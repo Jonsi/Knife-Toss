@@ -14,6 +14,10 @@ public class KnifeThrower : MonoBehaviour
     private InputAction attackAction;
     private Knife currentKnife;
     private bool isKnifeInFlight;
+    private int maxKnives = 0;
+    private int knivesThrown = 0;
+    private bool canThrow = true;
+    private GameController gameController;
     
     private void Awake()
     {
@@ -21,6 +25,8 @@ public class KnifeThrower : MonoBehaviour
         {
             attackAction = inputActionAsset.FindAction("Player/Attack");
         }
+        
+        gameController = FindFirstObjectByType<GameController>();
     }
     
     private void OnEnable()
@@ -43,10 +49,16 @@ public class KnifeThrower : MonoBehaviour
     
     private void OnThrowInput(InputAction.CallbackContext context)
     {
-        if (!isKnifeInFlight && knifePrefab != null && launcherTransform != null)
+        if (!canThrow || isKnifeInFlight || knifePrefab == null || launcherTransform == null)
+            return;
+        
+        // Check if we've reached max knives
+        if (maxKnives > 0 && knivesThrown >= maxKnives)
         {
-            ThrowKnife();
+            return;
         }
+        
+        ThrowKnife();
     }
     
     private void ThrowKnife()
@@ -58,6 +70,13 @@ public class KnifeThrower : MonoBehaviour
         {
             currentKnife.Initialize(this, throwSpeed);
             isKnifeInFlight = true;
+            knivesThrown++;
+            
+            // Notify GameController
+            if (gameController != null)
+            {
+                gameController.OnKnifeThrown();
+            }
         }
     }
     
@@ -76,6 +95,19 @@ public class KnifeThrower : MonoBehaviour
             currentKnife = null;
         }
         isKnifeInFlight = false;
+        knivesThrown = 0;
+        canThrow = true;
+    }
+    
+    public void SetMaxKnives(int max)
+    {
+        maxKnives = max;
+        knivesThrown = 0;
+    }
+    
+    public void SetCanThrow(bool allow)
+    {
+        canThrow = allow;
     }
 }
 

@@ -8,11 +8,9 @@ public class RotatingTarget : MonoBehaviour
     [Header("Difficulty Settings")]
     [SerializeField] private bool randomizeDirection = true;
     [SerializeField] private float directionChangeInterval = 3f;
-    [SerializeField] private float speedAccelerationPerLevel = 10f;
     
     private int currentDirection = 1;
     private float directionChangeTimer;
-    private int currentLevel = 1;
     
     private void Update()
     {
@@ -41,15 +39,20 @@ public class RotatingTarget : MonoBehaviour
         }
     }
     
-    public void SetLevel(int level)
-    {
-        currentLevel = level;
-        rotationSpeed += speedAccelerationPerLevel * (level - 1);
-    }
-    
     public void SetRotationSpeed(float speed)
     {
         rotationSpeed = speed;
+    }
+    
+    public void SetDirectionChangeInterval(float interval)
+    {
+        directionChangeInterval = interval;
+        directionChangeTimer = interval;
+    }
+    
+    public void SetRandomizeDirection(bool randomize)
+    {
+        randomizeDirection = randomize;
     }
     
     public void ResetRotation()

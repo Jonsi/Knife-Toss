@@ -176,6 +176,18 @@ public class Knife : MonoBehaviour
         }
     }
     
+    public void MarkAsPreStuck()
+    {
+        isStuck = true;
+        isResolved = true;
+        speed = 0f;
+        
+        if (rb2d != null)
+        {
+            rb2d.linearVelocity = Vector2.zero;
+        }
+    }
+    
     // Events for future GameController integration
     public static System.Action OnKnifeStuck;
     public static System.Action OnKnifeFailed;

@@ -65,17 +65,37 @@
    - `Target`, `Knife`, `StuckKnife` or reuse as needed.
 
 ## Phase 6 – Level System
-1. Create `LevelData` structure:
-   - `int levelIndex`.
-   - `int knivesRequired`.
-   - `float targetSpeed`.
-2. Option A: embed data in `GameController` as a list.
-3. Option B: ScriptableObject list for easier tuning.
-4. Implement Level Flow in `GameController`:
-   - Set current level data.
-   - Track knives thrown and knives successfully stuck.
-   - When `stuckKnives == knivesRequired` → win level.
-   - When fail → show fail UI.
+1. Decide what varies per level:
+   - Number of knives the player must stick.
+   - Rotation speed of the target.
+   - Optional: number of knives already stuck at the start, and how often the target changes direction.
+
+2. Create a simple level configuration asset:
+   - A list of levels, each with the values above.
+   - Editable in the Inspector so you can quickly tweak difficulty.
+
+3. Game flow per level:
+   - At the start of a level, read the relevant level data.
+   - Set the target’s rotation speed and behaviour according to that data.
+   - Set the total knives the player needs to stick and update the "knives left" UI.
+   - Optionally spawn a few knives already attached to the target for extra challenge.
+
+4. Tracking progress inside the level:
+   - Keep counters for how many knives are successfully stuck and how many are left to throw.
+   - Each time a knife sticks, update the counters and the UI.
+   - When the required number of knives is reached, trigger level completion.
+   - If you choose to limit the total knives, failing to reach the target count before running out triggers a fail.
+
+5. Progression between levels:
+   - Maintain a current level index that starts at 1 (or the highest unlocked level).
+   - On win: move to the next level index and load its data.
+   - On retry: reload the same level.
+   - Optionally save the highest reached level so the player resumes from there.
+
+6. Scaling difficulty:
+   - For the first 20–30 levels, define values by hand to get a good early curve.
+   - After that, gradually increase knife count and rotation speed in small steps.
+   - Occasionally add more pre‑stuck knives or faster direction changes to create spikes in difficulty.
 
 ## Phase 7 – UI Implementation
 1. Create Canvas with:
