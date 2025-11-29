@@ -94,6 +94,7 @@ namespace KnifeToss.Application.Services
             session.RecordKnifeStuck();
             if (session.IsComplete)
             {
+                DisableThrowerInput();
                 SaveProgress();
             }
         }
@@ -101,6 +102,7 @@ namespace KnifeToss.Application.Services
         public void HandleKnifeFailure()
         {
             session.RecordFailure();
+            DisableThrowerInput();
         }
 
         public void HandleKnifeThrown()
@@ -138,6 +140,12 @@ namespace KnifeToss.Application.Services
                 return;
 
             progressStore.SaveHighestLevel(session.LevelIndex);
+        }
+
+        private void DisableThrowerInput()
+        {
+            KnifeThrower knifeThrower = gameplayObjectProvider?.GetKnifeThrower();
+            knifeThrower?.SetCanThrow(false);
         }
 
         public void Dispose()

@@ -89,13 +89,11 @@ namespace KnifeToss.Presentation.Gameplay
         private void HandleLevelCompleted(LevelSession _)
         {
             hudPresenter?.ShowLevelComplete(true);
-            UnityEngine.Time.timeScale = 0f;
         }
 
         private void HandleLevelFailed(LevelSession _)
         {
             hudPresenter?.ShowFail(true);
-            UnityEngine.Time.timeScale = 0f;
         }
 
         private void RenderHud()
@@ -106,7 +104,6 @@ namespace KnifeToss.Presentation.Gameplay
         private void BeginTransition(UniTask transitionTask)
         {
             hudPresenter?.ResetState();
-            UnityEngine.Time.timeScale = 1f;
             CompleteTransitionAsync(transitionTask).Forget();
         }
 
