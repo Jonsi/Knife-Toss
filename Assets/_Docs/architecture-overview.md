@@ -17,20 +17,21 @@ The project is organized using a layered, dependency-inverted structure so that 
   - Provides Unity-facing adapters that implement Core interfaces, e.g., `LevelConfigCatalog` (ScriptableObject-backed level data), `PlayerPrefsProgressStore`, `KnivesHierarchyManager`, and `PreStuckKnifeSpawner`.
 
 - **Installers** (`Assets/Scripts/Installers`)
-  - `GameplayInstaller` acts as the composition root: it gathers scene references, instantiates domain/application objects, wires dependencies, and exposes the configured services to presentation components. This replaces the old monolithic `GameController` logic.
+  - `GameplayInstaller` derives from **VContainer**'s `LifetimeScope` and strictly wires dependencies: it registers ScriptableObject data, infrastructure adapters, presentation components (HUD/state presenters, command channel), the `GameplayObjectProvider`, and the `LevelFlowCoordinator` that orchestrates everything.
 
 - **Presentation** (`Assets/Scripts/Presentation`)
-  - Divided into `Gameplay` and `UI` subfolders. MonoBehaviours here interact with Unity components, forward input, and react to service events. Examples:
-    - `LevelLifecyclePresenter` subscribes to `LevelSession` events and updates UI presenters.
-    - `KnifeThrower`, `KnifeThrowRelay`, and `KnifeEventRelay` convert player input and projectile events into service calls.
-    - `LevelHudPresenter` and `GameStatePresenter` update TextMeshPro labels and UI state based on session data.
+  - Divided into `Gameplay` and `UI` subfolders. MonoBehaviours here interact with Unity components, while non-Mono classes (registered via DI) coordinate logic. Examples:
+    - `GameplayObjectProvider` instantiates prefabs (target, knife thrower) on demand and keeps them alive for services.
+    - `LevelFlowCoordinator` (registered via VContainer) hooks into `LevelSessionService`, `LevelHudPresenter`, and the `LevelCommandEventChannel` to drive lifecycle transitions and UI updates.
+    - `LevelHudPresenter` handles HUD text, fail/complete indicators, and raises command events when its buttons are clicked.
+    - `KnifeThrower` and `KnifeThrowRelay` convert player input into projectile launches, while knives raise events directly into `KnifeImpactEventChannel`.
 
 ## Event Flow
 
 1. **Input** – `KnifeThrower` captures input actions and spawns `Knife` projectiles. `KnifeThrowRelay` forwards `KnifeThrown` events to the service.
-2. **Gameplay State** – `LevelSessionService` updates `LevelSession` based on throws, knife impacts, retries, or level progression.
+2. **Gameplay State** – `LevelSessionService` updates `LevelSession` based on throws, knife impacts, retries, or level progression. The service now exposes asynchronous `UniTask` workflows so level transitions can yield between destruction/creation steps without blocking the main thread.
 3. **Events** – `Knife` uses `KnifeImpactEventChannel` so any system (service, VFX, audio) can respond to stuck/fail outcomes without direct references.
-4. **Presentation** – `LevelLifecyclePresenter` listens to `LevelSession` events and updates UI (`LevelHudPresenter`, `GameStatePresenter`).
+4. **Presentation** – `LevelFlowCoordinator` listens to `LevelSession` events, relies on `GameplayObjectProvider` for runtime objects, and updates UI presenters. Button clicks send commands through `LevelCommandEventChannel`, which the coordinator listens to.
 5. **Persistence** – When a level completes, `LevelSessionService` saves progress through `ILevelProgressStore` (currently backed by `PlayerPrefs`).
 
-This structure ensures each class owns a single responsibility, lets you replace infrastructure pieces (e.g., switch to addressable configs or cloud saves), and makes future features pluggable by subscribing to events or extending installers without editing core gameplay rules.
+This structure ensures each class owns a single responsibility, lets you replace infrastructure pieces (e.g., switch to addressable configs or cloud saves), and makes future features pluggable by subscribing to events or extending the `GameplayInstaller` rather than editing core gameplay rules. Prefab-driven bootstrapping + VContainer centralizes wiring, while UniTask-ready services allow future async work (loading scenes, spawning VFX, cloud saves) to slot in without refactors.

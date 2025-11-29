@@ -1,7 +1,9 @@
+using System;
+using Cysharp.Threading.Tasks;
 using KnifeToss.Core.Abstractions;
 using KnifeToss.Core.Domain;
+using KnifeToss.Core.Events;
 using KnifeToss.Infrastructure.Leveling;
-using KnifeToss.Infrastructure.Persistence;
 using KnifeToss.Presentation.Gameplay;
 using UnityEngine;
 
@@ -10,16 +12,16 @@ namespace KnifeToss.Application.Services
     /// <summary>
     /// Coordinates the lifecycle of a level and exposes a pure session model.
     /// </summary>
-    public sealed class LevelSessionService
+    public sealed class LevelSessionService : IDisposable
     {
         private readonly LevelSession session;
         private readonly ILevelCatalog catalog;
         private readonly ILevelProgressStore progressStore;
-        private readonly RotatingTarget rotatingTarget;
-        private readonly KnifeThrower knifeThrower;
+        private readonly GameplayObjectProvider gameplayObjectProvider;
         private readonly KnivesHierarchyManager hierarchyManager;
         private readonly PreStuckKnifeSpawner preStuckSpawner;
         private readonly int startLevel;
+        private readonly KnifeImpactEventChannel impactEventChannel;
 
         private LevelRules currentRules;
 
@@ -27,36 +29,43 @@ namespace KnifeToss.Application.Services
             LevelSession levelSession,
             ILevelCatalog levelCatalog,
             ILevelProgressStore levelProgressStore,
-            RotatingTarget target,
-            KnifeThrower thrower,
+            GameplayObjectProvider gameplayObjectProvider,
             KnivesHierarchyManager knivesHierarchy,
             PreStuckKnifeSpawner preStuckKnifeSpawner,
-            int startingLevel)
+            int startingLevel,
+            KnifeImpactEventChannel eventChannel)
         {
             session = levelSession;
             catalog = levelCatalog;
             progressStore = levelProgressStore;
-            rotatingTarget = target;
-            knifeThrower = thrower;
+            this.gameplayObjectProvider = gameplayObjectProvider;
             hierarchyManager = knivesHierarchy;
             preStuckSpawner = preStuckKnifeSpawner;
             startLevel = Mathf.Max(1, startingLevel);
+            impactEventChannel = eventChannel;
+
+            if (impactEventChannel != null)
+            {
+                impactEventChannel.KnifeStuck += HandleKnifeStuck;
+                impactEventChannel.KnifeFailed += HandleKnifeFailure;
+            }
         }
 
         public LevelSession Session => session;
         public LevelRules CurrentRules => currentRules;
         public int CurrentLevel => session.LevelIndex;
 
-        public void StartInitialLevel()
+        public UniTask StartInitialLevelAsync()
         {
             int highestLevel = progressStore.LoadHighestLevel(startLevel);
             int levelToStart = Mathf.Max(startLevel, highestLevel);
-            StartLevel(levelToStart);
+            return StartLevelAsync(levelToStart);
         }
 
-        public void StartLevel(int levelIndex)
+        public async UniTask StartLevelAsync(int levelIndex)
         {
             hierarchyManager.ResetHierarchy();
+            await UniTask.Yield(); // allow destruction to settle before re-parenting
             Transform knivesParent = hierarchyManager.EnsureParent();
 
             currentRules = catalog.GetRules(levelIndex);
@@ -65,18 +74,19 @@ namespace KnifeToss.Application.Services
             ConfigureTarget(currentRules);
             ConfigureThrower(knivesParent, currentRules);
 
+            await UniTask.WaitForEndOfFrame();
             int preStuckSpawned = preStuckSpawner.Spawn(currentRules);
             session.SeedPreStuckKnives(preStuckSpawned);
         }
 
-        public void RetryLevel()
+        public UniTask RetryLevelAsync()
         {
-            StartLevel(session.LevelIndex);
+            return StartLevelAsync(session.LevelIndex);
         }
 
-        public void NextLevel()
+        public UniTask NextLevelAsync()
         {
-            StartLevel(session.LevelIndex + 1);
+            return StartLevelAsync(session.LevelIndex + 1);
         }
 
         public void HandleKnifeStuck()
@@ -98,14 +108,13 @@ namespace KnifeToss.Application.Services
             session.RecordThrow();
             if (session.HasExhaustedKnives())
             {
-                knifeThrower.SetCanThrow(false);
+                gameplayObjectProvider.GetKnifeThrower().SetCanThrow(false);
             }
         }
 
         private void ConfigureTarget(LevelRules rules)
         {
-            if (rotatingTarget == null)
-                return;
+            RotatingTarget rotatingTarget = gameplayObjectProvider.GetTarget();
 
             rotatingTarget.SetRotationSpeed(rules.RotationSpeed);
             rotatingTarget.SetDirectionChangeInterval(rules.DirectionChangeInterval);
@@ -115,8 +124,7 @@ namespace KnifeToss.Application.Services
 
         private void ConfigureThrower(Transform knivesParent, LevelRules rules)
         {
-            if (knifeThrower == null)
-                return;
+            KnifeThrower knifeThrower = gameplayObjectProvider.GetKnifeThrower();
 
             knifeThrower.ResetState();
             knifeThrower.SetMaxKnives(rules.MaxKnives);
@@ -130,6 +138,15 @@ namespace KnifeToss.Application.Services
                 return;
 
             progressStore.SaveHighestLevel(session.LevelIndex);
+        }
+
+        public void Dispose()
+        {
+            if (impactEventChannel != null)
+            {
+                impactEventChannel.KnifeStuck -= HandleKnifeStuck;
+                impactEventChannel.KnifeFailed -= HandleKnifeFailure;
+            }
         }
     }
 }

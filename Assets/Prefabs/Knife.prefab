@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Knife
   embedOffset: 0.02
+  impactEventChannel: {fileID: 11400000, guid: a78030c48769aec48b1aeb7cf48a28cb, type: 2}
   hitTargetSound: {fileID: 8300000, guid: 39b9e94fd66ef1a4a992145a819b263d, type: 3}
   hitKnifeSound: {fileID: 8300000, guid: 964f1daeaad762c41a661cf54af71da3, type: 3}
   soundVolume: 1

@@ -1,6 +1,6 @@
 using KnifeToss.Application.Services;
-using KnifeToss.Installers;
 using UnityEngine;
+using VContainer;
 
 namespace KnifeToss.Presentation.Gameplay
 {
@@ -10,7 +10,6 @@ namespace KnifeToss.Presentation.Gameplay
     [RequireComponent(typeof(KnifeThrower))]
     public class KnifeThrowRelay : MonoBehaviour
     {
-        [SerializeField] private GameplayInstaller installer;
         [SerializeField] private KnifeThrower knifeThrower;
 
         private LevelSessionService sessionService;
@@ -21,16 +20,16 @@ namespace KnifeToss.Presentation.Gameplay
             {
                 knifeThrower = GetComponent<KnifeThrower>();
             }
+        }
 
-            if (installer == null)
-            {
-                installer = FindFirstObjectByType<GameplayInstaller>();
-            }
+        [Inject]
+        public void Construct(LevelSessionService levelSessionService)
+        {
+            sessionService = levelSessionService;
         }
 
         private void OnEnable()
         {
-            sessionService = installer != null ? installer.SessionService : null;
             if (knifeThrower != null)
             {
                 knifeThrower.KnifeThrown += HandleKnifeThrown;
