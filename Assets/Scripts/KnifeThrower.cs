@@ -18,6 +18,7 @@ public class KnifeThrower : MonoBehaviour
     private int knivesThrown = 0;
     private bool canThrow = true;
     private GameController gameController;
+    private GameObject knivesParent;
     
     private void Awake()
     {
@@ -64,6 +65,13 @@ public class KnifeThrower : MonoBehaviour
     private void ThrowKnife()
     {
         GameObject knifeObject = Instantiate(knifePrefab, launcherTransform.position, launcherTransform.rotation);
+        
+        // Parent knife to knives parent if available
+        if (knivesParent != null)
+        {
+            knifeObject.transform.SetParent(knivesParent.transform);
+        }
+        
         currentKnife = knifeObject.GetComponent<Knife>();
         
         if (currentKnife != null)
@@ -108,6 +116,11 @@ public class KnifeThrower : MonoBehaviour
     public void SetCanThrow(bool allow)
     {
         canThrow = allow;
+    }
+    
+    public void SetKnivesParent(GameObject parent)
+    {
+        knivesParent = parent;
     }
 }
 

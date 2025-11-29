@@ -1,0 +1,230 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bd2c8c3ee470b49af1d24bffeecc3c, type: 3}
+  m_Name: LevelConfig
+  m_EditorClassIdentifier: Assembly-CSharp::LevelConfig
+  levels:
+  - requiredKnives: 3
+    maxKnives: 0
+    rotationSpeed: 60
+    directionChangeInterval: 5
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 3
+    maxKnives: 0
+    rotationSpeed: 66
+    directionChangeInterval: 3.9
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 4
+    maxKnives: 0
+    rotationSpeed: 69
+    directionChangeInterval: 3.85
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 4
+    maxKnives: 0
+    rotationSpeed: 72
+    directionChangeInterval: 3.8
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 5
+    maxKnives: 0
+    rotationSpeed: 75
+    directionChangeInterval: 3.75
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 5
+    maxKnives: 0
+    rotationSpeed: 78
+    directionChangeInterval: 3.7
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 5
+    maxKnives: 0
+    rotationSpeed: 81
+    directionChangeInterval: 3.65
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 5
+    maxKnives: 0
+    rotationSpeed: 84
+    directionChangeInterval: 3.6
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 6
+    maxKnives: 0
+    rotationSpeed: 87
+    directionChangeInterval: 3.55
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 6
+    maxKnives: 0
+    rotationSpeed: 90
+    directionChangeInterval: 3.5
+    randomizeDirection: 1
+    preStuckKnives: 1
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 6
+    maxKnives: 0
+    rotationSpeed: 93
+    directionChangeInterval: 3.45
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 7
+    maxKnives: 0
+    rotationSpeed: 96
+    directionChangeInterval: 3.4
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 7
+    maxKnives: 0
+    rotationSpeed: 99
+    directionChangeInterval: 3.35
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 7
+    maxKnives: 0
+    rotationSpeed: 102
+    directionChangeInterval: 3.3
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 7
+    maxKnives: 0
+    rotationSpeed: 105
+    directionChangeInterval: 3
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 8
+    maxKnives: 0
+    rotationSpeed: 108
+    directionChangeInterval: 3.2
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 8
+    maxKnives: 0
+    rotationSpeed: 111
+    directionChangeInterval: 3.15
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 9
+    maxKnives: 0
+    rotationSpeed: 114
+    directionChangeInterval: 3.1
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 9
+    maxKnives: 0
+    rotationSpeed: 117
+    directionChangeInterval: 3.05
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 8
+    maxKnives: 0
+    rotationSpeed: 120
+    directionChangeInterval: 3
+    randomizeDirection: 1
+    preStuckKnives: 2
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 10
+    maxKnives: 0
+    rotationSpeed: 123
+    directionChangeInterval: 2.95
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 10
+    maxKnives: 0
+    rotationSpeed: 126
+    directionChangeInterval: 2.9
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 10
+    maxKnives: 0
+    rotationSpeed: 129
+    directionChangeInterval: 2.85
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 11
+    maxKnives: 0
+    rotationSpeed: 132
+    directionChangeInterval: 2.8
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 10
+    maxKnives: 0
+    rotationSpeed: 135
+    directionChangeInterval: 2.5
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 11
+    maxKnives: 0
+    rotationSpeed: 138
+    directionChangeInterval: 2.7
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 12
+    maxKnives: 0
+    rotationSpeed: 141
+    directionChangeInterval: 2.65
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 12
+    maxKnives: 0
+    rotationSpeed: 144
+    directionChangeInterval: 2.6
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 12
+    maxKnives: 0
+    rotationSpeed: 147
+    directionChangeInterval: 2.55
+    randomizeDirection: 1
+    preStuckKnives: 0
+    preStuckKnifeSpacing: 45
+  - requiredKnives: 12
+    maxKnives: 0
+    rotationSpeed: 150
+    directionChangeInterval: 2
+    randomizeDirection: 1
+    preStuckKnives: 3
+    preStuckKnifeSpacing: 45
+  generateProceduralLevels: 1
+  proceduralBaseKnives: 12
+  proceduralBaseRotationSpeed: 150
+  proceduralKnifeIncrease: 1
+  proceduralSpeedIncrease: 5

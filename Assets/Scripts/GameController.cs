@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class GameController : MonoBehaviour
 {
@@ -9,6 +11,9 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject failText;
     [SerializeField] private LevelConfig levelConfig;
     [SerializeField] private GameObject knifePrefab;
+    [SerializeField] private TextMeshProUGUI levelText;
+    [SerializeField] private TextMeshProUGUI knivesLeftText;
+    [SerializeField] private Button nextLevelButton;
     
     [Header("Level Settings")]
     [SerializeField] private int startLevel = 1;
@@ -19,31 +24,23 @@ public class GameController : MonoBehaviour
     private int knivesThrown;
     private bool isLevelComplete;
     private bool isGameOver;
+    private GameObject knivesParent;
     
     private const string HIGHEST_LEVEL_KEY = "HighestLevel";
+    private const string KNIVES_PARENT_NAME = "Knives";
     
     public void ResetGame()
     {
-        // Clear all stuck knives (knives that are children of the target)
-        if (targetTransform != null)
-        {
-            // Destroy all child knives
-            for (int i = targetTransform.childCount - 1; i >= 0; i--)
-            {
-                Transform child = targetTransform.GetChild(i);
-                if (child.CompareTag("Knife") || child.GetComponent<Knife>() != null)
-                {
-                    Destroy(child.gameObject);
-                }
-            }
-        }
+        // Reset game state flags
+        isGameOver = false;
+        isLevelComplete = false;
         
-        // Clear any knives in flight or in the scene
-        Knife[] allKnives = FindObjectsByType<Knife>(FindObjectsSortMode.None);
-        foreach (Knife knife in allKnives)
-        {
-            Destroy(knife.gameObject);
-        }
+        // Reset knife counters
+        knivesStuck = 0;
+        knivesThrown = 0;
+        
+        // Destroy the knives parent GameObject (this will destroy all knives)
+        DestroyKnivesParent();
         
         // Reset target rotation
         if (rotatingTarget != null)
@@ -65,6 +62,18 @@ public class GameController : MonoBehaviour
         if (failText != null)
         {
             failText.SetActive(false);
+        }
+        
+        // Disable next level button
+        if (nextLevelButton != null)
+        {
+            nextLevelButton.gameObject.SetActive(false);
+        }
+        
+        // Update UI text to reflect reset state
+        if (currentLevelData != null)
+        {
+            UpdateKnivesLeftText();
         }
         
         // Reset time scale
@@ -95,19 +104,16 @@ public class GameController : MonoBehaviour
             knifeThrower = FindFirstObjectByType<KnifeThrower>();
         }
         
-        if (failText == null)
-        {
-            GameObject failTextObj = GameObject.Find("FailText");
-            if (failTextObj != null)
-            {
-                failText = failTextObj;
-            }
-        }
-        
         // Disable fail text on start
         if (failText != null)
         {
             failText.SetActive(false);
+        }
+        
+        // Disable next level button on start
+        if (nextLevelButton != null)
+        {
+            nextLevelButton.gameObject.SetActive(false);
         }
         
         // Load highest level or use start level
@@ -161,6 +167,9 @@ public class GameController : MonoBehaviour
         
         Debug.Log($"Knife stuck! Progress: {knivesStuck}/{currentLevelData.requiredKnives}");
         
+        // Update knives left text
+        UpdateKnivesLeftText();
+        
         // Check if level is complete
         if (knivesStuck >= currentLevelData.requiredKnives)
         {
@@ -175,6 +184,12 @@ public class GameController : MonoBehaviour
     
     public void StartLevel(int level)
     {
+        // Destroy any existing knives parent first
+        DestroyKnivesParent();
+        
+        // Create new knives parent for this level
+        CreateKnivesParent();
+        
         currentLevel = level;
         knivesStuck = 0;
         knivesThrown = 0;
@@ -207,12 +222,94 @@ public class GameController : MonoBehaviour
         if (knifeThrower != null)
         {
             knifeThrower.SetMaxKnives(currentLevelData.maxKnives);
+            knifeThrower.SetKnivesParent(knivesParent);
         }
         
         // Spawn pre-stuck knives
         SpawnPreStuckKnives();
         
+        // Update UI text
+        UpdateLevelText();
+        UpdateKnivesLeftText();
+        
+        // Disable next level button when starting a new level
+        if (nextLevelButton != null)
+        {
+            nextLevelButton.gameObject.SetActive(false);
+        }
+        
         Debug.Log($"Level {currentLevel} started! Required knives: {currentLevelData.requiredKnives}");
+    }
+    
+    private void UpdateLevelText()
+    {
+        if (levelText != null)
+        {
+            levelText.text = $"Level {currentLevel}";
+        }
+    }
+    
+    private void UpdateKnivesLeftText()
+    {
+        if (knivesLeftText != null && currentLevelData != null)
+        {
+            int remaining = Mathf.Max(0, currentLevelData.requiredKnives - knivesStuck);
+            knivesLeftText.text = $"Knives Left: {remaining}";
+        }
+    }
+    
+    private void CreateKnivesParent()
+    {
+        // Destroy any existing knives parent first
+        DestroyKnivesParent();
+        
+        // Create new parent GameObject for all knives in this level
+        knivesParent = new GameObject(KNIVES_PARENT_NAME);
+        knivesParent.transform.SetParent(transform); // Parent to GameController's transform
+    }
+    
+    private void DestroyKnivesParent()
+    {
+        // Destroy the knives parent GameObject (this will destroy all child knives)
+        if (knivesParent != null)
+        {
+            Destroy(knivesParent);
+            knivesParent = null;
+        }
+        
+        // Also try to find and destroy any orphaned knives parent
+        GameObject existingParent = GameObject.Find(KNIVES_PARENT_NAME);
+        if (existingParent != null)
+        {
+            Destroy(existingParent);
+        }
+        
+        // Clear all knives that are children of the target (stuck knives)
+        if (targetTransform != null)
+        {
+            for (int i = targetTransform.childCount - 1; i >= 0; i--)
+            {
+                Transform child = targetTransform.GetChild(i);
+                if (child != null)
+                {
+                    Knife knife = child.GetComponent<Knife>();
+                    if (knife != null || child.CompareTag("Knife"))
+                    {
+                        Destroy(child.gameObject);
+                    }
+                }
+            }
+        }
+        
+        // Final cleanup: find and destroy any remaining knives in the scene
+        Knife[] allKnives = FindObjectsByType<Knife>(FindObjectsSortMode.None);
+        foreach (Knife knife in allKnives)
+        {
+            if (knife != null && knife.gameObject != null)
+            {
+                Destroy(knife.gameObject);
+            }
+        }
     }
     
     private void SpawnPreStuckKnives()
@@ -226,18 +323,40 @@ public class GameController : MonoBehaviour
         float angleStep = currentLevelData.preStuckKnifeSpacing;
         float startAngle = Random.Range(0f, 360f);
         
+        // Get embedOffset from knife prefab if available
+        Knife sampleKnife = knifePrefab.GetComponent<Knife>();
+        float embedOffset = 0.02f; // Default value
+        if (sampleKnife != null)
+        {
+            // Use reflection or a public getter - for now use default
+            // The embedOffset is private, so we'll use the default
+        }
+        
         for (int i = 0; i < currentLevelData.preStuckKnives; i++)
         {
             float angle = (startAngle + i * angleStep) * Mathf.Deg2Rad;
             Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-            Vector2 position = (Vector2)targetTransform.position + direction * targetRadius;
+            Vector2 position = (Vector2)targetTransform.position + direction * (targetRadius + embedOffset);
             
-            GameObject knifeObj = Instantiate(knifePrefab, position, Quaternion.identity);
+            // Calculate direction from knife position to center BEFORE instantiating
+            Vector2 targetCenter = targetTransform.position;
+            Vector2 directionToCenter = (targetCenter - position).normalized;
+            // Atan2 returns angle where 0° points right (positive X axis)
+            // Unity sprites typically point up (positive Y) at 0°, so subtract 90° to align
+            float knifeAngle = Mathf.Atan2(directionToCenter.y, directionToCenter.x) * Mathf.Rad2Deg - 90f;
+            Quaternion rotation = Quaternion.Euler(0, 0, knifeAngle);
+            
+            GameObject knifeObj = Instantiate(knifePrefab, position, rotation);
+            
+            // Parent to target for visual positioning, but also keep reference in knives parent
             knifeObj.transform.SetParent(targetTransform);
             
-            // Rotate knife to point outward
-            float knifeAngle = angle * Mathf.Rad2Deg;
-            knifeObj.transform.rotation = Quaternion.Euler(0, 0, knifeAngle);
+            // Also ensure it's tracked in the knives parent hierarchy
+            if (knivesParent != null)
+            {
+                // Create a wrapper or just track it - knives stuck to target stay as children of target
+                // but we'll destroy the knives parent which will clean up any orphaned knives
+            }
             
             // Mark as stuck and disable movement
             Knife knife = knifeObj.GetComponent<Knife>();
@@ -267,6 +386,12 @@ public class GameController : MonoBehaviour
         }
         
         Debug.Log($"Level {currentLevel} completed!");
+        
+        // Enable next level button
+        if (nextLevelButton != null)
+        {
+            nextLevelButton.gameObject.SetActive(true);
+        }
         
         // Pause the game (will be resumed when next level starts)
         Time.timeScale = 0f;
