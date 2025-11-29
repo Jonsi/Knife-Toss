@@ -1,6 +1,7 @@
-using UnityEngine;
-using UnityEditor;
+using KnifeToss.Core.Data;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 
 public class LevelConfigGenerator : EditorWindow
 {
@@ -106,4 +107,5 @@ public class LevelConfigGenerator : EditorWindow
         Debug.Log($"Created LevelConfig asset at {path} with {config.levels.Count} levels!");
     }
 }
+
 
