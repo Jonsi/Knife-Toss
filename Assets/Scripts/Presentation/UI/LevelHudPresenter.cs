@@ -49,13 +49,13 @@ namespace KnifeToss.Presentation.UI
 
             if (levelText != null)
             {
-                levelText.text = $"Level {session.LevelIndex}";
+                levelText.text = $"{session.LevelIndex}";
             }
 
             if (knivesLeftText != null)
             {
                 int remaining = Mathf.Max(0, session.Rules.RequiredKnives - session.KnivesStuck);
-                knivesLeftText.text = $"Knives Left: {remaining}";
+                knivesLeftText.text = $"{remaining}";
             }
         }
 
