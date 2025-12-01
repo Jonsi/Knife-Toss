@@ -100,7 +100,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3126276711855495373}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -153,6 +153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Knife
   embedOffset: 0.02
   impactEventChannel: {fileID: 11400000, guid: a78030c48769aec48b1aeb7cf48a28cb, type: 2}
+  failAnimationConfig: {fileID: 0}
   hitTargetSound: {fileID: 8300000, guid: 39b9e94fd66ef1a4a992145a819b263d, type: 3}
   hitKnifeSound: {fileID: 8300000, guid: 964f1daeaad762c41a661cf54af71da3, type: 3}
   soundVolume: 1

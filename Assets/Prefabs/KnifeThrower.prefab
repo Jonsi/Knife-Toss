@@ -49,6 +49,12 @@ MonoBehaviour:
   launcherTransform: {fileID: 3509053332355112065}
   inputActionAsset: {fileID: -944628639613478452, guid: 3590b91b4603b465dbb4216d601bff33, type: 3}
   throwSpeed: 20
+  poolWarmupCount: 10
+  visibleQueueCount: 3
+  queueSpacing: 0.5
+  slideAnimationDuration: 0.3
+  queueScaleStart: 1
+  queueScaleEnd: 0.5
 --- !u!1 &5945193156464006696
 GameObject:
   m_ObjectHideFlags: 0

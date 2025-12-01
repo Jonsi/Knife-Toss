@@ -64,6 +64,14 @@ namespace KnifeToss.Application.Services
 
         public async UniTask StartLevelAsync(int levelIndex)
         {
+            // CRITICAL: Kill all knife tweens BEFORE destroying hierarchy
+            // This prevents DOTween from trying to update tweens on destroyed objects
+            KnifeThrower knifeThrower = gameplayObjectProvider.GetKnifeThrower();
+            if (knifeThrower != null)
+            {
+                knifeThrower.KillAllKnifeTweens();
+            }
+            
             hierarchyManager.ResetHierarchy();
             await UniTask.Yield(); // allow destruction to settle before re-parenting
             Transform knivesParent = hierarchyManager.EnsureParent();
@@ -130,6 +138,7 @@ namespace KnifeToss.Application.Services
 
             knifeThrower.ResetState();
             knifeThrower.SetMaxKnives(rules.MaxKnives);
+            knifeThrower.SetTotalKnives(rules.RequiredKnives);
             knifeThrower.SetKnivesParent(knivesParent);
             knifeThrower.SetCanThrow(true);
         }
