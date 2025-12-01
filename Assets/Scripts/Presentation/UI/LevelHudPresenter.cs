@@ -1,9 +1,9 @@
 using KnifeToss.Core.Events;
 using KnifeToss.Infrastructure.Leveling;
-using VContainer;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 namespace KnifeToss.Presentation.UI
 {
@@ -12,24 +12,20 @@ namespace KnifeToss.Presentation.UI
         [SerializeField] private TextMeshProUGUI levelText;
         [Header("UI References")]
         [SerializeField] private GameObject failText;
+        [SerializeField] private LevelCompletePopup levelCompletePopup;
         [SerializeField] private LevelCommandEventChannel commandChannel;
         [SerializeField] private Button retryButton;
-        [SerializeField] private Button nextButton;
 
         private KnifeToss.Core.Abstractions.ILevelCommandInvoker commandInvoker;
 
         private void Awake()
         {
             EnsureCommandInvoker();
+            PropagateInvokerToPopup();
 
             if (retryButton != null)
             {
                 retryButton.onClick.AddListener(RaiseRetry);
-            }
-
-            if (nextButton != null)
-            {
-                nextButton.onClick.AddListener(RaiseNext);
             }
         }
 
@@ -39,11 +35,6 @@ namespace KnifeToss.Presentation.UI
             {
                 retryButton.onClick.RemoveListener(RaiseRetry);
             }
-
-            if (nextButton != null)
-            {
-                nextButton.onClick.RemoveListener(RaiseNext);
-            }
         }
 
         public void Render(LevelHudViewModel viewModel)
@@ -52,16 +43,7 @@ namespace KnifeToss.Presentation.UI
             {
                 levelText.text = viewModel.LevelLabel;
             }
-        }
-
-        private void RaiseRetry()
-        {
-            commandInvoker?.Retry();
-        }
-
-        private void RaiseNext()
-        {
-            commandInvoker?.Next();
+            levelCompletePopup?.SetLabel(viewModel.LevelCompleteLabel);
         }
 
         public void ShowFail(bool show)
@@ -74,10 +56,13 @@ namespace KnifeToss.Presentation.UI
 
         public void ShowLevelComplete(bool show)
         {
-            if (nextButton != null)
-            {
-                nextButton.gameObject.SetActive(show);
-            }
+            if (levelCompletePopup == null)
+                return;
+
+            if (show)
+                levelCompletePopup.Show();
+            else
+                levelCompletePopup.Hide();
         }
 
         public void ResetState()
@@ -90,6 +75,7 @@ namespace KnifeToss.Presentation.UI
         public void Construct(KnifeToss.Core.Abstractions.ILevelCommandInvoker invoker)
         {
             commandInvoker = invoker;
+            PropagateInvokerToPopup();
         }
 
         private void EnsureCommandInvoker()
@@ -103,6 +89,19 @@ namespace KnifeToss.Presentation.UI
             {
                 commandInvoker = new LevelCommandChannelInvoker(commandChannel);
             }
+        }
+
+        private void PropagateInvokerToPopup()
+        {
+            if (levelCompletePopup != null)
+            {
+                levelCompletePopup.SetCommandInvoker(commandInvoker);
+            }
+        }
+
+        private void RaiseRetry()
+        {
+            commandInvoker?.Retry();
         }
     }
 }
