@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3509053332355112065}
   - component: {fileID: 5062881446647928782}
+  - component: {fileID: -8666249114823628199}
   m_Layer: 0
   m_Name: KnifeThrower
   m_TagString: Untagged
@@ -47,14 +48,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KnifeThrower
   knifePrefab: {fileID: 3126276711855495373, guid: 0f0aea32d6aea4a41ba6b968d5173811, type: 3}
   launcherTransform: {fileID: 3509053332355112065}
-  inputActionAsset: {fileID: -944628639613478452, guid: 3590b91b4603b465dbb4216d601bff33, type: 3}
+  throwInputSource: {fileID: -8666249114823628199}
   throwSpeed: 20
   poolWarmupCount: 10
   visibleQueueCount: 3
   queueSpacing: 0.5
   slideAnimationDuration: 0.3
-  queueScaleStart: 1
   queueScaleEnd: 0.5
+  queueOpacityEnd: 0.3
+--- !u!114 &-8666249114823628199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5629078851861483033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 587a5ed406b06104e984bf41175a507c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KnifeToss.Presentation.Gameplay.InputActionThrowInput
+  actionReference: {fileID: 1120369429361536294, guid: 3590b91b4603b465dbb4216d601bff33, type: 3}
 --- !u!1 &5945193156464006696
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
-using KnifeToss.Core.Domain;
 using KnifeToss.Core.Events;
+using KnifeToss.Infrastructure.Leveling;
+using VContainer;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,8 +17,12 @@ namespace KnifeToss.Presentation.UI
         [SerializeField] private Button retryButton;
         [SerializeField] private Button nextButton;
 
+        private KnifeToss.Core.Abstractions.ILevelCommandInvoker commandInvoker;
+
         private void Awake()
         {
+            EnsureCommandInvoker();
+
             if (retryButton != null)
             {
                 retryButton.onClick.AddListener(RaiseRetry);
@@ -42,31 +47,27 @@ namespace KnifeToss.Presentation.UI
             }
         }
 
-        public void Render(LevelSession session)
+        public void Render(LevelHudViewModel viewModel)
         {
-            if (session == null)
-                return;
-
             if (levelText != null)
             {
-                levelText.text = $"{session.LevelIndex}";
+                levelText.text = viewModel.LevelLabel;
             }
 
             if (knivesLeftText != null)
             {
-                int remaining = Mathf.Max(0, session.Rules.RequiredKnives - session.KnivesStuck);
-                knivesLeftText.text = $"{remaining}";
+                knivesLeftText.text = viewModel.KnivesRemainingLabel;
             }
         }
 
         private void RaiseRetry()
         {
-            commandChannel?.RaiseRetry();
+            commandInvoker?.Retry();
         }
 
         private void RaiseNext()
         {
-            commandChannel?.RaiseNext();
+            commandInvoker?.Next();
         }
 
         public void ShowFail(bool show)
@@ -89,6 +90,25 @@ namespace KnifeToss.Presentation.UI
         {
             ShowFail(false);
             ShowLevelComplete(false);
+        }
+
+        [VContainer.Inject]
+        public void Construct(KnifeToss.Core.Abstractions.ILevelCommandInvoker invoker)
+        {
+            commandInvoker = invoker;
+        }
+
+        private void EnsureCommandInvoker()
+        {
+            if (commandInvoker != null)
+            {
+                return;
+            }
+
+            if (commandChannel != null)
+            {
+                commandInvoker = new LevelCommandChannelInvoker(commandChannel);
+            }
         }
     }
 }

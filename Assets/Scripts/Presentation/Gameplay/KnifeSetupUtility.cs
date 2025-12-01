@@ -1,0 +1,64 @@
+using UnityEngine;
+
+namespace KnifeToss.Presentation.Gameplay
+{
+    /// <summary>
+    /// Utility helpers for preparing knives for queue/throw lifecycle.
+    /// </summary>
+    internal static class KnifeSetupUtility
+    {
+        public static void EnableColliders(GameObject knifeObject, bool enabled)
+        {
+            if (knifeObject == null)
+            {
+                return;
+            }
+
+            KnifeView view = knifeObject.GetComponent<KnifeView>();
+            view?.CacheIfNeeded();
+
+            if (view != null)
+            {
+                view.SetCollidersEnabled(enabled);
+                return;
+            }
+
+            Collider2D[] colliders = knifeObject.GetComponents<Collider2D>();
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                Collider2D collider = colliders[i];
+                if (collider != null)
+                {
+                    collider.enabled = enabled;
+                }
+            }
+        }
+
+        public static void ApplyVisuals(GameObject knifeObject, Vector3 scale, Color color)
+        {
+            if (knifeObject == null)
+            {
+                return;
+            }
+
+            Transform knifeTransform = knifeObject.transform;
+            knifeTransform.localScale = scale;
+
+            KnifeView view = knifeObject.GetComponent<KnifeView>();
+            view?.CacheIfNeeded();
+            view?.SetColor(color);
+        }
+
+        public static void PositionAtLauncher(GameObject knifeObject, Transform launcher)
+        {
+            if (knifeObject == null || launcher == null)
+            {
+                return;
+            }
+
+            Transform knifeTransform = knifeObject.transform;
+            knifeTransform.position = launcher.position;
+            knifeTransform.rotation = launcher.rotation;
+        }
+    }
+}

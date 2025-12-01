@@ -156,16 +156,12 @@ namespace KnifeToss.Presentation.Gameplay
             Transform knifeTransform = knife.transform;
             knifeTransform.position = GetQueuePosition(index);
             knifeTransform.rotation = launcher != null ? launcher.rotation : Quaternion.identity;
-            knifeTransform.localScale = pool.PrefabOriginalScale * GetQueueScaleMultiplier(index);
+            Vector3 targetScale = pool.PrefabOriginalScale * GetQueueScaleMultiplier(index);
             knifeTransform.SetParent(queueParent);
 
-            SpriteRenderer renderer = knife.GetComponent<SpriteRenderer>();
-            if (renderer != null)
-            {
-                renderer.color = pool.PrefabOriginalColor * new Color(1f, 1f, 1f, GetQueueOpacityMultiplier(index));
-            }
-
-            DisableColliders(knife);
+            Color targetColor = ResolveQueueColor(index);
+            KnifeSetupUtility.ApplyVisuals(knife, targetScale, targetColor);
+            KnifeSetupUtility.EnableColliders(knife, false);
             knife.SetActive(true);
             queue.Add(knife);
         }
@@ -214,12 +210,8 @@ namespace KnifeToss.Presentation.Gameplay
                     continue;
                 }
 
-                SpriteRenderer renderer = knife.GetComponent<SpriteRenderer>();
-                if (renderer != null)
-                {
-                    float opacity = GetQueueOpacityMultiplier(i);
-                    renderer.color = pool.PrefabOriginalColor * new Color(1f, 1f, 1f, opacity);
-                }
+                Color targetColor = ResolveQueueColor(i);
+                KnifeSetupUtility.ApplyVisuals(knife, knife.transform.localScale, targetColor);
 
                 knife.SetActive(true);
             }
@@ -230,22 +222,10 @@ namespace KnifeToss.Presentation.Gameplay
             queue.Clear();
         }
 
-        private static void DisableColliders(GameObject knife)
+        private Color ResolveQueueColor(int index)
         {
-            if (knife == null)
-            {
-                return;
-            }
-
-            Collider2D[] colliders = knife.GetComponents<Collider2D>();
-            for (int i = 0; i < colliders.Length; i++)
-            {
-                Collider2D collider = colliders[i];
-                if (collider != null)
-                {
-                    collider.enabled = false;
-                }
-            }
+            float opacity = GetQueueOpacityMultiplier(index);
+            return pool.PrefabOriginalColor * new Color(1f, 1f, 1f, opacity);
         }
     }
 }

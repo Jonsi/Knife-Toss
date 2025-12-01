@@ -1,7 +1,7 @@
 using System;
 using KnifeToss.Presentation.Gameplay.Projectiles;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using VContainer;
 
 namespace KnifeToss.Presentation.Gameplay
 {
@@ -10,7 +10,7 @@ namespace KnifeToss.Presentation.Gameplay
         [Header("References")]
         [SerializeField] private GameObject knifePrefab;
         [SerializeField] private Transform launcherTransform;
-        [SerializeField] private InputActionAsset inputActionAsset;
+        [SerializeField] private MonoBehaviour throwInputSource;
 
         [Header("Throwing Settings")]
         [SerializeField] private float throwSpeed = 10f;
@@ -23,7 +23,7 @@ namespace KnifeToss.Presentation.Gameplay
         [SerializeField] private float queueScaleEnd = 0.5f;
         [SerializeField] private float queueOpacityEnd = 0.3f;
 
-        private InputAction attackAction;
+        private IThrowInput throwInput;
         private Knife currentKnife;
         private bool isKnifeInFlight;
         private int maxKnives;
@@ -33,13 +33,14 @@ namespace KnifeToss.Presentation.Gameplay
 
         private KnifePool knifePool;
         private KnifeMagazine magazine;
+        private KnifeToss.Core.Abstractions.IKnifeTracker knifeTracker;
 
         public event Action KnifeThrown;
 
         private void Awake()
         {
-            attackAction = inputActionAsset != null ? inputActionAsset.FindAction("Player/Attack") : null;
             launcherTransform ??= transform;
+            throwInput = throwInputSource as IThrowInput ?? new NullThrowInput();
 
             knifePool = new KnifePool(knifePrefab, transform, poolWarmupCount);
             magazine = new KnifeMagazine(
@@ -55,20 +56,14 @@ namespace KnifeToss.Presentation.Gameplay
 
         private void OnEnable()
         {
-            if (attackAction != null)
-            {
-                attackAction.Enable();
-                attackAction.performed += OnThrowInput;
-            }
+            throwInput.Performed += OnThrowInput;
+            throwInput.Enable();
         }
 
         private void OnDisable()
         {
-            if (attackAction != null)
-            {
-                attackAction.performed -= OnThrowInput;
-                attackAction.Disable();
-            }
+            throwInput.Performed -= OnThrowInput;
+            throwInput.Disable();
         }
 
         private void OnDestroy()
@@ -80,7 +75,7 @@ namespace KnifeToss.Presentation.Gameplay
 
         public void KillAllKnifeTweens()
         {
-            KillTweensOnKnivesInScene();
+            KillTweensFromRegistry();
             magazine.KillTweens();
             knifePool.KillTweens();
             KillTweensOnChildren(transform);
@@ -95,7 +90,7 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
-        private void OnThrowInput(InputAction.CallbackContext _)
+        private void OnThrowInput()
         {
             if (!IsReadyToThrow())
             {
@@ -149,30 +144,9 @@ namespace KnifeToss.Presentation.Gameplay
             Transform knifeTransform = knifeObject.transform;
 
             knifeTransform.SetParent(parent);
-            knifeTransform.position = launcherTransform.position;
-            knifeTransform.rotation = launcherTransform.rotation;
-            knifeTransform.localScale = knifePool.PrefabOriginalScale;
-
-            SpriteRenderer renderer = knifeObject.GetComponent<SpriteRenderer>();
-            if (renderer != null)
-            {
-                renderer.color = knifePool.PrefabOriginalColor;
-            }
-
-            EnableColliders(knifeObject);
-        }
-
-        private static void EnableColliders(GameObject knifeObject)
-        {
-            Collider2D[] colliders = knifeObject.GetComponents<Collider2D>();
-            for (int i = 0; i < colliders.Length; i++)
-            {
-                Collider2D collider = colliders[i];
-                if (collider != null)
-                {
-                    collider.enabled = true;
-                }
-            }
+            KnifeSetupUtility.PositionAtLauncher(knifeObject, launcherTransform);
+            KnifeSetupUtility.ApplyVisuals(knifeObject, knifePool.PrefabOriginalScale, knifePool.PrefabOriginalColor);
+            KnifeSetupUtility.EnableColliders(knifeObject, true);
         }
 
         private static void KillTweensOnChildren(Transform parent)
@@ -192,10 +166,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
-        private static void KillTweensOnKnivesInScene()
+        private void KillTweensFromRegistry()
         {
-            Knife[] allKnives = FindObjectsByType<Knife>(FindObjectsSortMode.None);
-            foreach (Knife knife in allKnives)
+            foreach (Knife knife in knifeTracker?.Snapshot() ?? Array.Empty<Knife>())
             {
                 if (knife != null)
                 {
@@ -243,6 +216,23 @@ namespace KnifeToss.Presentation.Gameplay
         private static void ActivateKnife(GameObject knifeObject)
         {
             knifeObject.SetActive(true);
+        }
+
+        [VContainer.Inject]
+        public void Construct(KnifeToss.Core.Abstractions.IKnifeTracker tracker)
+        {
+            knifeTracker = tracker;
+        }
+
+        private sealed class NullThrowInput : IThrowInput
+        {
+            public event Action Performed
+            {
+                add { }
+                remove { }
+            }
+            public void Enable() { }
+            public void Disable() { }
         }
     }
 }

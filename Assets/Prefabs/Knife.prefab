@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5314799449255176092}
   - component: {fileID: 2428425064513381742}
   - component: {fileID: 8727754346152716786}
+  - component: {fileID: -1165792760247777253}
   m_Layer: 0
   m_Name: Knife
   m_TagString: Knife
@@ -153,7 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Knife
   embedOffset: 0.02
   impactEventChannel: {fileID: 11400000, guid: a78030c48769aec48b1aeb7cf48a28cb, type: 2}
-  failAnimationConfig: {fileID: 0}
+  failAnimationConfig: {fileID: 11400000, guid: 09203f5a299b2204c9a04c195d2e7c87, type: 2}
   hitTargetSound: {fileID: 8300000, guid: 39b9e94fd66ef1a4a992145a819b263d, type: 3}
   hitKnifeSound: {fileID: 8300000, guid: 964f1daeaad762c41a661cf54af71da3, type: 3}
   soundVolume: 1
@@ -184,3 +185,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &-1165792760247777253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3126276711855495373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22bd3ada7ea5d284299650a7e8479f3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KnifeToss.Presentation.Gameplay.KnifeView
+  <Renderer>k__BackingField: {fileID: 7446733758576725936}
+  <Colliders>k__BackingField:
+  - {fileID: 5314799449255176092}

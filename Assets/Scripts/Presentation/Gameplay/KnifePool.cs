@@ -70,20 +70,8 @@ namespace KnifeToss.Presentation.Gameplay
             }
 
             TweenKiller.Kill(knife);
-
-            Transform knifeTransform = knife.transform;
-            if (knifeTransform != null)
-            {
-                knifeTransform.SetParent(defaultParent);
-                knifeTransform.localScale = PrefabOriginalScale;
-            }
-
-            SpriteRenderer spriteRenderer = knife.GetComponent<SpriteRenderer>();
-            if (spriteRenderer != null)
-            {
-                spriteRenderer.color = PrefabOriginalColor;
-            }
-
+            ResetKnifeTransform(knife);
+            ResetKnifeVisuals(knife);
             DisableColliders(knife);
             knife.SetActive(false);
             pool.Enqueue(knife);
@@ -116,6 +104,7 @@ namespace KnifeToss.Presentation.Gameplay
         {
             GameObject knife = Object.Instantiate(prefab, defaultParent);
             knife.SetActive(false);
+            EnsureView(knife);
             DisableColliders(knife);
             return knife;
         }
@@ -124,6 +113,14 @@ namespace KnifeToss.Presentation.Gameplay
         {
             if (knife == null)
             {
+                return;
+            }
+
+            KnifeView view = knife.GetComponent<KnifeView>();
+            view?.CacheIfNeeded();
+            if (view != null)
+            {
+                view.SetCollidersEnabled(false);
                 return;
             }
 
@@ -136,6 +133,39 @@ namespace KnifeToss.Presentation.Gameplay
                     collider.enabled = false;
                 }
             }
+        }
+
+        private void ResetKnifeTransform(GameObject knife)
+        {
+            Transform knifeTransform = knife.transform;
+            if (knifeTransform == null)
+            {
+                return;
+            }
+
+            knifeTransform.SetParent(defaultParent);
+            knifeTransform.localScale = PrefabOriginalScale;
+        }
+
+        private void ResetKnifeVisuals(GameObject knife)
+        {
+            KnifeView view = EnsureView(knife);
+            if (view != null)
+            {
+                view.SetColor(PrefabOriginalColor);
+            }
+        }
+
+        private static KnifeView EnsureView(GameObject knife)
+        {
+            if (knife == null)
+            {
+                return null;
+            }
+
+            KnifeView view = knife.GetComponent<KnifeView>() ?? knife.AddComponent<KnifeView>();
+            view.CacheIfNeeded();
+            return view;
         }
     }
 }

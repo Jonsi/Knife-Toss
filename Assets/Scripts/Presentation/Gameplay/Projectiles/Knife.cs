@@ -2,6 +2,7 @@ using DG.Tweening;
 using KnifeToss.Core.Events;
 using KnifeToss.Presentation.Gameplay;
 using UnityEngine;
+using VContainer;
 
 namespace KnifeToss.Presentation.Gameplay.Projectiles
 {
@@ -19,6 +20,8 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         private Rigidbody2D rb2d;
         private Sequence failSequence;
         private Collider2D[] cachedColliders;
+        private Core.Abstractions.IKnifeTracker knifeTracker;
+        private Core.Abstractions.IAudioPlayer audioPlayer;
 
         [Header("Stick Settings")]
         [SerializeField] private float embedOffset = 0.02f;
@@ -37,14 +40,28 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             cachedColliders = GetComponents<Collider2D>();
         }
 
+        private void OnEnable()
+        {
+            knifeTracker?.Register(this);
+        }
+
         private void OnDisable()
         {
+            knifeTracker?.Unregister(this);
             KillFailSequence();
         }
 
         private void OnDestroy()
         {
+            knifeTracker?.Unregister(this);
             KillFailSequence();
+        }
+
+        [VContainer.Inject]
+        public void Construct(Core.Abstractions.IKnifeTracker tracker, Core.Abstractions.IAudioPlayer audioPlayer)
+        {
+            knifeTracker = tracker;
+            this.audioPlayer = audioPlayer;
         }
 
         public void Initialize(KnifeThrower knifeThrower, float throwSpeed)
@@ -93,7 +110,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
 
         private void HandleCollision(Transform collisionTransform, GameObject collisionObject)
         {
-            if (isResolved || isStuck)
+            if (!CanResolveImpact())
             {
                 return;
             }
@@ -116,28 +133,10 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
 
         private void StickToTarget(Transform targetTransform)
         {
-            isStuck = true;
-            isResolved = true;
-            HaltMotion();
-
-            Vector2 targetCenter = targetTransform.position;
-            Vector2 knifePosition = transform.position;
-            Vector2 direction = (knifePosition - targetCenter).normalized;
-
-            CircleCollider2D targetCollider = targetTransform.GetComponent<CircleCollider2D>();
-            float targetRadius = targetCollider != null ? targetCollider.radius : 0.5f;
-
-            Vector2 embeddedPosition = targetCenter + direction * (targetRadius + embedOffset);
-            transform.position = embeddedPosition;
-            transform.SetParent(targetTransform);
-
+            ResolveAsStuck();
+            AlignToTarget(targetTransform);
             thrower?.OnKnifeResolved();
-
-            if (hitTargetSound != null)
-            {
-                AudioSource.PlayClipAtPoint(hitTargetSound, transform.position, soundVolume);
-            }
-
+            PlaySound(hitTargetSound);
             impactEventChannel?.RaiseKnifeStuck();
         }
 
@@ -160,12 +159,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
 
             thrower?.OnKnifeResolved();
             PlayFailAnimation();
-
-            if (hitKnifeSound != null)
-            {
-                AudioSource.PlayClipAtPoint(hitKnifeSound, transform.position, soundVolume);
-            }
-
+            PlaySound(hitKnifeSound);
             impactEventChannel?.RaiseKnifeFailed();
         }
 
@@ -189,6 +183,29 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
 
         public bool IsStuck => isStuck;
         public float EmbedOffset => embedOffset;
+
+        private bool CanResolveImpact()
+        {
+            return !isResolved && !isStuck;
+        }
+
+        private void ResolveAsStuck()
+        {
+            isStuck = true;
+            isResolved = true;
+            HaltMotion();
+        }
+
+        private void AlignToTarget(Transform targetTransform)
+        {
+            Vector2 targetCenter = targetTransform.position;
+            Vector2 direction = ((Vector2)transform.position - targetCenter).normalized;
+            CircleCollider2D targetCollider = targetTransform.GetComponent<CircleCollider2D>();
+            float targetRadius = targetCollider != null ? targetCollider.radius : 0.5f;
+            Vector2 embeddedPosition = targetCenter + direction * (targetRadius + embedOffset);
+            transform.position = embeddedPosition;
+            transform.SetParent(targetTransform);
+        }
 
         private void HaltMotion()
         {
@@ -222,27 +239,13 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         {
             KillFailSequence();
 
-            float fallDistance = failAnimationConfig != null
-                ? failAnimationConfig.FallDistance
-                : DefaultFallDistance;
-            float fallDuration = failAnimationConfig != null
-                ? failAnimationConfig.FallDuration
-                : DefaultFallDuration;
-            float drift = failAnimationConfig != null
-                ? failAnimationConfig.HorizontalDrift
-                : DefaultHorizontalDrift;
-            float rotationDegrees = failAnimationConfig != null
-                ? failAnimationConfig.RotationDegrees
-                : DefaultRotationDegrees;
-            float rotationDuration = failAnimationConfig != null
-                ? failAnimationConfig.RotationDuration
-                : fallDuration;
-            Ease moveEase = failAnimationConfig != null
-                ? failAnimationConfig.MovementEase
-                : Ease.InQuad;
-            Ease rotationEase = failAnimationConfig != null
-                ? failAnimationConfig.RotationEase
-                : Ease.OutQuad;
+            float fallDistance = ResolveOrDefault(() => failAnimationConfig.FallDistance, DefaultFallDistance);
+            float fallDuration = ResolveOrDefault(() => failAnimationConfig.FallDuration, DefaultFallDuration);
+            float drift = ResolveOrDefault(() => failAnimationConfig.HorizontalDrift, DefaultHorizontalDrift);
+            float rotationDegrees = ResolveOrDefault(() => failAnimationConfig.RotationDegrees, DefaultRotationDegrees);
+            float rotationDuration = ResolveOrDefault(() => failAnimationConfig.RotationDuration, fallDuration);
+            Ease moveEase = ResolveOrDefault(() => failAnimationConfig.MovementEase, Ease.InQuad);
+            Ease rotationEase = ResolveOrDefault(() => failAnimationConfig.RotationEase, Ease.OutQuad);
 
             Vector3 horizontalOffset = Vector3.right * Random.Range(-drift, drift);
             Vector3 targetPosition = transform.position + horizontalOffset + Vector3.down * fallDistance;
@@ -263,6 +266,35 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             {
                 failSequence.Kill();
                 failSequence = null;
+            }
+        }
+
+        private void PlaySound(AudioClip clip)
+        {
+            if (clip == null)
+            {
+                return;
+            }
+
+            (audioPlayer ?? NullAudioPlayer.Instance).Play(clip, transform.position, soundVolume);
+        }
+
+        private T ResolveOrDefault<T>(System.Func<T> resolver, T fallback)
+        {
+            if (failAnimationConfig == null)
+            {
+                return fallback;
+            }
+
+            return resolver();
+        }
+
+        private sealed class NullAudioPlayer : Core.Abstractions.IAudioPlayer
+        {
+            public static readonly NullAudioPlayer Instance = new NullAudioPlayer();
+
+            public void Play(AudioClip clip, Vector3 position, float volume)
+            {
             }
         }
     }

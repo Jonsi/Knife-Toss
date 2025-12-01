@@ -98,7 +98,12 @@ namespace KnifeToss.Presentation.Gameplay
 
         private void RenderHud()
         {
-            hudPresenter?.Render(session);
+            if (hudPresenter == null || session == null)
+            {
+                return;
+            }
+
+            hudPresenter.Render(LevelHudViewModel.FromSession(session));
         }
 
         private void BeginTransition(UniTask transitionTask)
