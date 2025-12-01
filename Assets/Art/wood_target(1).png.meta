@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 7e6eed70ebde0f04ba5c5396558f7bca
+guid: deb4ce519254c6f42ad22a835ce56434
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3561148701943319872
-    second: target_0
+      213: 5999485902567149015
+    second: wood_target(1)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,12 +46,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 600
+  spritePixelsToUnits: 200
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: target_0
+      name: wood_target(1)_0
       rect:
         serializedVersion: 2
-        x: 79
-        y: 72
-        width: 866
-        height: 877
+        x: 55
+        y: 58
+        width: 401
+        height: 397
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0c233549f12449ec0800000000000000
-      internalID: -3561148701943319872
+      spriteID: 7dd8a7944a4724350800000000000000
+      internalID: 5999485902567149015
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      target_0: -3561148701943319872
+      wood_target(1)_0: 5999485902567149015
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

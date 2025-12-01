@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a022d1a8c0713784cad7847392ae8d2e
+guid: d81a3a01a2e783b4880c80739f323465
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 75522494528791814
-    second: restart_icon_0
+      213: 4546342253326239920
+    second: restart_icon(1)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: restart_icon_0
+      name: restart_icon(1)_0
       rect:
         serializedVersion: 2
-        x: 142
-        y: 88
-        width: 739
-        height: 807
+        x: 34
+        y: 36
+        width: 188
+        height: 189
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 605a0f20f4f4c0100800000000000000
-      internalID: 75522494528791814
+      spriteID: 0b80cdc113ad71f30800000000000000
+      internalID: 4546342253326239920
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      restart_icon_0: 75522494528791814
+      restart_icon(1)_0: 4546342253326239920
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

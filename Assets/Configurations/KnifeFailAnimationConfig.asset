@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a8b5186f9b940a9b6c3fe54fb9dec63, type: 3}
   m_Name: KnifeFailAnimationConfig
   m_EditorClassIdentifier: Assembly-CSharp::KnifeToss.Presentation.Gameplay.Projectiles.KnifeFailAnimationConfig
-  fallDistance: 69.79
+  fallDistance: 5
   fallDuration: 0.6
-  horizontalDrift: 156.2
-  rotationDegrees: 360
+  horizontalDrift: 2.61
+  rotationDegrees: 720
   rotationDuration: 0.6
   movementEase: 5
   rotationEase: 6

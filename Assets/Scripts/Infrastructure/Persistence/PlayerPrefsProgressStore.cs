@@ -8,6 +8,8 @@ namespace KnifeToss.Infrastructure.Persistence
     /// </summary>
     public sealed class PlayerPrefsProgressStore : ILevelProgressStore
     {
+        public const string DefaultHighestLevelKey = "HighestLevel";
+
         private readonly string highestLevelKey;
 
         public PlayerPrefsProgressStore(string key)

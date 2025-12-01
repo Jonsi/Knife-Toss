@@ -20,7 +20,7 @@ namespace KnifeToss.Installers
     /// </summary>
     public class GameplayInstaller : LifetimeScope
     {
-        private const string HighestLevelKey = "HighestLevel";
+        private static readonly string HighestLevelKey = Infrastructure.Persistence.PlayerPrefsProgressStore.DefaultHighestLevelKey;
 
         [Header("Configurations")]
         [SerializeField] private LevelConfig levelConfig;

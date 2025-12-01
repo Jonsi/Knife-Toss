@@ -24,7 +24,7 @@ namespace KnifeToss.Presentation.UI
             }
 
             int remaining = UnityEngine.Mathf.Max(0, session.Rules.RequiredKnives - session.KnivesStuck);
-            return new LevelHudViewModel(session.LevelIndex.ToString(), remaining.ToString());
+            return new LevelHudViewModel($"{session.LevelIndex}", remaining.ToString());
         }
     }
 }

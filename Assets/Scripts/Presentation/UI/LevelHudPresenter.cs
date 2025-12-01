@@ -10,7 +10,6 @@ namespace KnifeToss.Presentation.UI
     public class LevelHudPresenter : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI levelText;
-        [SerializeField] private TextMeshProUGUI knivesLeftText;
         [Header("UI References")]
         [SerializeField] private GameObject failText;
         [SerializeField] private LevelCommandEventChannel commandChannel;
@@ -52,11 +51,6 @@ namespace KnifeToss.Presentation.UI
             if (levelText != null)
             {
                 levelText.text = viewModel.LevelLabel;
-            }
-
-            if (knivesLeftText != null)
-            {
-                knivesLeftText.text = viewModel.KnivesRemainingLabel;
             }
         }
 
