@@ -1,3 +1,4 @@
+using KnifeToss.Core.Abstractions;
 using KnifeToss.Core.Events;
 using KnifeToss.Infrastructure.Leveling;
 using TMPro;
@@ -11,14 +12,16 @@ namespace KnifeToss.Presentation.UI
     {
         [SerializeField] private TextMeshProUGUI levelText;
         [Header("UI References")]
-        [SerializeField] private GameObject failText;
-        [SerializeField] private LevelCompletePopup levelCompletePopup;
+        public LevelCompletePopup levelCompletePopup;
         [SerializeField] private LevelCommandEventChannel commandChannel;
-        [SerializeField] private Button retryButton;
-        [SerializeField] private FailFeedbackPresenter failFeedbackPresenter;
+        public Button retryButton;
+        [SerializeField] private Button muteButton;
+        [SerializeField] private GameObject muteIcon;
+        [SerializeField] private GameObject unmuteIcon;
         [SerializeField] private ButtonClickEventChannel buttonClickEventChannel;
 
-        private KnifeToss.Core.Abstractions.ILevelCommandInvoker commandInvoker;
+        private ILevelCommandInvoker commandInvoker;
+        private ISettingsService _settingsService;
 
         private void Awake()
         {
@@ -29,6 +32,10 @@ namespace KnifeToss.Presentation.UI
             {
                 retryButton.onClick.AddListener(RaiseRetry);
             }
+            if (muteButton != null)
+            {
+                muteButton.onClick.AddListener(ToggleMute);
+            }
         }
 
         private void OnDestroy()
@@ -36,6 +43,10 @@ namespace KnifeToss.Presentation.UI
             if (retryButton != null)
             {
                 retryButton.onClick.RemoveListener(RaiseRetry);
+            }
+            if (muteButton != null)
+            {
+                muteButton.onClick.RemoveListener(ToggleMute);
             }
         }
 
@@ -50,15 +61,8 @@ namespace KnifeToss.Presentation.UI
 
         public void ShowFail(bool show)
         {
-            if (failText != null)
-            {
-                failText.SetActive(show);
-            }
-
-            if (!show)
-            {
-                failFeedbackPresenter?.ResetFeedback();
-            }
+            // Fail text functionality is removed.
+            // The retry button is now shown via LevelFlowCoordinator.
         }
 
         public void ShowLevelComplete(bool show)
@@ -76,14 +80,15 @@ namespace KnifeToss.Presentation.UI
         {
             ShowFail(false);
             ShowLevelComplete(false);
-            failFeedbackPresenter?.ResetFeedback();
         }
 
         [VContainer.Inject]
-        public void Construct(KnifeToss.Core.Abstractions.ILevelCommandInvoker invoker)
+        public void Construct(ILevelCommandInvoker invoker, ISettingsService settingsService)
         {
             commandInvoker = invoker;
+            _settingsService = settingsService;
             PropagateInvokerToPopup();
+            UpdateMuteButtonIcon();
         }
 
         private void EnsureCommandInvoker()
@@ -109,8 +114,25 @@ namespace KnifeToss.Presentation.UI
 
         private void RaiseRetry()
         {
-
             commandInvoker?.Retry();
+        }
+
+        private void ToggleMute()
+        {
+            _settingsService.ToggleMute();
+            UpdateMuteButtonIcon();
+        }
+
+        private void UpdateMuteButtonIcon()
+        {
+            if (muteIcon == null || unmuteIcon == null)
+            {
+                return;
+            }
+            
+            var isMuted = _settingsService.IsMuted();
+            muteIcon.SetActive(isMuted);
+            unmuteIcon.SetActive(!isMuted);
         }
     }
 }

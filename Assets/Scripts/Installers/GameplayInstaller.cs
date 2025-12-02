@@ -52,6 +52,16 @@ namespace KnifeToss.Installers
             builder.Register<ILevelCommandInvoker, LevelCommandChannelInvoker>(Lifetime.Singleton)
                 .WithParameter(levelCommandEventChannel);
             builder.Register<IKnifeTracker, KnifeTracker>(Lifetime.Singleton);
+            builder.Register<IMusicPlayer, MusicPlayer>(Lifetime.Singleton);
+            builder.Register<ISettingsRepository, PlayerPrefsSettingsRepository>(Lifetime.Singleton);
+
+            builder.Register<SettingsService>(Lifetime.Singleton)
+                .As<ISettingsService, IStartable>();
+
+            builder.Register<ScoreService>(Lifetime.Singleton)
+                .As<IScoreService, IStartable, IDisposable>();
+
+            builder.Register<IStarRatingService, StarRatingService>(Lifetime.Singleton);
 
             builder.Register<GameplayObjectProvider>(Lifetime.Singleton)
                 .WithParameter("targetPrefab", targetPrefab)
@@ -76,6 +86,8 @@ namespace KnifeToss.Installers
                 .As<IStartable>()
                 .As<IDisposable>();
 
+            builder.RegisterEntryPoint<MusicPlayerStart>();
+
             builder.Register<RotatingTargetFailHandler>(Lifetime.Singleton)
                 .As<IStartable>()
                 .As<IDisposable>();
@@ -85,6 +97,21 @@ namespace KnifeToss.Installers
                 .WithParameter(buttonClickEventChannel)
                 .As<IStartable>()
                 .As<IDisposable>();
+        }
+
+        public class MusicPlayerStart : IStartable
+        {
+            private readonly IMusicPlayer _musicPlayer;
+
+            public MusicPlayerStart(IMusicPlayer musicPlayer)
+            {
+                _musicPlayer = musicPlayer;
+            }
+
+            public void Start()
+            {
+                _musicPlayer.PlayMusic();
+            }
         }
     }
 }

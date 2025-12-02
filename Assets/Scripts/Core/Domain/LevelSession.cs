@@ -18,6 +18,8 @@ namespace KnifeToss.Core.Domain
         public bool IsComplete { get; private set; }
         public bool IsFailed { get; private set; }
         public int PlayerKnivesStuck => Math.Max(0, KnivesStuck - preStuckBaseline);
+        public int Score { get; private set; }
+        public bool HadToRetry { get; private set; }
 
         private int preStuckBaseline;
 
@@ -30,6 +32,8 @@ namespace KnifeToss.Core.Domain
             IsComplete = false;
             IsFailed = false;
             preStuckBaseline = 0;
+            Score = 0;
+            HadToRetry = false;
             NotifyChanged();
         }
 
@@ -63,12 +67,24 @@ namespace KnifeToss.Core.Domain
             NotifyChanged();
         }
 
+        public void AddScore(int amount)
+        {
+            if (amount <= 0)
+            {
+                return;
+            }
+
+            Score += amount;
+            NotifyChanged();
+        }
+
         public void RecordFailure()
         {
             if (IsComplete || IsFailed)
                 return;
 
             IsFailed = true;
+            HadToRetry = true;
             NotifyChanged();
             Failed?.Invoke(this);
         }

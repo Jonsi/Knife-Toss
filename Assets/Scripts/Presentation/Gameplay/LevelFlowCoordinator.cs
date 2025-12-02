@@ -1,6 +1,7 @@
 using System;
 using Cysharp.Threading.Tasks;
 using KnifeToss.Application.Services;
+using KnifeToss.Core.Abstractions;
 using KnifeToss.Core.Domain;
 using KnifeToss.Core.Events;
 using KnifeToss.Presentation.UI;
@@ -17,17 +18,23 @@ namespace KnifeToss.Presentation.Gameplay
         private readonly LevelSession session;
         private readonly LevelHudPresenter hudPresenter;
         private readonly LevelCommandEventChannel commandChannel;
+        private readonly IStarRatingService _starRatingService;
+        private readonly ILevelProgressStore _levelProgressStore;
 
         public LevelFlowCoordinator(
             LevelSessionService sessionService,
             LevelSession session,
             LevelHudPresenter hudPresenter,
-            LevelCommandEventChannel commandChannel)
+            LevelCommandEventChannel commandChannel,
+            IStarRatingService starRatingService,
+            ILevelProgressStore levelProgressStore)
         {
             this.sessionService = sessionService;
             this.session = session;
             this.hudPresenter = hudPresenter;
             this.commandChannel = commandChannel;
+            _starRatingService = starRatingService;
+            _levelProgressStore = levelProgressStore;
         }
 
         public void Start()
@@ -86,14 +93,24 @@ namespace KnifeToss.Presentation.Gameplay
             RenderHud();
         }
 
-        private void HandleLevelCompleted(LevelSession _)
+        private void HandleLevelCompleted(LevelSession completedSession)
         {
-            hudPresenter?.ShowLevelComplete(true);
+            var stars = _starRatingService.CalculateStars(completedSession);
+            
+            var progress = _levelProgressStore.LoadProgress();
+            if (!progress.starsPerLevel.ContainsKey(completedSession.LevelIndex) || progress.starsPerLevel[completedSession.LevelIndex] < stars)
+            {
+                progress.starsPerLevel[completedSession.LevelIndex] = stars;
+                _levelProgressStore.SaveProgress(progress);
+            }
+            
+            hudPresenter.levelCompletePopup.SetStars(stars);
+            hudPresenter.ShowLevelComplete(true);
         }
 
         private void HandleLevelFailed(LevelSession _)
         {
-            hudPresenter?.ShowFail(true);
+            hudPresenter.retryButton.gameObject.SetActive(true);
         }
 
         private void RenderHud()
@@ -109,6 +126,7 @@ namespace KnifeToss.Presentation.Gameplay
         private void BeginTransition(UniTask transitionTask)
         {
             hudPresenter?.ResetState();
+            hudPresenter.retryButton.gameObject.SetActive(false);
             CompleteTransitionAsync(transitionTask).Forget();
         }
 

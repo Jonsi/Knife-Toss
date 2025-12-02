@@ -28,6 +28,14 @@ namespace KnifeToss.Infrastructure.Audio
             PlayInternal(clip, Vector3.zero, volume);
         }
 
+        public void SetMuted(bool isMuted)
+        {
+            if (sharedSource != null)
+            {
+                sharedSource.mute = isMuted;
+            }
+        }
+
         private void PlayInternal(AudioClip clip, Vector3 position, float volume)
         {
             if (clip == null)

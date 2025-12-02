@@ -16,5 +16,7 @@ namespace KnifeToss.Core.Abstractions
 
 
         void Play2D(AudioClip clip, float volume);
+
+        void SetMuted(bool isMuted);
     }
 }

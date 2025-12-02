@@ -1,42 +1,67 @@
-# Unity Setup (Step-by-Step)
+# Unity Setup Guide
 
-1. **Open Project**
-   - Unity Hub → **Open** → select repo root (`Knife-Toss`). Use Unity 2021.3+ with the Input System enabled.
+This guide covers the essential steps to get the project running in the Unity Editor.
 
-2. **Create Required Assets**
-   - Ensure `Assets/LevelConfig.asset` exists (regenerate via **Knife Toss → Generate Level Config** if missing).
-   - Create two ScriptableObject channels: `KnifeImpactEventChannel` and `LevelCommandEventChannel` (*Create → Knife Toss → Events → ...*).
+## 1. Open Project
+- Open the project root folder with **Unity Hub** (Unity 2021.3+ recommended).
+- Ensure the **Input System** package is enabled.
 
-3. **Prepare Prefabs**
-   - Provide a rotating target prefab (`RotatingTarget` + collider) and a knife thrower prefab (`KnifeThrower` with your `InputActionAsset`). The knife projectile prefab already ships with the repo.
+## 2. Create Core Assets
+Create the following ScriptableObject assets in your `Assets` folder if they don't exist. You can right-click in the Project window to find them under the `Create` menu.
+- `LevelConfig` (*Create → KnifeToss → Level Config*)
+- `SoundSettings` (*Create → KnifeToss → Sound Settings*)
+- **Event Channels** (*Create → KnifeToss → Events → ...*):
+  - `KnifeImpactEventChannel`
+  - `LevelCommandEventChannel`
+  - `ButtonClickEventChannel`
 
-4. **Configure `GameplayInstaller` (DI container)**
-   - Add an empty GameObject (e.g., `GameplayInstaller`) to your gameplay scene and attach the component.
-    - Assign:
-      - `LevelConfig` asset.
-      - `KnifeImpactEventChannel` asset.
-      - `LevelCommandEventChannel` asset.
-      - Starting level (e.g., 1).
-      - Target/wheel prefab.
-      - KnifeThrower prefab.
-      - Knife prefab (used for pre-stuck knives).
-      - Scene reference for your HUD (`LevelHudPresenter`) so the coordinator can update UI state.
-   - The installer wires everything through VContainer. `GameplayObjectProvider` instantiates the gameplay prefabs at runtime, so you don’t place them manually.
+## 3. Prepare Prefabs
+Ensure you have prefabs for:
+- The rotating **Target**.
+- The **Knife Thrower**.
+- The **Knife** projectile.
 
-5. **Hook Up UI Commands**
-   - Keep your HUD canvas in the scene with `LevelHudPresenter` (it now also owns the fail/complete UI elements).
-   - Assign the same `LevelCommandEventChannel` plus references to the Retry/Next buttons and fail text on the presenter. It automatically registers button listeners that raise the channel events—no UnityEvent wiring needed.
+## 4. Configure the Scene
+1.  Open the `MainGame` scene.
+2.  Create an empty GameObject named `[Installer]`.
+3.  Add the `GameplayInstaller` component to it.
+4.  Assign the following in the `GameplayInstaller` component's inspector:
+    - **Configurations:**
+        - `LevelConfig` asset
+        - `KnifeImpactEventChannel` asset
+        - `LevelCommandEventChannel` asset
+        - `SoundSettings` asset
+        - `ButtonClickEventChannel` asset
+        - `Start Level` (e.g., 1)
+    - **Prefabs For Gameplay:**
+        - `Target Prefab`
+        - `Knife Thrower Prefab`
+        - `Knife Prefab`
+    - **UI References:**
+        - `Level Hud Presenter` (from your scene's Canvas)
 
-6. **Input / Knife Prefab**
-   - Ensure the knife thrower prefab references your `InputActionAsset` and the shared knife projectile prefab is set on the installer.
+## 5. Configure the UI
+1.  **Level HUD Presenter:** Select the `LevelHudPresenter` object in your scene. Assign all of its UI references in the Inspector:
+    - `Level Text`
+    - `Level Complete Popup`
+    - `Retry Button`
+    - `Mute Button`
+    - `Mute Icon` (the object to show when muted)
+    - `Unmute Icon` (the object to show when not muted)
 
-7. **FMOD Audio Setup**
-   - **RuntimeManager**: Automatically created when FMOD is first accessed. No manual setup required.
-   - **StudioListener**: Already added to Main Camera for 3D audio positioning. This enables spatial audio for sound effects.
-   - **AudioListener**: Disabled on Main Camera (FMOD replaces Unity's audio system).
-   - **Banks**: If using FMOD Studio, import banks via **FMOD → Settings** and configure bank loading. For simple .wav files, you can use EventReferences directly.
-   - **Event References**: Assign FMOD Event References to `SoundEffect` ScriptableObjects in your prefabs/components.
+2.  **Level Complete Popup:** Select the `LevelCompletePopup` object (the one assigned to the presenter). Assign its UI references:
+    - `Level Complete Text`
+    - `Next Button`
+    - `Retry Button`
+    - `Stars` (an array of 3 GameObjects for the star display)
 
-8. **Playtest**
-   - Enter Play Mode. `GameplayInstaller` + `LevelFlowCoordinator` handle instantiation, event wiring, and UI updates. Buttons raise channel events, the coordinator listens, and the HUD reflects the current level state.
-   - Audio will play automatically when sound effects are triggered. Check the Console for any FMOD initialization warnings.
+## 6. Configure Audio
+1.  Select your `SoundSettings.asset`.
+2.  Assign `AudioClip` files to the fields:
+    - `Hit Target Sound`
+    - `Hit Knife Sound`
+    - `Music` (background music track)
+    - `ButtonClickSound`
+
+## 7. Play
+Enter Play Mode. The `GameplayInstaller` will set up the scene and the game should be playable.

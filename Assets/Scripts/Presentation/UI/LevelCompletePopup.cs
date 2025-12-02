@@ -16,6 +16,7 @@ namespace KnifeToss.Presentation.UI
         [SerializeField] private TextMeshProUGUI levelCompleteText;
         [SerializeField] private Button nextButton;
         [SerializeField] private Button retryButton;
+        [SerializeField] private GameObject[] stars;
         [SerializeField] private LevelCommandEventChannel commandChannel;
         [SerializeField] private ButtonClickEventChannel buttonClickEventChannel;
 
@@ -54,6 +55,14 @@ namespace KnifeToss.Presentation.UI
             if (levelCompleteText != null)
             {
                 levelCompleteText.text = label;
+            }
+        }
+
+        public void SetStars(int count)
+        {
+            for (var i = 0; i < stars.Length; i++)
+            {
+                stars[i].SetActive(i < count);
             }
         }
 

@@ -223,7 +223,7 @@ MonoBehaviour:
     randomizeDirection: 1
     preStuckKnives: 3
     preStuckKnifeSpacing: 45
-  generateProceduralLevels: 1
+  generateProceduralLevels: 0
   proceduralBaseKnives: 12
   proceduralBaseRotationSpeed: 150
   proceduralKnifeIncrease: 1

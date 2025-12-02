@@ -332,6 +332,10 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             public void Play2D(AudioClip clip, float volume)
             {
             }
+
+            public void SetMuted(bool isMuted)
+            {
+            }
         }
     }
 }

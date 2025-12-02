@@ -265,7 +265,7 @@ GameObject:
   m_Component:
   - component: {fileID: 47493984}
   m_Layer: 5
-  m_Name: Star
+  m_Name: Stars
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -441,7 +441,6 @@ GameObject:
   m_Component:
   - component: {fileID: 197163807}
   - component: {fileID: 197163808}
-  - component: {fileID: 197163809}
   m_Layer: 5
   m_Name: Holder
   m_TagString: Untagged
@@ -484,32 +483,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KnifeToss.Presentation.UI.LevelHudPresenter
   levelText: {fileID: 10756972}
-  failText: {fileID: 0}
   levelCompletePopup: {fileID: 519400801}
   commandChannel: {fileID: 11400000, guid: 76592a2f6c663224399fb72a23fe1509, type: 2}
   retryButton: {fileID: 2096806327}
-  failFeedbackPresenter: {fileID: 197163809}
+  muteButton: {fileID: 0}
+  muteIcon: {fileID: 0}
+  unmuteIcon: {fileID: 0}
   buttonClickEventChannel: {fileID: 11400000, guid: 721085d1c0ff9a14b96a5baa901e0c64, type: 2}
---- !u!114 &197163809
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 197163806}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fcae72926a719bd4b867186ec1495622, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::KnifeToss.Presentation.UI.FailFeedbackPresenter
-  impactEventChannel: {fileID: 11400000, guid: a78030c48769aec48b1aeb7cf48a28cb, type: 2}
-  retryButtonTransform: {fileID: 2096806326}
-  retryButton: {fileID: 882002977}
-  buttonClickEventChannel: {fileID: 11400000, guid: 721085d1c0ff9a14b96a5baa901e0c64, type: 2}
-  retryBounceScale: 1.05
-  retryBounceDuration: 0.186
-  retryBounceInterval: 0.1
-  retryBounceLoops: -1
 --- !u!1 &321186377
 GameObject:
   m_ObjectHideFlags: 0
@@ -628,7 +608,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &519400800
 RectTransform:
   m_ObjectHideFlags: 0
@@ -666,8 +646,12 @@ MonoBehaviour:
   levelCompleteText: {fileID: 1212226831}
   nextButton: {fileID: 726980825}
   retryButton: {fileID: 882002977}
+  stars:
+  - {fileID: 948466960}
+  - {fileID: 1781610027}
+  - {fileID: 1815072488}
   commandChannel: {fileID: 11400000, guid: 76592a2f6c663224399fb72a23fe1509, type: 2}
-  buttonClickEventChannel: {fileID: 0}
+  buttonClickEventChannel: {fileID: 11400000, guid: 721085d1c0ff9a14b96a5baa901e0c64, type: 2}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1576,7 +1560,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -303.9}
+  m_AnchoredPosition: {x: 0, y: -303.90002}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1287957333
@@ -2501,7 +2485,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -216.31}
+  m_AnchoredPosition: {x: 0, y: -216.31006}
   m_SizeDelta: {x: 256, y: 256}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2008561023
@@ -2577,7 +2561,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 128, y: -91.81}
+  m_AnchoredPosition: {x: 128, y: -91.81006}
   m_SizeDelta: {x: 256, y: 256}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &2096806327
