@@ -3,10 +3,10 @@ using UnityEngine.UI;
 
 namespace KnifeToss.Presentation.UI
 {
-    /// <summary>
-    /// Continuously shifts a RawImage's UV rectangle to mimic a scrolling background.
-    /// Works on the Canvas "Clouds" image without touching sprites or materials.
-    /// </summary>
+
+
+
+
     [RequireComponent(typeof(RawImage))]
     public sealed class RawImageTextureScroller : MonoBehaviour
     {

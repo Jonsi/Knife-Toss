@@ -43,7 +43,7 @@ namespace KnifeToss.Infrastructure.Audio
 
             source.transform.position = position;
 
-            // Keep the source alive and simply fire a one-shot to avoid per-play allocations and reduce latency.
+
             source.PlayOneShot(clip, volume);
         }
 
@@ -62,7 +62,7 @@ namespace KnifeToss.Infrastructure.Audio
 
             if (source == null)
             {
-                // If we somehow still don't have a source (e.g., prefab stage restrictions), force a new owner.
+
                 owner = new GameObject(goName);
                 source = owner.AddComponent<AudioSource>();
             }
@@ -75,9 +75,9 @@ namespace KnifeToss.Infrastructure.Audio
 
             source.playOnAwake = false;
             source.loop = false;
-            source.spatialBlend = 0f; // force 2D
+            source.spatialBlend = 0f;
             source.dopplerLevel = 0f;
-            source.priority = 0; // highest priority, lowest latency
+            source.priority = 0;
             source.spatialize = false;
 
             Object.DontDestroyOnLoad(owner);
@@ -89,7 +89,7 @@ namespace KnifeToss.Infrastructure.Audio
         {
             AudioConfiguration config = AudioSettings.GetConfiguration();
 
-            // 0 means let Unity pick the platform default; 256 is usually the smallest reliable buffer for mobile/desktop.
+
             const int targetBuffer = 256;
             if (config.dspBufferSize != targetBuffer && config.dspBufferSize > 0)
             {

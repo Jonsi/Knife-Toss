@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace KnifeToss.Core.Domain
 {
-    /// <summary>
-    /// Immutable snapshot of the rules that describe a level.
-    /// </summary>
+
+
+
     public readonly struct LevelRules
     {
         public int RequiredKnives { get; }

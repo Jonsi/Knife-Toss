@@ -5,9 +5,9 @@ using VContainer.Unity;
 
 namespace KnifeToss.Presentation.Gameplay
 {
-    /// <summary>
-    /// Creates, resets, and recycles knife instances.
-    /// </summary>
+
+
+
     internal sealed class KnifePool
     {
         private readonly GameObject prefab;

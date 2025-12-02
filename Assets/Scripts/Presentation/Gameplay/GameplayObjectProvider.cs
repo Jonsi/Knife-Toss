@@ -4,9 +4,9 @@ using VContainer.Unity;
 
 namespace KnifeToss.Presentation.Gameplay
 {
-    /// <summary>
-    /// Lazily instantiates gameplay prefabs (target/thrower) and exposes their components.
-    /// </summary>
+
+
+
     public sealed class GameplayObjectProvider
     {
         private readonly GameObject targetPrefab;

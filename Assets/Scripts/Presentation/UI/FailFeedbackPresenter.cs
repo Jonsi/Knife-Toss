@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 namespace KnifeToss.Presentation.UI
 {
-    /// <summary>
-    /// Shows fast, non-blocking feedback when a run fails.
-    /// </summary>
+
+
+
     public sealed class FailFeedbackPresenter : MonoBehaviour
     {
         [Header("Event Source")]
@@ -89,7 +89,7 @@ namespace KnifeToss.Presentation.UI
 
         private void HandleRetryClicked()
         {
-            // Button click event is automatically raised by AutoButtonEventRegistrar
+
             StopRetryAnimation();
         }
 

@@ -9,9 +9,9 @@ using UnityEngine;
 
 namespace KnifeToss.Application.Services
 {
-    /// <summary>
-    /// Coordinates the lifecycle of a level and exposes a pure session model.
-    /// </summary>
+
+
+
     public sealed class LevelSessionService : IDisposable
     {
         private readonly LevelSession session;

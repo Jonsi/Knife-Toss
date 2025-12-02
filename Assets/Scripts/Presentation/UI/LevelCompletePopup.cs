@@ -7,9 +7,9 @@ using UnityEngine.UI;
 
 namespace KnifeToss.Presentation.UI
 {
-    /// <summary>
-    /// Handles presentation logic for the level-complete popup.
-    /// </summary>
+
+
+
     public sealed class LevelCompletePopup : MonoBehaviour
     {
         [SerializeField] private GameObject popupRoot;
@@ -81,13 +81,13 @@ namespace KnifeToss.Presentation.UI
 
         private void RaiseRetry()
         {
-            // Button click event is automatically raised by AutoButtonEventRegistrar
+
             commandInvoker?.Retry();
         }
 
         private void RaiseNext()
         {
-            // Button click event is automatically raised by AutoButtonEventRegistrar
+
             commandInvoker?.Next();
         }
 

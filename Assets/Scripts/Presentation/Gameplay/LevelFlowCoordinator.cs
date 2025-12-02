@@ -8,9 +8,9 @@ using VContainer.Unity;
 
 namespace KnifeToss.Presentation.Gameplay
 {
-    /// <summary>
-    /// Non-MonoBehaviour coordinator that wires level lifecycle, UI, and command events.
-    /// </summary>
+
+
+
     public sealed class LevelFlowCoordinator : IStartable, IDisposable
     {
         private readonly LevelSessionService sessionService;

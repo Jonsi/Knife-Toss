@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace KnifeToss.Presentation.Gameplay
 {
-    /// <summary>
-    /// Maintains the queued knives, handles layout, and provides knives for throwing.
-    /// </summary>
+
+
+
     internal sealed class KnifeMagazine
     {
         private readonly KnifePool pool;

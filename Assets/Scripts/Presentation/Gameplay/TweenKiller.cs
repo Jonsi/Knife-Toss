@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace KnifeToss.Presentation.Gameplay
 {
-    /// <summary>
-    /// Centralized DOTween cleanup to avoid duplicate kill logic.
-    /// </summary>
+
+
+
     internal static class TweenKiller
     {
         public static void Kill(object target)

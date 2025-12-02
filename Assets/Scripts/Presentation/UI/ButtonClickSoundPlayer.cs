@@ -6,11 +6,11 @@ using VContainer.Unity;
 
 namespace KnifeToss.Presentation.UI
 {
-    /// <summary>
-    /// Plays the shared button click sound whenever the click event channel is raised.
-    /// This provides backwards compatibility for buttons that use the event channel.
-    /// For new buttons, prefer using ButtonSoundHandler component instead.
-    /// </summary>
+
+
+
+
+
     public sealed class ButtonClickSoundPlayer : IStartable, System.IDisposable
     {
         private readonly IAudioPlayer audioPlayer;

@@ -4,9 +4,9 @@ using UnityEngine.InputSystem;
 
 namespace KnifeToss.Presentation.Gameplay
 {
-    /// <summary>
-    /// Adapts an InputAction to the throw input abstraction.
-    /// </summary>
+
+
+
     public sealed class InputActionThrowInput : MonoBehaviour, IThrowInput
     {
         [SerializeField] private InputActionReference actionReference;

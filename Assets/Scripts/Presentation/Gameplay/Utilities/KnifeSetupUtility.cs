@@ -2,9 +2,9 @@ using UnityEngine;
 
 namespace KnifeToss.Presentation.Gameplay
 {
-    /// <summary>
-    /// Utility helpers for preparing knives for queue/throw lifecycle.
-    /// </summary>
+
+
+
     internal static class KnifeSetupUtility
     {
         public static void EnableColliders(GameObject knifeObject, bool enabled)

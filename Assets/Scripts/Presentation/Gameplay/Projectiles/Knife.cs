@@ -278,7 +278,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             }
 
             IAudioPlayer player = audioPlayer ?? NullAudioPlayer.Instance;
-            // Use 2D sound for gameplay sounds (they're effectively 2D in this game)
+
             player.Play2D(clip, soundVolume);
         }
 

@@ -4,10 +4,10 @@ using VContainer.Unity;
 
 namespace KnifeToss.Presentation.Gameplay
 {
-    /// <summary>
-    /// Subscribes to fail events and freezes the rotating target immediately.
-    /// Keeps rotation logic isolated from UI and services.
-    /// </summary>
+
+
+
+
     public sealed class RotatingTargetFailHandler : IStartable, IDisposable
     {
         private readonly GameplayObjectProvider gameplayObjectProvider;

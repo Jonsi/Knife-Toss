@@ -2,9 +2,9 @@ using UnityEngine;
 
 namespace KnifeToss.Presentation.Gameplay
 {
-    /// <summary>
-    /// Cached references for knives to avoid repeated GetComponent calls.
-    /// </summary>
+
+
+
     [DisallowMultipleComponent]
     public sealed class KnifeView : MonoBehaviour
     {

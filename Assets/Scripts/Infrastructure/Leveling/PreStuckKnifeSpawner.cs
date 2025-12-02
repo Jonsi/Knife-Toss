@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace KnifeToss.Infrastructure.Leveling
 {
-    /// <summary>
-    /// Handles pre-populating the target with knives according to level rules.
-    /// </summary>
+
+
+
     public sealed class PreStuckKnifeSpawner
     {
         private readonly Transform targetTransform;

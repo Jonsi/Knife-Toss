@@ -2,9 +2,9 @@ using KnifeToss.Core.Domain;
 
 namespace KnifeToss.Presentation.UI
 {
-    /// <summary>
-    /// Pure data for HUD binding.
-    /// </summary>
+
+
+
     public readonly struct LevelHudViewModel
     {
         public string LevelLabel { get; }
@@ -17,7 +17,7 @@ namespace KnifeToss.Presentation.UI
             KnivesRemainingLabel = knivesRemainingLabel;
             LevelCompleteLabel = levelCompleteLabel;
         }
- 
+
         public static LevelHudViewModel FromSession(LevelSession session)
         {
             if (session == null || session.Rules.RequiredKnives <= 0)

@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace KnifeToss.Infrastructure.Leveling
 {
-    /// <summary>
-    /// Responsible for creating and cleaning up the runtime hierarchy that hosts knives.
-    /// </summary>
+
+
+
     public sealed class KnivesHierarchyManager
     {
         private readonly Transform owner;

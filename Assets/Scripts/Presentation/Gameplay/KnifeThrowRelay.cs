@@ -4,9 +4,9 @@ using VContainer;
 
 namespace KnifeToss.Presentation.Gameplay
 {
-    /// <summary>
-    /// Bridges KnifeThrower events to the session service without direct references.
-    /// </summary>
+
+
+
     [RequireComponent(typeof(KnifeThrower))]
     public class KnifeThrowRelay : MonoBehaviour
     {

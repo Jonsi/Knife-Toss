@@ -2,9 +2,9 @@ using System;
 
 namespace KnifeToss.Core.Domain
 {
-    /// <summary>
-    /// Pure domain model that tracks the current state of a level play session.
-    /// </summary>
+
+
+
     public class LevelSession
     {
         public event Action<LevelSession> SessionChanged;

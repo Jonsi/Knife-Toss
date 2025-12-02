@@ -109,7 +109,7 @@ namespace KnifeToss.Presentation.UI
 
         private void RaiseRetry()
         {
-            // Button click event is automatically raised by AutoButtonEventRegistrar
+
             commandInvoker?.Retry();
         }
     }

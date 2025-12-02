@@ -6,10 +6,10 @@ using VContainer;
 
 namespace KnifeToss.Presentation.UI
 {
-    /// <summary>
-    /// Automatically registers all buttons in the scene (or under a specific parent) to raise ButtonClickEventChannel when clicked.
-    /// Place this component on a Canvas or any parent GameObject. It will find all Button components and wire them up automatically.
-    /// </summary>
+
+
+
+
     public sealed class AutoButtonEventRegistrar : MonoBehaviour
     {
         [Header("Configuration")]
@@ -68,7 +68,7 @@ namespace KnifeToss.Presentation.UI
             {
                 if (button != null && !registeredButtons.Contains(button))
                 {
-                    // Store reference to avoid closure issues
+
                     ButtonClickEventChannel channel = buttonClickEventChannel;
                     button.onClick.AddListener(() => channel?.RaiseClicked());
                     registeredButtons.Add(button);
@@ -88,16 +88,16 @@ namespace KnifeToss.Presentation.UI
             {
                 if (button != null && buttonClickEventChannel != null)
                 {
-                    // Note: We can't remove the lambda listener directly, but Unity will clean it up when the button is destroyed
-                    // This is fine since the lambda will be garbage collected when the button is destroyed
+
+
                 }
             }
             registeredButtons.Clear();
         }
 
-        /// <summary>
-        /// Call this method to re-register buttons (useful for dynamically created buttons).
-        /// </summary>
+
+
+
         public void RefreshButtonRegistrations()
         {
             UnregisterAllButtons();

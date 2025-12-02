@@ -15,9 +15,9 @@ using VContainer.Unity;
 
 namespace KnifeToss.Installers
 {
-    /// <summary>
-    /// VContainer LifetimeScope responsible for wiring gameplay dependencies.
-    /// </summary>
+
+
+
     public class GameplayInstaller : LifetimeScope
     {
         private static readonly string HighestLevelKey = Infrastructure.Persistence.PlayerPrefsProgressStore.DefaultHighestLevelKey;

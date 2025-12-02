@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace KnifeToss.Infrastructure.Persistence
 {
-    /// <summary>
-    /// Simple persistence adapter that hides PlayerPrefs usage behind an interface.
-    /// </summary>
+
+
+
     public sealed class PlayerPrefsProgressStore : ILevelProgressStore
     {
         public const string DefaultHighestLevelKey = "HighestLevel";

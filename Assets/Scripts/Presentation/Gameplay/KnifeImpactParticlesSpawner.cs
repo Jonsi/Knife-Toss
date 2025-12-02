@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace KnifeToss.Presentation.Gameplay
 {
-    /// <summary>
-    /// Spawns splinter particles when knives stick into targets.
-    /// </summary>
+
+
+
     public sealed class KnifeImpactParticlesSpawner : MonoBehaviour
     {
         [Header("Event Source")]
