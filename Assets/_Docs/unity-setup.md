@@ -30,5 +30,13 @@
 6. **Input / Knife Prefab**
    - Ensure the knife thrower prefab references your `InputActionAsset` and the shared knife projectile prefab is set on the installer.
 
-7. **Playtest**
+7. **FMOD Audio Setup**
+   - **RuntimeManager**: Automatically created when FMOD is first accessed. No manual setup required.
+   - **StudioListener**: Already added to Main Camera for 3D audio positioning. This enables spatial audio for sound effects.
+   - **AudioListener**: Disabled on Main Camera (FMOD replaces Unity's audio system).
+   - **Banks**: If using FMOD Studio, import banks via **FMOD → Settings** and configure bank loading. For simple .wav files, you can use EventReferences directly.
+   - **Event References**: Assign FMOD Event References to `SoundEffect` ScriptableObjects in your prefabs/components.
+
+8. **Playtest**
    - Enter Play Mode. `GameplayInstaller` + `LevelFlowCoordinator` handle instantiation, event wiring, and UI updates. Buttons raise channel events, the coordinator listens, and the HUD reflects the current level state.
+   - Audio will play automatically when sound effects are triggered. Check the Console for any FMOD initialization warnings.

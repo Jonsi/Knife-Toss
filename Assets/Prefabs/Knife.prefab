@@ -154,8 +154,12 @@ MonoBehaviour:
   embedOffset: 0.02
   impactEventChannel: {fileID: 11400000, guid: a78030c48769aec48b1aeb7cf48a28cb, type: 2}
   failAnimationConfig: {fileID: 11400000, guid: 09203f5a299b2204c9a04c195d2e7c87, type: 2}
-  hitTargetSound: {fileID: 8300000, guid: 39b9e94fd66ef1a4a992145a819b263d, type: 3}
-  hitKnifeSound: {fileID: 8300000, guid: 964f1daeaad762c41a661cf54af71da3, type: 3}
+  hitTargetSound:
+    clip: {fileID: 8300000, guid: ad885cbd16cd0064a8d674e1c70497f7, type: 3}
+    startOffsetSeconds: 0
+  hitKnifeSound:
+    clip: {fileID: 8300000, guid: 2f79b76c4d829fb439462ad242183257, type: 3}
+    startOffsetSeconds: 0
   soundVolume: 1
 --- !u!50 &8727754346152716786
 Rigidbody2D:

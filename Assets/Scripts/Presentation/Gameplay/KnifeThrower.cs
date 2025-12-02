@@ -34,6 +34,7 @@ namespace KnifeToss.Presentation.Gameplay
         private KnifePool knifePool;
         private KnifeMagazine magazine;
         private KnifeToss.Core.Abstractions.IKnifeTracker knifeTracker;
+        private IObjectResolver objectResolver;
 
         public event Action KnifeThrown;
 
@@ -41,17 +42,6 @@ namespace KnifeToss.Presentation.Gameplay
         {
             launcherTransform ??= transform;
             throwInput = throwInputSource as IThrowInput ?? new NullThrowInput();
-
-            knifePool = new KnifePool(knifePrefab, transform, poolWarmupCount);
-            magazine = new KnifeMagazine(
-                knifePool,
-                transform,
-                launcherTransform,
-                visibleQueueCount,
-                queueSpacing,
-                slideAnimationDuration,
-                queueScaleEnd,
-                queueOpacityEnd);
         }
 
         private void OnEnable()
@@ -69,12 +59,13 @@ namespace KnifeToss.Presentation.Gameplay
         private void OnDestroy()
         {
             KillAllKnifeTweens();
-            magazine.Reset();
-            knifePool.Clear();
+            magazine?.Reset();
+            knifePool?.Clear();
         }
 
         public void KillAllKnifeTweens()
         {
+            EnsureInitialized();
             KillTweensFromRegistry();
             magazine.KillTweens();
             knifePool.KillTweens();
@@ -102,6 +93,8 @@ namespace KnifeToss.Presentation.Gameplay
 
         private bool IsReadyToThrow()
         {
+            EnsureInitialized();
+
             if (!canThrow || isKnifeInFlight || knifePrefab == null || launcherTransform == null)
             {
                 return false;
@@ -117,6 +110,8 @@ namespace KnifeToss.Presentation.Gameplay
 
         private void ThrowKnife()
         {
+            EnsureInitialized();
+
             if (!magazine.TryTakeNext(out GameObject knifeObject))
             {
                 return;
@@ -185,6 +180,7 @@ namespace KnifeToss.Presentation.Gameplay
 
         public void ResetState()
         {
+            EnsureInitialized();
             KillAllKnifeTweens();
             magazine.Reset();
             isKnifeInFlight = false;
@@ -200,6 +196,7 @@ namespace KnifeToss.Presentation.Gameplay
 
         public void SetTotalKnives(int total)
         {
+            EnsureInitialized();
             magazine.Configure(total);
         }
 
@@ -219,9 +216,38 @@ namespace KnifeToss.Presentation.Gameplay
         }
 
         [VContainer.Inject]
-        public void Construct(KnifeToss.Core.Abstractions.IKnifeTracker tracker)
+        public void Construct(KnifeToss.Core.Abstractions.IKnifeTracker tracker, IObjectResolver resolver)
         {
             knifeTracker = tracker;
+            objectResolver = resolver;
+            InitializePoolAndMagazine();
+        }
+
+        private void InitializePoolAndMagazine()
+        {
+            if (knifePool != null && magazine != null)
+            {
+                return;
+            }
+
+            knifePool = new KnifePool(knifePrefab, transform, poolWarmupCount, objectResolver);
+            magazine = new KnifeMagazine(
+                knifePool,
+                transform,
+                launcherTransform,
+                visibleQueueCount,
+                queueSpacing,
+                slideAnimationDuration,
+                queueScaleEnd,
+                queueOpacityEnd);
+        }
+
+        private void EnsureInitialized()
+        {
+            if (knifePool == null || magazine == null)
+            {
+                InitializePoolAndMagazine();
+            }
         }
 
         private sealed class NullThrowInput : IThrowInput

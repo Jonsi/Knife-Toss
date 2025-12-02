@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
 namespace KnifeToss.Presentation.Gameplay
 {
@@ -11,11 +13,13 @@ namespace KnifeToss.Presentation.Gameplay
         private readonly GameObject prefab;
         private readonly Transform defaultParent;
         private readonly Queue<GameObject> pool = new Queue<GameObject>();
+        private readonly IObjectResolver resolver;
 
-        public KnifePool(GameObject knifePrefab, Transform parent, int warmupCount)
+        public KnifePool(GameObject knifePrefab, Transform parent, int warmupCount, IObjectResolver objectResolver)
         {
             prefab = knifePrefab;
             defaultParent = parent;
+            resolver = objectResolver;
 
             if (prefab != null)
             {
@@ -103,6 +107,7 @@ namespace KnifeToss.Presentation.Gameplay
         private GameObject CreateKnife()
         {
             GameObject knife = Object.Instantiate(prefab, defaultParent);
+            resolver?.InjectGameObject(knife);
             knife.SetActive(false);
             EnsureView(knife);
             DisableColliders(knife);

@@ -1,4 +1,5 @@
 using DG.Tweening;
+using KnifeToss.Core.Abstractions;
 using KnifeToss.Core.Events;
 using KnifeToss.Presentation.Gameplay;
 using UnityEngine;
@@ -20,8 +21,8 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         private Rigidbody2D rb2d;
         private Sequence failSequence;
         private Collider2D[] cachedColliders;
-        private Core.Abstractions.IKnifeTracker knifeTracker;
-        private Core.Abstractions.IAudioPlayer audioPlayer;
+        private IKnifeTracker knifeTracker;
+        private IAudioPlayer audioPlayer;
 
         [Header("Stick Settings")]
         [SerializeField] private float embedOffset = 0.02f;
@@ -31,8 +32,8 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         [SerializeField] private KnifeFailAnimationConfig failAnimationConfig;
 
         [Header("Sound Effects")]
-        [SerializeField] private AudioClip hitTargetSound;
-        [SerializeField] private AudioClip hitKnifeSound;
+        [SerializeField] private SoundEffect hitTargetSound;
+        [SerializeField] private SoundEffect hitKnifeSound;
         [SerializeField] private float soundVolume = 1f;
 
         private void Awake()
@@ -58,7 +59,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         }
 
         [VContainer.Inject]
-        public void Construct(Core.Abstractions.IKnifeTracker tracker, Core.Abstractions.IAudioPlayer audioPlayer)
+        public void Construct(IKnifeTracker tracker, IAudioPlayer audioPlayer)
         {
             knifeTracker = tracker;
             this.audioPlayer = audioPlayer;
@@ -269,14 +270,9 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             }
         }
 
-        private void PlaySound(AudioClip clip)
+        private void PlaySound(SoundEffect sound)
         {
-            if (clip == null)
-            {
-                return;
-            }
-
-            (audioPlayer ?? NullAudioPlayer.Instance).Play(clip, transform.position, soundVolume);
+            (audioPlayer ?? NullAudioPlayer.Instance).Play(sound, transform.position, soundVolume);
         }
 
         private Vector3 ResolveImpactPoint(Collision2D collision)
@@ -314,11 +310,15 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             return resolver();
         }
 
-        private sealed class NullAudioPlayer : Core.Abstractions.IAudioPlayer
+        private sealed class NullAudioPlayer : IAudioPlayer
         {
             public static readonly NullAudioPlayer Instance = new NullAudioPlayer();
 
             public void Play(AudioClip clip, Vector3 position, float volume)
+            {
+            }
+
+            public void Play(SoundEffect sound, Vector3 position, float volume)
             {
             }
         }
