@@ -55,8 +55,63 @@ An arcade skill game where the player throws knives at a rotating target. The go
 - Animated targets.
 - Power-ups.
 
-## Build Requirements
-- Android build.
-- Ad SDK integration.
-- Basic analytics for level tracking.
+---
+
+# FEATURES (Expanded)
+
+## Core Features
+- Throw knives at a rotating target.
+- Knives stick on hit; collision with stuck knives causes failure.
+- Single-tap control.
+- Level progression with increasing difficulty.
+
+## Scoring System
+- 3-Star level rating:
+  - 1 Star: Level completed.
+  - 2 Stars: Clean run or accuracy conditions.
+  - 3 Stars: Perfect run.
+- Stars tied to performance and bonus objectives.
+
+## Bonus Objects
+- Tomatoes or similar items placed on targets.
+- Hitting them grants bonus points.
+- Never blocks required knife placement slots.
+
+## Target Variants
+- Multiple rotating targets.
+- Orbiting mini-targets.
+- Opposite or alternating rotation directions.
+
+## Target Behavior
+- Speed pulsation.
+- Direction flipping mid-rotation.
+- Jitter/wobble motion.
+- Rotation acceleration curves.
+
+## Knife Variants
+- Cosmetic skins.
+- Optional gameplay variants:
+  - Heavy knife (bigger collision).
+  - Slim knife (smaller collision).
+  - Double-throw mechanic.
+
+## Obstacles
+- Metal plates that cause bounce/fail.
+- Spike zones.
+- Void/no-hit sectors.
+
+## Combo System
+- Precision-timing rewards.
+- Consecutive hit streaks.
+- Score multiplier.
+
+## Additional Modes
+- Endless mode.
+- Daily challenges.
+- Global/local leaderboards.
+
+## Visual Feedback
+- Screen flash on fail.
+- Retry button animation.
+- Target freeze on fail.
 

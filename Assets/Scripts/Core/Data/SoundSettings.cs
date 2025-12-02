@@ -9,11 +9,15 @@ namespace KnifeToss.Core.Data
         [SerializeField] private AudioClip hitTargetSound;
         [SerializeField] private AudioClip hitKnifeSound;
 
+        [Header("Music")]
+        [SerializeField] private AudioClip music;
+
         [Header("UI")]
         [SerializeField] private AudioClip buttonClickSound;
 
         public AudioClip HitTargetSound => hitTargetSound;
         public AudioClip HitKnifeSound => hitKnifeSound;
+        public AudioClip Music => music;
         public AudioClip ButtonClickSound => buttonClickSound;
     }
 }
