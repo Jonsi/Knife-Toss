@@ -71,6 +71,10 @@ namespace KnifeToss.Installers
             builder.Register<LevelFlowCoordinator>(Lifetime.Singleton)
                 .As<IStartable>()
                 .As<IDisposable>();
+
+            builder.Register<RotatingTargetFailHandler>(Lifetime.Singleton)
+                .As<IStartable>()
+                .As<IDisposable>();
         }
     }
 }

@@ -100,15 +100,15 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            HandleCollision(collision.transform, collision.gameObject);
+            HandleCollision(collision.transform, collision.gameObject, ResolveImpactPoint(collision));
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            HandleCollision(collision.transform, collision.gameObject);
+            HandleCollision(collision.transform, collision.gameObject, ResolveImpactPoint(collision));
         }
 
-        private void HandleCollision(Transform collisionTransform, GameObject collisionObject)
+        private void HandleCollision(Transform collisionTransform, GameObject collisionObject, Vector3 impactPoint)
         {
             if (!CanResolveImpact())
             {
@@ -117,7 +117,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
 
             if (collisionObject.CompareTag("Target"))
             {
-                StickToTarget(collisionTransform);
+                StickToTarget(collisionTransform, impactPoint);
                 return;
             }
 
@@ -126,21 +126,21 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
                 Knife otherKnife = collisionObject.GetComponent<Knife>();
                 if (otherKnife != null)
                 {
-                    TriggerFail();
+                    TriggerFail(collisionTransform != null ? collisionTransform.position : transform.position);
                 }
             }
         }
 
-        private void StickToTarget(Transform targetTransform)
+        private void StickToTarget(Transform targetTransform, Vector3 impactPoint)
         {
             ResolveAsStuck();
             AlignToTarget(targetTransform);
             thrower?.OnKnifeResolved();
             PlaySound(hitTargetSound);
-            impactEventChannel?.RaiseKnifeStuck();
+            impactEventChannel?.RaiseKnifeStuck(impactPoint);
         }
 
-        private void TriggerFail()
+        private void TriggerFail(Vector3 failurePoint)
         {
             if (isResolved)
             {
@@ -158,9 +158,8 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             SetCollidersEnabled(false);
 
             thrower?.OnKnifeResolved();
-            PlayFailAnimation();
             PlaySound(hitKnifeSound);
-            impactEventChannel?.RaiseKnifeFailed();
+            impactEventChannel?.RaiseKnifeFailed(failurePoint);
         }
 
         public void Resolve()
@@ -179,6 +178,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             isStuck = true;
             isResolved = true;
             HaltMotion();
+            SetCollidersEnabled(true);
         }
 
         public bool IsStuck => isStuck;
@@ -277,6 +277,31 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             }
 
             (audioPlayer ?? NullAudioPlayer.Instance).Play(clip, transform.position, soundVolume);
+        }
+
+        private Vector3 ResolveImpactPoint(Collision2D collision)
+        {
+            if (collision == null)
+            {
+                return transform.position;
+            }
+
+            if (collision.contactCount > 0)
+            {
+                return collision.GetContact(0).point;
+            }
+
+            return ResolveImpactPoint(collision.collider);
+        }
+
+        private Vector3 ResolveImpactPoint(Collider2D collider)
+        {
+            if (collider == null)
+            {
+                return transform.position;
+            }
+
+            return collider.ClosestPoint(transform.position);
         }
 
         private T ResolveOrDefault<T>(System.Func<T> resolver, T fallback)

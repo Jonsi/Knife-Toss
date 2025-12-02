@@ -15,6 +15,7 @@ namespace KnifeToss.Presentation.UI
         [SerializeField] private LevelCompletePopup levelCompletePopup;
         [SerializeField] private LevelCommandEventChannel commandChannel;
         [SerializeField] private Button retryButton;
+        [SerializeField] private FailFeedbackPresenter failFeedbackPresenter;
 
         private KnifeToss.Core.Abstractions.ILevelCommandInvoker commandInvoker;
 
@@ -52,6 +53,11 @@ namespace KnifeToss.Presentation.UI
             {
                 failText.SetActive(show);
             }
+
+            if (!show)
+            {
+                failFeedbackPresenter?.ResetFeedback();
+            }
         }
 
         public void ShowLevelComplete(bool show)
@@ -69,6 +75,7 @@ namespace KnifeToss.Presentation.UI
         {
             ShowFail(false);
             ShowLevelComplete(false);
+            failFeedbackPresenter?.ResetFeedback();
         }
 
         [VContainer.Inject]

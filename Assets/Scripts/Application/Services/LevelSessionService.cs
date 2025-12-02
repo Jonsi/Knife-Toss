@@ -116,6 +116,7 @@ namespace KnifeToss.Application.Services
         {
             RotatingTarget rotatingTarget = gameplayObjectProvider.GetTarget();
 
+            rotatingTarget.Resume();
             rotatingTarget.SetRotationSpeed(rules.RotationSpeed);
             rotatingTarget.SetDirectionChangeInterval(rules.DirectionChangeInterval);
             rotatingTarget.SetRandomizeDirection(rules.RandomizeDirection);

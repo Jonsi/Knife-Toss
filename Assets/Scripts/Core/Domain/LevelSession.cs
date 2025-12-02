@@ -17,6 +17,9 @@ namespace KnifeToss.Core.Domain
         public int KnivesThrown { get; private set; }
         public bool IsComplete { get; private set; }
         public bool IsFailed { get; private set; }
+        public int PlayerKnivesStuck => Math.Max(0, KnivesStuck - preStuckBaseline);
+
+        private int preStuckBaseline;
 
         public void Begin(int levelIndex, LevelRules rules)
         {
@@ -26,6 +29,7 @@ namespace KnifeToss.Core.Domain
             KnivesThrown = 0;
             IsComplete = false;
             IsFailed = false;
+            preStuckBaseline = 0;
             NotifyChanged();
         }
 
@@ -35,6 +39,7 @@ namespace KnifeToss.Core.Domain
                 return;
 
             KnivesStuck = count;
+            preStuckBaseline = KnivesStuck;
             EvaluateProgress();
             NotifyChanged();
         }
@@ -78,7 +83,7 @@ namespace KnifeToss.Core.Domain
 
         private void EvaluateProgress()
         {
-            if (KnivesStuck >= Rules.RequiredKnives)
+            if (PlayerKnivesStuck >= Rules.RequiredKnives)
             {
                 IsComplete = true;
                 Completed?.Invoke(this);

@@ -25,7 +25,7 @@ namespace KnifeToss.Presentation.UI
                 return new LevelHudViewModel(string.Empty, string.Empty, string.Empty);
             }
 
-            int remaining = UnityEngine.Mathf.Max(0, session.Rules.RequiredKnives - session.KnivesStuck);
+            int remaining = UnityEngine.Mathf.Max(0, session.Rules.RequiredKnives - session.PlayerKnivesStuck);
             string levelLabel = $"{session.LevelIndex}";
             string completeLabel = $"LEVEL {levelLabel}";
             return new LevelHudViewModel(levelLabel, remaining.ToString(), completeLabel);

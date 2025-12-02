@@ -13,9 +13,15 @@ namespace KnifeToss.Presentation.Gameplay
 
         private int currentDirection = 1;
         private float directionChangeTimer;
+        private bool isFrozen;
 
         private void Update()
         {
+            if (isFrozen)
+            {
+                return;
+            }
+
             Rotate();
 
             if (randomizeDirection)
@@ -57,11 +63,22 @@ namespace KnifeToss.Presentation.Gameplay
             randomizeDirection = randomize;
         }
 
+        public void Freeze()
+        {
+            isFrozen = true;
+        }
+
+        public void Resume()
+        {
+            isFrozen = false;
+        }
+
         public void ResetRotation()
         {
             transform.rotation = Quaternion.identity;
             currentDirection = 1;
             directionChangeTimer = directionChangeInterval;
+            isFrozen = false;
         }
     }
 }

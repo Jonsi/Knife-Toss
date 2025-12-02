@@ -441,6 +441,7 @@ GameObject:
   m_Component:
   - component: {fileID: 197163807}
   - component: {fileID: 197163808}
+  - component: {fileID: 197163809}
   m_Layer: 5
   m_Name: Holder
   m_TagString: Untagged
@@ -486,7 +487,26 @@ MonoBehaviour:
   failText: {fileID: 0}
   levelCompletePopup: {fileID: 519400801}
   commandChannel: {fileID: 11400000, guid: 76592a2f6c663224399fb72a23fe1509, type: 2}
-  retryButton: {fileID: 882002977}
+  retryButton: {fileID: 2096806327}
+  failFeedbackPresenter: {fileID: 197163809}
+--- !u!114 &197163809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 197163806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcae72926a719bd4b867186ec1495622, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KnifeToss.Presentation.UI.FailFeedbackPresenter
+  impactEventChannel: {fileID: 11400000, guid: a78030c48769aec48b1aeb7cf48a28cb, type: 2}
+  retryButtonTransform: {fileID: 2096806326}
+  retryBounceScale: 1.05
+  retryBounceDuration: 0.186
+  retryBounceInterval: 0.1
+  retryBounceLoops: -1
 --- !u!1 &321186377
 GameObject:
   m_ObjectHideFlags: 0
@@ -1654,6 +1674,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1287957331}
   m_CullTransparentMesh: 1
+--- !u!1 &1450673223
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1450673225}
+  - component: {fileID: 1450673224}
+  m_Layer: 0
+  m_Name: ParticleSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1450673224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1450673223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb5b39bb5d266af4f93446d5675553fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KnifeToss.Presentation.Gameplay.KnifeImpactParticlesSpawner
+  impactEventChannel: {fileID: 11400000, guid: a78030c48769aec48b1aeb7cf48a28cb, type: 2}
+  splintersPrefab: {fileID: 6077942822066176380, guid: 54a43af0fe26f194dbe98de5fbffa7f8, type: 3}
+  vfxParent: {fileID: 1450673225}
+--- !u!4 &1450673225
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1450673223}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.16876, y: -0.08237, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1498501746
 GameObject:
   m_ObjectHideFlags: 0
@@ -2594,3 +2661,4 @@ SceneRoots:
   - {fileID: 1996917748}
   - {fileID: 1672016116}
   - {fileID: 1767366863}
+  - {fileID: 1450673225}
