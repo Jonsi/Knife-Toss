@@ -111,6 +111,7 @@ namespace KnifeToss.Presentation.Gameplay
         private void HandleLevelFailed(LevelSession _)
         {
             hudPresenter.retryButton.gameObject.SetActive(true);
+            hudPresenter.retryButton.interactable = true;
         }
 
         private void RenderHud()
@@ -126,13 +127,20 @@ namespace KnifeToss.Presentation.Gameplay
         private void BeginTransition(UniTask transitionTask)
         {
             hudPresenter?.ResetState();
-            hudPresenter.retryButton.gameObject.SetActive(false);
+            if (hudPresenter?.retryButton != null)
+            {
+                hudPresenter.retryButton.interactable = false;
+            }
             CompleteTransitionAsync(transitionTask).Forget();
         }
 
         private async UniTaskVoid CompleteTransitionAsync(UniTask transitionTask)
         {
             await transitionTask;
+            if (hudPresenter?.retryButton != null)
+            {
+                hudPresenter.retryButton.interactable = true;
+            }
             RenderHud();
         }
     }
