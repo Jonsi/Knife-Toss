@@ -17,6 +17,7 @@ namespace KnifeToss.Presentation.UI
         [SerializeField] private Button nextButton;
         [SerializeField] private Button retryButton;
         [SerializeField] private LevelCommandEventChannel commandChannel;
+        [SerializeField] private ButtonClickEventChannel buttonClickEventChannel;
 
         private ILevelCommandInvoker commandInvoker;
 
@@ -80,11 +81,13 @@ namespace KnifeToss.Presentation.UI
 
         private void RaiseRetry()
         {
+            // Button click event is automatically raised by AutoButtonEventRegistrar
             commandInvoker?.Retry();
         }
 
         private void RaiseNext()
         {
+            // Button click event is automatically raised by AutoButtonEventRegistrar
             commandInvoker?.Next();
         }
 

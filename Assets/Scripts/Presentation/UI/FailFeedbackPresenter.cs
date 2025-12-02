@@ -15,6 +15,8 @@ namespace KnifeToss.Presentation.UI
 
         [Header("Retry Prompt")]
         [SerializeField] private RectTransform retryButtonTransform;
+        [SerializeField] private Button retryButton;
+        [SerializeField] private ButtonClickEventChannel buttonClickEventChannel;
         [SerializeField, Range(1f, 1.5f)] private float retryBounceScale = 1.08f;
         [SerializeField, Range(0.05f, 0.6f)] private float retryBounceDuration = 0.28f;
         [SerializeField, Range(0f, 1f)] private float retryBounceInterval = 0.1f;
@@ -25,7 +27,6 @@ namespace KnifeToss.Presentation.UI
         private Vector3 retryBaseScale = Vector3.one;
         private Vector2 retryBaseAnchoredPosition;
         private Sequence retrySequence;
-        private Button retryButton;
 
         private void Awake()
         {
@@ -65,11 +66,7 @@ namespace KnifeToss.Presentation.UI
             }
 
             impactEventChannel.KnifeFailed += HandleKnifeFailed;
-            Button button = ResolveRetryButton();
-            if (button != null)
-            {
-                button.onClick.AddListener(HandleRetryClicked);
-            }
+            retryButton?.onClick.AddListener(HandleRetryClicked);
             isSubscribed = true;
         }
 
@@ -81,11 +78,7 @@ namespace KnifeToss.Presentation.UI
             }
 
             impactEventChannel.KnifeFailed -= HandleKnifeFailed;
-            Button button = ResolveRetryButton();
-            if (button != null)
-            {
-                button.onClick.RemoveListener(HandleRetryClicked);
-            }
+            retryButton?.onClick.RemoveListener(HandleRetryClicked);
             isSubscribed = false;
         }
 
@@ -96,6 +89,7 @@ namespace KnifeToss.Presentation.UI
 
         private void HandleRetryClicked()
         {
+            // Button click event is automatically raised by AutoButtonEventRegistrar
             StopRetryAnimation();
         }
 
@@ -174,22 +168,6 @@ namespace KnifeToss.Presentation.UI
                 retryBaseScale = retryButtonTransform.localScale;
                 retryBaseAnchoredPosition = retryButtonTransform.anchoredPosition;
             }
-        }
-
-        private Button ResolveRetryButton()
-        {
-            if (retryButton != null)
-            {
-                return retryButton;
-            }
-
-            if (retryButtonTransform == null)
-            {
-                return null;
-            }
-
-            retryButton = retryButtonTransform.GetComponent<Button>();
-            return retryButton;
         }
     }
 }

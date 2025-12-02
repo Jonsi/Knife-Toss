@@ -15,20 +15,20 @@ namespace KnifeToss.Infrastructure.Audio
 
         public void Play(AudioClip clip, Vector3 position, float volume)
         {
-            PlayInternal(clip, position, volume, 0f);
+            PlayInternal(clip, position, volume);
         }
 
-        public void Play(SoundEffect sound, Vector3 position, float volume)
+        public void Play2D(AudioClip clip)
         {
-            if (sound == null || !sound.HasClip)
-            {
-                return;
-            }
-
-            PlayInternal(sound.Clip, position, volume, sound.StartOffsetSeconds);
+            PlayInternal(clip, Vector3.zero, 1f);
         }
 
-        private void PlayInternal(AudioClip clip, Vector3 position, float volume, float offsetSeconds)
+        public void Play2D(AudioClip clip, float volume)
+        {
+            PlayInternal(clip, Vector3.zero, volume);
+        }
+
+        private void PlayInternal(AudioClip clip, Vector3 position, float volume)
         {
             if (clip == null)
             {
@@ -43,21 +43,8 @@ namespace KnifeToss.Infrastructure.Audio
 
             source.transform.position = position;
 
-            if (offsetSeconds <= 0.0001f)
-            {
-                // Keep the source alive and simply fire a one-shot to avoid per-play allocations and reduce latency.
-                source.PlayOneShot(clip, volume);
-                return;
-            }
-
-            // Start partway into the clip to skip leading silence; note this source can only play one clip at a time.
-            source.clip = clip;
-            source.volume = volume;
-            source.loop = false;
-
-            int offsetSamples = Mathf.Min(Mathf.FloorToInt(offsetSeconds * clip.frequency), clip.samples - 1);
-            source.timeSamples = Mathf.Max(0, offsetSamples);
-            source.Play();
+            // Keep the source alive and simply fire a one-shot to avoid per-play allocations and reduce latency.
+            source.PlayOneShot(clip, volume);
         }
 
         private static AudioSource CreateOrGetSource()

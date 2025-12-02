@@ -26,6 +26,8 @@ namespace KnifeToss.Installers
         [SerializeField] private LevelConfig levelConfig;
         [SerializeField] private KnifeImpactEventChannel knifeImpactChannel;
         [SerializeField] private LevelCommandEventChannel levelCommandEventChannel;
+        [SerializeField] private SoundSettings soundSettings;
+        [SerializeField] private ButtonClickEventChannel buttonClickEventChannel;
         [SerializeField] private int startLevel = 1;
 
         [Header("Prefabs For Gameplay")]
@@ -42,6 +44,8 @@ namespace KnifeToss.Installers
             builder.RegisterInstance(knifeImpactChannel);
             builder.RegisterInstance(levelCommandEventChannel);
             builder.RegisterInstance(knifePrefab);
+            builder.RegisterInstance(soundSettings);
+            builder.RegisterInstance(buttonClickEventChannel);
             builder.RegisterInstance<ILevelProgressStore>(new PlayerPrefsProgressStore(HighestLevelKey));
             builder.RegisterInstance(hudPresenter);
             builder.Register<IAudioPlayer, AudioPlayer>(Lifetime.Singleton);
@@ -73,6 +77,12 @@ namespace KnifeToss.Installers
                 .As<IDisposable>();
 
             builder.Register<RotatingTargetFailHandler>(Lifetime.Singleton)
+                .As<IStartable>()
+                .As<IDisposable>();
+
+            builder.Register<ButtonClickSoundPlayer>(Lifetime.Singleton)
+                .WithParameter(soundSettings)
+                .WithParameter(buttonClickEventChannel)
                 .As<IStartable>()
                 .As<IDisposable>();
         }
