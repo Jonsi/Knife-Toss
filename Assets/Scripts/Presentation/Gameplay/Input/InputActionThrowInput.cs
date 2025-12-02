@@ -18,7 +18,7 @@ namespace KnifeToss.Presentation.Gameplay
             if (actionReference != null && actionReference.action != null)
             {
                 actionReference.action.Enable();
-                actionReference.action.performed += HandlePerformed;
+                actionReference.action.started += HandleStarted;
             }
         }
 
@@ -26,7 +26,7 @@ namespace KnifeToss.Presentation.Gameplay
         {
             if (actionReference != null && actionReference.action != null)
             {
-                actionReference.action.performed -= HandlePerformed;
+                actionReference.action.started -= HandleStarted;
                 actionReference.action.Disable();
             }
         }
@@ -41,7 +41,7 @@ namespace KnifeToss.Presentation.Gameplay
             actionReference?.action?.Disable();
         }
 
-        private void HandlePerformed(InputAction.CallbackContext _)
+        private void HandleStarted(InputAction.CallbackContext _)
         {
             Performed?.Invoke();
         }

@@ -12,12 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4787d3b73954f0468096c6b7191ce57, type: 3}
   m_Name: SoundSettings
   m_EditorClassIdentifier: Assembly-CSharp::KnifeToss.Core.Data.SoundSettings
-  hitTargetSound:
-    clip: {fileID: 0}
-    startOffsetSeconds: 0
-  hitKnifeSound:
-    clip: {fileID: 0}
-    startOffsetSeconds: 0
-  buttonClickSound:
-    clip: {fileID: 0}
-    startOffsetSeconds: 0
+  hitTargetSound: {fileID: 8300000, guid: ad885cbd16cd0064a8d674e1c70497f7, type: 3}
+  hitKnifeSound: {fileID: 8300000, guid: 2f79b76c4d829fb439462ad242183257, type: 3}
+  buttonClickSound: {fileID: 8300000, guid: 32d4b1811dda14a6cb9e059ee8ad17d2, type: 3}
