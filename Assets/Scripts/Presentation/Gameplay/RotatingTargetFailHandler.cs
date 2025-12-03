@@ -39,8 +39,8 @@ namespace KnifeToss.Presentation.Gameplay
 
         private void HandleKnifeFailed()
         {
-            RotatingTarget target = gameplayObjectProvider?.GetTarget();
-            target?.Freeze();
+            TargetGroupManager targetGroupManager = gameplayObjectProvider?.GetTargetGroupManager();
+            targetGroupManager?.FreezeAll();
         }
     }
 }

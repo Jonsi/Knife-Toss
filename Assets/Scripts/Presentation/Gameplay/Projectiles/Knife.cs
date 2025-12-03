@@ -202,8 +202,12 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             Vector2 targetCenter = targetTransform.position;
             Vector2 direction = ((Vector2)transform.position - targetCenter).normalized;
             CircleCollider2D targetCollider = targetTransform.GetComponent<CircleCollider2D>();
-            float targetRadius = targetCollider != null ? targetCollider.radius : 0.5f;
-            Vector2 embeddedPosition = targetCenter + direction * (targetRadius + embedOffset);
+            float uniformScale = Mathf.Max(targetTransform.lossyScale.x, targetTransform.lossyScale.y);
+            float targetRadius = targetCollider != null
+                ? targetCollider.radius * uniformScale
+                : 0.5f;
+            float scaledEmbedOffset = embedOffset * uniformScale;
+            Vector2 embeddedPosition = targetCenter + direction * (targetRadius + scaledEmbedOffset);
             transform.position = embeddedPosition;
             transform.SetParent(targetTransform);
         }

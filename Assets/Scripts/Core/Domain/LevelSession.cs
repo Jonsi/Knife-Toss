@@ -20,6 +20,8 @@ namespace KnifeToss.Core.Domain
         public int PlayerKnivesStuck => Math.Max(0, KnivesStuck - preStuckBaseline);
         public int Score { get; private set; }
         public bool HadToRetry { get; private set; }
+        public int TargetCount { get; private set; }
+        public int TargetsRemaining { get; private set; }
 
         private int preStuckBaseline;
 
@@ -34,6 +36,8 @@ namespace KnifeToss.Core.Domain
             preStuckBaseline = 0;
             Score = 0;
             HadToRetry = false;
+            TargetCount = Math.Max(1, rules.TargetCount);
+            TargetsRemaining = TargetCount;
             NotifyChanged();
         }
 
@@ -75,6 +79,12 @@ namespace KnifeToss.Core.Domain
             }
 
             Score += amount;
+            NotifyChanged();
+        }
+
+        public void MarkTargetCompleted()
+        {
+            TargetsRemaining = Math.Max(0, TargetsRemaining - 1);
             NotifyChanged();
         }
 

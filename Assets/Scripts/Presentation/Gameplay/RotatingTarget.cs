@@ -1,3 +1,4 @@
+using KnifeToss.Presentation.Gameplay.Rotation;
 using UnityEngine;
 
 namespace KnifeToss.Presentation.Gameplay
@@ -14,6 +15,7 @@ namespace KnifeToss.Presentation.Gameplay
         private int currentDirection = 1;
         private float directionChangeTimer;
         private bool isFrozen;
+        private IRotationBehaviour rotationBehaviour;
 
         private void Update()
         {
@@ -22,11 +24,18 @@ namespace KnifeToss.Presentation.Gameplay
                 return;
             }
 
-            Rotate();
-
-            if (randomizeDirection)
+            if (rotationBehaviour != null)
             {
-                UpdateDirectionChange();
+                rotationBehaviour.ApplyRotation(transform, Time.deltaTime);
+            }
+            else
+            {
+                Rotate();
+
+                if (randomizeDirection)
+                {
+                    UpdateDirectionChange();
+                }
             }
         }
 
@@ -50,6 +59,11 @@ namespace KnifeToss.Presentation.Gameplay
         public void SetRotationSpeed(float speed)
         {
             rotationSpeed = speed;
+
+            if (rotationBehaviour is ConstantRotation)
+            {
+                rotationBehaviour = new ConstantRotation(rotationSpeed * currentDirection);
+            }
         }
 
         public void SetDirectionChangeInterval(float interval)
@@ -61,6 +75,12 @@ namespace KnifeToss.Presentation.Gameplay
         public void SetRandomizeDirection(bool randomize)
         {
             randomizeDirection = randomize;
+        }
+
+        public void SetRotationBehaviour(IRotationBehaviour behaviour)
+        {
+            rotationBehaviour = behaviour;
+            rotationBehaviour?.Reset();
         }
 
         public void Freeze()
@@ -79,6 +99,7 @@ namespace KnifeToss.Presentation.Gameplay
             currentDirection = 1;
             directionChangeTimer = directionChangeInterval;
             isFrozen = false;
+            rotationBehaviour?.Reset();
         }
     }
 }

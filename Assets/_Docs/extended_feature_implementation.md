@@ -1,149 +1,177 @@
 # Extended Feature Implementation Plan
 
-## Purpose
-This document outlines the recommended order of implementation for the post-MVP features described in `knife_toss_gdd.md`, along with any required architectural refactors to keep the project maintainable and test-friendly.
+Scope: post-MVP features from `knife_toss_gdd.md`, implemented in small, testable steps aligned with the current layered architecture, VContainer DI, UniTask-based flows, and DOTween for presentation polish.
 
 The game already supports:
-* Rotating target & knife collision rules
-* Knife throwing via single-tap input
-* Level progression & config catalog
+- Rotating target & knife collision rules
+- Knife throwing via single-tap input
+- Level progression & config catalog
 
-The plan below therefore focuses on additive features and technical debt reduction.
-
----
-
-## Existing Implementation Survey (Dec 2025)
-
-| Area | Status | Key Classes / Assets |
-|------|--------|----------------------|
-| **Rotating Behaviour** | Implemented (constant speed + random flip) | `RotatingTarget.cs` (Update loop, direction flip) |
-| **Knife Collision / Tracking** | Implemented | `KnifeTracker.cs`, `KnifeImpactEventChannel.cs` |
-| **Particles on Knife Hit** | Implemented | `KnifeImpactParticlesSpawner.cs` |
-| **Fail Screen & Retry Animation** | Implemented | `FailFeedbackPresenter.cs`, `LevelHudPresenter.cs` |
-| **Audio SFX plumbing** | Core `AudioPlayer.cs`; Button click & knife impact channel wired, but **no music or mute toggle** |
-| **Procedural Levels** | Implemented | `LevelConfig.cs` – `GenerateProceduralLevel()` |
-| **HUD Knife Counter Animation** | Implemented | `LevelHudPresenter.cs` + TMP counter |
-
-> We will treat the rows above as DONE unless future polish is required.
+The phases below are ordered by impact vs. risk. Each item should prefer:
+- Domain logic in Core/Application layers
+- DI wiring via `GameplayInstaller`
+- Async flows via UniTask
+- Presentation polish via DOTween (no logic in tweens)
 
 ---
 
-## Phase 1 – Quality-of-Life & UX Polishing
+## Phase 1 – Audio & UX
 
-This phase focuses on foundational features that significantly improve the player experience.
-
-1. **Music & Audio Options:**
-   - **Task:** Implement a dedicated `MusicPlayer` service that handles looping background music. This keeps music management separate from the existing `AudioPlayer`, which is designed for one-shot sound effects.
-   - **Task:** Add a global mute/unmute toggle in the UI. The state of this toggle will be persisted using the existing `ISaveService` so that the player's preference is saved across sessions.
-   - **Rationale:** A good audio experience is crucial for player engagement. Separating music and SFX players follows the Single Responsibility Principle, making the audio system more robust and easier to manage.
+1. **Music & Audio Options**
+   - Add `MusicPlayer` in Infrastructure layer:
+     - Loop background music, separate from `AudioPlayer` (SFX only).
+     - Register in `GameplayInstaller` and inject where needed.
+   - Add settings storage:
+     - Persist music/SFX mute flags via `ISaveService` (or new `IAudioSettingsStore` adapter).
+   - Add UI toggle(s):
+     - Extend existing settings or HUD UI using VContainer-injected presenters.
+     - Use DOTween for simple toggle animations only.
 
 ---
 
 ## Phase 2 – Scoring & Stars
 
-This phase introduces a scoring system to provide players with performance feedback and replayability, directly based on the GDD's specifications.
+1. **Scoring in Domain**
+   - Extend `LevelSession` to track `Score` and related flags (e.g. `HasFailed`, `BonusObjectsHit`).
+   - Update `LevelSessionService` to raise score events on knife hit, bonus, fail, retry.
 
-1. **Track Score:**
-   - **Task:** Extend the `LevelSession` domain object to include a `score` property. This will be the central point for tracking all score-related events.
-   - **Rationale:** Centralizing session-specific data within `LevelSession` keeps our domain logic clean and decoupled from Unity's presentation layer.
-2. **Implement 3-Star Rating (GDD-Aligned):**
-   - **Task:** Implement a system to award stars based on the following GDD criteria:
-     - **1 Star:** Awarded for basic level completion.
-     - **2 Stars:** Awarded for a "Clean Run" (completing the level without failing and retrying) OR hitting all bonus objects in the level.
-     - **3 Stars:** Awarded for a "Perfect Run" (completing the level without failing AND hitting all bonus objects).
-   - **Task:** The star rating for each level should be saved using the `ILevelProgressStore`.
-   - **Rationale:** A star system with clear, defined goals provides players with concrete challenges and encourages them to replay levels to achieve mastery.
-3. **Display Stars:**
-   - **Task:** Update the `LevelCompletePopup` to display the final score and the stars awarded.
-   - **Rationale:** This provides immediate visual feedback to the player on their performance.
+2. **3-Star Rating (GDD Rules)**
+   - Implement pure domain logic (no Unity types) that maps final `LevelSession` state → `StarCount`:
+     - 1 star: level completed.
+     - 2 stars: clean run (no fail) OR all bonus objects hit.
+     - 3 stars: clean run AND all bonus objects hit.
+   - Persist best star count per level via `ILevelProgressStore`.
+
+3. **Presentation**
+   - Extend `LevelCompletePopup` presenter:
+     - Show score and stars using data from `LevelSessionService` / `ScoreService`.
+     - Use DOTween for star reveal animation; no game logic in tween callbacks.
 
 ---
 
 ## Phase 3 – Target Variety
 
-To keep gameplay engaging, this phase focuses on introducing more varied and challenging target behaviors as outlined in the GDD.
+Goal: introduce pluggable rotation behaviours and support multiple orbiting targets with distance-based scaling that also scales knives.
 
-1. **Refactor Rotation Logic (SOLID):**
-   - **Task:** Create an `IRotationBehaviour` interface and move the existing rotation logic into a `ConstantRotation` class that implements this interface (Strategy Pattern).
-   - **Task:** Modify `RotatingTarget.cs` to hold a reference to an `IRotationBehaviour`, delegating the rotation logic to it.
-   - **Rationale:** This refactoring adheres to the **Open/Closed Principle**, allowing us to add new rotation behaviors without modifying the `RotatingTarget` class.
-2. **Implement GDD Target Behaviors:**
-   - **Task:** Create new classes that implement `IRotationBehaviour` for:
-     - `PulsatingRotation` (speed varies over time).
-     - `FlippingRotation` (randomly changes direction mid-rotation).
-     - `JitterWobbleRotation` (introduces a slight, unpredictable wobble).
-     - `AccelerationCurveRotation` (rotation speed follows a predefined curve).
-   - **Task:** Extend `LevelConfig` to allow designers to select and configure a rotation behavior for each level.
-   - **Rationale:** These new behaviors, taken directly from the GDD, will increase the variety and challenge of the gameplay.
-3. **Support for Multiple & Orbiting Targets:**
-   - **Task:** This is a significant architectural change. A new manager class, perhaps a `TargetGroupManager`, will be needed to coordinate multiple targets.
-   - **Task:** Levels with multiple targets will need to define which target is currently "active" for knife throws.
-   - **Task:** `LevelConfig` will need to be extended to support defining multiple target prefabs, their positions, and their rotation behaviors.
-   - **Rationale:** This feature dramatically expands design possibilities, allowing for much more complex and interesting level layouts.
+1. **Rotation Strategy**
+   - Confirm/align `IRotationBehaviour` shape:
+     - Keep interface minimal (e.g. `ApplyRotation(Transform target, float deltaTime)`).
+   - Ensure current behaviour lives in `ConstantRotation`:
+     - `RotatingTarget` holds an `IRotationBehaviour` reference (serialized or injected).
+     - Update loop delegates to behaviour; no inline rotation logic.
+   - Wire via config:
+     - Use `LevelConfig` (or a dedicated rotation config) to select behaviour per level.
+     - Optionally add a small factory in Application/Infrastructure to map config → behaviour instance.
+
+2. **New Rotation Behaviours**
+   - Implement `PulsatingRotation`:
+     - Speed varies over time (sine/curve driven) using serialized parameters.
+   - Implement `FlippingRotation`:
+     - Random direction flips with configurable timing/probability.
+   - Implement `AccelerationCurveRotation`:
+     - Speed follows an `AnimationCurve` over a loop duration.
+   - Keep behaviours stateless or minimally stateful and independent of Unity scene objects beyond the provided `Transform`.
+
+3. **Multiple & Orbiting Targets**
+   - Add `TargetGroupManager` in Presentation/Gameplay:
+     - Own a central pivot transform (mid-screen).
+     - Manage a list of target entries: prefab ref, orbit radius, starting angle, base scale, rotation behaviour ref.
+     - Drive per-target position/rotation each frame (rotate pivot or compute per-target positions – pick one and keep logic isolated here).
+   - Distance-based scaling:
+     - Define a radius → scale mapping (simple curve or linear function).
+     - Apply scale to each target so further targets appear appropriately smaller/larger.
+   - Knife scaling:
+     - Define an interface or context exposing the active target’s scale factor.
+     - When `KnifePool` spawns a knife for a target, apply the same factor to knife transform and collider (e.g. target at 80% → knife at ~80%).
+   - Config & DI:
+     - Extend `LevelConfig` to describe multiple targets: orbit radius, angle, behaviour type, etc.
+     - Register `TargetGroupManager` and required configs via `GameplayInstaller`.
+     - Keep Level rules (win/fail conditions) in domain by representing “active target” and “targets remaining” in `LevelSession` or a dedicated domain object.
 
 ---
 
 ## Phase 4 – Bonus Objects & Obstacles
 
-This phase adds new interactive elements to the targets to create more dynamic gameplay scenarios, as specified in the GDD.
+1. **Bonus Objects (Tomatoes)**
+   - Domain:
+     - Add bonus hit accounting to `LevelSession` (e.g. `BonusObjectsTotal`, `BonusObjectsHit`).
+   - Infrastructure/Presentation:
+     - Create tomato prefab + hit-detection script that raises an event (e.g. via a new ScriptableObject event channel or existing impact channel extension).
+   - Config:
+     - Extend `LevelConfig` to define tomato count/placements (angles/slots that must not overlap knife-required slots).
 
-1. **Bonus Objects (Tomatoes):**
-   - **Task:** Create a "Tomato" prefab with a script that detects hits. When hit, it should grant bonus points and trigger a visual/audio effect.
-   - **Task:** **Crucially**, the system for placing tomatoes must ensure they **do not block required knife placement slots**, as per the GDD. They should be placed in the empty spaces on the target.
-   - **Task:** Extend `LevelConfig` to allow designers to specify the number and placement of bonus objects.
-   - **Rationale:** Bonus objects add an extra layer of skill-based scoring, rewarding precision.
-2. **Obstacles (GDD-Inspired):**
-   - **Task:** Implement the following obstacle types from the GDD:
-     - **Metal Plates:** Deflect knives and cause a fail state.
-     - **Spike Zones:** Small areas on the target that cause a fail state if hit.
-     - **Void/No-Hit Sectors:** Sections of the target that are "intangible," causing the knife to pass through and resulting in a miss (but not a fail).
-   - **Task:** The `Knife` projectile's collision logic will need to be updated to handle these new object types and their unique behaviors.
-   - **Task:** Extend `LevelConfig` to define obstacle placements on the target.
-   - **Rationale:** These obstacles introduce new challenges and require players to be more strategic and precise with their throws.
-
----
-
-## Phase 5 – Advanced Gameplay Mechanics
-
-This phase introduces a combo system to reward skilled play and add more depth to the scoring mechanics.
-
-1. **Combo System:**
-   - **Task:** Implement a combo tracker in `LevelSession` to count consecutive hits. The combo resets on a miss or fail.
-   - **Task:** Implement a score multiplier that increases with the combo streak.
-   - **Task (GDD-Inspired):** Add "Precision-Timing Rewards". For example, grant a larger score bonus if a knife is thrown immediately after a target flips direction or during its fastest rotation phase.
-   - **Task:** The `LevelHudPresenter` will be updated to display the current combo count and multiplier.
-   - **Rationale:** A combo system with precision rewards adds an exciting "high-risk, high-reward" element, encouraging skillful and daring play.
+2. **Obstacles**
+   - Types: Metal Plate (deflect+fail), Spike Zone (fail), Void Sector (miss, no fail).
+   - Domain:
+     - Extend hit result representation (e.g. enum) so `LevelSessionService` can distinguish success/fail/miss/obstacle hit.
+   - Presentation:
+     - Implement obstacle prefabs with colliders and simple scripts that map collisions → hit result type.
+   - Config:
+     - Extend `LevelConfig` with obstacle definitions (type + placement).
 
 ---
 
-## Phase 6 – Gameplay-Modifying Knife Variants
+## Phase 5 – Combo & Precision Systems
 
-This phase introduces different types of knives that alter gameplay, as suggested in the GDD.
+1. **Combo Tracking**
+   - Add combo state to `LevelSession` (current streak, max streak).
+   - Reset on miss or fail; increment on successful hits.
 
-1. **Knife Variant System:**
-   - **Task:** Refactor the `Knife` prefab and scripts to support different knife properties. An `IKnifeBehaviour` or similar strategy pattern could be used.
-   - **Task:** Implement the following GDD knife variants:
-     - **Heavy Knife:** Has a larger collider, making it easier to hit the target but also easier to hit other knives.
-     - **Slim Knife:** Has a smaller collider, requiring more precision.
-     - **Double-Throw:** A power-up or knife type that allows two knives to be thrown in quick succession.
-   - **Task:** A system for selecting and equipping knives will be needed, likely in a new "Armory" UI screen.
-   - **Rationale:** Knife variants add a layer of strategy and player choice, increasing long-term engagement.
+2. **Score Multiplier & Precision Rewards**
+   - Introduce domain-level score multiplier based on combo.
+   - Add “precision timing” hooks:
+     - Rotation behaviours expose simple state or events (e.g. flipped this frame, currently at max speed window).
+     - `LevelSessionService` can apply bonus when knife hits during these windows.
+
+3. **HUD Presentation**
+   - Extend `LevelHudPresenter`:
+     - Show current combo and multiplier.
+     - Use DOTween for subtle number/scale animations only.
+
+---
+
+## Phase 6 – Knife Variants
+
+1. **Knife Behaviour Abstraction**
+   - Introduce `IKnifeBehaviour` (or similar) in Core/Domain:
+     - Encapsulate properties like collider size, throw cadence, special rules.
+   - Refactor `Knife` and `KnifePool`:
+     - Knife visuals/colliders read from injected/configured behaviour data.
+
+2. **Variants (GDD-Aligned)**
+   - Heavy Knife:
+     - Larger collider, same base rules; tuned to be more likely to hit existing knives.
+   - Slim Knife:
+     - Smaller collider; more precision, same scoring rules.
+   - Double-Throw:
+     - Behaviour that allows two knives per input window, implemented via `LevelSessionService` + `KnifeThrower` rules (no timing logic in the prefab itself).
+
+3. **Selection & UI**
+   - Add an “Armory” or loadout UI:
+     - Uses existing DI pattern for presenters and event channels.
+   - Persist chosen variant via `ISaveService` / progress store and inject into `LevelSessionService` at level start.
 
 ---
 
 ## Phase 7 – Additional Game Modes
 
-This phase focuses on adding new game modes to extend the life of the game, as outlined in the GDD's "Post-Launch Enhancements".
+1. **Endless Mode**
+   - Domain:
+     - Extend/introduce a mode flag in `LevelSession` or a dedicated `GameMode` object.
+     - Use existing procedural generation (`LevelConfig.GenerateProceduralLevel`) to spawn an infinite sequence with difficulty curve.
+   - Application:
+     - Add endless-mode entry point to `LevelFlowCoordinator` / menu UI.
+   - Persistence:
+     - Track and save endless high score via `ILevelProgressStore` or a dedicated high-score store.
 
-1. **Endless Mode:**
-   - **Task:** Create a new game mode where the player faces a never-ending sequence of procedurally generated targets. The difficulty would increase over time.
-   - **Task:** This mode will require a separate high-score tracking system.
-   - **Rationale:** Endless modes are excellent for retention, providing a long-term challenge for dedicated players.
-2. **Daily Challenges:**
-   - **Task:** Implement a system that generates a unique, pre-seeded challenge level each day.
-   - **Task:** This will require a server-side component to ensure all players get the same challenge.
-   - **Rationale:** Daily challenges encourage players to return to the game regularly.
+2. **Daily Challenges**
+   - Domain/Application:
+     - Define a deterministic seed-based level generator that takes a daily seed value.
+   - Infrastructure:
+     - For now, compute a local “daily seed” (e.g. date-based); later can be replaced with a server-provided seed behind an interface.
+   - UI:
+     - Add a menu entry and simple results screen reusing existing score/star presentation where possible.
 
 ---
 
-*Further phases, including leaderboards and knife skins, to be planned after the above are implemented.*
+Further post-launch ideas (leaderboards, cosmetic skins, etc.) should follow the same principles: push rules into Core/Application, keep Infrastructure replaceable, and use VContainer, UniTask, and DOTween only in their respective roles (wiring, async, and visuals).*** End Patch***assistant +#+#+#+#+#+assistant to=functions.apply_patchyrmakablytyped to=functions.apply_patch((&___tool_input: str__) => any)validator  ভিডassistant to=functions.apply_patch/Subthresholdassistant to=functions.apply_patch	RTLU to=functions.apply_patchной to=functions.apply_patchาติ to=functions.apply_patchassistant to=functions.apply_patch тай to=functions.apply_patchassistant to=functions.apply_patchraichte to=functions.apply_patchassistant to=functions.apply_patchassistant to=functions.apply_patchичество to=functions.apply_patchassistant to=functions.apply_patch Beau to=functions.apply_patchassistant to=functions.apply_patchassistant to=functions.apply_patchassistant to=functions.apply_patchassistant to=functions.apply_patchassistant to=functions.apply_patchassistant to=functions.apply_patchassistant to=functions.apply_patchassistant to=functions.apply_patchassistant to=functions.apply_patchassistant to=functions.apply_patchassistant to=functions.apply_patchassistant to=functions.apply_patchassistant потол to=functions.apply_patchassistant to=functions.apply_patchassistant to=functions.apply_patchassistant to=functions.apply_patchassistant to=functions.apply_patch to=functions.apply_patch ***!

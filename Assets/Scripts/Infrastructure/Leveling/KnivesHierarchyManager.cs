@@ -9,14 +9,12 @@ namespace KnifeToss.Infrastructure.Leveling
     public sealed class KnivesHierarchyManager
     {
         private readonly Transform owner;
-        private readonly Transform targetTransform;
         private GameObject knivesParent;
         private readonly string parentName;
 
-        public KnivesHierarchyManager(Transform ownerTransform, Transform target, string defaultParentName = "Knives")
+        public KnivesHierarchyManager(Transform ownerTransform, string defaultParentName = "Knives")
         {
             owner = ownerTransform;
-            targetTransform = target;
             parentName = defaultParentName;
         }
 
@@ -48,25 +46,7 @@ namespace KnifeToss.Infrastructure.Leveling
                 Object.Destroy(existing);
             }
 
-            CleanupTargetChildren();
             CleanupLooseKnives();
-        }
-
-        private void CleanupTargetChildren()
-        {
-            if (targetTransform == null)
-                return;
-
-            for (int i = targetTransform.childCount - 1; i >= 0; i--)
-            {
-                Transform child = targetTransform.GetChild(i);
-                if (child == null) continue;
-
-                if (child.TryGetComponent(out Knife _))
-                {
-                    Object.Destroy(child.gameObject);
-                }
-            }
         }
 
         private static void CleanupLooseKnives()

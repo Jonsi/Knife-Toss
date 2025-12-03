@@ -68,14 +68,15 @@ namespace KnifeToss.Installers
                 .WithParameter("knifeThrowerPrefab", knifeThrowerPrefab)
                 .WithParameter("lifetimeTransform", transform);
 
+            builder.Register<ITargetScaleProvider>(resolver => resolver.Resolve<GameplayObjectProvider>().GetTargetGroupManager(), Lifetime.Singleton);
+
             builder.Register<LevelSession>(Lifetime.Singleton);
             builder.Register<ILevelCatalog, LevelConfigCatalog>(Lifetime.Singleton);
             builder.Register<KnivesHierarchyManager>(Lifetime.Singleton)
                 .WithParameter(transform)
-                .WithParameter(resolver => resolver.Resolve<GameplayObjectProvider>().GetTarget().transform)
                 .WithParameter("Knives");
             builder.Register<PreStuckKnifeSpawner>(Lifetime.Singleton)
-                .WithParameter(resolver => resolver.Resolve<GameplayObjectProvider>().GetTarget().transform)
+                .WithParameter(resolver => resolver.Resolve<ITargetScaleProvider>())
                 .WithParameter(knifePrefab);
             builder.Register<LevelSessionService>(Lifetime.Singleton)
                 .WithParameter(resolver => resolver.Resolve<GameplayObjectProvider>())

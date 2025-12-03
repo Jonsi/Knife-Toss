@@ -818,8 +818,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.25}
   m_AnchorMax: {x: 0.5, y: 0.25}
-  m_AnchoredPosition: {x: 0, y: -51}
-  m_SizeDelta: {x: 401, y: 280.6}
+  m_AnchoredPosition: {x: 0, y: -50.999985}
+  m_SizeDelta: {x: 330.3, y: 135}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &726980825
 MonoBehaviour:
@@ -879,7 +879,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.9098039, g: 0.6509804, b: 0.2627451, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1015,7 +1015,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.1}
   m_AnchorMax: {x: 0.5, y: 0.1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 401, y: 280.6}
+  m_SizeDelta: {x: 330.3, y: 135}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &882002977
 MonoBehaviour:
@@ -1075,7 +1075,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.6105375, g: 0.9245283, b: 0.5712887, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2582,7 +2582,7 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
-  levelConfig: {fileID: 11400000, guid: 790de71ca408d914d91da91cbfc1f3de, type: 2}
+  levelConfig: {fileID: 0}
   knifeImpactChannel: {fileID: 11400000, guid: a78030c48769aec48b1aeb7cf48a28cb, type: 2}
   levelCommandEventChannel: {fileID: 11400000, guid: 76592a2f6c663224399fb72a23fe1509, type: 2}
   soundSettings: {fileID: 11400000, guid: 5def38df6d93db34286062cf0a77bf72, type: 2}

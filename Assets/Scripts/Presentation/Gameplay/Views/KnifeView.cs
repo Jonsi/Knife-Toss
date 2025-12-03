@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 namespace KnifeToss.Presentation.Gameplay
@@ -48,6 +49,50 @@ namespace KnifeToss.Presentation.Gameplay
             {
                 Renderer.color = color;
             }
+        }
+
+        public void SetParent(Transform parent)
+        {
+            transform.SetParent(parent, false);
+        }
+
+        public void ResetTransform(Transform parent, Vector3 targetScale)
+        {
+            transform.SetParent(parent, false);
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+            transform.localScale = targetScale;
+        }
+
+        public void ApplyVisuals(Vector3 position, Vector3 scale, Color color, Quaternion rotation)
+        {
+            transform.position = position;
+            transform.rotation = rotation;
+            transform.localScale = scale;
+            SetColor(color);
+        }
+
+        public void AnimateTo(Vector3 position, Vector3 scale, Color color, float duration)
+        {
+            KillTweens();
+
+            transform.DOMove(position, duration).SetEase(Ease.OutQuad);
+            transform.DOScale(scale, duration).SetEase(Ease.OutQuad);
+
+            if (Renderer != null)
+            {
+                Renderer.DOColor(color, duration).SetEase(Ease.OutQuad);
+            }
+        }
+
+        public void KillTweens()
+        {
+            TweenKiller.Kill(gameObject);
+        }
+
+        public void SetColliders(bool enabled)
+        {
+            SetCollidersEnabled(enabled);
         }
     }
 }

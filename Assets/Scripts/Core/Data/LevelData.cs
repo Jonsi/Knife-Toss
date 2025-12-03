@@ -3,31 +3,32 @@ using UnityEngine;
 namespace KnifeToss.Core.Data
 {
     [System.Serializable]
-    public class LevelData
+    public class LevelRequirementsConfig
     {
-        [Header("Level Requirements")]
         [Tooltip("Number of knives the player must stick to complete the level")]
         public int requiredKnives = 5;
 
         [Tooltip("Maximum number of knives the player can throw (0 = unlimited)")]
         public int maxKnives = 0;
+    }
 
-        [Header("Target Settings")]
-        [Tooltip("Rotation speed of the target in degrees per second")]
-        public float rotationSpeed = 90f;
+    [System.Serializable]
+    public class TargetGroupConfig
+    {
+        [Tooltip("Optional list of targets for this level. If empty, a single default target will be used.")]
+        public System.Collections.Generic.List<TargetDefinition> targets = new System.Collections.Generic.List<TargetDefinition>();
+    }
 
-        [Tooltip("How often the target changes direction (in seconds, 0 = never)")]
-        public float directionChangeInterval = 3f;
+    [System.Serializable]
+    public class LevelData
+    {
+        [Header("Level Requirements")]
+        [Tooltip("Knife limits and completion requirement for this level.")]
+        public LevelRequirementsConfig requirements = new LevelRequirementsConfig();
 
-        [Tooltip("Whether the target should randomize direction")]
-        public bool randomizeDirection = true;
-
-        [Header("Pre-Stuck Knives")]
-        [Tooltip("Number of knives already stuck to the target at level start")]
-        public int preStuckKnives = 0;
-
-        [Tooltip("Angular spacing between pre-stuck knives (in degrees)")]
-        public float preStuckKnifeSpacing = 45f;
+        [Header("Target Group")]
+        [Tooltip("Defines the targets in this level and their orbit/scaling settings.")]
+        public TargetGroupConfig targetGroup = new TargetGroupConfig();
     }
 }
 

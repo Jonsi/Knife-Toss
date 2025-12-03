@@ -16,8 +16,11 @@ namespace KnifeToss.Core.Data
 
         [Tooltip("Base values for procedural level generation")]
         public int proceduralBaseKnives = 5;
+        [Tooltip("Base rotation speed used when generating procedural levels (degrees per second)")]
         public float proceduralBaseRotationSpeed = 90f;
+        [Tooltip("Knives added per procedural level after the authored ones")]
         public float proceduralKnifeIncrease = 1f;
+        [Tooltip("Rotation speed added per procedural level after the authored ones")]
         public float proceduralSpeedIncrease = 5f;
 
         public LevelData GetLevelData(int levelIndex)
@@ -56,20 +59,9 @@ namespace KnifeToss.Core.Data
             int proceduralLevelNumber = levelIndex - levels.Count;
 
 
-            level.requiredKnives = Mathf.RoundToInt(proceduralBaseKnives + proceduralLevelNumber * proceduralKnifeIncrease);
-            level.rotationSpeed = proceduralBaseRotationSpeed + proceduralLevelNumber * proceduralSpeedIncrease;
-
-
-            level.maxKnives = 0;
-            level.directionChangeInterval = 3f;
-            level.randomizeDirection = true;
-            level.preStuckKnives = 0;
-
-
-            if (proceduralLevelNumber % 5 == 0 && proceduralLevelNumber > 0)
-            {
-                level.preStuckKnives = Mathf.Min(proceduralLevelNumber / 5, 3);
-            }
+            level.requirements.requiredKnives = Mathf.RoundToInt(proceduralBaseKnives + proceduralLevelNumber * proceduralKnifeIncrease);
+            // Legacy rotation values removed; target behaviours drive rotation.
+            level.requirements.maxKnives = 0;
 
             return level;
         }

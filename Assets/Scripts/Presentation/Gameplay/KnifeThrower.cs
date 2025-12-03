@@ -35,6 +35,7 @@ namespace KnifeToss.Presentation.Gameplay
         private KnifeMagazine magazine;
         private KnifeToss.Core.Abstractions.IKnifeTracker knifeTracker;
         private IObjectResolver objectResolver;
+        private ITargetScaleProvider targetScaleProvider;
 
         public event Action KnifeThrown;
 
@@ -140,7 +141,7 @@ namespace KnifeToss.Presentation.Gameplay
 
             knifeTransform.SetParent(parent);
             KnifeSetupUtility.PositionAtLauncher(knifeObject, launcherTransform);
-            KnifeSetupUtility.ApplyVisuals(knifeObject, knifePool.PrefabOriginalScale, knifePool.PrefabOriginalColor);
+            KnifeSetupUtility.ApplyVisuals(knifeObject, ResolveKnifeScale(), knifePool.PrefabOriginalColor);
             KnifeSetupUtility.EnableColliders(knifeObject, true);
         }
 
@@ -216,11 +217,19 @@ namespace KnifeToss.Presentation.Gameplay
         }
 
         [VContainer.Inject]
-        public void Construct(KnifeToss.Core.Abstractions.IKnifeTracker tracker, IObjectResolver resolver)
+        public void Construct(KnifeToss.Core.Abstractions.IKnifeTracker tracker, IObjectResolver resolver, ITargetScaleProvider scaleProvider = null)
         {
             knifeTracker = tracker;
             objectResolver = resolver;
+            targetScaleProvider = scaleProvider;
             InitializePoolAndMagazine();
+            UpdateMagazineScale();
+        }
+
+        public void SetScaleProvider(ITargetScaleProvider scaleProvider)
+        {
+            targetScaleProvider = scaleProvider;
+            UpdateMagazineScale();
         }
 
         private void InitializePoolAndMagazine()
@@ -240,6 +249,7 @@ namespace KnifeToss.Presentation.Gameplay
                 slideAnimationDuration,
                 queueScaleEnd,
                 queueOpacityEnd);
+            UpdateMagazineScale();
         }
 
         private void EnsureInitialized()
@@ -248,6 +258,27 @@ namespace KnifeToss.Presentation.Gameplay
             {
                 InitializePoolAndMagazine();
             }
+        }
+
+        private Vector3 ResolveKnifeScale()
+        {
+            float scaleFactor = ResolveScaleFactor();
+            return knifePool != null ? knifePool.PrefabOriginalScale * scaleFactor : Vector3.one * scaleFactor;
+        }
+
+        private float ResolveScaleFactor()
+        {
+            return targetScaleProvider != null ? targetScaleProvider.PrimaryScale : 1f;
+        }
+
+        private void UpdateMagazineScale()
+        {
+            if (magazine == null)
+            {
+                return;
+            }
+
+            magazine.SetScaleMultiplier(ResolveScaleFactor());
         }
 
         private sealed class NullThrowInput : IThrowInput
@@ -260,6 +291,23 @@ namespace KnifeToss.Presentation.Gameplay
             public void Enable() { }
             public void Disable() { }
         }
+
+        [System.Serializable]
+        public sealed class MagazineConfig
+        {
+            [SerializeField] private int poolWarmupCount = 10;
+            [SerializeField] private int visibleQueueCount = 5;
+            [SerializeField] private float queueSpacing = 0.5f;
+            [SerializeField] private float slideAnimationDuration = 0.3f;
+            [SerializeField] private float queueScaleEnd = 0.5f;
+            [SerializeField] private float queueOpacityEnd = 0.3f;
+
+            public int PoolWarmupCount => poolWarmupCount;
+            public int VisibleQueueCount => visibleQueueCount;
+            public float QueueSpacing => queueSpacing;
+            public float SlideAnimationDuration => slideAnimationDuration;
+            public float QueueScaleEnd => queueScaleEnd;
+            public float QueueOpacityEnd => queueOpacityEnd;
+        }
     }
 }
-

@@ -21,6 +21,7 @@ namespace KnifeToss.Presentation.Gameplay
         private readonly List<GameObject> queue = new List<GameObject>();
 
         private int knivesRemaining;
+        private float scaleMultiplier = 1f;
 
         public KnifeMagazine(
             KnifePool knifePool,
@@ -89,6 +90,11 @@ namespace KnifeToss.Presentation.Gameplay
             TweenKiller.Kill(queue);
         }
 
+        public void SetScaleMultiplier(float multiplier)
+        {
+            scaleMultiplier = Mathf.Max(0.01f, multiplier);
+        }
+
         private void WarmPool(int totalKnives)
         {
             pool.Warmup(Mathf.Max(0, totalKnives));
@@ -121,7 +127,7 @@ namespace KnifeToss.Presentation.Gameplay
                 SpriteRenderer renderer = knife.GetComponent<SpriteRenderer>();
 
                 Vector3 targetPosition = GetQueuePosition(i);
-                Vector3 targetScale = pool.PrefabOriginalScale * GetQueueScaleMultiplier(i);
+                Vector3 targetScale = pool.PrefabOriginalScale * GetQueueScaleMultiplier(i) * ResolveScaleMultiplier();
                 Color targetColor = pool.PrefabOriginalColor * new Color(1f, 1f, 1f, GetQueueOpacityMultiplier(i));
 
                 knifeTransform.DOMove(targetPosition, slideAnimationDuration).SetEase(Ease.OutQuad);
@@ -156,7 +162,7 @@ namespace KnifeToss.Presentation.Gameplay
             Transform knifeTransform = knife.transform;
             knifeTransform.position = GetQueuePosition(index);
             knifeTransform.rotation = launcher != null ? launcher.rotation : Quaternion.identity;
-            Vector3 targetScale = pool.PrefabOriginalScale * GetQueueScaleMultiplier(index);
+            Vector3 targetScale = pool.PrefabOriginalScale * GetQueueScaleMultiplier(index) * ResolveScaleMultiplier();
             knifeTransform.SetParent(queueParent);
 
             Color targetColor = ResolveQueueColor(index);
@@ -226,6 +232,11 @@ namespace KnifeToss.Presentation.Gameplay
         {
             float opacity = GetQueueOpacityMultiplier(index);
             return pool.PrefabOriginalColor * new Color(1f, 1f, 1f, opacity);
+        }
+
+        private float ResolveScaleMultiplier()
+        {
+            return scaleMultiplier;
         }
     }
 }

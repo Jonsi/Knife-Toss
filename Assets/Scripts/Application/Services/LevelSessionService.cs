@@ -1,6 +1,7 @@
 using System;
 using Cysharp.Threading.Tasks;
 using KnifeToss.Core.Abstractions;
+using KnifeToss.Core.Data;
 using KnifeToss.Core.Domain;
 using KnifeToss.Core.Events;
 using KnifeToss.Infrastructure.Leveling;
@@ -24,6 +25,7 @@ namespace KnifeToss.Application.Services
         private readonly KnifeImpactEventChannel impactEventChannel;
 
         private LevelRules currentRules;
+        private LevelData currentLevelData;
 
         public LevelSessionService(
             LevelSession levelSession,
@@ -73,7 +75,7 @@ namespace KnifeToss.Application.Services
             ConfigureThrower(knivesParent, currentRules);
 
             await UniTask.WaitForEndOfFrame();
-            int preStuckSpawned = preStuckSpawner.Spawn(currentRules);
+            int preStuckSpawned = preStuckSpawner.Spawn(currentLevelData);
             session.SeedPreStuckKnives(preStuckSpawned);
         }
 
@@ -114,13 +116,9 @@ namespace KnifeToss.Application.Services
 
         private void ConfigureTarget(LevelRules rules)
         {
-            RotatingTarget rotatingTarget = gameplayObjectProvider.GetTarget();
-
-            rotatingTarget.Resume();
-            rotatingTarget.SetRotationSpeed(rules.RotationSpeed);
-            rotatingTarget.SetDirectionChangeInterval(rules.DirectionChangeInterval);
-            rotatingTarget.SetRandomizeDirection(rules.RandomizeDirection);
-            rotatingTarget.ResetRotation();
+            TargetGroupManager targetGroupManager = gameplayObjectProvider.GetTargetGroupManager();
+            targetGroupManager.Configure(currentLevelData, 0);
+            targetGroupManager.ResumeAll();
         }
 
         private void ConfigureThrower(Transform knivesParent, LevelRules rules)
@@ -128,6 +126,7 @@ namespace KnifeToss.Application.Services
             KnifeThrower knifeThrower = gameplayObjectProvider.GetKnifeThrower();
 
             knifeThrower.ResetState();
+            knifeThrower.SetScaleProvider(gameplayObjectProvider.GetTargetGroupManager());
             knifeThrower.SetMaxKnives(rules.MaxKnives);
             knifeThrower.SetTotalKnives(rules.RequiredKnives);
             knifeThrower.SetKnivesParent(knivesParent);
@@ -162,6 +161,7 @@ namespace KnifeToss.Application.Services
 
         private void ApplyRules(int levelIndex)
         {
+            currentLevelData = catalog.GetLevelData(levelIndex);
             currentRules = catalog.GetRules(levelIndex);
             session.Begin(levelIndex, currentRules);
         }

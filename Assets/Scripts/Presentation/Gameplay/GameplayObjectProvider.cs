@@ -14,8 +14,8 @@ namespace KnifeToss.Presentation.Gameplay
         private readonly Transform runtimeRoot;
         private readonly IObjectResolver resolver;
 
-        private RotatingTarget targetInstance;
         private KnifeThrower throwerInstance;
+        private TargetGroupManager targetGroupManager;
 
         public GameplayObjectProvider(
             GameObject targetPrefab,
@@ -33,23 +33,8 @@ namespace KnifeToss.Presentation.Gameplay
 
         public RotatingTarget GetTarget()
         {
-            if (targetInstance != null)
-                return targetInstance;
-
-            if (targetPrefab == null)
-            {
-                throw new System.InvalidOperationException("Target prefab is not assigned.");
-            }
-
-            GameObject instance = Object.Instantiate(targetPrefab, runtimeRoot);
-            instance.name = "TargetInstance";
-            resolver.InjectGameObject(instance);
-            targetInstance = instance.GetComponent<RotatingTarget>();
-            if (targetInstance == null)
-            {
-                throw new System.InvalidOperationException("Target prefab must contain a RotatingTarget component.");
-            }
-            return targetInstance;
+            TargetGroupManager group = GetTargetGroupManager();
+            return group != null ? group.PrimaryTarget?.GetComponent<RotatingTarget>() : null;
         }
 
         public KnifeThrower GetKnifeThrower()
@@ -72,6 +57,21 @@ namespace KnifeToss.Presentation.Gameplay
                 throw new System.InvalidOperationException("KnifeThrower prefab must contain a KnifeThrower component.");
             }
             return throwerInstance;
+        }
+
+        public TargetGroupManager GetTargetGroupManager()
+        {
+            if (targetGroupManager != null)
+            {
+                return targetGroupManager;
+            }
+
+            GameObject container = new GameObject("TargetGroupManager");
+            container.transform.SetParent(runtimeRoot, false);
+            targetGroupManager = container.AddComponent<TargetGroupManager>();
+            resolver.InjectGameObject(container);
+            targetGroupManager.Initialize(targetPrefab, resolver);
+            return targetGroupManager;
         }
 
         private static void EnsureKnifeThrowRelay(GameObject host)

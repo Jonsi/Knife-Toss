@@ -18,5 +18,10 @@ namespace KnifeToss.Infrastructure.Leveling
             LevelData data = levelConfig != null ? levelConfig.GetLevelData(levelIndex) : null;
             return LevelRules.FromLevelData(data);
         }
+
+        public LevelData GetLevelData(int levelIndex)
+        {
+            return levelConfig != null ? levelConfig.GetLevelData(levelIndex) : null;
+        }
     }
 }
