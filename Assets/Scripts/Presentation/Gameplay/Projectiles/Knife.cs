@@ -26,6 +26,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         private bool isResolved;
         private bool isStuck;
         private Rigidbody2D rb2d;
+        [SerializeField] private Transform snapPosition;
         private Sequence failSequence;
         private Collider2D[] cachedColliders;
         private IKnifeTracker knifeTracker;
@@ -47,6 +48,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         private void Awake()
         {
             cachedColliders = GetComponents<Collider2D>();
+            ResolveSnapPosition();
         }
 
         /// <summary>
@@ -152,20 +154,8 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         /// </summary>
         private void HandleCollision(Transform collisionTransform, GameObject collisionObject, Vector3 impactPoint)
         {
-            if (!CanResolveImpact())
+            if (!CanResolveImpact() || collisionObject == null)
             {
-                return;
-            }
-
-            if (collisionObject != null && collisionObject.GetComponentInParent<HitableObjectView>() != null)
-            {
-                // Let the hitable object handle its own hit logic (sound/VFX) without treating it as a target hit.
-                return;
-            }
-
-            if (collisionObject.CompareTag("Target"))
-            {
-                StickToTarget(collisionTransform, impactPoint);
                 return;
             }
 
@@ -176,16 +166,42 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
                 {
                     TriggerFail(collisionTransform != null ? collisionTransform.position : transform.position);
                 }
+                return;
+            }
+
+            HitableObjectView hitableView = collisionObject.GetComponentInParent<HitableObjectView>();
+            if (hitableView != null)
+            {
+                Collider2D hitableCollider = hitableView.GetComponent<Collider2D>()
+                    ?? collisionObject.GetComponent<Collider2D>();
+                Transform anchor = hitableCollider != null ? hitableCollider.transform : hitableView.transform;
+                StickToCollider(anchor, hitableCollider, impactPoint);
+                return;
+            }
+
+            if (collisionObject.CompareTag("Target"))
+            {
+                Collider2D targetCollider = collisionObject.GetComponent<Collider2D>()
+                    ?? collisionObject.GetComponentInParent<Collider2D>();
+                Transform anchor = targetCollider != null ? targetCollider.transform : collisionTransform;
+                StickToCollider(anchor, targetCollider, impactPoint);
             }
         }
 
         /// <summary>
-        /// Performs the StickToTarget operation.
+        /// Performs the StickToCircle operation using collider data.
         /// </summary>
-        private void StickToTarget(Transform targetTransform, Vector3 impactPoint)
+        private void StickToCollider(Transform anchor, Collider2D collider, Vector3 impactPoint)
         {
+            if (anchor == null)
+            {
+                return;
+            }
+
+            ResolveCircleSnap(anchor, collider, impactPoint, out Vector3 center, out Vector3 surfacePoint, out Vector2 surfaceDirection);
+
             ResolveAsStuck();
-            AlignToTarget(targetTransform, impactPoint);
+            AlignToSurface(anchor, surfacePoint);
             thrower?.OnKnifeResolved();
             PlaySound(soundSettings != null ? soundSettings.HitTargetSound : null);
             impactEventChannel?.RaiseKnifeStuck(impactPoint);
@@ -263,32 +279,23 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         }
 
         /// <summary>
-        /// Performs the AlignToTarget operation.
+        /// Performs the AlignToCircleEdge operation.
         /// </summary>
-        private void AlignToTarget(Transform targetTransform, Vector3 impactPoint)
+        private void AlignToSurface(Transform anchorParent, Vector3 surfacePoint)
         {
-            Vector2 targetCenter = targetTransform.position;
-            Vector2 fromCenter = ((Vector2)impactPoint - targetCenter);
-            if (fromCenter.sqrMagnitude < Mathf.Epsilon)
+            Quaternion rotation = transform.rotation;
+
+            Vector3 snapTarget = surfacePoint;
+            if (TryResolveSnapOffset(rotation, out Vector3 snapOffset))
             {
-                fromCenter = ((Vector2)transform.position - targetCenter);
+                transform.SetPositionAndRotation(snapTarget - snapOffset, rotation);
+            }
+            else
+            {
+                transform.SetPositionAndRotation(snapTarget, rotation);
             }
 
-            Vector2 direction = fromCenter.sqrMagnitude > Mathf.Epsilon
-                ? fromCenter.normalized
-                : Vector2.up;
-
-            CircleCollider2D targetCollider = targetTransform.GetComponent<CircleCollider2D>();
-            float uniformScale = Mathf.Max(targetTransform.lossyScale.x, targetTransform.lossyScale.y);
-            float targetRadius = targetCollider != null
-                ? targetCollider.radius * uniformScale
-                : 0.5f;
-
-            float embedDistance = Mathf.Max(targetRadius - embedOffset, 0f);
-            Vector2 embeddedPosition = targetCenter + direction * embedDistance;
-            transform.position = embeddedPosition;
-            transform.up = -direction;
-            transform.SetParent(targetTransform);
+            transform.SetParent(anchorParent, true);
         }
 
         /// <summary>
@@ -409,6 +416,80 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             }
 
             return collider.ClosestPoint(transform.position);
+        }
+
+        /// <summary>
+        /// Performs the ResolveImpactDirection operation.
+        /// </summary>
+        private Vector2 ResolveImpactDirection(Vector3 circleCenter, Vector3 impactPoint)
+        {
+            Vector2 fromCenter = (Vector2)(impactPoint - circleCenter);
+            if (fromCenter.sqrMagnitude < Mathf.Epsilon)
+            {
+                fromCenter = (Vector2)(transform.position - circleCenter);
+            }
+
+            return fromCenter.sqrMagnitude > Mathf.Epsilon ? fromCenter.normalized : Vector2.up;
+        }
+
+        /// <summary>
+        /// Performs the TryResolveSnapOffset operation.
+        /// </summary>
+        private bool TryResolveSnapOffset(Quaternion rotation, out Vector3 snapOffset)
+        {
+            Transform resolvedSnap = ResolveSnapPosition();
+            if (resolvedSnap == null)
+            {
+                snapOffset = Vector3.zero;
+                return false;
+            }
+
+            Vector3 scaledLocal = Vector3.Scale(resolvedSnap.localPosition, transform.lossyScale);
+            snapOffset = rotation * scaledLocal;
+            return true;
+        }
+
+        /// <summary>
+        /// Performs the ResolveSnapPosition operation.
+        /// </summary>
+        private Transform ResolveSnapPosition()
+        {
+            if (snapPosition != null)
+            {
+                return snapPosition;
+            }
+
+            snapPosition = transform.Find("SnapPosition");
+            return snapPosition;
+        }
+
+        /// <summary>
+        /// Resolves circle collider center and surface point for snapping.
+        /// </summary>
+        private void ResolveCircleSnap(Transform anchor, Collider2D collider, Vector3 impactPoint, out Vector3 center, out Vector3 surfacePoint, out Vector2 surfaceDirection)
+        {
+            CircleCollider2D circle = collider as CircleCollider2D;
+            if (circle == null && anchor != null)
+            {
+                circle = anchor.GetComponent<CircleCollider2D>();
+            }
+
+            center = anchor != null ? anchor.position : impactPoint;
+            surfaceDirection = ResolveImpactDirection(center, impactPoint);
+            surfacePoint = center;
+
+            if (circle == null)
+            {
+                return;
+            }
+
+            center = circle.transform.TransformPoint(circle.offset);
+            float uniformScale = Mathf.Max(circle.transform.lossyScale.x, circle.transform.lossyScale.y);
+            float radius = circle.radius * uniformScale;
+
+            surfaceDirection = ResolveImpactDirection(center, impactPoint);
+            surfaceDirection = surfaceDirection.sqrMagnitude > Mathf.Epsilon ? surfaceDirection.normalized : Vector2.up;
+            surfacePoint = center + (Vector3)(surfaceDirection * radius);
         }
 
         /// <summary>
