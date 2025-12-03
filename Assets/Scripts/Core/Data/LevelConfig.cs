@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace KnifeToss.Core.Data
 {
+    /// <summary>
+    /// Represents the LevelConfig class.
+    /// </summary>
     [CreateAssetMenu(fileName = "LevelConfig", menuName = "Knife Toss/Level Config")]
     public class LevelConfig : ScriptableObject
     {
@@ -23,6 +26,9 @@ namespace KnifeToss.Core.Data
         [Tooltip("Rotation speed added per procedural level after the authored ones")]
         public float proceduralSpeedIncrease = 5f;
 
+        /// <summary>
+        /// Performs the GetLevelData operation.
+        /// </summary>
         public LevelData GetLevelData(int levelIndex)
         {
 
@@ -51,6 +57,9 @@ namespace KnifeToss.Core.Data
             return new LevelData();
         }
 
+        /// <summary>
+        /// Performs the GenerateProceduralLevel operation.
+        /// </summary>
         private LevelData GenerateProceduralLevel(int levelIndex)
         {
             LevelData level = new LevelData();
@@ -60,7 +69,6 @@ namespace KnifeToss.Core.Data
 
 
             level.requirements.requiredKnives = Mathf.RoundToInt(proceduralBaseKnives + proceduralLevelNumber * proceduralKnifeIncrease);
-            // Legacy rotation values removed; target behaviours drive rotation.
             level.requirements.maxKnives = 0;
 
             return level;

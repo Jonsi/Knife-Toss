@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace KnifeToss.Core.Data
 {
+    /// <summary>
+    /// Represents the LevelProgressData class.
+    /// </summary>
     [Serializable]
     public class LevelProgressData
     {

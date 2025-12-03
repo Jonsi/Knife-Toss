@@ -21,6 +21,9 @@ namespace KnifeToss.Core.Data
         [Tooltip("Curve mapping normalized radius (0-1) to normalized scale (0-1).")]
         public AnimationCurve radiusToScale = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
+        /// <summary>
+        /// Performs the Evaluate operation.
+        /// </summary>
         public float Evaluate(float radius)
         {
             if (maxRadius <= minRadius)
@@ -34,6 +37,9 @@ namespace KnifeToss.Core.Data
             return Mathf.Max(0.01f, scale);
         }
 
+        /// <summary>
+        /// Performs the Clone operation.
+        /// </summary>
         public TargetScalingConfig Clone()
         {
             return new TargetScalingConfig

@@ -23,6 +23,9 @@ namespace KnifeToss.Presentation.Gameplay
         private int knivesRemaining;
         private float scaleMultiplier = 1f;
 
+        /// <summary>
+        /// Performs the KnifeMagazine operation.
+        /// </summary>
         public KnifeMagazine(
             KnifePool knifePool,
             Transform queueRoot,
@@ -46,6 +49,9 @@ namespace KnifeToss.Presentation.Gameplay
         public int KnivesRemaining => knivesRemaining;
         public IReadOnlyList<GameObject> QueuedKnives => queue;
 
+        /// <summary>
+        /// Performs the Configure operation.
+        /// </summary>
         public void Configure(int totalKnives)
         {
             knivesRemaining = totalKnives;
@@ -56,6 +62,9 @@ namespace KnifeToss.Presentation.Gameplay
             FillInitialQueue();
         }
 
+        /// <summary>
+        /// Performs the TryTakeNext operation.
+        /// </summary>
         public bool TryTakeNext(out GameObject knife)
         {
             knife = null;
@@ -71,6 +80,9 @@ namespace KnifeToss.Presentation.Gameplay
             return knife != null;
         }
 
+        /// <summary>
+        /// Performs the SlideQueueForward operation.
+        /// </summary>
         public void SlideQueueForward()
         {
             AnimateQueue();
@@ -78,6 +90,9 @@ namespace KnifeToss.Presentation.Gameplay
             UpdateQueueVisibility();
         }
 
+        /// <summary>
+        /// Performs the Reset operation.
+        /// </summary>
         public void Reset()
         {
             pool.ReturnAll(queue);
@@ -85,21 +100,33 @@ namespace KnifeToss.Presentation.Gameplay
             knivesRemaining = 0;
         }
 
+        /// <summary>
+        /// Performs the KillTweens operation.
+        /// </summary>
         public void KillTweens()
         {
             TweenKiller.Kill(queue);
         }
 
+        /// <summary>
+        /// Performs the SetScaleMultiplier operation.
+        /// </summary>
         public void SetScaleMultiplier(float multiplier)
         {
             scaleMultiplier = Mathf.Max(0.01f, multiplier);
         }
 
+        /// <summary>
+        /// Performs the WarmPool operation.
+        /// </summary>
         private void WarmPool(int totalKnives)
         {
             pool.Warmup(Mathf.Max(0, totalKnives));
         }
 
+        /// <summary>
+        /// Performs the FillInitialQueue operation.
+        /// </summary>
         private void FillInitialQueue()
         {
             int targetCount = Mathf.Min(visibleQueueCount + 1, knivesRemaining);
@@ -111,6 +138,9 @@ namespace KnifeToss.Presentation.Gameplay
             UpdateQueueVisibility();
         }
 
+        /// <summary>
+        /// Performs the AnimateQueue operation.
+        /// </summary>
         private void AnimateQueue()
         {
             for (int i = 0; i < queue.Count; i++)
@@ -140,6 +170,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the MaintainQueueSize operation.
+        /// </summary>
         private void MaintainQueueSize()
         {
             int targetCount = Mathf.Min(visibleQueueCount + 1, knivesRemaining);
@@ -149,6 +182,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the AddKnifeToQueue operation.
+        /// </summary>
         private void AddKnifeToQueue()
         {
             GameObject knife = pool.GetOrCreate();
@@ -172,6 +208,9 @@ namespace KnifeToss.Presentation.Gameplay
             queue.Add(knife);
         }
 
+        /// <summary>
+        /// Performs the GetQueuePosition operation.
+        /// </summary>
         private Vector3 GetQueuePosition(int queueIndex)
         {
             Vector3 origin = launcher != null ? launcher.position : queueParent.position;
@@ -179,6 +218,9 @@ namespace KnifeToss.Presentation.Gameplay
             return origin + Vector3.right * offsetX;
         }
 
+        /// <summary>
+        /// Performs the GetQueueScaleMultiplier operation.
+        /// </summary>
         private float GetQueueScaleMultiplier(int queueIndex)
         {
             if (visibleQueueCount <= 1)
@@ -190,6 +232,9 @@ namespace KnifeToss.Presentation.Gameplay
             return Mathf.Lerp(1f, queueScaleEnd, t);
         }
 
+        /// <summary>
+        /// Performs the GetQueueOpacityMultiplier operation.
+        /// </summary>
         private float GetQueueOpacityMultiplier(int queueIndex)
         {
             if (queueIndex >= visibleQueueCount)
@@ -206,6 +251,9 @@ namespace KnifeToss.Presentation.Gameplay
             return Mathf.Lerp(1f, queueOpacityEnd, t);
         }
 
+        /// <summary>
+        /// Performs the UpdateQueueVisibility operation.
+        /// </summary>
         private void UpdateQueueVisibility()
         {
             for (int i = 0; i < queue.Count; i++)
@@ -223,17 +271,26 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the ClearQueue operation.
+        /// </summary>
         private void ClearQueue()
         {
             queue.Clear();
         }
 
+        /// <summary>
+        /// Performs the ResolveQueueColor operation.
+        /// </summary>
         private Color ResolveQueueColor(int index)
         {
             float opacity = GetQueueOpacityMultiplier(index);
             return pool.PrefabOriginalColor * new Color(1f, 1f, 1f, opacity);
         }
 
+        /// <summary>
+        /// Performs the ResolveScaleMultiplier operation.
+        /// </summary>
         private float ResolveScaleMultiplier()
         {
             return scaleMultiplier;

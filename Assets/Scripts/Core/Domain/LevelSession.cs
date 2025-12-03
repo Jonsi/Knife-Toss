@@ -5,6 +5,9 @@ namespace KnifeToss.Core.Domain
 
 
 
+    /// <summary>
+    /// Represents the LevelSession class.
+    /// </summary>
     public class LevelSession
     {
         public event Action<LevelSession> SessionChanged;
@@ -25,6 +28,9 @@ namespace KnifeToss.Core.Domain
 
         private int preStuckBaseline;
 
+        /// <summary>
+        /// Performs the Begin operation.
+        /// </summary>
         public void Begin(int levelIndex, LevelRules rules)
         {
             LevelIndex = levelIndex;
@@ -41,6 +47,9 @@ namespace KnifeToss.Core.Domain
             NotifyChanged();
         }
 
+        /// <summary>
+        /// Performs the SeedPreStuckKnives operation.
+        /// </summary>
         public void SeedPreStuckKnives(int count)
         {
             if (count <= 0)
@@ -52,6 +61,9 @@ namespace KnifeToss.Core.Domain
             NotifyChanged();
         }
 
+        /// <summary>
+        /// Performs the RecordThrow operation.
+        /// </summary>
         public void RecordThrow()
         {
             if (IsComplete || IsFailed)
@@ -61,6 +73,9 @@ namespace KnifeToss.Core.Domain
             NotifyChanged();
         }
 
+        /// <summary>
+        /// Performs the RecordKnifeStuck operation.
+        /// </summary>
         public void RecordKnifeStuck()
         {
             if (IsComplete || IsFailed)
@@ -71,6 +86,9 @@ namespace KnifeToss.Core.Domain
             NotifyChanged();
         }
 
+        /// <summary>
+        /// Performs the AddScore operation.
+        /// </summary>
         public void AddScore(int amount)
         {
             if (amount <= 0)
@@ -82,12 +100,18 @@ namespace KnifeToss.Core.Domain
             NotifyChanged();
         }
 
+        /// <summary>
+        /// Performs the MarkTargetCompleted operation.
+        /// </summary>
         public void MarkTargetCompleted()
         {
             TargetsRemaining = Math.Max(0, TargetsRemaining - 1);
             NotifyChanged();
         }
 
+        /// <summary>
+        /// Performs the RecordFailure operation.
+        /// </summary>
         public void RecordFailure()
         {
             if (IsComplete || IsFailed)
@@ -99,6 +123,9 @@ namespace KnifeToss.Core.Domain
             Failed?.Invoke(this);
         }
 
+        /// <summary>
+        /// Performs the HasExhaustedKnives operation.
+        /// </summary>
         public bool HasExhaustedKnives()
         {
             if (Rules.MaxKnives <= 0)
@@ -107,6 +134,9 @@ namespace KnifeToss.Core.Domain
             return KnivesThrown >= Rules.MaxKnives && KnivesStuck < Rules.RequiredKnives;
         }
 
+        /// <summary>
+        /// Performs the EvaluateProgress operation.
+        /// </summary>
         private void EvaluateProgress()
         {
             if (PlayerKnivesStuck >= Rules.RequiredKnives)
@@ -116,6 +146,9 @@ namespace KnifeToss.Core.Domain
             }
         }
 
+        /// <summary>
+        /// Performs the NotifyChanged operation.
+        /// </summary>
         private void NotifyChanged()
         {
             SessionChanged?.Invoke(this);

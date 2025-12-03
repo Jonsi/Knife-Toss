@@ -8,6 +8,9 @@ using VContainer;
 
 namespace KnifeToss.Presentation.UI
 {
+    /// <summary>
+    /// Represents the LevelHudPresenter class.
+    /// </summary>
     public class LevelHudPresenter : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI levelText;
@@ -24,6 +27,9 @@ namespace KnifeToss.Presentation.UI
         private ILevelCommandInvoker commandInvoker;
         private ISettingsService _settingsService;
 
+        /// <summary>
+        /// Performs the Awake operation.
+        /// </summary>
         private void Awake()
         {
             EnsureCommandInvoker();
@@ -39,6 +45,9 @@ namespace KnifeToss.Presentation.UI
             }
         }
 
+        /// <summary>
+        /// Performs the OnDestroy operation.
+        /// </summary>
         private void OnDestroy()
         {
             if (retryButton != null)
@@ -51,6 +60,9 @@ namespace KnifeToss.Presentation.UI
             }
         }
 
+        /// <summary>
+        /// Performs the Render operation.
+        /// </summary>
         public void Render(LevelHudViewModel viewModel)
         {
             if (levelText != null)
@@ -60,12 +72,16 @@ namespace KnifeToss.Presentation.UI
             levelCompletePopup?.SetLabel(viewModel.LevelCompleteLabel);
         }
 
+        /// <summary>
+        /// Performs the ShowFail operation.
+        /// </summary>
         public void ShowFail(bool show)
         {
-            // Fail text functionality is removed.
-            // The retry button is now shown via LevelFlowCoordinator.
         }
 
+        /// <summary>
+        /// Performs the ShowLevelComplete operation.
+        /// </summary>
         public void ShowLevelComplete(bool show)
         {
             if (levelCompletePopup == null)
@@ -77,6 +93,9 @@ namespace KnifeToss.Presentation.UI
                 levelCompletePopup.Hide();
         }
 
+        /// <summary>
+        /// Performs the ResetState operation.
+        /// </summary>
         public void ResetState()
         {
             ShowFail(false);
@@ -84,6 +103,9 @@ namespace KnifeToss.Presentation.UI
             StopRetryAnimation();
         }
 
+        /// <summary>
+        /// Performs the Construct operation.
+        /// </summary>
         [VContainer.Inject]
         public void Construct(ILevelCommandInvoker invoker, ISettingsService settingsService)
         {
@@ -93,6 +115,9 @@ namespace KnifeToss.Presentation.UI
             UpdateMuteButtonIcon();
         }
 
+        /// <summary>
+        /// Performs the EnsureCommandInvoker operation.
+        /// </summary>
         private void EnsureCommandInvoker()
         {
             if (commandInvoker != null)
@@ -106,6 +131,9 @@ namespace KnifeToss.Presentation.UI
             }
         }
 
+        /// <summary>
+        /// Performs the PropagateInvokerToPopup operation.
+        /// </summary>
         private void PropagateInvokerToPopup()
         {
             if (levelCompletePopup != null)
@@ -114,17 +142,26 @@ namespace KnifeToss.Presentation.UI
             }
         }
 
+        /// <summary>
+        /// Performs the RaiseRetry operation.
+        /// </summary>
         private void RaiseRetry()
         {
             commandInvoker?.Retry();
         }
 
+        /// <summary>
+        /// Performs the ToggleMute operation.
+        /// </summary>
         private void ToggleMute()
         {
             _settingsService.ToggleMute();
             UpdateMuteButtonIcon();
         }
 
+        /// <summary>
+        /// Performs the UpdateMuteButtonIcon operation.
+        /// </summary>
         private void UpdateMuteButtonIcon()
         {
             if (muteIcon == null || unmuteIcon == null)
@@ -137,11 +174,17 @@ namespace KnifeToss.Presentation.UI
             unmuteIcon.SetActive(!isMuted);
         }
 
+        /// <summary>
+        /// Performs the PlayRetryAnimation operation.
+        /// </summary>
         public void PlayRetryAnimation()
         {
             retryButtonAnimator?.Play();
         }
 
+        /// <summary>
+        /// Performs the StopRetryAnimation operation.
+        /// </summary>
         public void StopRetryAnimation()
         {
             retryButtonAnimator?.StopAnimation();

@@ -18,6 +18,9 @@ namespace KnifeToss.Installers
 
 
 
+    /// <summary>
+    /// Represents the GameplayInstaller class.
+    /// </summary>
     public class GameplayInstaller : LifetimeScope
     {
         private static readonly string HighestLevelKey = Infrastructure.Persistence.PlayerPrefsProgressStore.DefaultHighestLevelKey;
@@ -38,6 +41,9 @@ namespace KnifeToss.Installers
         [Header("UI References")]
         [SerializeField] private LevelHudPresenter hudPresenter;
 
+        /// <summary>
+        /// Performs the Configure operation.
+        /// </summary>
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterInstance(levelConfig);
@@ -100,15 +106,24 @@ namespace KnifeToss.Installers
                 .As<IDisposable>();
         }
 
+        /// <summary>
+        /// Represents the MusicPlayerStart class.
+        /// </summary>
         public class MusicPlayerStart : IStartable
         {
             private readonly IMusicPlayer _musicPlayer;
 
+            /// <summary>
+            /// Performs the MusicPlayerStart operation.
+            /// </summary>
             public MusicPlayerStart(IMusicPlayer musicPlayer)
             {
                 _musicPlayer = musicPlayer;
             }
 
+            /// <summary>
+            /// Performs the Start operation.
+            /// </summary>
             public void Start()
             {
                 _musicPlayer.PlayMusic();

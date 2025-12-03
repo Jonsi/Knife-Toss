@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace KnifeToss.Core.Data
 {
+    /// <summary>
+    /// Represents the LevelRequirementsConfig class.
+    /// </summary>
     [System.Serializable]
     public class LevelRequirementsConfig
     {
@@ -12,6 +15,9 @@ namespace KnifeToss.Core.Data
         public int maxKnives = 0;
     }
 
+    /// <summary>
+    /// Represents the TargetGroupConfig class.
+    /// </summary>
     [System.Serializable]
     public class TargetGroupConfig
     {
@@ -19,6 +25,9 @@ namespace KnifeToss.Core.Data
         public System.Collections.Generic.List<TargetDefinition> targets = new System.Collections.Generic.List<TargetDefinition>();
     }
 
+    /// <summary>
+    /// Represents the LevelData class.
+    /// </summary>
     [System.Serializable]
     public class LevelData
     {

@@ -17,6 +17,9 @@ namespace KnifeToss.Presentation.Gameplay
         private KnifeThrower throwerInstance;
         private TargetGroupManager targetGroupManager;
 
+        /// <summary>
+        /// Performs the GameplayObjectProvider operation.
+        /// </summary>
         public GameplayObjectProvider(
             GameObject targetPrefab,
             GameObject knifeThrowerPrefab,
@@ -31,12 +34,18 @@ namespace KnifeToss.Presentation.Gameplay
             runtimeRoot.SetParent(lifetimeTransform, false);
         }
 
+        /// <summary>
+        /// Performs the GetTarget operation.
+        /// </summary>
         public RotatingTarget GetTarget()
         {
             TargetGroupManager group = GetTargetGroupManager();
             return group != null ? group.PrimaryTarget?.GetComponent<RotatingTarget>() : null;
         }
 
+        /// <summary>
+        /// Performs the GetKnifeThrower operation.
+        /// </summary>
         public KnifeThrower GetKnifeThrower()
         {
             if (throwerInstance != null)
@@ -59,6 +68,9 @@ namespace KnifeToss.Presentation.Gameplay
             return throwerInstance;
         }
 
+        /// <summary>
+        /// Performs the GetTargetGroupManager operation.
+        /// </summary>
         public TargetGroupManager GetTargetGroupManager()
         {
             if (targetGroupManager != null)
@@ -74,6 +86,9 @@ namespace KnifeToss.Presentation.Gameplay
             return targetGroupManager;
         }
 
+        /// <summary>
+        /// Performs the EnsureKnifeThrowRelay operation.
+        /// </summary>
         private static void EnsureKnifeThrowRelay(GameObject host)
         {
             if (host.GetComponent<KnifeThrowRelay>() == null)

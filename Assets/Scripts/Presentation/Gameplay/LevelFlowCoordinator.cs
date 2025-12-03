@@ -22,6 +22,9 @@ namespace KnifeToss.Presentation.Gameplay
         private readonly IStarRatingService _starRatingService;
         private readonly ILevelProgressStore _levelProgressStore;
 
+        /// <summary>
+        /// Performs the LevelFlowCoordinator operation.
+        /// </summary>
         public LevelFlowCoordinator(
             LevelSessionService sessionService,
             LevelSession session,
@@ -38,6 +41,9 @@ namespace KnifeToss.Presentation.Gameplay
             _levelProgressStore = levelProgressStore;
         }
 
+        /// <summary>
+        /// Performs the Start operation.
+        /// </summary>
         public void Start()
         {
             if (commandChannel != null)
@@ -56,6 +62,9 @@ namespace KnifeToss.Presentation.Gameplay
             InitializeAsync().Forget();
         }
 
+        /// <summary>
+        /// Performs the Dispose operation.
+        /// </summary>
         public void Dispose()
         {
             if (commandChannel != null)
@@ -72,6 +81,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the InitializeAsync operation.
+        /// </summary>
         private async UniTaskVoid InitializeAsync()
         {
             hudPresenter?.ResetState();
@@ -79,21 +91,33 @@ namespace KnifeToss.Presentation.Gameplay
             RenderHud();
         }
 
+        /// <summary>
+        /// Performs the HandleNextRequested operation.
+        /// </summary>
         private void HandleNextRequested()
         {
             BeginTransition(sessionService.NextLevelAsync());
         }
 
+        /// <summary>
+        /// Performs the HandleRetryRequested operation.
+        /// </summary>
         private void HandleRetryRequested()
         {
             BeginTransition(sessionService.RetryLevelAsync());
         }
 
+        /// <summary>
+        /// Performs the HandleSessionChanged operation.
+        /// </summary>
         private void HandleSessionChanged(LevelSession _)
         {
             RenderHud();
         }
 
+        /// <summary>
+        /// Performs the HandleLevelCompleted operation.
+        /// </summary>
         private void HandleLevelCompleted(LevelSession completedSession)
         {
             var stars = _starRatingService.CalculateStars(completedSession);
@@ -109,6 +133,9 @@ namespace KnifeToss.Presentation.Gameplay
             hudPresenter.ShowLevelComplete(true);
         }
 
+        /// <summary>
+        /// Performs the HandleLevelFailed operation.
+        /// </summary>
         private void HandleLevelFailed(LevelSession _)
         {
             Time.timeScale = 0f;
@@ -120,6 +147,9 @@ namespace KnifeToss.Presentation.Gameplay
             hudPresenter?.PlayRetryAnimation();
         }
 
+        /// <summary>
+        /// Performs the RenderHud operation.
+        /// </summary>
         private void RenderHud()
         {
             if (hudPresenter == null || session == null)
@@ -130,6 +160,9 @@ namespace KnifeToss.Presentation.Gameplay
             hudPresenter.Render(LevelHudViewModel.FromSession(session));
         }
 
+        /// <summary>
+        /// Performs the BeginTransition operation.
+        /// </summary>
         private void BeginTransition(UniTask transitionTask)
         {
             Time.timeScale = 1f;
@@ -141,6 +174,9 @@ namespace KnifeToss.Presentation.Gameplay
             CompleteTransitionAsync(transitionTask).Forget();
         }
 
+        /// <summary>
+        /// Performs the CompleteTransitionAsync operation.
+        /// </summary>
         private async UniTaskVoid CompleteTransitionAsync(UniTask transitionTask)
         {
             await transitionTask;

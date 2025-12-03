@@ -9,6 +9,9 @@ namespace KnifeToss.Presentation.Gameplay.Rotation
         private readonly float frequency;
         private float elapsed;
 
+        /// <summary>
+        /// Performs the PulsatingRotation operation.
+        /// </summary>
         public PulsatingRotation(float baseSpeed, float amplitude, float frequency)
         {
             this.baseSpeed = baseSpeed;
@@ -16,6 +19,9 @@ namespace KnifeToss.Presentation.Gameplay.Rotation
             this.frequency = Mathf.Max(0f, frequency);
         }
 
+        /// <summary>
+        /// Performs the ApplyRotation operation.
+        /// </summary>
         public void ApplyRotation(Transform target, float deltaTime)
         {
             if (target == null)
@@ -29,6 +35,9 @@ namespace KnifeToss.Presentation.Gameplay.Rotation
             target.Rotate(0f, 0f, rotationAmount);
         }
 
+        /// <summary>
+        /// Performs the Reset operation.
+        /// </summary>
         public void Reset()
         {
             elapsed = 0f;

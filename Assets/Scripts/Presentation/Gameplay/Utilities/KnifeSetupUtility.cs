@@ -7,6 +7,9 @@ namespace KnifeToss.Presentation.Gameplay
 
     internal static class KnifeSetupUtility
     {
+        /// <summary>
+        /// Performs the EnableColliders operation.
+        /// </summary>
         public static void EnableColliders(GameObject knifeObject, bool enabled)
         {
             if (knifeObject == null)
@@ -34,6 +37,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the ApplyVisuals operation.
+        /// </summary>
         public static void ApplyVisuals(GameObject knifeObject, Vector3 scale, Color color)
         {
             if (knifeObject == null)
@@ -49,6 +55,9 @@ namespace KnifeToss.Presentation.Gameplay
             view?.SetColor(color);
         }
 
+        /// <summary>
+        /// Performs the PositionAtLauncher operation.
+        /// </summary>
         public static void PositionAtLauncher(GameObject knifeObject, Transform launcher)
         {
             if (knifeObject == null || launcher == null)

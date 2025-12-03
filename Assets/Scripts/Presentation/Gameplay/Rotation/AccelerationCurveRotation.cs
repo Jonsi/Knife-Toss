@@ -9,6 +9,9 @@ namespace KnifeToss.Presentation.Gameplay.Rotation
         private readonly float loopDuration;
         private float elapsed;
 
+        /// <summary>
+        /// Performs the AccelerationCurveRotation operation.
+        /// </summary>
         public AccelerationCurveRotation(float baseSpeed, AnimationCurve curve, float loopDuration)
         {
             this.baseSpeed = baseSpeed;
@@ -16,6 +19,9 @@ namespace KnifeToss.Presentation.Gameplay.Rotation
             this.loopDuration = Mathf.Max(0.01f, loopDuration);
         }
 
+        /// <summary>
+        /// Performs the ApplyRotation operation.
+        /// </summary>
         public void ApplyRotation(Transform target, float deltaTime)
         {
             if (target == null)
@@ -35,6 +41,9 @@ namespace KnifeToss.Presentation.Gameplay.Rotation
             target.Rotate(0f, 0f, rotationAmount);
         }
 
+        /// <summary>
+        /// Performs the Reset operation.
+        /// </summary>
         public void Reset()
         {
             elapsed = 0f;

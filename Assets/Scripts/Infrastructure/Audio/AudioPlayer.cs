@@ -7,27 +7,42 @@ namespace KnifeToss.Infrastructure.Audio
     {
         private AudioSource sharedSource;
 
+        /// <summary>
+        /// Performs the AudioPlayer operation.
+        /// </summary>
         public AudioPlayer()
         {
             ConfigureLowLatencyIfNeeded();
             sharedSource = CreateOrGetSource();
         }
 
+        /// <summary>
+        /// Performs the Play operation.
+        /// </summary>
         public void Play(AudioClip clip, Vector3 position, float volume)
         {
             PlayInternal(clip, position, volume);
         }
 
+        /// <summary>
+        /// Performs the Play2D operation.
+        /// </summary>
         public void Play2D(AudioClip clip)
         {
             PlayInternal(clip, Vector3.zero, 1f);
         }
 
+        /// <summary>
+        /// Performs the Play2D operation.
+        /// </summary>
         public void Play2D(AudioClip clip, float volume)
         {
             PlayInternal(clip, Vector3.zero, volume);
         }
 
+        /// <summary>
+        /// Performs the SetMuted operation.
+        /// </summary>
         public void SetMuted(bool isMuted)
         {
             if (sharedSource != null)
@@ -36,6 +51,9 @@ namespace KnifeToss.Infrastructure.Audio
             }
         }
 
+        /// <summary>
+        /// Performs the PlayInternal operation.
+        /// </summary>
         private void PlayInternal(AudioClip clip, Vector3 position, float volume)
         {
             if (clip == null)
@@ -55,6 +73,9 @@ namespace KnifeToss.Infrastructure.Audio
             source.PlayOneShot(clip, volume);
         }
 
+        /// <summary>
+        /// Performs the CreateOrGetSource operation.
+        /// </summary>
         private static AudioSource CreateOrGetSource()
         {
             const string goName = "AudioPlayer (2D)";
@@ -93,6 +114,9 @@ namespace KnifeToss.Infrastructure.Audio
             return source;
         }
 
+        /// <summary>
+        /// Performs the ConfigureLowLatencyIfNeeded operation.
+        /// </summary>
         private static void ConfigureLowLatencyIfNeeded()
         {
             AudioConfiguration config = AudioSettings.GetConfiguration();

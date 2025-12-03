@@ -8,6 +8,9 @@ namespace KnifeToss.Core.Events
     {
         public event Action Clicked;
 
+        /// <summary>
+        /// Performs the RaiseClicked operation.
+        /// </summary>
         public void RaiseClicked()
         {
             Clicked?.Invoke();

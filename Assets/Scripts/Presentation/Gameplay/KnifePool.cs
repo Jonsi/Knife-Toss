@@ -15,6 +15,9 @@ namespace KnifeToss.Presentation.Gameplay
         private readonly Queue<GameObject> pool = new Queue<GameObject>();
         private readonly IObjectResolver resolver;
 
+        /// <summary>
+        /// Performs the KnifePool operation.
+        /// </summary>
         public KnifePool(GameObject knifePrefab, Transform parent, int warmupCount, IObjectResolver objectResolver)
         {
             prefab = knifePrefab;
@@ -38,6 +41,9 @@ namespace KnifeToss.Presentation.Gameplay
         public Vector3 PrefabOriginalScale { get; }
         public Color PrefabOriginalColor { get; }
 
+        /// <summary>
+        /// Performs the Warmup operation.
+        /// </summary>
         public void Warmup(int count)
         {
             if (prefab == null)
@@ -51,6 +57,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the GetOrCreate operation.
+        /// </summary>
         public GameObject GetOrCreate()
         {
             if (prefab == null)
@@ -66,6 +75,9 @@ namespace KnifeToss.Presentation.Gameplay
             return pool.Count > 0 ? pool.Dequeue() : CreateKnife();
         }
 
+        /// <summary>
+        /// Performs the Return operation.
+        /// </summary>
         public void Return(GameObject knife)
         {
             if (knife == null)
@@ -81,6 +93,9 @@ namespace KnifeToss.Presentation.Gameplay
             pool.Enqueue(knife);
         }
 
+        /// <summary>
+        /// Performs the ReturnAll operation.
+        /// </summary>
         public void ReturnAll(IEnumerable<GameObject> knives)
         {
             if (knives == null)
@@ -94,16 +109,25 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the Clear operation.
+        /// </summary>
         public void Clear()
         {
             pool.Clear();
         }
 
+        /// <summary>
+        /// Performs the KillTweens operation.
+        /// </summary>
         public void KillTweens()
         {
             TweenKiller.Kill(pool);
         }
 
+        /// <summary>
+        /// Performs the CreateKnife operation.
+        /// </summary>
         private GameObject CreateKnife()
         {
             GameObject knife = Object.Instantiate(prefab, defaultParent);
@@ -114,6 +138,9 @@ namespace KnifeToss.Presentation.Gameplay
             return knife;
         }
 
+        /// <summary>
+        /// Performs the DisableColliders operation.
+        /// </summary>
         private static void DisableColliders(GameObject knife)
         {
             if (knife == null)
@@ -140,6 +167,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the ResetKnifeTransform operation.
+        /// </summary>
         private void ResetKnifeTransform(GameObject knife)
         {
             Transform knifeTransform = knife.transform;
@@ -152,6 +182,9 @@ namespace KnifeToss.Presentation.Gameplay
             knifeTransform.localScale = PrefabOriginalScale;
         }
 
+        /// <summary>
+        /// Performs the ResetKnifeVisuals operation.
+        /// </summary>
         private void ResetKnifeVisuals(GameObject knife)
         {
             KnifeView view = EnsureView(knife);
@@ -161,6 +194,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the EnsureView operation.
+        /// </summary>
         private static KnifeView EnsureView(GameObject knife)
         {
             if (knife == null)

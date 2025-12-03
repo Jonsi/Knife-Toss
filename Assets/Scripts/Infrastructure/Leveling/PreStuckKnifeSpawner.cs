@@ -14,12 +14,18 @@ namespace KnifeToss.Infrastructure.Leveling
         private readonly ITargetScaleProvider targetProvider;
         private readonly GameObject knifePrefab;
 
+        /// <summary>
+        /// Performs the PreStuckKnifeSpawner operation.
+        /// </summary>
         public PreStuckKnifeSpawner(ITargetScaleProvider targetProvider, GameObject prefab)
         {
             this.targetProvider = targetProvider;
             knifePrefab = prefab;
         }
 
+        /// <summary>
+        /// Performs the Spawn operation.
+        /// </summary>
         public int Spawn(LevelData levelData)
         {
             if (levelData == null || levelData.targetGroup == null || targetProvider == null || knifePrefab == null)
@@ -73,6 +79,9 @@ namespace KnifeToss.Infrastructure.Leveling
             return spawned;
         }
 
+        /// <summary>
+        /// Performs the ResolveEmbedOffset operation.
+        /// </summary>
         private float ResolveEmbedOffset()
         {
             if (knifePrefab != null && knifePrefab.TryGetComponent(out Knife knife))

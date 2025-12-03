@@ -17,21 +17,33 @@ namespace KnifeToss.Presentation.Gameplay
 
         private bool isSubscribed;
 
+        /// <summary>
+        /// Performs the OnEnable operation.
+        /// </summary>
         private void OnEnable()
         {
             Subscribe();
         }
 
+        /// <summary>
+        /// Performs the OnDisable operation.
+        /// </summary>
         private void OnDisable()
         {
             Unsubscribe();
         }
 
+        /// <summary>
+        /// Performs the OnDestroy operation.
+        /// </summary>
         private void OnDestroy()
         {
             Unsubscribe();
         }
 
+        /// <summary>
+        /// Performs the Subscribe operation.
+        /// </summary>
         private void Subscribe()
         {
             if (isSubscribed || impactEventChannel == null)
@@ -43,6 +55,9 @@ namespace KnifeToss.Presentation.Gameplay
             isSubscribed = true;
         }
 
+        /// <summary>
+        /// Performs the Unsubscribe operation.
+        /// </summary>
         private void Unsubscribe()
         {
             if (!isSubscribed || impactEventChannel == null)
@@ -54,11 +69,17 @@ namespace KnifeToss.Presentation.Gameplay
             isSubscribed = false;
         }
 
+        /// <summary>
+        /// Performs the HandleKnifeStuckAt operation.
+        /// </summary>
         private void HandleKnifeStuckAt(Vector3 position)
         {
             SpawnSplinters(position);
         }
 
+        /// <summary>
+        /// Performs the SpawnSplinters operation.
+        /// </summary>
         private void SpawnSplinters(Vector3 position)
         {
             if (splintersPrefab == null)

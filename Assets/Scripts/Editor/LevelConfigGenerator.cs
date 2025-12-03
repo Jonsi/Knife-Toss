@@ -3,16 +3,25 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// Represents the LevelConfigGenerator class.
+/// </summary>
 public class LevelConfigGenerator : EditorWindow
 {
     private const int TotalLevels = 10;
 
+    /// <summary>
+    /// Performs the ShowWindow operation.
+    /// </summary>
     [MenuItem("Knife Toss/Generate Level Config")]
     public static void ShowWindow()
     {
         GetWindow<LevelConfigGenerator>("Level Config Generator");
     }
 
+    /// <summary>
+    /// Performs the OnGUI operation.
+    /// </summary>
     private void OnGUI()
     {
         GUILayout.Label("Level Configuration Generator", EditorStyles.boldLabel);
@@ -24,6 +33,9 @@ public class LevelConfigGenerator : EditorWindow
         }
     }
 
+    /// <summary>
+    /// Performs the CreateLevelConfig operation.
+    /// </summary>
     private static void CreateLevelConfig()
     {
         LevelConfig config = ScriptableObject.CreateInstance<LevelConfig>();
@@ -51,16 +63,17 @@ public class LevelConfigGenerator : EditorWindow
         Debug.Log($"Created LevelConfig asset at {path} with {config.levels.Count} levels!");
     }
 
+    /// <summary>
+    /// Performs the CreateLevel operation.
+    /// </summary>
     private static LevelData CreateLevel(int levelNumber)
     {
         LevelData level = new LevelData();
         float difficulty = Mathf.InverseLerp(1f, TotalLevels, levelNumber);
 
-        // Core requirements scale steadily
         level.requirements.requiredKnives = Mathf.RoundToInt(Mathf.Lerp(3f, 10f, difficulty));
         level.requirements.maxKnives = 0; // unlimited throws by default
 
-        // Base rotation defaults (used by fallback path or when only one target exists)
         float baseRotationSpeed = Mathf.Lerp(70f, 180f, difficulty);
         float directionChangeInterval = Mathf.Lerp(3.5f, 1.1f, difficulty);
 
@@ -68,6 +81,9 @@ public class LevelConfigGenerator : EditorWindow
         return level;
     }
 
+    /// <summary>
+    /// Performs the BuildTargets operation.
+    /// </summary>
     private static List<TargetDefinition> BuildTargets(int levelNumber, float difficulty, float baseRotationSpeed, float directionChangeInterval)
     {
         int targetCount = Mathf.Clamp(1 + Mathf.FloorToInt(difficulty * 3f + 0.2f), 1, 4);
@@ -96,9 +112,11 @@ public class LevelConfigGenerator : EditorWindow
         return targets;
     }
 
+    /// <summary>
+    /// Performs the CreateRotationConfig operation.
+    /// </summary>
     private static TargetRotationConfig CreateRotationConfig(int levelNumber, int targetIndex, float difficulty, float baseRotationSpeed, float directionChangeInterval)
     {
-        // Cycle behaviours as difficulty rises.
         RotationBehaviourType behaviourType;
         if (levelNumber <= 2)
         {

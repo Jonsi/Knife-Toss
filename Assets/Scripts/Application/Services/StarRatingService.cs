@@ -3,8 +3,14 @@ using KnifeToss.Core.Domain;
 
 namespace KnifeToss.Application.Services
 {
+    /// <summary>
+    /// Represents the StarRatingService class.
+    /// </summary>
     public class StarRatingService : IStarRatingService
     {
+        /// <summary>
+        /// Performs the CalculateStars operation.
+        /// </summary>
         public int CalculateStars(LevelSession session)
         {
             if (!session.IsComplete)
@@ -12,15 +18,10 @@ namespace KnifeToss.Application.Services
                 return 0;
             }
 
-            // GDD criteria:
-            // 1 Star: Level completed.
-            // 2 Stars: "Clean Run" (no failures) OR all bonus objects hit.
-            // 3 Stars: "Perfect Run" (no failures AND all bonus objects hit).
 
             var stars = 1;
             var isCleanRun = !session.HadToRetry;
             
-            // TODO: Implement bonus object tracking
             var allBonusObjectsHit = false; 
 
             if (isCleanRun || allBonusObjectsHit)

@@ -2,6 +2,9 @@ using KnifeToss.Infrastructure.Persistence;
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// Represents the PlayerStatsEditorWindow class.
+/// </summary>
 public class PlayerStatsEditorWindow : EditorWindow
 {
     private const string Title = "Player Stats";
@@ -11,17 +14,26 @@ public class PlayerStatsEditorWindow : EditorWindow
     private int highestLevel;
     private bool hasExistingValue;
 
+    /// <summary>
+    /// Performs the ShowWindow operation.
+    /// </summary>
     [MenuItem("Knife Toss/Player Stats")]
     public static void ShowWindow()
     {
         GetWindow<PlayerStatsEditorWindow>(Title);
     }
 
+    /// <summary>
+    /// Performs the OnEnable operation.
+    /// </summary>
     private void OnEnable()
     {
         LoadFromPrefs();
     }
 
+    /// <summary>
+    /// Performs the OnGUI operation.
+    /// </summary>
     private void OnGUI()
     {
         EditorGUILayout.LabelField("Player Progress (PlayerPrefs)", EditorStyles.boldLabel);
@@ -53,6 +65,9 @@ public class PlayerStatsEditorWindow : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
+    /// <summary>
+    /// Performs the LoadFromPrefs operation.
+    /// </summary>
     private void LoadFromPrefs()
     {
         PlayerPrefsProgressStore store = new PlayerPrefsProgressStore(highestLevelKey);
@@ -61,6 +76,9 @@ public class PlayerStatsEditorWindow : EditorWindow
         Repaint();
     }
 
+    /// <summary>
+    /// Performs the SaveToPrefs operation.
+    /// </summary>
     private void SaveToPrefs(int level)
     {
         PlayerPrefsProgressStore store = new PlayerPrefsProgressStore(highestLevelKey);
@@ -69,6 +87,9 @@ public class PlayerStatsEditorWindow : EditorWindow
         highestLevel = level;
     }
 
+    /// <summary>
+    /// Performs the ClearPrefs operation.
+    /// </summary>
     private void ClearPrefs()
     {
         PlayerPrefs.DeleteKey(highestLevelKey);

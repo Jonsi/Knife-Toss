@@ -17,6 +17,9 @@ namespace KnifeToss.Presentation.UI
         private readonly SoundSettings soundSettings;
         private readonly ButtonClickEventChannel buttonClickEventChannel;
 
+        /// <summary>
+        /// Performs the ButtonClickSoundPlayer operation.
+        /// </summary>
         public ButtonClickSoundPlayer(IAudioPlayer audioPlayer, SoundSettings soundSettings, ButtonClickEventChannel buttonClickEventChannel)
         {
             this.audioPlayer = audioPlayer;
@@ -24,6 +27,9 @@ namespace KnifeToss.Presentation.UI
             this.buttonClickEventChannel = buttonClickEventChannel;
         }
 
+        /// <summary>
+        /// Performs the Start operation.
+        /// </summary>
         public void Start()
         {
             if (buttonClickEventChannel != null)
@@ -32,6 +38,9 @@ namespace KnifeToss.Presentation.UI
             }
         }
 
+        /// <summary>
+        /// Performs the Dispose operation.
+        /// </summary>
         public void Dispose()
         {
             if (buttonClickEventChannel != null)
@@ -40,6 +49,9 @@ namespace KnifeToss.Presentation.UI
             }
         }
 
+        /// <summary>
+        /// Performs the OnClicked operation.
+        /// </summary>
         private void OnClicked()
         {
             AudioClip clickSound = soundSettings != null ? soundSettings.ButtonClickSound : null;

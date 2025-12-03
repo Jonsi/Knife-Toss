@@ -22,6 +22,9 @@ namespace KnifeToss.Presentation.UI
 
         private ILevelCommandInvoker commandInvoker;
 
+        /// <summary>
+        /// Performs the Awake operation.
+        /// </summary>
         private void Awake()
         {
             EnsureCommandInvoker();
@@ -37,6 +40,9 @@ namespace KnifeToss.Presentation.UI
             }
         }
 
+        /// <summary>
+        /// Performs the OnDestroy operation.
+        /// </summary>
         private void OnDestroy()
         {
             if (retryButton != null)
@@ -50,6 +56,9 @@ namespace KnifeToss.Presentation.UI
             }
         }
 
+        /// <summary>
+        /// Performs the SetLabel operation.
+        /// </summary>
         public void SetLabel(string label)
         {
             if (levelCompleteText != null)
@@ -58,6 +67,9 @@ namespace KnifeToss.Presentation.UI
             }
         }
 
+        /// <summary>
+        /// Performs the SetStars operation.
+        /// </summary>
         public void SetStars(int count)
         {
             for (var i = 0; i < stars.Length; i++)
@@ -66,6 +78,9 @@ namespace KnifeToss.Presentation.UI
             }
         }
 
+        /// <summary>
+        /// Performs the Show operation.
+        /// </summary>
         public void Show()
         {
             if (popupRoot != null)
@@ -74,6 +89,9 @@ namespace KnifeToss.Presentation.UI
             }
         }
 
+        /// <summary>
+        /// Performs the Hide operation.
+        /// </summary>
         public void Hide()
         {
             if (popupRoot != null)
@@ -82,24 +100,36 @@ namespace KnifeToss.Presentation.UI
             }
         }
 
+        /// <summary>
+        /// Performs the SetCommandInvoker operation.
+        /// </summary>
         public void SetCommandInvoker(ILevelCommandInvoker invoker)
         {
             commandInvoker = invoker;
             EnsureCommandInvoker();
         }
 
+        /// <summary>
+        /// Performs the RaiseRetry operation.
+        /// </summary>
         private void RaiseRetry()
         {
 
             commandInvoker?.Retry();
         }
 
+        /// <summary>
+        /// Performs the RaiseNext operation.
+        /// </summary>
         private void RaiseNext()
         {
 
             commandInvoker?.Next();
         }
 
+        /// <summary>
+        /// Performs the EnsureCommandInvoker operation.
+        /// </summary>
         private void EnsureCommandInvoker()
         {
             if (commandInvoker != null)

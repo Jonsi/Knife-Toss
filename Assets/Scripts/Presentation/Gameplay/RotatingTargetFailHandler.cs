@@ -13,6 +13,9 @@ namespace KnifeToss.Presentation.Gameplay
         private readonly GameplayObjectProvider gameplayObjectProvider;
         private readonly KnifeImpactEventChannel impactEventChannel;
 
+        /// <summary>
+        /// Performs the RotatingTargetFailHandler operation.
+        /// </summary>
         public RotatingTargetFailHandler(
             GameplayObjectProvider gameplayObjectProvider,
             KnifeImpactEventChannel impactEventChannel)
@@ -21,6 +24,9 @@ namespace KnifeToss.Presentation.Gameplay
             this.impactEventChannel = impactEventChannel;
         }
 
+        /// <summary>
+        /// Performs the Start operation.
+        /// </summary>
         public void Start()
         {
             if (impactEventChannel != null)
@@ -29,6 +35,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the Dispose operation.
+        /// </summary>
         public void Dispose()
         {
             if (impactEventChannel != null)
@@ -37,6 +46,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the HandleKnifeFailed operation.
+        /// </summary>
         private void HandleKnifeFailed()
         {
             TargetGroupManager targetGroupManager = gameplayObjectProvider?.GetTargetGroupManager();

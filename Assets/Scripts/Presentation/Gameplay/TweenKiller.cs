@@ -9,6 +9,9 @@ namespace KnifeToss.Presentation.Gameplay
 
     internal static class TweenKiller
     {
+        /// <summary>
+        /// Performs the Kill operation.
+        /// </summary>
         public static void Kill(object target)
         {
             if (target == null)
@@ -19,6 +22,9 @@ namespace KnifeToss.Presentation.Gameplay
             DOTween.Kill(target, true);
         }
 
+        /// <summary>
+        /// Performs the Kill operation.
+        /// </summary>
         public static void Kill(GameObject gameObject)
         {
             if (gameObject == null)
@@ -31,6 +37,9 @@ namespace KnifeToss.Presentation.Gameplay
             Kill(gameObject.GetComponent<SpriteRenderer>());
         }
 
+        /// <summary>
+        /// Performs the Kill operation.
+        /// </summary>
         public static void Kill(Transform transform)
         {
             if (transform == null)
@@ -42,6 +51,9 @@ namespace KnifeToss.Presentation.Gameplay
             transform.DOKill(true);
         }
 
+        /// <summary>
+        /// Performs the Kill operation.
+        /// </summary>
         public static void Kill(SpriteRenderer renderer)
         {
             if (renderer == null)
@@ -53,6 +65,9 @@ namespace KnifeToss.Presentation.Gameplay
             renderer.DOKill(true);
         }
 
+        /// <summary>
+        /// Performs the Kill operation.
+        /// </summary>
         public static void Kill(IEnumerable<GameObject> gameObjects)
         {
             if (gameObjects == null)

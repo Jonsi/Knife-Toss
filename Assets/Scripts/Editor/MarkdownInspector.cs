@@ -3,6 +3,9 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// Represents the MarkdownInspector class.
+/// </summary>
 [CustomEditor(typeof(TextAsset))]
 [CanEditMultipleObjects]
 public class MarkdownInspector : Editor
@@ -24,6 +27,9 @@ public class MarkdownInspector : Editor
     private Color codeBackgroundColor;
     private string inlineCodeColor;
 
+    /// <summary>
+    /// Performs the OnInspectorGUI operation.
+    /// </summary>
     public override void OnInspectorGUI()
     {
         var textAsset = (TextAsset)target;
@@ -42,6 +48,9 @@ public class MarkdownInspector : Editor
         EditorGUILayout.EndScrollView();
     }
 
+    /// <summary>
+    /// Performs the RenderMarkdown operation.
+    /// </summary>
     private void RenderMarkdown(string markdown)
     {
         string[] lines = markdown.Replace("\r", string.Empty).Split('\n');
@@ -155,6 +164,9 @@ public class MarkdownInspector : Editor
         }
     }
 
+    /// <summary>
+    /// Performs the EnsureStyles operation.
+    /// </summary>
     private void EnsureStyles()
     {
         bool isDark = EditorGUIUtility.isProSkin;
@@ -198,6 +210,9 @@ public class MarkdownInspector : Editor
         stylesInitialized = true;
     }
 
+    /// <summary>
+    /// Performs the CreateBaseStyle operation.
+    /// </summary>
     private GUIStyle CreateBaseStyle(GUIStyle template, Color textColor)
     {
         GUIStyle style = new GUIStyle(template)
@@ -219,6 +234,9 @@ public class MarkdownInspector : Editor
         return style;
     }
 
+    /// <summary>
+    /// Performs the CreateHeaderStyle operation.
+    /// </summary>
     private GUIStyle CreateHeaderStyle(Color textColor, int fontSize, FontStyle fontStyle, RectOffset margin)
     {
         GUIStyle style = CreateBaseStyle(EditorStyles.boldLabel, textColor);
@@ -228,6 +246,9 @@ public class MarkdownInspector : Editor
         return style;
     }
 
+    /// <summary>
+    /// Performs the DrawHeader operation.
+    /// </summary>
     private void DrawHeader(int level, string text)
     {
         GUIStyle style = header3Style;
@@ -252,6 +273,9 @@ public class MarkdownInspector : Editor
         }
     }
 
+    /// <summary>
+    /// Performs the DrawQuote operation.
+    /// </summary>
     private void DrawQuote(string text)
     {
         GUIContent content = new GUIContent(text);
@@ -266,6 +290,9 @@ public class MarkdownInspector : Editor
         EditorGUI.SelectableLabel(textRect, text, quoteStyle);
     }
 
+    /// <summary>
+    /// Performs the DrawHorizontalRule operation.
+    /// </summary>
     private void DrawHorizontalRule(float verticalPadding = 6f)
     {
         EditorGUILayout.Space(verticalPadding);
@@ -276,6 +303,9 @@ public class MarkdownInspector : Editor
         EditorGUILayout.Space(verticalPadding);
     }
 
+    /// <summary>
+    /// Performs the DrawCodeBlock operation.
+    /// </summary>
     private void DrawCodeBlock(string text)
     {
         GUIContent content = new GUIContent(text);
@@ -287,6 +317,9 @@ public class MarkdownInspector : Editor
         EditorGUI.SelectableLabel(textRect, text, codeStyle);
     }
 
+    /// <summary>
+    /// Performs the DrawSelectableLabel operation.
+    /// </summary>
     private void DrawSelectableLabel(string text, GUIStyle style)
     {
         if (string.IsNullOrEmpty(text))
@@ -301,6 +334,9 @@ public class MarkdownInspector : Editor
         EditorGUI.SelectableLabel(rect, text, style);
     }
 
+    /// <summary>
+    /// Performs the FlushParagraph operation.
+    /// </summary>
     private void FlushParagraph(List<string> paragraphBuffer)
     {
         if (paragraphBuffer.Count == 0)
@@ -314,11 +350,17 @@ public class MarkdownInspector : Editor
         paragraphBuffer.Clear();
     }
 
+    /// <summary>
+    /// Performs the GetContentWidth operation.
+    /// </summary>
     private float GetContentWidth()
     {
         return Mathf.Max(10f, EditorGUIUtility.currentViewWidth - 32f);
     }
 
+    /// <summary>
+    /// Performs the ProcessInlineFormatting operation.
+    /// </summary>
     private string ProcessInlineFormatting(string text)
     {
         text = Regex.Replace(text, @"\*\*([^*]+)\*\*", "<b>$1</b>");

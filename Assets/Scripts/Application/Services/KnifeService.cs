@@ -8,11 +8,17 @@ using VContainer.Unity;
 
 namespace KnifeToss.Application.Services
 {
+    /// <summary>
+    /// Represents the KnifeService class.
+    /// </summary>
     public class KnifeService : IKnifeService
     {
         private readonly KnifePool _knifePool;
         private readonly KnifeMagazine _magazine;
 
+        /// <summary>
+        /// Performs the KnifeService operation.
+        /// </summary>
         public KnifeService(
             GameObject knifePrefab,
             Transform defaultParent,
@@ -32,10 +38,25 @@ namespace KnifeToss.Application.Services
                 magazineConfig.QueueOpacityEnd);
         }
 
+        /// <summary>
+        /// Performs the Configure operation.
+        /// </summary>
         public void Configure(int totalKnives) => _magazine.Configure(totalKnives);
+        /// <summary>
+        /// Performs the GetNextKnife operation.
+        /// </summary>
         public Knife GetNextKnife() => _magazine.TryTakeNext(out var knifeObject) ? knifeObject.GetComponent<Knife>() : null;
+        /// <summary>
+        /// Performs the Return operation.
+        /// </summary>
         public void Return(Knife knife) => _knifePool.Return(knife.gameObject);
+        /// <summary>
+        /// Performs the SlideQueueForward operation.
+        /// </summary>
         public void SlideQueueForward() => _magazine.SlideQueueForward();
+        /// <summary>
+        /// Performs the Reset operation.
+        /// </summary>
         public void Reset() => _magazine.Reset();
 
         private sealed class KnifeMagazine
@@ -51,6 +72,9 @@ namespace KnifeToss.Application.Services
             private readonly List<GameObject> _queuedKnives = new List<GameObject>();
             public int KnivesRemaining { get; private set; }
 
+            /// <summary>
+            /// Performs the KnifeMagazine operation.
+            /// </summary>
             public KnifeMagazine(KnifePool knifePool, Transform queueRoot, Transform launcherTransform, int visibleCount, float spacing, float slideDuration, float scaleEnd, float opacityEnd)
             {
                 _pool = knifePool;
@@ -63,6 +87,9 @@ namespace KnifeToss.Application.Services
                 _queueOpacityEnd = opacityEnd;
             }
 
+            /// <summary>
+            /// Performs the Configure operation.
+            /// </summary>
             public void Configure(int totalKnives)
             {
                 Reset();
@@ -71,6 +98,9 @@ namespace KnifeToss.Application.Services
                 UpdateQueue(true);
             }
 
+            /// <summary>
+            /// Performs the TryTakeNext operation.
+            /// </summary>
             public bool TryTakeNext(out GameObject knife)
             {
                 knife = null;
@@ -84,8 +114,14 @@ namespace KnifeToss.Application.Services
                 return knife != null;
             }
 
+            /// <summary>
+            /// Performs the SlideQueueForward operation.
+            /// </summary>
             public void SlideQueueForward() => UpdateQueue(false);
 
+            /// <summary>
+            /// Performs the Reset operation.
+            /// </summary>
             public void Reset()
             {
                 KillTweens();
@@ -94,6 +130,9 @@ namespace KnifeToss.Application.Services
                 KnivesRemaining = 0;
             }
 
+            /// <summary>
+            /// Performs the KillTweens operation.
+            /// </summary>
             private void KillTweens()
             {
                 foreach (var knife in _queuedKnives)
@@ -102,6 +141,9 @@ namespace KnifeToss.Application.Services
                 }
             }
 
+            /// <summary>
+            /// Performs the UpdateQueue operation.
+            /// </summary>
             private void UpdateQueue(bool instantaneous)
             {
                 for (var i = 0; i < _queuedKnives.Count; i++)
@@ -122,6 +164,9 @@ namespace KnifeToss.Application.Services
                 }
             }
 
+            /// <summary>
+            /// Performs the PrepareNewKnife operation.
+            /// </summary>
             private void PrepareNewKnife(GameObject knife)
             {
                 var view = knife.GetComponent<KnifeView>();
@@ -130,6 +175,9 @@ namespace KnifeToss.Application.Services
                 knife.SetActive(true);
             }
 
+            /// <summary>
+            /// Performs the ApplyKnifeVisuals operation.
+            /// </summary>
             private void ApplyKnifeVisuals(GameObject knife, int index, bool instantaneous)
             {
                 var view = knife.GetComponent<KnifeView>();
@@ -151,6 +199,9 @@ namespace KnifeToss.Application.Services
                 }
             }
 
+            /// <summary>
+            /// Performs the GetQueuePosition operation.
+            /// </summary>
             private Vector3 GetQueuePosition(int queueIndex)
             {
                 var origin = _launcher != null ? _launcher.position : _queueParent.position;
@@ -158,6 +209,9 @@ namespace KnifeToss.Application.Services
                 return origin + offset;
             }
             
+            /// <summary>
+            /// Performs the GetQueueScaleMultiplier operation.
+            /// </summary>
             private float GetQueueScaleMultiplier(int queueIndex)
             {
                 if (queueIndex == 0) return 1f;
@@ -166,6 +220,9 @@ namespace KnifeToss.Application.Services
                 return Mathf.Lerp(1f, _queueScaleEnd, t);
             }
 
+            /// <summary>
+            /// Performs the GetQueueOpacityMultiplier operation.
+            /// </summary>
             private float GetQueueOpacityMultiplier(int queueIndex)
             {
                 if (queueIndex > _visibleQueueCount) return 0f;
@@ -175,6 +232,9 @@ namespace KnifeToss.Application.Services
                 return Mathf.Lerp(1f, _queueOpacityEnd, t);
             }
 
+            /// <summary>
+            /// Performs the GetQueueColor operation.
+            /// </summary>
             private Color GetQueueColor(int index)
             {
                 var opacity = GetQueueOpacityMultiplier(index);
@@ -191,6 +251,9 @@ namespace KnifeToss.Application.Services
             public Vector3 PrefabOriginalScale { get; }
             public Color PrefabOriginalColor { get; }
 
+            /// <summary>
+            /// Performs the KnifePool operation.
+            /// </summary>
             public KnifePool(GameObject knifePrefab, Transform parent, int warmupCount, IObjectResolver objectResolver)
             {
                 _prefab = knifePrefab;
@@ -211,6 +274,9 @@ namespace KnifeToss.Application.Services
                 Warmup(warmupCount);
             }
 
+            /// <summary>
+            /// Performs the Warmup operation.
+            /// </summary>
             public void Warmup(int count)
             {
                 if (_prefab == null) return;
@@ -220,6 +286,9 @@ namespace KnifeToss.Application.Services
                 }
             }
 
+            /// <summary>
+            /// Performs the GetOrCreate operation.
+            /// </summary>
             public GameObject GetOrCreate()
             {
                 if (_prefab == null) return null;
@@ -227,6 +296,9 @@ namespace KnifeToss.Application.Services
                 return _pool.Count > 0 ? _pool.Dequeue() : CreateKnife();
             }
 
+            /// <summary>
+            /// Performs the Return operation.
+            /// </summary>
             public void Return(GameObject knife)
             {
                 if (knife == null) return;
@@ -245,11 +317,17 @@ namespace KnifeToss.Application.Services
                 _pool.Enqueue(knife);
             }
 
+            /// <summary>
+            /// Performs the ReturnAll operation.
+            /// </summary>
             public void ReturnAll(IEnumerable<GameObject> knives)
             {
                 foreach (var knife in knives) Return(knife);
             }
 
+            /// <summary>
+            /// Performs the CreateKnife operation.
+            /// </summary>
             private GameObject CreateKnife()
             {
                 var knife = Object.Instantiate(_prefab, _defaultParent);

@@ -21,23 +21,35 @@ namespace KnifeToss.Presentation.UI
 
         private readonly List<Button> registeredButtons = new List<Button>();
 
+        /// <summary>
+        /// Performs the Start operation.
+        /// </summary>
         private void Start()
         {
             EnsureEventChannel();
             RegisterAllButtons();
         }
 
+        /// <summary>
+        /// Performs the OnDestroy operation.
+        /// </summary>
         private void OnDestroy()
         {
             UnregisterAllButtons();
         }
 
+        /// <summary>
+        /// Performs the Construct operation.
+        /// </summary>
         [Inject]
         public void Construct(ButtonClickEventChannel buttonClickEventChannel)
         {
             this.buttonClickEventChannel = buttonClickEventChannel;
         }
 
+        /// <summary>
+        /// Performs the EnsureEventChannel operation.
+        /// </summary>
         private void EnsureEventChannel()
         {
             if (buttonClickEventChannel == null)
@@ -46,6 +58,9 @@ namespace KnifeToss.Presentation.UI
             }
         }
 
+        /// <summary>
+        /// Performs the RegisterAllButtons operation.
+        /// </summary>
         private void RegisterAllButtons()
         {
             if (buttonClickEventChannel == null)
@@ -82,6 +97,9 @@ namespace KnifeToss.Presentation.UI
             }
         }
 
+        /// <summary>
+        /// Performs the UnregisterAllButtons operation.
+        /// </summary>
         private void UnregisterAllButtons()
         {
             foreach (Button button in registeredButtons)
@@ -98,6 +116,9 @@ namespace KnifeToss.Presentation.UI
 
 
 
+        /// <summary>
+        /// Performs the RefreshButtonRegistrations operation.
+        /// </summary>
         public void RefreshButtonRegistrations()
         {
             UnregisterAllButtons();

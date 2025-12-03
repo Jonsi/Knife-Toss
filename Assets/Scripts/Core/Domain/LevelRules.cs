@@ -15,6 +15,9 @@ namespace KnifeToss.Core.Domain
         public bool RandomizeDirection { get; }
         public int TargetCount { get; }
 
+        /// <summary>
+        /// Performs the LevelRules operation.
+        /// </summary>
         public LevelRules(
             int requiredKnives,
             int maxKnives,
@@ -31,6 +34,9 @@ namespace KnifeToss.Core.Domain
             TargetCount = Mathf.Max(1, targetCount);
         }
 
+        /// <summary>
+        /// Performs the FromLevelData operation.
+        /// </summary>
         public static LevelRules FromLevelData(LevelData data)
         {
             if (data == null)
@@ -43,7 +49,6 @@ namespace KnifeToss.Core.Domain
 
             int targetCount = targetGroup.targets != null && targetGroup.targets.Count > 0 ? targetGroup.targets.Count : 1;
 
-            // Legacy rotation values kept for compatibility; derived from first target if available.
             float rotationSpeed = ResolveFallbackRotationSpeed(targetGroup);
             float directionChangeInterval = 0f;
             bool randomizeDirection = false;
@@ -57,6 +62,9 @@ namespace KnifeToss.Core.Domain
                 targetCount);
         }
 
+        /// <summary>
+        /// Performs the ResolveFallbackRotationSpeed operation.
+        /// </summary>
         private static float ResolveFallbackRotationSpeed(TargetGroupConfig targetGroup)
         {
             if (targetGroup?.targets != null && targetGroup.targets.Count > 0)

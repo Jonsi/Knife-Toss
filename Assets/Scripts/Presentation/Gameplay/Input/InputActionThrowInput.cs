@@ -13,6 +13,9 @@ namespace KnifeToss.Presentation.Gameplay
 
         public event Action Performed;
 
+        /// <summary>
+        /// Performs the OnEnable operation.
+        /// </summary>
         private void OnEnable()
         {
             if (actionReference != null && actionReference.action != null)
@@ -22,6 +25,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the OnDisable operation.
+        /// </summary>
         private void OnDisable()
         {
             if (actionReference != null && actionReference.action != null)
@@ -31,16 +37,25 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the Enable operation.
+        /// </summary>
         public void Enable()
         {
             actionReference?.action?.Enable();
         }
 
+        /// <summary>
+        /// Performs the Disable operation.
+        /// </summary>
         public void Disable()
         {
             actionReference?.action?.Disable();
         }
 
+        /// <summary>
+        /// Performs the HandleStarted operation.
+        /// </summary>
         private void HandleStarted(InputAction.CallbackContext _)
         {
             Performed?.Invoke();

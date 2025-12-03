@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace KnifeToss.Core.Data
 {
+    /// <summary>
+    /// Enumerates RotationBehaviourType options.
+    /// </summary>
     public enum RotationBehaviourType
     {
         Constant = 0,

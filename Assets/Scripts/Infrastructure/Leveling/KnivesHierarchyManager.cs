@@ -12,12 +12,18 @@ namespace KnifeToss.Infrastructure.Leveling
         private GameObject knivesParent;
         private readonly string parentName;
 
+        /// <summary>
+        /// Performs the KnivesHierarchyManager operation.
+        /// </summary>
         public KnivesHierarchyManager(Transform ownerTransform, string defaultParentName = "Knives")
         {
             owner = ownerTransform;
             parentName = defaultParentName;
         }
 
+        /// <summary>
+        /// Performs the EnsureParent operation.
+        /// </summary>
         public Transform EnsureParent()
         {
             if (knivesParent == null)
@@ -32,6 +38,9 @@ namespace KnifeToss.Infrastructure.Leveling
             return knivesParent.transform;
         }
 
+        /// <summary>
+        /// Performs the ResetHierarchy operation.
+        /// </summary>
         public void ResetHierarchy()
         {
             if (knivesParent != null)
@@ -49,6 +58,9 @@ namespace KnifeToss.Infrastructure.Leveling
             CleanupLooseKnives();
         }
 
+        /// <summary>
+        /// Performs the CleanupLooseKnives operation.
+        /// </summary>
         private static void CleanupLooseKnives()
         {
             Knife[] allKnives = Object.FindObjectsByType<Knife>(FindObjectsSortMode.None);

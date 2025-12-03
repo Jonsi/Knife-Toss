@@ -27,6 +27,9 @@ namespace KnifeToss.Application.Services
         private LevelRules currentRules;
         private LevelData currentLevelData;
 
+        /// <summary>
+        /// Performs the LevelSessionService operation.
+        /// </summary>
         public LevelSessionService(
             LevelSession levelSession,
             ILevelCatalog levelCatalog,
@@ -57,6 +60,9 @@ namespace KnifeToss.Application.Services
         public LevelRules CurrentRules => currentRules;
         public int CurrentLevel => session.LevelIndex;
 
+        /// <summary>
+        /// Performs the StartInitialLevelAsync operation.
+        /// </summary>
         public UniTask StartInitialLevelAsync()
         {
             int highestLevel = progressStore.LoadHighestLevel(startLevel);
@@ -64,6 +70,9 @@ namespace KnifeToss.Application.Services
             return StartLevelAsync(levelToStart);
         }
 
+        /// <summary>
+        /// Performs the StartLevelAsync operation.
+        /// </summary>
         public async UniTask StartLevelAsync(int levelIndex)
         {
             ResetThrowerTweens();
@@ -79,16 +88,25 @@ namespace KnifeToss.Application.Services
             session.SeedPreStuckKnives(preStuckSpawned);
         }
 
+        /// <summary>
+        /// Performs the RetryLevelAsync operation.
+        /// </summary>
         public UniTask RetryLevelAsync()
         {
             return StartLevelAsync(session.LevelIndex);
         }
 
+        /// <summary>
+        /// Performs the NextLevelAsync operation.
+        /// </summary>
         public UniTask NextLevelAsync()
         {
             return StartLevelAsync(session.LevelIndex + 1);
         }
 
+        /// <summary>
+        /// Performs the HandleKnifeStuck operation.
+        /// </summary>
         public void HandleKnifeStuck()
         {
             session.RecordKnifeStuck();
@@ -99,12 +117,18 @@ namespace KnifeToss.Application.Services
             }
         }
 
+        /// <summary>
+        /// Performs the HandleKnifeFailure operation.
+        /// </summary>
         public void HandleKnifeFailure()
         {
             session.RecordFailure();
             DisableThrowerInput();
         }
 
+        /// <summary>
+        /// Performs the HandleKnifeThrown operation.
+        /// </summary>
         public void HandleKnifeThrown()
         {
             session.RecordThrow();
@@ -114,6 +138,9 @@ namespace KnifeToss.Application.Services
             }
         }
 
+        /// <summary>
+        /// Performs the ConfigureTarget operation.
+        /// </summary>
         private void ConfigureTarget(LevelRules rules)
         {
             TargetGroupManager targetGroupManager = gameplayObjectProvider.GetTargetGroupManager();
@@ -121,6 +148,9 @@ namespace KnifeToss.Application.Services
             targetGroupManager.ResumeAll();
         }
 
+        /// <summary>
+        /// Performs the ConfigureThrower operation.
+        /// </summary>
         private void ConfigureThrower(Transform knivesParent, LevelRules rules)
         {
             KnifeThrower knifeThrower = gameplayObjectProvider.GetKnifeThrower();
@@ -133,6 +163,9 @@ namespace KnifeToss.Application.Services
             knifeThrower.SetCanThrow(true);
         }
 
+        /// <summary>
+        /// Performs the SaveProgress operation.
+        /// </summary>
         private void SaveProgress()
         {
             if (progressStore == null)
@@ -141,24 +174,36 @@ namespace KnifeToss.Application.Services
             progressStore.SaveHighestLevel(session.LevelIndex);
         }
 
+        /// <summary>
+        /// Performs the DisableThrowerInput operation.
+        /// </summary>
         private void DisableThrowerInput()
         {
             KnifeThrower knifeThrower = gameplayObjectProvider?.GetKnifeThrower();
             knifeThrower?.SetCanThrow(false);
         }
 
+        /// <summary>
+        /// Performs the ResetThrowerTweens operation.
+        /// </summary>
         private void ResetThrowerTweens()
         {
             KnifeThrower knifeThrower = gameplayObjectProvider.GetKnifeThrower();
             knifeThrower?.KillAllKnifeTweens();
         }
 
+        /// <summary>
+        /// Performs the RebuildKnifeHierarchyAsync operation.
+        /// </summary>
         private async UniTask RebuildKnifeHierarchyAsync()
         {
             hierarchyManager.ResetHierarchy();
             await UniTask.Yield();
         }
 
+        /// <summary>
+        /// Performs the ApplyRules operation.
+        /// </summary>
         private void ApplyRules(int levelIndex)
         {
             currentLevelData = catalog.GetLevelData(levelIndex);
@@ -166,6 +211,9 @@ namespace KnifeToss.Application.Services
             session.Begin(levelIndex, currentRules);
         }
 
+        /// <summary>
+        /// Performs the Dispose operation.
+        /// </summary>
         public void Dispose()
         {
             if (impactEventChannel != null)

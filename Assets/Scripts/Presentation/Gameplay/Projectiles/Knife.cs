@@ -8,6 +8,9 @@ using VContainer;
 
 namespace KnifeToss.Presentation.Gameplay.Projectiles
 {
+    /// <summary>
+    /// Represents the Knife class.
+    /// </summary>
     public class Knife : MonoBehaviour
     {
         private const float DefaultFallDistance = 3f;
@@ -35,28 +38,43 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         [SerializeField] private float soundVolume = 1f;
         private SoundSettings soundSettings;
 
+        /// <summary>
+        /// Performs the Awake operation.
+        /// </summary>
         private void Awake()
         {
             cachedColliders = GetComponents<Collider2D>();
         }
 
+        /// <summary>
+        /// Performs the OnEnable operation.
+        /// </summary>
         private void OnEnable()
         {
             knifeTracker?.Register(this);
         }
 
+        /// <summary>
+        /// Performs the OnDisable operation.
+        /// </summary>
         private void OnDisable()
         {
             knifeTracker?.Unregister(this);
             KillFailSequence();
         }
 
+        /// <summary>
+        /// Performs the OnDestroy operation.
+        /// </summary>
         private void OnDestroy()
         {
             knifeTracker?.Unregister(this);
             KillFailSequence();
         }
 
+        /// <summary>
+        /// Performs the Construct operation.
+        /// </summary>
         [VContainer.Inject]
         public void Construct(IKnifeTracker tracker, IAudioPlayer audioPlayer, SoundSettings soundSettings)
         {
@@ -65,6 +83,9 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             this.soundSettings = soundSettings;
         }
 
+        /// <summary>
+        /// Performs the Initialize operation.
+        /// </summary>
         public void Initialize(KnifeThrower knifeThrower, float throwSpeed)
         {
             thrower = knifeThrower;
@@ -82,6 +103,9 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             SetCollidersEnabled(true);
         }
 
+        /// <summary>
+        /// Performs the Update operation.
+        /// </summary>
         private void Update()
         {
             if (isResolved || isStuck)
@@ -99,16 +123,25 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             }
         }
 
+        /// <summary>
+        /// Performs the OnTriggerEnter2D operation.
+        /// </summary>
         private void OnTriggerEnter2D(Collider2D collision)
         {
             HandleCollision(collision.transform, collision.gameObject, ResolveImpactPoint(collision));
         }
 
+        /// <summary>
+        /// Performs the OnCollisionEnter2D operation.
+        /// </summary>
         private void OnCollisionEnter2D(Collision2D collision)
         {
             HandleCollision(collision.transform, collision.gameObject, ResolveImpactPoint(collision));
         }
 
+        /// <summary>
+        /// Performs the HandleCollision operation.
+        /// </summary>
         private void HandleCollision(Transform collisionTransform, GameObject collisionObject, Vector3 impactPoint)
         {
             if (!CanResolveImpact())
@@ -132,6 +165,9 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             }
         }
 
+        /// <summary>
+        /// Performs the StickToTarget operation.
+        /// </summary>
         private void StickToTarget(Transform targetTransform, Vector3 impactPoint)
         {
             ResolveAsStuck();
@@ -141,6 +177,9 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             impactEventChannel?.RaiseKnifeStuck(impactPoint);
         }
 
+        /// <summary>
+        /// Performs the TriggerFail operation.
+        /// </summary>
         private void TriggerFail(Vector3 failurePoint)
         {
             if (isResolved)
@@ -163,6 +202,9 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             impactEventChannel?.RaiseKnifeFailed(failurePoint);
         }
 
+        /// <summary>
+        /// Performs the Resolve operation.
+        /// </summary>
         public void Resolve()
         {
             if (isResolved)
@@ -174,6 +216,9 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             thrower?.OnKnifeResolved();
         }
 
+        /// <summary>
+        /// Performs the MarkAsPreStuck operation.
+        /// </summary>
         public void MarkAsPreStuck()
         {
             isStuck = true;
@@ -185,11 +230,17 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         public bool IsStuck => isStuck;
         public float EmbedOffset => embedOffset;
 
+        /// <summary>
+        /// Performs the CanResolveImpact operation.
+        /// </summary>
         private bool CanResolveImpact()
         {
             return !isResolved && !isStuck;
         }
 
+        /// <summary>
+        /// Performs the ResolveAsStuck operation.
+        /// </summary>
         private void ResolveAsStuck()
         {
             isStuck = true;
@@ -197,6 +248,9 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             HaltMotion();
         }
 
+        /// <summary>
+        /// Performs the AlignToTarget operation.
+        /// </summary>
         private void AlignToTarget(Transform targetTransform)
         {
             Vector2 targetCenter = targetTransform.position;
@@ -212,6 +266,9 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             transform.SetParent(targetTransform);
         }
 
+        /// <summary>
+        /// Performs the HaltMotion operation.
+        /// </summary>
         private void HaltMotion()
         {
             speed = 0f;
@@ -223,6 +280,9 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             }
         }
 
+        /// <summary>
+        /// Performs the SetCollidersEnabled operation.
+        /// </summary>
         private void SetCollidersEnabled(bool enabled)
         {
             if (cachedColliders == null || cachedColliders.Length == 0)
@@ -240,6 +300,9 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             }
         }
 
+        /// <summary>
+        /// Performs the PlayFailAnimation operation.
+        /// </summary>
         private void PlayFailAnimation()
         {
             KillFailSequence();
@@ -265,6 +328,9 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             failSequence.OnKill(() => failSequence = null);
         }
 
+        /// <summary>
+        /// Performs the KillFailSequence operation.
+        /// </summary>
         private void KillFailSequence()
         {
             if (failSequence != null)
@@ -274,6 +340,9 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             }
         }
 
+        /// <summary>
+        /// Performs the PlaySound operation.
+        /// </summary>
         private void PlaySound(AudioClip clip)
         {
             if (clip == null)
@@ -286,6 +355,9 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             player.Play2D(clip, soundVolume);
         }
 
+        /// <summary>
+        /// Performs the ResolveImpactPoint operation.
+        /// </summary>
         private Vector3 ResolveImpactPoint(Collision2D collision)
         {
             if (collision == null)
@@ -301,6 +373,9 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             return ResolveImpactPoint(collision.collider);
         }
 
+        /// <summary>
+        /// Performs the ResolveImpactPoint operation.
+        /// </summary>
         private Vector3 ResolveImpactPoint(Collider2D collider)
         {
             if (collider == null)
@@ -311,6 +386,9 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             return collider.ClosestPoint(transform.position);
         }
 
+        /// <summary>
+        /// Performs the ResolveOrDefault<T> operation.
+        /// </summary>
         private T ResolveOrDefault<T>(System.Func<T> resolver, T fallback)
         {
             if (failAnimationConfig == null)
@@ -325,18 +403,30 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         {
             public static readonly NullAudioPlayer Instance = new NullAudioPlayer();
 
+            /// <summary>
+            /// Performs the Play operation.
+            /// </summary>
             public void Play(AudioClip clip, Vector3 position, float volume)
             {
             }
 
+            /// <summary>
+            /// Performs the Play2D operation.
+            /// </summary>
             public void Play2D(AudioClip clip)
             {
             }
 
+            /// <summary>
+            /// Performs the Play2D operation.
+            /// </summary>
             public void Play2D(AudioClip clip, float volume)
             {
             }
 
+            /// <summary>
+            /// Performs the SetMuted operation.
+            /// </summary>
             public void SetMuted(bool isMuted)
             {
             }

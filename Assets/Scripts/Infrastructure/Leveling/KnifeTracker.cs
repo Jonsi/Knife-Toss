@@ -9,6 +9,9 @@ namespace KnifeToss.Infrastructure.Leveling
     {
         private readonly HashSet<Knife> knives = new HashSet<Knife>();
 
+        /// <summary>
+        /// Performs the Register operation.
+        /// </summary>
         public void Register(Knife knife)
         {
             if (knife != null)
@@ -17,6 +20,9 @@ namespace KnifeToss.Infrastructure.Leveling
             }
         }
 
+        /// <summary>
+        /// Performs the Unregister operation.
+        /// </summary>
         public void Unregister(Knife knife)
         {
             if (knife != null)
@@ -25,6 +31,9 @@ namespace KnifeToss.Infrastructure.Leveling
             }
         }
 
+        /// <summary>
+        /// Performs the Snapshot operation.
+        /// </summary>
         public IEnumerable<Knife> Snapshot()
         {
             return knives.ToArray();

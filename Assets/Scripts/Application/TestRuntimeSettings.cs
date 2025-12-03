@@ -11,6 +11,9 @@ namespace KnifeToss.Application
     {
         private const int TargetFps = 60;
 
+        /// <summary>
+        /// Performs the ApplyFrameRate operation.
+        /// </summary>
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void ApplyFrameRate()
         {

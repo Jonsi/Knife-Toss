@@ -4,10 +4,16 @@ using UnityEngine;
 
 namespace KnifeToss.Infrastructure.Persistence
 {
+    /// <summary>
+    /// Represents the PlayerPrefsSettingsRepository class.
+    /// </summary>
     public class PlayerPrefsSettingsRepository : ISettingsRepository
     {
         private const string SettingsKey = "AudioSettings";
 
+        /// <summary>
+        /// Performs the Save operation.
+        /// </summary>
         public void Save(AudioSettingsData settings)
         {
             var json = JsonUtility.ToJson(settings);
@@ -15,6 +21,9 @@ namespace KnifeToss.Infrastructure.Persistence
             PlayerPrefs.Save();
         }
 
+        /// <summary>
+        /// Performs the Load operation.
+        /// </summary>
         public AudioSettingsData Load()
         {
             if (PlayerPrefs.HasKey(SettingsKey))

@@ -5,6 +5,9 @@ using VContainer;
 
 namespace KnifeToss.Presentation.Gameplay
 {
+    /// <summary>
+    /// Represents the KnifeThrower class.
+    /// </summary>
     public class KnifeThrower : MonoBehaviour
     {
         [Header("References")]
@@ -39,24 +42,36 @@ namespace KnifeToss.Presentation.Gameplay
 
         public event Action KnifeThrown;
 
+        /// <summary>
+        /// Performs the Awake operation.
+        /// </summary>
         private void Awake()
         {
             launcherTransform ??= transform;
             throwInput = throwInputSource as IThrowInput ?? new NullThrowInput();
         }
 
+        /// <summary>
+        /// Performs the OnEnable operation.
+        /// </summary>
         private void OnEnable()
         {
             throwInput.Performed += OnThrowInput;
             throwInput.Enable();
         }
 
+        /// <summary>
+        /// Performs the OnDisable operation.
+        /// </summary>
         private void OnDisable()
         {
             throwInput.Performed -= OnThrowInput;
             throwInput.Disable();
         }
 
+        /// <summary>
+        /// Performs the OnDestroy operation.
+        /// </summary>
         private void OnDestroy()
         {
             KillAllKnifeTweens();
@@ -64,6 +79,9 @@ namespace KnifeToss.Presentation.Gameplay
             knifePool?.Clear();
         }
 
+        /// <summary>
+        /// Performs the KillAllKnifeTweens operation.
+        /// </summary>
         public void KillAllKnifeTweens()
         {
             EnsureInitialized();
@@ -82,6 +100,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the OnThrowInput operation.
+        /// </summary>
         private void OnThrowInput()
         {
             if (!IsReadyToThrow())
@@ -92,6 +113,9 @@ namespace KnifeToss.Presentation.Gameplay
             ThrowKnife();
         }
 
+        /// <summary>
+        /// Performs the IsReadyToThrow operation.
+        /// </summary>
         private bool IsReadyToThrow()
         {
             EnsureInitialized();
@@ -109,6 +133,9 @@ namespace KnifeToss.Presentation.Gameplay
             return magazine.KnivesRemaining > 0;
         }
 
+        /// <summary>
+        /// Performs the ThrowKnife operation.
+        /// </summary>
         private void ThrowKnife()
         {
             EnsureInitialized();
@@ -134,6 +161,9 @@ namespace KnifeToss.Presentation.Gameplay
             magazine.SlideQueueForward();
         }
 
+        /// <summary>
+        /// Performs the PrepareKnifeForThrow operation.
+        /// </summary>
         private void PrepareKnifeForThrow(GameObject knifeObject)
         {
             Transform parent = knivesParent != null ? knivesParent : null;
@@ -145,6 +175,9 @@ namespace KnifeToss.Presentation.Gameplay
             KnifeSetupUtility.EnableColliders(knifeObject, true);
         }
 
+        /// <summary>
+        /// Performs the KillTweensOnChildren operation.
+        /// </summary>
         private static void KillTweensOnChildren(Transform parent)
         {
             if (parent == null)
@@ -162,6 +195,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the KillTweensFromRegistry operation.
+        /// </summary>
         private void KillTweensFromRegistry()
         {
             foreach (Knife knife in knifeTracker?.Snapshot() ?? Array.Empty<Knife>())
@@ -173,12 +209,18 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the OnKnifeResolved operation.
+        /// </summary>
         public void OnKnifeResolved()
         {
             isKnifeInFlight = false;
             currentKnife = null;
         }
 
+        /// <summary>
+        /// Performs the ResetState operation.
+        /// </summary>
         public void ResetState()
         {
             EnsureInitialized();
@@ -189,33 +231,51 @@ namespace KnifeToss.Presentation.Gameplay
             canThrow = true;
         }
 
+        /// <summary>
+        /// Performs the SetMaxKnives operation.
+        /// </summary>
         public void SetMaxKnives(int max)
         {
             maxKnives = max;
             knivesThrown = 0;
         }
 
+        /// <summary>
+        /// Performs the SetTotalKnives operation.
+        /// </summary>
         public void SetTotalKnives(int total)
         {
             EnsureInitialized();
             magazine.Configure(total);
         }
 
+        /// <summary>
+        /// Performs the SetCanThrow operation.
+        /// </summary>
         public void SetCanThrow(bool allow)
         {
             canThrow = allow;
         }
 
+        /// <summary>
+        /// Performs the SetKnivesParent operation.
+        /// </summary>
         public void SetKnivesParent(Transform parent)
         {
             knivesParent = parent;
         }
 
+        /// <summary>
+        /// Performs the ActivateKnife operation.
+        /// </summary>
         private static void ActivateKnife(GameObject knifeObject)
         {
             knifeObject.SetActive(true);
         }
 
+        /// <summary>
+        /// Performs the Construct operation.
+        /// </summary>
         [VContainer.Inject]
         public void Construct(KnifeToss.Core.Abstractions.IKnifeTracker tracker, IObjectResolver resolver, ITargetScaleProvider scaleProvider = null)
         {
@@ -226,12 +286,18 @@ namespace KnifeToss.Presentation.Gameplay
             UpdateMagazineScale();
         }
 
+        /// <summary>
+        /// Performs the SetScaleProvider operation.
+        /// </summary>
         public void SetScaleProvider(ITargetScaleProvider scaleProvider)
         {
             targetScaleProvider = scaleProvider;
             UpdateMagazineScale();
         }
 
+        /// <summary>
+        /// Performs the InitializePoolAndMagazine operation.
+        /// </summary>
         private void InitializePoolAndMagazine()
         {
             if (knifePool != null && magazine != null)
@@ -252,6 +318,9 @@ namespace KnifeToss.Presentation.Gameplay
             UpdateMagazineScale();
         }
 
+        /// <summary>
+        /// Performs the EnsureInitialized operation.
+        /// </summary>
         private void EnsureInitialized()
         {
             if (knifePool == null || magazine == null)
@@ -260,17 +329,26 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the ResolveKnifeScale operation.
+        /// </summary>
         private Vector3 ResolveKnifeScale()
         {
             float scaleFactor = ResolveScaleFactor();
             return knifePool != null ? knifePool.PrefabOriginalScale * scaleFactor : Vector3.one * scaleFactor;
         }
 
+        /// <summary>
+        /// Performs the ResolveScaleFactor operation.
+        /// </summary>
         private float ResolveScaleFactor()
         {
             return targetScaleProvider != null ? targetScaleProvider.PrimaryScale : 1f;
         }
 
+        /// <summary>
+        /// Performs the UpdateMagazineScale operation.
+        /// </summary>
         private void UpdateMagazineScale()
         {
             if (magazine == null)
@@ -288,7 +366,13 @@ namespace KnifeToss.Presentation.Gameplay
                 add { }
                 remove { }
             }
+            /// <summary>
+            /// Performs the Enable operation.
+            /// </summary>
             public void Enable() { }
+            /// <summary>
+            /// Performs the Disable operation.
+            /// </summary>
             public void Disable() { }
         }
 

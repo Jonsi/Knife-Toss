@@ -4,6 +4,9 @@ namespace KnifeToss.Presentation.Gameplay.Rotation
 {
     public sealed class RotationBehaviourFactory
     {
+        /// <summary>
+        /// Performs the Create operation.
+        /// </summary>
         public IRotationBehaviour Create(TargetRotationConfig config)
         {
             if (config == null)

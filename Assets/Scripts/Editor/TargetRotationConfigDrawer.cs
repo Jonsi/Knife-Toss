@@ -8,11 +8,17 @@ namespace KnifeToss.Editor
     [CustomPropertyDrawer(typeof(TargetRotationConfig))]
     public sealed class TargetRotationConfigDrawer : PropertyDrawer
     {
+        /// <summary>
+        /// Performs the GetPropertyHeight operation.
+        /// </summary>
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             return EditorGUI.GetPropertyHeight(property, label, true);
         }
 
+        /// <summary>
+        /// Performs the OnGUI operation.
+        /// </summary>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginProperty(position, label, property);
@@ -37,6 +43,9 @@ namespace KnifeToss.Editor
             EditorGUI.EndProperty();
         }
 
+        /// <summary>
+        /// Performs the EnumerateVisibleProperties operation.
+        /// </summary>
         private static IEnumerable<SerializedProperty> EnumerateVisibleProperties(SerializedProperty property)
         {
             var speed = property.FindPropertyRelative(nameof(TargetRotationConfig.speed));
@@ -60,6 +69,9 @@ namespace KnifeToss.Editor
             }
         }
 
+        /// <summary>
+        /// Performs the IsEnabled operation.
+        /// </summary>
         private static bool IsEnabled(string propertyName, SerializedProperty parent)
         {
             SerializedProperty typeProp = parent.FindPropertyRelative(nameof(TargetRotationConfig.behaviourType));

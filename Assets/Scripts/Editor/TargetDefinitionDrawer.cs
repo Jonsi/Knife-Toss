@@ -8,6 +8,9 @@ namespace KnifeToss.Editor
     [CustomPropertyDrawer(typeof(TargetDefinition))]
     public sealed class TargetDefinitionDrawer : PropertyDrawer
     {
+        /// <summary>
+        /// Performs the GetPropertyHeight operation.
+        /// </summary>
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             float height = 0f;
@@ -21,6 +24,9 @@ namespace KnifeToss.Editor
             return height;
         }
 
+        /// <summary>
+        /// Performs the OnGUI operation.
+        /// </summary>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginProperty(position, label, property);
@@ -38,6 +44,9 @@ namespace KnifeToss.Editor
             EditorGUI.EndProperty();
         }
 
+        /// <summary>
+        /// Performs the EnumerateProperties operation.
+        /// </summary>
         private static IEnumerable<SerializedProperty> EnumerateProperties(SerializedProperty property)
         {
             yield return property.FindPropertyRelative(nameof(TargetDefinition.prefab));

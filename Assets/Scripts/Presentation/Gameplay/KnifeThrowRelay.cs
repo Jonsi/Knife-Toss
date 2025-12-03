@@ -7,6 +7,9 @@ namespace KnifeToss.Presentation.Gameplay
 
 
 
+    /// <summary>
+    /// Represents the KnifeThrowRelay class.
+    /// </summary>
     [RequireComponent(typeof(KnifeThrower))]
     public class KnifeThrowRelay : MonoBehaviour
     {
@@ -14,6 +17,9 @@ namespace KnifeToss.Presentation.Gameplay
 
         private LevelSessionService sessionService;
 
+        /// <summary>
+        /// Performs the Awake operation.
+        /// </summary>
         private void Awake()
         {
             if (knifeThrower == null)
@@ -22,12 +28,18 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the Construct operation.
+        /// </summary>
         [Inject]
         public void Construct(LevelSessionService levelSessionService)
         {
             sessionService = levelSessionService;
         }
 
+        /// <summary>
+        /// Performs the OnEnable operation.
+        /// </summary>
         private void OnEnable()
         {
             if (knifeThrower != null)
@@ -36,6 +48,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the OnDisable operation.
+        /// </summary>
         private void OnDisable()
         {
             if (knifeThrower != null)
@@ -44,6 +59,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the HandleKnifeThrown operation.
+        /// </summary>
         private void HandleKnifeThrown()
         {
             sessionService?.HandleKnifeThrown();

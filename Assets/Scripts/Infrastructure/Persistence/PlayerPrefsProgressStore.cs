@@ -11,22 +11,34 @@ namespace KnifeToss.Infrastructure.Persistence
 
         private readonly string highestLevelKey;
 
+        /// <summary>
+        /// Performs the PlayerPrefsProgressStore operation.
+        /// </summary>
         public PlayerPrefsProgressStore(string key)
         {
             highestLevelKey = key;
         }
 
+        /// <summary>
+        /// Performs the LoadHighestLevel operation.
+        /// </summary>
         public int LoadHighestLevel(int fallbackLevel)
         {
             return PlayerPrefs.GetInt(highestLevelKey, fallbackLevel);
         }
 
+        /// <summary>
+        /// Performs the SaveHighestLevel operation.
+        /// </summary>
         public void SaveHighestLevel(int levelIndex)
         {
             PlayerPrefs.SetInt(highestLevelKey, levelIndex);
             PlayerPrefs.Save();
         }
 
+        /// <summary>
+        /// Performs the LoadProgress operation.
+        /// </summary>
         public LevelProgressData LoadProgress()
         {
             if (PlayerPrefs.HasKey(ProgressKey))
@@ -45,6 +57,9 @@ namespace KnifeToss.Infrastructure.Persistence
             return new LevelProgressData();
         }
 
+        /// <summary>
+        /// Performs the SaveProgress operation.
+        /// </summary>
         public void SaveProgress(LevelProgressData progress)
         {
             var json = JsonUtility.ToJson(progress);

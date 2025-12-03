@@ -10,6 +10,9 @@ namespace KnifeToss.Presentation.Gameplay.Rotation
         private float timer;
         private int direction = 1;
 
+        /// <summary>
+        /// Performs the FlippingRotation operation.
+        /// </summary>
         public FlippingRotation(float speed, float flipInterval, float flipProbability)
         {
             this.speed = speed;
@@ -18,6 +21,9 @@ namespace KnifeToss.Presentation.Gameplay.Rotation
             timer = this.flipInterval;
         }
 
+        /// <summary>
+        /// Performs the ApplyRotation operation.
+        /// </summary>
         public void ApplyRotation(Transform target, float deltaTime)
         {
             if (target == null)
@@ -40,6 +46,9 @@ namespace KnifeToss.Presentation.Gameplay.Rotation
             target.Rotate(0f, 0f, rotationAmount);
         }
 
+        /// <summary>
+        /// Performs the Reset operation.
+        /// </summary>
         public void Reset()
         {
             direction = 1;

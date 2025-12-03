@@ -24,6 +24,9 @@ namespace KnifeToss.Presentation.Gameplay
         public float PrimaryScale => entries.Count > 0 ? entries[0].CurrentScale : 1f;
         public IReadOnlyList<Transform> AllTargets => targetTransforms;
 
+        /// <summary>
+        /// Performs the Initialize operation.
+        /// </summary>
         public void Initialize(GameObject defaultTargetPrefab, IObjectResolver resolver)
         {
             fallbackPrefab = defaultTargetPrefab;
@@ -31,6 +34,9 @@ namespace KnifeToss.Presentation.Gameplay
             EnsurePivot();
         }
 
+        /// <summary>
+        /// Performs the Configure operation.
+        /// </summary>
         public void Configure(LevelData levelData, int activeTarget)
         {
             EnsurePivot();
@@ -50,11 +56,16 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the SetActiveTarget operation.
+        /// </summary>
         public void SetActiveTarget(int index)
         {
-            // Active target concept removed; primary target is first entry.
         }
 
+        /// <summary>
+        /// Performs the FreezeAll operation.
+        /// </summary>
         public void FreezeAll()
         {
             for (int i = 0; i < entries.Count; i++)
@@ -63,6 +74,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the ResumeAll operation.
+        /// </summary>
         public void ResumeAll()
         {
             for (int i = 0; i < entries.Count; i++)
@@ -71,6 +85,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the Update operation.
+        /// </summary>
         private void Update()
         {
             float delta = Time.deltaTime;
@@ -96,6 +113,9 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
+        /// <summary>
+        /// Performs the CreateTarget operation.
+        /// </summary>
         private void CreateTarget(TargetDefinition definition, int index)
         {
             GameObject prefab = definition.prefab != null ? definition.prefab : fallbackPrefab;
@@ -140,14 +160,19 @@ namespace KnifeToss.Presentation.Gameplay
             targetTransforms.Add(instance.transform);
         }
 
+        /// <summary>
+        /// Performs the ResolveOrbitPosition operation.
+        /// </summary>
         private Vector3 ResolveOrbitPosition(float radius, float angleDegrees)
         {
             float rad = angleDegrees * Mathf.Deg2Rad;
             Vector3 offset = new Vector3(Mathf.Cos(rad), Mathf.Sin(rad), 0f) * radius;
-            // Pivot already holds the center position; apply only the orbit offset here.
             return offset;
         }
 
+        /// <summary>
+        /// Performs the ResolveScale operation.
+        /// </summary>
         private float ResolveScale(float orbitRadius, TargetDefinition definition)
         {
             if (definition == null)
@@ -159,6 +184,9 @@ namespace KnifeToss.Presentation.Gameplay
         }
 
 
+        /// <summary>
+        /// Performs the EnsurePivot operation.
+        /// </summary>
         private void EnsurePivot()
         {
             if (pivot == null)
@@ -168,10 +196,12 @@ namespace KnifeToss.Presentation.Gameplay
                 pivot.SetParent(transform, false);
             }
 
-            // Keep pivot positioned once; child offsets stay purely radial.
             pivot.localPosition = pivotPosition;
         }
 
+        /// <summary>
+        /// Performs the ClearEntries operation.
+        /// </summary>
         private void ClearEntries()
         {
             for (int i = 0; i < entries.Count; i++)
@@ -188,6 +218,9 @@ namespace KnifeToss.Presentation.Gameplay
             targetTransforms.Clear();
         }
 
+        /// <summary>
+        /// Performs the ResolveDefinitions operation.
+        /// </summary>
         private static IReadOnlyList<TargetDefinition> ResolveDefinitions(LevelData data)
         {
             if (data != null && data.targetGroup != null && data.targetGroup.targets != null && data.targetGroup.targets.Count > 0)
@@ -210,6 +243,9 @@ namespace KnifeToss.Presentation.Gameplay
             return new List<TargetDefinition> { fallback };
         }
 
+        /// <summary>
+        /// Represents the TargetEntry struct.
+        /// </summary>
         private struct TargetEntry
         {
             public TargetDefinition Definition;
@@ -221,6 +257,9 @@ namespace KnifeToss.Presentation.Gameplay
             public float CurrentScale;
         }
 
+        /// <summary>
+        /// Performs the RefreshRotationBehaviourIfNeeded operation.
+        /// </summary>
         private void RefreshRotationBehaviourIfNeeded(ref TargetEntry entry)
         {
             TargetRotationConfig config = entry.Definition.rotation;
@@ -250,6 +289,9 @@ namespace KnifeToss.Presentation.Gameplay
             private readonly float flipProbability;
             private readonly float curveLoopDuration;
 
+            /// <summary>
+            /// Performs the TargetRotationConfigSnapshot operation.
+            /// </summary>
             private TargetRotationConfigSnapshot(
                 RotationBehaviourType type,
                 float speed,
@@ -268,6 +310,9 @@ namespace KnifeToss.Presentation.Gameplay
                 this.curveLoopDuration = curveLoopDuration;
             }
 
+            /// <summary>
+            /// Performs the From operation.
+            /// </summary>
             public static TargetRotationConfigSnapshot From(TargetRotationConfig config)
             {
                 if (config == null)
@@ -285,6 +330,9 @@ namespace KnifeToss.Presentation.Gameplay
                     config.acceleration != null ? config.acceleration.curveLoopDuration : 0f);
             }
 
+            /// <summary>
+            /// Performs the Equals operation.
+            /// </summary>
             public bool Equals(TargetRotationConfigSnapshot other)
             {
                 return type == other.type

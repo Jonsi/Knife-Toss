@@ -17,6 +17,9 @@ namespace KnifeToss.Presentation.UI
 
         private Rect uvRect;
 
+        /// <summary>
+        /// Performs the Awake operation.
+        /// </summary>
         private void Awake()
         {
             targetImage ??= GetComponent<RawImage>();
@@ -31,6 +34,9 @@ namespace KnifeToss.Presentation.UI
             targetImage.uvRect = uvRect;
         }
 
+        /// <summary>
+        /// Performs the Update operation.
+        /// </summary>
         private void Update()
         {
             if (targetImage == null)

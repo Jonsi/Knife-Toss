@@ -12,17 +12,26 @@ namespace KnifeToss.Presentation.UI
         private Tween pulseTween;
         private Vector3 defaultScale;
 
+        /// <summary>
+        /// Performs the Awake operation.
+        /// </summary>
         private void Awake()
         {
             defaultScale = transform.localScale;
         }
 
+        /// <summary>
+        /// Performs the OnDisable operation.
+        /// </summary>
         private void OnDisable()
         {
             StopAnimation();
             ResetScale();
         }
 
+        /// <summary>
+        /// Performs the Play operation.
+        /// </summary>
         public void Play()
         {
             StopAnimation();
@@ -40,6 +49,9 @@ namespace KnifeToss.Presentation.UI
                 .From(Vector3.one * min);
         }
 
+        /// <summary>
+        /// Performs the StopAnimation operation.
+        /// </summary>
         public void StopAnimation()
         {
             if (pulseTween != null)
@@ -50,6 +62,9 @@ namespace KnifeToss.Presentation.UI
             ResetScale();
         }
 
+        /// <summary>
+        /// Performs the ResetScale operation.
+        /// </summary>
         private void ResetScale()
         {
             transform.localScale = defaultScale == Vector3.zero ? Vector3.one : defaultScale;
