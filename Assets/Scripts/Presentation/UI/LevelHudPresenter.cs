@@ -15,6 +15,7 @@ namespace KnifeToss.Presentation.UI
         public LevelCompletePopup levelCompletePopup;
         [SerializeField] private LevelCommandEventChannel commandChannel;
         public Button retryButton;
+        [SerializeField] private RetryButtonAnimator retryButtonAnimator;
         [SerializeField] private Button muteButton;
         [SerializeField] private GameObject muteIcon;
         [SerializeField] private GameObject unmuteIcon;
@@ -80,6 +81,7 @@ namespace KnifeToss.Presentation.UI
         {
             ShowFail(false);
             ShowLevelComplete(false);
+            StopRetryAnimation();
         }
 
         [VContainer.Inject]
@@ -133,6 +135,16 @@ namespace KnifeToss.Presentation.UI
             var isMuted = _settingsService.IsMuted();
             muteIcon.SetActive(isMuted);
             unmuteIcon.SetActive(!isMuted);
+        }
+
+        public void PlayRetryAnimation()
+        {
+            retryButtonAnimator?.Play();
+        }
+
+        public void StopRetryAnimation()
+        {
+            retryButtonAnimator?.StopAnimation();
         }
     }
 }

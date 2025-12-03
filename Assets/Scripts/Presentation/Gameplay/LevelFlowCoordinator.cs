@@ -5,6 +5,7 @@ using KnifeToss.Core.Abstractions;
 using KnifeToss.Core.Domain;
 using KnifeToss.Core.Events;
 using KnifeToss.Presentation.UI;
+using UnityEngine;
 using VContainer.Unity;
 
 namespace KnifeToss.Presentation.Gameplay
@@ -110,8 +111,13 @@ namespace KnifeToss.Presentation.Gameplay
 
         private void HandleLevelFailed(LevelSession _)
         {
-            hudPresenter.retryButton.gameObject.SetActive(true);
-            hudPresenter.retryButton.interactable = true;
+            Time.timeScale = 0f;
+            if (hudPresenter?.retryButton != null)
+            {
+                hudPresenter.retryButton.gameObject.SetActive(true);
+                hudPresenter.retryButton.interactable = true;
+            }
+            hudPresenter?.PlayRetryAnimation();
         }
 
         private void RenderHud()
@@ -126,6 +132,7 @@ namespace KnifeToss.Presentation.Gameplay
 
         private void BeginTransition(UniTask transitionTask)
         {
+            Time.timeScale = 1f;
             hudPresenter?.ResetState();
             if (hudPresenter?.retryButton != null)
             {
