@@ -13,28 +13,19 @@ namespace KnifeToss.Application.Services
         /// </summary>
         public int CalculateStars(LevelSession session)
         {
-            if (!session.IsComplete)
+            if (session == null || session.Rules.Objectives == null || !session.IsComplete)
             {
                 return 0;
             }
 
 
-            var stars = 1;
-            var isCleanRun = !session.HadToRetry;
-            
-            var allBonusObjectsHit = false; 
-
-            if (isCleanRun || allBonusObjectsHit)
-            {
-                stars = 2;
-            }
-
-            if (isCleanRun && allBonusObjectsHit)
-            {
-                stars = 3;
-            }
-
-            return stars;
+            return ObjectiveEvaluator.CalculateStars(
+                session.Rules.Objectives,
+                new ObjectiveEvaluator.ObjectiveEvaluationContext(
+                    session.PlayerKnivesStuck,
+                    session.Rules.KnifeCount,
+                    session.HitableObjectsHit,
+                    session.Rules.TotalHitableObjects));
         }
     }
 }

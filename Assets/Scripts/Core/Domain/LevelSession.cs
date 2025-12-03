@@ -25,6 +25,8 @@ namespace KnifeToss.Core.Domain
         public bool HadToRetry { get; private set; }
         public int TargetCount { get; private set; }
         public int TargetsRemaining { get; private set; }
+        public int HitableObjectsHit { get; private set; }
+        public int AchievedStars { get; private set; }
 
         private int preStuckBaseline;
 
@@ -44,6 +46,8 @@ namespace KnifeToss.Core.Domain
             HadToRetry = false;
             TargetCount = Math.Max(1, rules.TargetCount);
             TargetsRemaining = TargetCount;
+            HitableObjectsHit = 0;
+            AchievedStars = 0;
             NotifyChanged();
         }
 
@@ -82,6 +86,21 @@ namespace KnifeToss.Core.Domain
                 return;
 
             KnivesStuck++;
+            EvaluateProgress();
+            NotifyChanged();
+        }
+
+        /// <summary>
+        /// Performs the RecordHitableObjectHit operation.
+        /// </summary>
+        public void RecordHitableObjectHit()
+        {
+            if (IsComplete || IsFailed)
+            {
+                return;
+            }
+
+            HitableObjectsHit++;
             EvaluateProgress();
             NotifyChanged();
         }
@@ -128,10 +147,7 @@ namespace KnifeToss.Core.Domain
         /// </summary>
         public bool HasExhaustedKnives()
         {
-            if (Rules.MaxKnives <= 0)
-                return false;
-
-            return KnivesThrown >= Rules.MaxKnives && KnivesStuck < Rules.RequiredKnives;
+            return KnivesThrown >= Rules.KnifeCount && PlayerKnivesStuck < Rules.KnifeCount;
         }
 
         /// <summary>
@@ -139,7 +155,15 @@ namespace KnifeToss.Core.Domain
         /// </summary>
         private void EvaluateProgress()
         {
-            if (PlayerKnivesStuck >= Rules.RequiredKnives)
+            AchievedStars = ObjectiveEvaluator.CalculateStars(
+                Rules.Objectives,
+                new ObjectiveEvaluator.ObjectiveEvaluationContext(
+                    PlayerKnivesStuck,
+                    Rules.KnifeCount,
+                    HitableObjectsHit,
+                    Rules.TotalHitableObjects));
+
+            if (AchievedStars >= 1)
             {
                 IsComplete = true;
                 Completed?.Invoke(this);

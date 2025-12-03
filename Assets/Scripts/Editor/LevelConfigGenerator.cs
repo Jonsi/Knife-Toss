@@ -66,16 +66,25 @@ public class LevelConfigGenerator : EditorWindow
     /// <summary>
     /// Performs the CreateLevel operation.
     /// </summary>
-    private static LevelData CreateLevel(int levelNumber)
-    {
-        LevelData level = new LevelData();
-        float difficulty = Mathf.InverseLerp(1f, TotalLevels, levelNumber);
+        private static LevelData CreateLevel(int levelNumber)
+        {
+            LevelData level = new LevelData();
+            float difficulty = Mathf.InverseLerp(1f, TotalLevels, levelNumber);
 
-        level.requirements.requiredKnives = Mathf.RoundToInt(Mathf.Lerp(3f, 10f, difficulty));
-        level.requirements.maxKnives = 0; // unlimited throws by default
+            int requiredKnives = Mathf.RoundToInt(Mathf.Lerp(3f, 10f, difficulty));
+            level.knives = requiredKnives;
+            level.objectives.oneStar.objectives = new List<ObjectiveDefinition>
+            {
+                new ObjectiveDefinition
+                {
+                    type = ObjectiveType.StickKnives,
+                    requireAll = false,
+                    count = requiredKnives
+                }
+            };
 
-        float baseRotationSpeed = Mathf.Lerp(70f, 180f, difficulty);
-        float directionChangeInterval = Mathf.Lerp(3.5f, 1.1f, difficulty);
+            float baseRotationSpeed = Mathf.Lerp(70f, 180f, difficulty);
+            float directionChangeInterval = Mathf.Lerp(3.5f, 1.1f, difficulty);
 
         level.targetGroup.targets = BuildTargets(levelNumber, difficulty, baseRotationSpeed, directionChangeInterval);
         return level;
@@ -159,8 +168,5 @@ public class LevelConfigGenerator : EditorWindow
         };
     }
 }
-
-
-
 
 

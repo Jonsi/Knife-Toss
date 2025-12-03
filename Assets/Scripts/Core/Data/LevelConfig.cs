@@ -57,9 +57,6 @@ namespace KnifeToss.Core.Data
             return new LevelData();
         }
 
-        /// <summary>
-        /// Performs the GenerateProceduralLevel operation.
-        /// </summary>
         private LevelData GenerateProceduralLevel(int levelIndex)
         {
             LevelData level = new LevelData();
@@ -68,11 +65,19 @@ namespace KnifeToss.Core.Data
             int proceduralLevelNumber = levelIndex - levels.Count;
 
 
-            level.requirements.requiredKnives = Mathf.RoundToInt(proceduralBaseKnives + proceduralLevelNumber * proceduralKnifeIncrease);
-            level.requirements.maxKnives = 0;
+            int knifeTarget = Mathf.RoundToInt(proceduralBaseKnives + proceduralLevelNumber * proceduralKnifeIncrease);
+            level.knives = Mathf.Max(1, knifeTarget);
+            level.objectives.oneStar.objectives = new List<ObjectiveDefinition>
+            {
+                new ObjectiveDefinition
+                {
+                    type = ObjectiveType.StickKnives,
+                    requireAll = false,
+                    count = Mathf.Max(1, knifeTarget)
+                }
+            };
 
             return level;
         }
     }
 }
-

@@ -24,6 +24,7 @@ namespace KnifeToss.Application.Services
         private readonly HitableObjectSpawner hitableSpawner;
         private readonly int startLevel;
         private readonly KnifeImpactEventChannel impactEventChannel;
+        private readonly HitableObjectHitEventChannel hitableEventChannel;
 
         private LevelRules currentRules;
         private LevelData currentLevelData;
@@ -40,7 +41,8 @@ namespace KnifeToss.Application.Services
             PreStuckKnifeSpawner preStuckKnifeSpawner,
             HitableObjectSpawner hitableObjectSpawner,
             int startingLevel,
-            KnifeImpactEventChannel eventChannel)
+            KnifeImpactEventChannel eventChannel,
+            HitableObjectHitEventChannel hitableHitEventChannel)
         {
             session = levelSession;
             catalog = levelCatalog;
@@ -51,11 +53,17 @@ namespace KnifeToss.Application.Services
             hitableSpawner = hitableObjectSpawner;
             startLevel = Mathf.Max(1, startingLevel);
             impactEventChannel = eventChannel;
+            hitableEventChannel = hitableHitEventChannel;
 
             if (impactEventChannel != null)
             {
                 impactEventChannel.KnifeStuck += HandleKnifeStuck;
                 impactEventChannel.KnifeFailed += HandleKnifeFailure;
+            }
+
+            if (hitableEventChannel != null)
+            {
+                hitableEventChannel.HitableHitAt += HandleHitableObjectHit;
             }
         }
 
@@ -122,6 +130,19 @@ namespace KnifeToss.Application.Services
         }
 
         /// <summary>
+        /// Performs the HandleHitableObjectHit operation.
+        /// </summary>
+        private void HandleHitableObjectHit(Vector3 _)
+        {
+            session.RecordHitableObjectHit();
+            if (session.IsComplete)
+            {
+                DisableThrowerInput();
+                SaveProgress();
+            }
+        }
+
+        /// <summary>
         /// Performs the HandleKnifeFailure operation.
         /// </summary>
         public void HandleKnifeFailure()
@@ -161,8 +182,7 @@ namespace KnifeToss.Application.Services
 
             knifeThrower.ResetState();
             knifeThrower.SetScaleProvider(gameplayObjectProvider.GetTargetGroupManager());
-            knifeThrower.SetMaxKnives(rules.MaxKnives);
-            knifeThrower.SetTotalKnives(rules.RequiredKnives);
+            knifeThrower.SetTotalKnives(rules.KnifeCount);
             knifeThrower.SetKnivesParent(knivesParent);
             knifeThrower.SetCanThrow(true);
         }
@@ -232,6 +252,11 @@ namespace KnifeToss.Application.Services
             {
                 impactEventChannel.KnifeStuck -= HandleKnifeStuck;
                 impactEventChannel.KnifeFailed -= HandleKnifeFailure;
+            }
+
+            if (hitableEventChannel != null)
+            {
+                hitableEventChannel.HitableHitAt -= HandleHitableObjectHit;
             }
         }
     }

@@ -95,7 +95,8 @@ namespace KnifeToss.Installers
             builder.Register<LevelSessionService>(Lifetime.Singleton)
                 .WithParameter(resolver => resolver.Resolve<GameplayObjectProvider>())
                 .WithParameter(startLevel)
-                .WithParameter(knifeImpactChannel);
+                .WithParameter(knifeImpactChannel)
+                .WithParameter(hitableHitEventChannel);
 
             builder.Register<HitableObjectSoundPlayer>(Lifetime.Singleton)
                 .As<IStartable>()

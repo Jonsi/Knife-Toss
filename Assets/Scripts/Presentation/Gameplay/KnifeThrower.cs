@@ -29,7 +29,6 @@ namespace KnifeToss.Presentation.Gameplay
         private IThrowInput throwInput;
         private Knife currentKnife;
         private bool isKnifeInFlight;
-        private int maxKnives;
         private int knivesThrown;
         private bool canThrow = true;
         private bool isAiming;
@@ -143,11 +142,6 @@ namespace KnifeToss.Presentation.Gameplay
             EnsureInitialized();
 
             if (!canThrow || isKnifeInFlight || knifePrefab == null || launcherTransform == null)
-            {
-                return false;
-            }
-
-            if (maxKnives > 0 && knivesThrown >= maxKnives)
             {
                 return false;
             }
@@ -305,21 +299,13 @@ namespace KnifeToss.Presentation.Gameplay
         }
 
         /// <summary>
-        /// Performs the SetMaxKnives operation.
-        /// </summary>
-        public void SetMaxKnives(int max)
-        {
-            maxKnives = max;
-            knivesThrown = 0;
-        }
-
-        /// <summary>
         /// Performs the SetTotalKnives operation.
         /// </summary>
         public void SetTotalKnives(int total)
         {
             EnsureInitialized();
             magazine.Configure(total);
+            knivesThrown = 0;
         }
 
         /// <summary>
