@@ -203,9 +203,7 @@ namespace KnifeToss.Presentation.Gameplay
                 rotation = new TargetRotationConfig
                 {
                     speed = 90f,
-                    behaviourType = RotationBehaviourType.Constant,
-                    flipInterval = 3f,
-                    flipProbability = 0.5f
+                    behaviourType = RotationBehaviourType.Constant
                 }
             };
 
@@ -280,11 +278,11 @@ namespace KnifeToss.Presentation.Gameplay
                 return new TargetRotationConfigSnapshot(
                     config.behaviourType,
                     config.speed,
-                    config.pulsateAmplitude,
-                    config.pulsateFrequency,
-                    config.flipInterval,
-                    config.flipProbability,
-                    config.curveLoopDuration);
+                    config.pulsating != null ? config.pulsating.amplitude : 0f,
+                    config.pulsating != null ? config.pulsating.frequency : 0f,
+                    config.flipping != null ? config.flipping.flipInterval : 0f,
+                    config.flipping != null ? config.flipping.flipProbability : 0f,
+                    config.acceleration != null ? config.acceleration.curveLoopDuration : 0f);
             }
 
             public bool Equals(TargetRotationConfigSnapshot other)

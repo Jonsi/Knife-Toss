@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class LevelConfigGenerator : EditorWindow
 {
+    private const int TotalLevels = 10;
+
     [MenuItem("Knife Toss/Generate Level Config")]
     public static void ShowWindow()
     {
@@ -16,7 +18,7 @@ public class LevelConfigGenerator : EditorWindow
         GUILayout.Label("Level Configuration Generator", EditorStyles.boldLabel);
         GUILayout.Space(10);
 
-        if (GUILayout.Button("Create Level Config Asset with 30 Levels"))
+        if (GUILayout.Button($"Create Level Config Asset with {TotalLevels} Levels"))
         {
             CreateLevelConfig();
         }
@@ -27,7 +29,7 @@ public class LevelConfigGenerator : EditorWindow
         LevelConfig config = ScriptableObject.CreateInstance<LevelConfig>();
         config.levels = new List<LevelData>();
 
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < TotalLevels; i++)
         {
             config.levels.Add(CreateLevel(i + 1));
         }
@@ -52,25 +54,26 @@ public class LevelConfigGenerator : EditorWindow
     private static LevelData CreateLevel(int levelNumber)
     {
         LevelData level = new LevelData();
+        float difficulty = Mathf.InverseLerp(1f, TotalLevels, levelNumber);
 
         // Core requirements scale steadily
-        level.requirements.requiredKnives = Mathf.Max(3, 3 + levelNumber / 2);
+        level.requirements.requiredKnives = Mathf.RoundToInt(Mathf.Lerp(3f, 10f, difficulty));
         level.requirements.maxKnives = 0; // unlimited throws by default
 
         // Base rotation defaults (used by fallback path or when only one target exists)
-        float baseRotationSpeed = 60f + levelNumber * 3f;
-        float directionChangeInterval = Mathf.Max(1.75f, 3.5f - levelNumber * 0.04f);
+        float baseRotationSpeed = Mathf.Lerp(70f, 180f, difficulty);
+        float directionChangeInterval = Mathf.Lerp(3.5f, 1.1f, difficulty);
 
-        level.targetGroup.targets = BuildTargets(levelNumber, baseRotationSpeed, directionChangeInterval);
+        level.targetGroup.targets = BuildTargets(levelNumber, difficulty, baseRotationSpeed, directionChangeInterval);
         return level;
     }
 
-    private static List<TargetDefinition> BuildTargets(int levelNumber, float baseRotationSpeed, float directionChangeInterval)
+    private static List<TargetDefinition> BuildTargets(int levelNumber, float difficulty, float baseRotationSpeed, float directionChangeInterval)
     {
-        int targetCount = ResolveTargetCount(levelNumber);
-        float orbitRadius = targetCount == 1 ? 0f : Mathf.Lerp(1.5f, 3.5f, Mathf.Clamp01(levelNumber / 30f));
-        float orbitSpeed = targetCount == 1 ? 0f : Mathf.Lerp(10f, 35f, Mathf.Clamp01(levelNumber / 30f));
-        float baseScale = 1f;
+        int targetCount = Mathf.Clamp(1 + Mathf.FloorToInt(difficulty * 3f + 0.2f), 1, 4);
+        float orbitRadius = targetCount == 1 ? 0f : Mathf.Lerp(1.25f, 3.5f, difficulty);
+        float orbitSpeed = targetCount == 1 ? 0f : Mathf.Lerp(6f, 42f, difficulty);
+        float baseScale = Mathf.Lerp(1.1f, 0.9f, difficulty);
 
         var targets = new List<TargetDefinition>();
         for (int i = 0; i < targetCount; i++)
@@ -82,7 +85,9 @@ public class LevelConfigGenerator : EditorWindow
                 startingAngle = angle,
                 orbitDegreesPerSecond = orbitSpeed * (i % 2 == 0 ? 1f : -1f),
                 baseScale = baseScale,
-                rotation = CreateRotationConfig(levelNumber, i, baseRotationSpeed, directionChangeInterval)
+                rotation = CreateRotationConfig(levelNumber, i, difficulty, baseRotationSpeed, directionChangeInterval),
+                preStuckKnives = difficulty > 0.65f && i == 0 ? 1 : 0,
+                preStuckKnifeSpacing = 360f
             };
 
             targets.Add(def);
@@ -91,27 +96,19 @@ public class LevelConfigGenerator : EditorWindow
         return targets;
     }
 
-    private static int ResolveTargetCount(int levelNumber)
-    {
-        if (levelNumber < 6) return 1;
-        if (levelNumber < 12) return 2;
-        if (levelNumber < 20) return 3;
-        return 4;
-    }
-
-    private static TargetRotationConfig CreateRotationConfig(int levelNumber, int targetIndex, float baseRotationSpeed, float directionChangeInterval)
+    private static TargetRotationConfig CreateRotationConfig(int levelNumber, int targetIndex, float difficulty, float baseRotationSpeed, float directionChangeInterval)
     {
         // Cycle behaviours as difficulty rises.
         RotationBehaviourType behaviourType;
-        if (levelNumber < 6)
+        if (levelNumber <= 2)
         {
             behaviourType = RotationBehaviourType.Constant;
         }
-        else if (levelNumber < 12)
+        else if (levelNumber <= 4)
         {
             behaviourType = RotationBehaviourType.Flipping;
         }
-        else if (levelNumber < 20)
+        else if (levelNumber <= 7)
         {
             behaviourType = RotationBehaviourType.Pulsating;
         }
@@ -126,12 +123,21 @@ public class LevelConfigGenerator : EditorWindow
         {
             behaviourType = behaviourType,
             speed = speed * (targetIndex % 2 == 0 ? 1f : -1f),
-            pulsateAmplitude = speed * 0.35f,
-            pulsateFrequency = Mathf.Lerp(0.8f, 1.6f, Mathf.Clamp01(levelNumber / 30f)),
-            flipInterval = Mathf.Max(0.8f, directionChangeInterval - targetIndex * 0.15f),
-            flipProbability = Mathf.Clamp01(0.35f + levelNumber * 0.015f),
-            accelerationCurve = AnimationCurve.EaseInOut(0f, 0.6f, 1f, 1.4f),
-            curveLoopDuration = Mathf.Max(1.2f, 3f - levelNumber * 0.04f)
+            pulsating = new PulsatingRotationSettings
+            {
+                amplitude = speed * 0.35f,
+                frequency = Mathf.Lerp(0.8f, 1.6f, difficulty)
+            },
+            flipping = new FlippingRotationSettings
+            {
+                flipInterval = Mathf.Lerp(2.5f, 0.9f, difficulty),
+                flipProbability = Mathf.Clamp01(0.25f + difficulty * 0.55f)
+            },
+            acceleration = new AccelerationRotationSettings
+            {
+                accelerationCurve = AnimationCurve.EaseInOut(0f, 0.6f, 1f, 1.4f),
+                curveLoopDuration = Mathf.Lerp(2.4f, 1.0f, difficulty)
+            }
         };
     }
 }

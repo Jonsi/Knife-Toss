@@ -2582,7 +2582,7 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
-  levelConfig: {fileID: 0}
+  levelConfig: {fileID: 11400000, guid: 67d774534f2d7a84eae187cbf4a5a05b, type: 2}
   knifeImpactChannel: {fileID: 11400000, guid: a78030c48769aec48b1aeb7cf48a28cb, type: 2}
   levelCommandEventChannel: {fileID: 11400000, guid: 76592a2f6c663224399fb72a23fe1509, type: 2}
   soundSettings: {fileID: 11400000, guid: 5def38df6d93db34286062cf0a77bf72, type: 2}
