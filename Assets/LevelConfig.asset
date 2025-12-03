@@ -60,6 +60,14 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 2.4
+        hitableObjects:
+        - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+          count: 2
+          radialOffset: 0
+          angularSpacing: 0
+          spacingRandomness: 0
+          angularRandomness: 0
+          orientOutwards: 1
   - requirements:
       requiredKnives: 4
       maxKnives: 0
@@ -107,6 +115,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 2.2444446
+        hitableObjects: []
   - requirements:
       requiredKnives: 5
       maxKnives: 0
@@ -154,6 +163,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 2.088889
+        hitableObjects: []
   - requirements:
       requiredKnives: 5
       maxKnives: 0
@@ -201,6 +211,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1.9333334
+        hitableObjects: []
       - prefab: {fileID: 0}
         orbitRadius: 2
         startingAngle: 180
@@ -243,6 +254,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1.9333334
+        hitableObjects: []
   - requirements:
       requiredKnives: 6
       maxKnives: 0
@@ -290,6 +302,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1.7777778
+        hitableObjects: []
       - prefab: {fileID: 0}
         orbitRadius: 2.25
         startingAngle: 180
@@ -332,6 +345,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1.7777778
+        hitableObjects: []
   - requirements:
       requiredKnives: 7
       maxKnives: 0
@@ -379,6 +393,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1.6222222
+        hitableObjects: []
       - prefab: {fileID: 0}
         orbitRadius: 2.5
         startingAngle: 180
@@ -421,6 +436,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1.6222222
+        hitableObjects: []
   - requirements:
       requiredKnives: 8
       maxKnives: 0
@@ -468,6 +484,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1.4666667
+        hitableObjects: []
       - prefab: {fileID: 0}
         orbitRadius: 2.75
         startingAngle: 120
@@ -510,6 +527,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1.4666667
+        hitableObjects: []
       - prefab: {fileID: 0}
         orbitRadius: 2.75
         startingAngle: 240
@@ -552,6 +570,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1.4666667
+        hitableObjects: []
   - requirements:
       requiredKnives: 8
       maxKnives: 0
@@ -599,6 +618,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1.3111111
+        hitableObjects: []
       - prefab: {fileID: 0}
         orbitRadius: 3
         startingAngle: 120
@@ -641,6 +661,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1.3111111
+        hitableObjects: []
       - prefab: {fileID: 0}
         orbitRadius: 3
         startingAngle: 240
@@ -683,6 +704,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1.3111111
+        hitableObjects: []
   - requirements:
       requiredKnives: 9
       maxKnives: 0
@@ -730,6 +752,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1.1555556
+        hitableObjects: []
       - prefab: {fileID: 0}
         orbitRadius: 3.25
         startingAngle: 120
@@ -772,6 +795,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1.1555556
+        hitableObjects: []
       - prefab: {fileID: 0}
         orbitRadius: 3.25
         startingAngle: 240
@@ -814,6 +838,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1.1555556
+        hitableObjects: []
   - requirements:
       requiredKnives: 10
       maxKnives: 0
@@ -861,6 +886,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1
+        hitableObjects: []
       - prefab: {fileID: 0}
         orbitRadius: 3.5
         startingAngle: 90
@@ -903,6 +929,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1
+        hitableObjects: []
       - prefab: {fileID: 0}
         orbitRadius: 3.5
         startingAngle: 180
@@ -945,6 +972,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1
+        hitableObjects: []
       - prefab: {fileID: 0}
         orbitRadius: 3.5
         startingAngle: 270
@@ -987,6 +1015,7 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 1
+        hitableObjects: []
   generateProceduralLevels: 1
   proceduralBaseKnives: 12
   proceduralBaseRotationSpeed: 150

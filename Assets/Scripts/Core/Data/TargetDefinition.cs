@@ -30,5 +30,9 @@ namespace KnifeToss.Core.Data
 
         [Tooltip("Rotation behaviour settings for this target.")]
         public TargetRotationConfig rotation = new TargetRotationConfig();
+
+        [Header("Hitable Objects")]
+        [Tooltip("Optional hitable objects placed around this target.")]
+        public System.Collections.Generic.List<HitableObjectPlacement> hitableObjects = new System.Collections.Generic.List<HitableObjectPlacement>();
     }
 }

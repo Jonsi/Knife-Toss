@@ -486,6 +486,7 @@ MonoBehaviour:
   levelCompletePopup: {fileID: 519400801}
   commandChannel: {fileID: 11400000, guid: 76592a2f6c663224399fb72a23fe1509, type: 2}
   retryButton: {fileID: 2096806327}
+  retryButtonAnimator: {fileID: 2096806330}
   muteButton: {fileID: 0}
   muteIcon: {fileID: 0}
   unmuteIcon: {fileID: 0}
@@ -818,7 +819,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.25}
   m_AnchorMax: {x: 0.5, y: 0.25}
-  m_AnchoredPosition: {x: 0, y: -50.999985}
+  m_AnchoredPosition: {x: 0, y: -51}
   m_SizeDelta: {x: 330.3, y: 135}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &726980825
@@ -2591,6 +2592,7 @@ MonoBehaviour:
   targetPrefab: {fileID: 5427965671015069626, guid: 0e557c846743ed044bf689812c8bae87, type: 3}
   knifeThrowerPrefab: {fileID: 5629078851861483033, guid: beef113832fb38942ba436dfd0328ae2, type: 3}
   knifePrefab: {fileID: 3126276711855495373, guid: 0f0aea32d6aea4a41ba6b968d5173811, type: 3}
+  hitableHitEventChannel: {fileID: 11400000, guid: 00a8d37ff348b46479a98b4c8f2896f0, type: 2}
   hudPresenter: {fileID: 197163808}
 --- !u!4 &1996917748
 Transform:
@@ -2695,6 +2697,7 @@ GameObject:
   - component: {fileID: 2096806329}
   - component: {fileID: 2096806328}
   - component: {fileID: 2096806327}
+  - component: {fileID: 2096806330}
   m_Layer: 5
   m_Name: ResetButton
   m_TagString: Untagged
@@ -2803,6 +2806,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2096806325}
   m_CullTransparentMesh: 1
+--- !u!114 &2096806330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096806325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a14d9232c45e964cbe084362b27641e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KnifeToss.Presentation.UI.RetryButtonAnimator
+  config: {fileID: 11400000, guid: 9611f575cb22ed54a843eb9b63d08d82, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

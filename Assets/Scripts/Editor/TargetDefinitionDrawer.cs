@@ -56,6 +56,7 @@ namespace KnifeToss.Editor
             yield return property.FindPropertyRelative(nameof(TargetDefinition.baseScale));
             yield return property.FindPropertyRelative(nameof(TargetDefinition.preStuckKnives));
             yield return property.FindPropertyRelative(nameof(TargetDefinition.preStuckKnifeSpacing));
+            yield return property.FindPropertyRelative(nameof(TargetDefinition.hitableObjects));
             yield return property.FindPropertyRelative(nameof(TargetDefinition.rotation));
         }
     }

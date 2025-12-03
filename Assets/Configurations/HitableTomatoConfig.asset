@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 890a1155be90acc428dce908210d6835, type: 3}
+  m_Name: HitableTomatoConfig
+  m_EditorClassIdentifier: Assembly-CSharp::KnifeToss.Core.Data.HitableObjectConfig
+  prefab: {fileID: 8469477875108916277, guid: d5abd729dc883c14193d9008126a4bf2, type: 3}
+  hitParticles: {fileID: 5510749490086042844, guid: 20c1ef8e83242c54e9b724b12d0a1d90, type: 3}

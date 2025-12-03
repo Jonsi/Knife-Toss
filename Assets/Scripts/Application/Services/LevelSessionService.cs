@@ -21,6 +21,7 @@ namespace KnifeToss.Application.Services
         private readonly GameplayObjectProvider gameplayObjectProvider;
         private readonly KnivesHierarchyManager hierarchyManager;
         private readonly PreStuckKnifeSpawner preStuckSpawner;
+        private readonly HitableObjectSpawner hitableSpawner;
         private readonly int startLevel;
         private readonly KnifeImpactEventChannel impactEventChannel;
 
@@ -37,6 +38,7 @@ namespace KnifeToss.Application.Services
             GameplayObjectProvider gameplayObjectProvider,
             KnivesHierarchyManager knivesHierarchy,
             PreStuckKnifeSpawner preStuckKnifeSpawner,
+            HitableObjectSpawner hitableObjectSpawner,
             int startingLevel,
             KnifeImpactEventChannel eventChannel)
         {
@@ -46,6 +48,7 @@ namespace KnifeToss.Application.Services
             this.gameplayObjectProvider = gameplayObjectProvider;
             hierarchyManager = knivesHierarchy;
             preStuckSpawner = preStuckKnifeSpawner;
+            hitableSpawner = hitableObjectSpawner;
             startLevel = Mathf.Max(1, startingLevel);
             impactEventChannel = eventChannel;
 
@@ -84,6 +87,7 @@ namespace KnifeToss.Application.Services
             ConfigureThrower(knivesParent, currentRules);
 
             await UniTask.WaitForEndOfFrame();
+            SpawnHitableObjects();
             int preStuckSpawned = preStuckSpawner.Spawn(currentLevelData);
             session.SeedPreStuckKnives(preStuckSpawned);
         }
@@ -209,6 +213,14 @@ namespace KnifeToss.Application.Services
             currentLevelData = catalog.GetLevelData(levelIndex);
             currentRules = catalog.GetRules(levelIndex);
             session.Begin(levelIndex, currentRules);
+        }
+
+        /// <summary>
+        /// Performs the SpawnHitableObjects operation.
+        /// </summary>
+        private void SpawnHitableObjects()
+        {
+            hitableSpawner?.Spawn(currentLevelData);
         }
 
         /// <summary>

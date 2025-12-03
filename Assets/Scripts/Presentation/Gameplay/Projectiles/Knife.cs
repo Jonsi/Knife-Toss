@@ -149,6 +149,12 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
                 return;
             }
 
+            if (collisionObject != null && collisionObject.GetComponentInParent<HitableObjectView>() != null)
+            {
+                // Let the hitable object handle its own hit logic (sound/VFX) without treating it as a target hit.
+                return;
+            }
+
             if (collisionObject.CompareTag("Target"))
             {
                 StickToTarget(collisionTransform, impactPoint);

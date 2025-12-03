@@ -14,4 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KnifeToss.Core.Data.SoundSettings
   hitTargetSound: {fileID: 8300000, guid: ad885cbd16cd0064a8d674e1c70497f7, type: 3}
   hitKnifeSound: {fileID: 8300000, guid: 2f79b76c4d829fb439462ad242183257, type: 3}
+  hitHitableSound: {fileID: 8300000, guid: 22eab4df0bfb76b439118c30d20e43b9, type: 3}
+  music: {fileID: 0}
   buttonClickSound: {fileID: 8300000, guid: 32d4b1811dda14a6cb9e059ee8ad17d2, type: 3}

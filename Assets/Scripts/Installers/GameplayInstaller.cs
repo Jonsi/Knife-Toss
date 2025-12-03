@@ -38,6 +38,9 @@ namespace KnifeToss.Installers
         [SerializeField] private GameObject knifeThrowerPrefab;
         [SerializeField] private GameObject knifePrefab;
 
+        [Header("Events")]
+        [SerializeField] private HitableObjectHitEventChannel hitableHitEventChannel;
+
         [Header("UI References")]
         [SerializeField] private LevelHudPresenter hudPresenter;
 
@@ -51,6 +54,7 @@ namespace KnifeToss.Installers
             builder.RegisterInstance(levelCommandEventChannel);
             builder.RegisterInstance(knifePrefab);
             builder.RegisterInstance(soundSettings);
+            builder.RegisterInstance(hitableHitEventChannel);
             builder.RegisterInstance(buttonClickEventChannel);
             builder.RegisterInstance<ILevelProgressStore>(new PlayerPrefsProgressStore(HighestLevelKey));
             builder.RegisterInstance(hudPresenter);
@@ -81,6 +85,10 @@ namespace KnifeToss.Installers
             builder.Register<KnivesHierarchyManager>(Lifetime.Singleton)
                 .WithParameter(transform)
                 .WithParameter("Knives");
+            builder.Register<HitableObjectSpawner>(Lifetime.Singleton)
+                .WithParameter(resolver => resolver.Resolve<ITargetScaleProvider>())
+                .WithParameter(soundSettings)
+                .WithParameter(hitableHitEventChannel);
             builder.Register<PreStuckKnifeSpawner>(Lifetime.Singleton)
                 .WithParameter(resolver => resolver.Resolve<ITargetScaleProvider>())
                 .WithParameter(knifePrefab);
@@ -88,6 +96,10 @@ namespace KnifeToss.Installers
                 .WithParameter(resolver => resolver.Resolve<GameplayObjectProvider>())
                 .WithParameter(startLevel)
                 .WithParameter(knifeImpactChannel);
+
+            builder.Register<HitableObjectSoundPlayer>(Lifetime.Singleton)
+                .As<IStartable>()
+                .As<IDisposable>();
 
             builder.Register<LevelFlowCoordinator>(Lifetime.Singleton)
                 .As<IStartable>()
