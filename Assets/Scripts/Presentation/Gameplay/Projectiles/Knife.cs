@@ -201,7 +201,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             ResolveCircleSnap(anchor, collider, impactPoint, out Vector3 center, out Vector3 surfacePoint, out Vector2 surfaceDirection);
 
             ResolveAsStuck();
-            AlignToSurface(anchor, surfacePoint);
+            AlignToSurface(anchor, center, surfacePoint, surfaceDirection);
             thrower?.OnKnifeResolved();
             PlaySound(soundSettings != null ? soundSettings.HitTargetSound : null);
             impactEventChannel?.RaiseKnifeStuck(impactPoint);
@@ -281,9 +281,12 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         /// <summary>
         /// Performs the AlignToCircleEdge operation.
         /// </summary>
-        private void AlignToSurface(Transform anchorParent, Vector3 surfacePoint)
+        private void AlignToSurface(Transform anchorParent, Vector3 circleCenter, Vector3 surfacePoint, Vector2 surfaceDirection)
         {
-            Quaternion rotation = transform.rotation;
+            Vector2 direction = surfaceDirection.sqrMagnitude > Mathf.Epsilon
+                ? surfaceDirection.normalized
+                : ResolveImpactDirection(circleCenter, surfacePoint);
+            Quaternion rotation = Quaternion.LookRotation(Vector3.forward, -direction);
 
             Vector3 snapTarget = surfacePoint;
             if (TryResolveSnapOffset(rotation, out Vector3 snapOffset))
