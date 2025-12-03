@@ -171,7 +171,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         private void StickToTarget(Transform targetTransform, Vector3 impactPoint)
         {
             ResolveAsStuck();
-            AlignToTarget(targetTransform);
+            AlignToTarget(targetTransform, impactPoint);
             thrower?.OnKnifeResolved();
             PlaySound(soundSettings != null ? soundSettings.HitTargetSound : null);
             impactEventChannel?.RaiseKnifeStuck(impactPoint);
@@ -251,18 +251,29 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         /// <summary>
         /// Performs the AlignToTarget operation.
         /// </summary>
-        private void AlignToTarget(Transform targetTransform)
+        private void AlignToTarget(Transform targetTransform, Vector3 impactPoint)
         {
             Vector2 targetCenter = targetTransform.position;
-            Vector2 direction = ((Vector2)transform.position - targetCenter).normalized;
+            Vector2 fromCenter = ((Vector2)impactPoint - targetCenter);
+            if (fromCenter.sqrMagnitude < Mathf.Epsilon)
+            {
+                fromCenter = ((Vector2)transform.position - targetCenter);
+            }
+
+            Vector2 direction = fromCenter.sqrMagnitude > Mathf.Epsilon
+                ? fromCenter.normalized
+                : Vector2.up;
+
             CircleCollider2D targetCollider = targetTransform.GetComponent<CircleCollider2D>();
             float uniformScale = Mathf.Max(targetTransform.lossyScale.x, targetTransform.lossyScale.y);
             float targetRadius = targetCollider != null
                 ? targetCollider.radius * uniformScale
                 : 0.5f;
-            float scaledEmbedOffset = embedOffset * uniformScale;
-            Vector2 embeddedPosition = targetCenter + direction * (targetRadius + scaledEmbedOffset);
+
+            float embedDistance = Mathf.Max(targetRadius - embedOffset, 0f);
+            Vector2 embeddedPosition = targetCenter + direction * embedDistance;
             transform.position = embeddedPosition;
+            transform.up = -direction;
             transform.SetParent(targetTransform);
         }
 
