@@ -18,8 +18,11 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         private const float DefaultHorizontalDrift = 0.2f;
         private const float DefaultRotationDegrees = 540f;
 
+        private static readonly Vector2 DefaultLaunchDirection = Vector2.up;
+
         private KnifeThrower thrower;
         private float speed;
+        private Vector2 launchDirection = DefaultLaunchDirection;
         private bool isResolved;
         private bool isStuck;
         private Rigidbody2D rb2d;
@@ -86,12 +89,17 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         /// <summary>
         /// Performs the Initialize operation.
         /// </summary>
-        public void Initialize(KnifeThrower knifeThrower, float throwSpeed)
+        public void Initialize(KnifeThrower knifeThrower, float throwSpeed, Vector2 direction)
         {
             thrower = knifeThrower;
             speed = throwSpeed;
+            launchDirection = direction.sqrMagnitude > Mathf.Epsilon
+                ? direction.normalized
+                : DefaultLaunchDirection;
             isResolved = false;
             isStuck = false;
+
+            transform.up = launchDirection;
 
             rb2d = GetComponent<Rigidbody2D>();
             if (rb2d != null)
@@ -115,11 +123,11 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
 
             if (rb2d != null)
             {
-                rb2d.linearVelocity = Vector2.up * speed;
+                rb2d.linearVelocity = launchDirection * speed;
             }
             else
             {
-                transform.position += Vector3.up * speed * Time.deltaTime;
+                transform.position += (Vector3)(launchDirection * speed * Time.deltaTime);
             }
         }
 

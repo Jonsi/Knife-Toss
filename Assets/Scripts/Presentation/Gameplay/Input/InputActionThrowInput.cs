@@ -11,7 +11,11 @@ namespace KnifeToss.Presentation.Gameplay
     {
         [SerializeField] private InputActionReference actionReference;
 
-        public event Action Performed;
+        private Vector2 lastScreenPosition;
+
+        public event Action<Vector2> Pressed;
+        public event Action<Vector2> Released;
+        public Vector2 CurrentScreenPosition => ResolveScreenPosition();
 
         /// <summary>
         /// Performs the OnEnable operation.
@@ -22,6 +26,7 @@ namespace KnifeToss.Presentation.Gameplay
             {
                 actionReference.action.Enable();
                 actionReference.action.started += HandleStarted;
+                actionReference.action.canceled += HandleCanceled;
             }
         }
 
@@ -33,6 +38,7 @@ namespace KnifeToss.Presentation.Gameplay
             if (actionReference != null && actionReference.action != null)
             {
                 actionReference.action.started -= HandleStarted;
+                actionReference.action.canceled -= HandleCanceled;
                 actionReference.action.Disable();
             }
         }
@@ -58,7 +64,57 @@ namespace KnifeToss.Presentation.Gameplay
         /// </summary>
         private void HandleStarted(InputAction.CallbackContext _)
         {
-            Performed?.Invoke();
+            Vector2 screenPosition = ResolveScreenPosition();
+            lastScreenPosition = screenPosition;
+            Pressed?.Invoke(screenPosition);
+        }
+
+        private void HandleCanceled(InputAction.CallbackContext _)
+        {
+            Vector2 screenPosition = ResolveScreenPosition();
+            lastScreenPosition = screenPosition;
+            Released?.Invoke(screenPosition);
+        }
+
+        private Vector2 ResolveScreenPosition()
+        {
+            if (TryGetScreenPosition(out Vector2 position))
+            {
+                return position;
+            }
+
+            return lastScreenPosition;
+        }
+
+        private bool TryGetScreenPosition(out Vector2 position)
+        {
+            position = Vector2.zero;
+
+            if (actionReference != null && actionReference.action != null)
+            {
+                InputAction action = actionReference.action;
+                InputControl control = action.activeControl;
+
+                if (control != null && control.valueType == typeof(Vector2))
+                {
+                    position = action.ReadValue<Vector2>();
+                    return position != Vector2.zero;
+                }
+            }
+
+            if (UnityEngine.InputSystem.Mouse.current != null)
+            {
+                position = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
+                return true;
+            }
+
+            if (UnityEngine.InputSystem.Touchscreen.current != null)
+            {
+                position = UnityEngine.InputSystem.Touchscreen.current.primaryTouch.position.ReadValue();
+                return true;
+            }
+
+            return false;
         }
     }
 }

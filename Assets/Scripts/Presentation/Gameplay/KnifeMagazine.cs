@@ -22,6 +22,7 @@ namespace KnifeToss.Presentation.Gameplay
 
         private int knivesRemaining;
         private float scaleMultiplier = 1f;
+        private Quaternion queueBaseRotation = Quaternion.identity;
 
         /// <summary>
         /// Performs the KnifeMagazine operation.
@@ -58,6 +59,7 @@ namespace KnifeToss.Presentation.Gameplay
 
             pool.ReturnAll(queue);
             ClearQueue();
+            queueBaseRotation = launcher != null ? launcher.rotation : Quaternion.identity;
             WarmPool(totalKnives);
             FillInitialQueue();
         }
@@ -106,6 +108,26 @@ namespace KnifeToss.Presentation.Gameplay
         public void KillTweens()
         {
             TweenKiller.Kill(queue);
+        }
+
+        /// <summary>
+        /// Performs the AlignFirstKnife operation.
+        /// </summary>
+        public void AlignFirstKnife(Vector2 direction)
+        {
+            if (queue.Count == 0)
+            {
+                return;
+            }
+
+            GameObject knife = queue[0];
+            if (knife == null)
+            {
+                return;
+            }
+
+            Transform knifeTransform = knife.transform;
+            knifeTransform.up = direction;
         }
 
         /// <summary>
@@ -197,7 +219,7 @@ namespace KnifeToss.Presentation.Gameplay
 
             Transform knifeTransform = knife.transform;
             knifeTransform.position = GetQueuePosition(index);
-            knifeTransform.rotation = launcher != null ? launcher.rotation : Quaternion.identity;
+            knifeTransform.rotation = queueBaseRotation;
             Vector3 targetScale = pool.PrefabOriginalScale * GetQueueScaleMultiplier(index) * ResolveScaleMultiplier();
             knifeTransform.SetParent(queueParent);
 

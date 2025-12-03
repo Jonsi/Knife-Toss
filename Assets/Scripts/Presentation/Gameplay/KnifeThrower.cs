@@ -32,6 +32,7 @@ namespace KnifeToss.Presentation.Gameplay
         private int maxKnives;
         private int knivesThrown;
         private bool canThrow = true;
+        private bool isAiming;
         private Transform knivesParent;
 
         private KnifePool knifePool;
@@ -56,7 +57,8 @@ namespace KnifeToss.Presentation.Gameplay
         /// </summary>
         private void OnEnable()
         {
-            throwInput.Performed += OnThrowInput;
+            throwInput.Pressed += OnThrowPressed;
+            throwInput.Released += OnThrowReleased;
             throwInput.Enable();
         }
 
@@ -65,8 +67,20 @@ namespace KnifeToss.Presentation.Gameplay
         /// </summary>
         private void OnDisable()
         {
-            throwInput.Performed -= OnThrowInput;
+            throwInput.Pressed -= OnThrowPressed;
+            throwInput.Released -= OnThrowReleased;
             throwInput.Disable();
+        }
+
+        private void Update()
+        {
+            if (!isAiming)
+            {
+                return;
+            }
+
+            Vector2 aimDirection = ResolveAimDirection(throwInput.CurrentScreenPosition);
+            ApplyAimDirection(aimDirection);
         }
 
         /// <summary>
@@ -100,17 +114,25 @@ namespace KnifeToss.Presentation.Gameplay
             }
         }
 
-        /// <summary>
-        /// Performs the OnThrowInput operation.
-        /// </summary>
-        private void OnThrowInput()
+        private void OnThrowPressed(Vector2 screenPosition)
         {
+            isAiming = true;
+            Vector2 aimDirection = ResolveAimDirection(screenPosition);
+            ApplyAimDirection(aimDirection);
+        }
+
+        private void OnThrowReleased(Vector2 screenPosition)
+        {
+            isAiming = false;
+            Vector2 aimDirection = ResolveAimDirection(screenPosition);
+            ApplyAimDirection(aimDirection);
+
             if (!IsReadyToThrow())
             {
                 return;
             }
 
-            ThrowKnife();
+            ThrowKnife(aimDirection);
         }
 
         /// <summary>
@@ -136,7 +158,7 @@ namespace KnifeToss.Presentation.Gameplay
         /// <summary>
         /// Performs the ThrowKnife operation.
         /// </summary>
-        private void ThrowKnife()
+        private void ThrowKnife(Vector2 aimDirection)
         {
             EnsureInitialized();
 
@@ -150,16 +172,67 @@ namespace KnifeToss.Presentation.Gameplay
             PrepareKnifeForThrow(knifeObject);
             ActivateKnife(knifeObject);
 
+            ApplyAimDirection(aimDirection);
+
             currentKnife = knifeObject.GetComponent<Knife>();
             if (currentKnife != null)
             {
-                currentKnife.Initialize(this, throwSpeed);
+                currentKnife.Initialize(this, throwSpeed, aimDirection);
             }
 
             knivesThrown++;
             KnifeThrown?.Invoke();
             magazine.SlideQueueForward();
         }
+
+        private void ApplyAimDirection(Vector2 direction)
+        {
+            if (launcherTransform == null)
+            {
+                return;
+            }
+
+            Vector2 resolved = direction.sqrMagnitude > Mathf.Epsilon ? direction.normalized : Vector2.up;
+            AlignQueuedHead(resolved);
+        }
+
+        private Vector2 ResolveAimDirection(Vector2 screenPosition)
+        {
+            if (launcherTransform == null)
+            {
+                return Vector2.up;
+            }
+
+            Camera cam = Camera.main;
+            if (cam == null)
+            {
+                return launcherTransform.up;
+            }
+
+            float zDistance = Mathf.Abs(launcherTransform.position.z - cam.transform.position.z);
+            zDistance = Mathf.Approximately(zDistance, 0f) ? 1f : zDistance;
+            Vector3 worldPoint = cam.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, zDistance));
+            worldPoint.z = launcherTransform.position.z;
+
+            Vector2 direction = (Vector2)(worldPoint - launcherTransform.position);
+            if (direction.sqrMagnitude < Mathf.Epsilon)
+            {
+                return launcherTransform.up;
+            }
+
+            return direction.normalized;
+        }
+
+        private void AlignQueuedHead(Vector2 direction)
+        {
+            if (magazine == null || direction.sqrMagnitude <= Mathf.Epsilon)
+            {
+                return;
+            }
+
+            magazine.AlignFirstKnife(direction.normalized);
+        }
+
 
         /// <summary>
         /// Performs the PrepareKnifeForThrow operation.
@@ -361,11 +434,17 @@ namespace KnifeToss.Presentation.Gameplay
 
         private sealed class NullThrowInput : IThrowInput
         {
-            public event Action Performed
+            public event Action<Vector2> Pressed
             {
                 add { }
                 remove { }
             }
+            public event Action<Vector2> Released
+            {
+                add { }
+                remove { }
+            }
+            public Vector2 CurrentScreenPosition => Vector2.zero;
             /// <summary>
             /// Performs the Enable operation.
             /// </summary>

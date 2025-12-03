@@ -100,7 +100,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3126276711855495373}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -127,10 +127,10 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.010036677, y: 0.07961583}
+  m_Offset: {x: -0.010036677, y: 1.11}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.5, y: 0.09}
     oldSize: {x: 1.7066667, y: 2.56}
     newSize: {x: 1.7066667, y: 2.56}
     adaptiveTilingThreshold: 0.5
@@ -154,12 +154,6 @@ MonoBehaviour:
   embedOffset: 0.02
   impactEventChannel: {fileID: 11400000, guid: a78030c48769aec48b1aeb7cf48a28cb, type: 2}
   failAnimationConfig: {fileID: 11400000, guid: 09203f5a299b2204c9a04c195d2e7c87, type: 2}
-  hitTargetSound:
-    clip: {fileID: 8300000, guid: ad885cbd16cd0064a8d674e1c70497f7, type: 3}
-    startOffsetSeconds: 0
-  hitKnifeSound:
-    clip: {fileID: 8300000, guid: 2f79b76c4d829fb439462ad242183257, type: 3}
-    startOffsetSeconds: 0
   soundVolume: 1
 --- !u!50 &8727754346152716786
 Rigidbody2D:
