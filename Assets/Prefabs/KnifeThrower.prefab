@@ -51,9 +51,9 @@ MonoBehaviour:
   throwInputSource: {fileID: 7941506103797331319}
   throwSpeed: 20
   poolWarmupCount: 10
-  visibleQueueCount: 3
-  queueSpacing: 0.2
-  slideAnimationDuration: 0.3
+  visibleQueueCount: 1
+  queueSpacing: 1
+  slideAnimationDuration: 0.1
   queueScaleEnd: 0.5
   queueOpacityEnd: 0.3
 --- !u!114 &7941506103797331319

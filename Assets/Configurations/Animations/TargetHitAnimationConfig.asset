@@ -17,7 +17,7 @@ MonoBehaviour:
   shakeVibrato: 20
   shakeRandomness: 45
   shakeFadeOut: 0
-  tintColor: {r: 1, g: 0.6841278, b: 0, a: 1}
+  tintColor: {r: 1, g: 1, b: 1, a: 1}
   tintFadeInDuration: 0.05
   tintHoldDuration: 0.05
   tintFadeOutDuration: 0.2
