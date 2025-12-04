@@ -24,18 +24,27 @@ namespace KnifeToss.Application.Services
             Transform defaultParent,
             Transform launcherTransform,
             IObjectResolver objectResolver,
-            KnifeThrower.MagazineConfig magazineConfig)
+            KnifeToss.Core.Data.MagazineConfig magazineConfig)
         {
-            _knifePool = new KnifePool(knifePrefab, defaultParent, magazineConfig.PoolWarmupCount, objectResolver);
-            _magazine = new KnifeMagazine(
-                _knifePool,
-                defaultParent,
-                launcherTransform,
-                magazineConfig.VisibleQueueCount,
-                magazineConfig.QueueSpacing,
-                magazineConfig.SlideAnimationDuration,
-                magazineConfig.QueueScaleEnd,
-                magazineConfig.QueueOpacityEnd);
+            if (magazineConfig == null)
+            {
+                // Default values if config not provided
+                _knifePool = new KnifePool(knifePrefab, defaultParent, 10, objectResolver);
+                _magazine = new KnifeMagazine(_knifePool, defaultParent, launcherTransform, 5, 0.5f, 0.3f, 0.5f, 0.3f);
+            }
+            else
+            {
+                _knifePool = new KnifePool(knifePrefab, defaultParent, magazineConfig.poolWarmupCount, objectResolver);
+                _magazine = new KnifeMagazine(
+                    _knifePool,
+                    defaultParent,
+                    launcherTransform,
+                    magazineConfig.visibleQueueCount,
+                    magazineConfig.queueSpacing,
+                    magazineConfig.slideAnimationDuration,
+                    magazineConfig.queueScaleEnd,
+                    magazineConfig.queueOpacityEnd);
+            }
         }
 
         /// <summary>

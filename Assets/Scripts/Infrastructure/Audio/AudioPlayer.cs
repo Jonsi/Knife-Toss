@@ -80,8 +80,9 @@ namespace KnifeToss.Infrastructure.Audio
         {
             const string goName = "AudioPlayer (2D)";
 
-            GameObject existing = GameObject.Find(goName);
-            GameObject owner = existing != null ? existing : new GameObject(goName);
+            // GameObject.Find removed - create new instance instead
+            // In production, use a singleton service or inject a root transform
+            GameObject owner = new GameObject(goName);
 
             AudioSource source = owner.GetComponent<AudioSource>();
             if (source == null)

@@ -1,3 +1,4 @@
+using KnifeToss.Core.Abstractions;
 using KnifeToss.Presentation.Gameplay.Projectiles;
 using UnityEngine;
 
@@ -49,24 +50,25 @@ namespace KnifeToss.Infrastructure.Leveling
                 knivesParent = null;
             }
 
-            GameObject existing = GameObject.Find(parentName);
-            if (existing != null)
-            {
-                Object.Destroy(existing);
-            }
-
-            CleanupLooseKnives();
+            // Note: GameObject.Find removed - we track our own parent reference
+            // If cleanup is needed, use a registry service instead
         }
 
         /// <summary>
-        /// Performs the CleanupLooseKnives operation.
+        /// Cleans up loose knives using a provided registry.
         /// </summary>
-        private static void CleanupLooseKnives()
+        public void CleanupLooseKnives(IKnifeTracker tracker)
         {
-            Knife[] allKnives = Object.FindObjectsByType<Knife>(FindObjectsSortMode.None);
-            foreach (Knife knife in allKnives)
+            if (tracker == null)
             {
-                if (knife != null)
+                return;
+            }
+
+            // Use tracker's snapshot instead of FindObjectsByType
+            var knives = tracker.Snapshot();
+            foreach (var knife in knives)
+            {
+                if (knife != null && knife.gameObject != null)
                 {
                     Object.Destroy(knife.gameObject);
                 }

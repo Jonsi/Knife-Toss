@@ -1,12 +1,17 @@
 using System;
+using KnifeToss.Application;
 using KnifeToss.Application.Services;
 using KnifeToss.Core.Abstractions;
 using KnifeToss.Core.Data;
 using KnifeToss.Core.Domain;
 using KnifeToss.Core.Events;
+using KnifeToss.Core.Abstractions.Factories;
+using KnifeToss.Core.Abstractions.Services;
 using KnifeToss.Infrastructure.Audio;
+using KnifeToss.Infrastructure.Factories;
 using KnifeToss.Infrastructure.Leveling;
 using KnifeToss.Infrastructure.Persistence;
+using KnifeToss.Infrastructure.Services;
 using KnifeToss.Presentation.Gameplay;
 using KnifeToss.Presentation.UI;
 using UnityEngine;
@@ -58,7 +63,20 @@ namespace KnifeToss.Installers
             builder.RegisterInstance(buttonClickEventChannel);
             builder.RegisterInstance<ILevelProgressStore>(new PlayerPrefsProgressStore(HighestLevelKey));
             builder.RegisterInstance(hudPresenter);
+            
+            // Register RuntimeCacheService if not already registered in parent scope
+            builder.Register<RuntimeCacheService>(Lifetime.Singleton);
+            
+            builder.Register<IGameEventBus, GameEventBus>(Lifetime.Singleton);
             builder.Register<IAudioPlayer, AudioPlayer>(Lifetime.Singleton);
+            
+            // Register pooled audio service for Knife components
+            builder.Register<PooledAudioService>(Lifetime.Singleton)
+                .As<IAudioService>()
+                .As<IDisposable>()
+                .WithParameter("poolRoot", resolver => resolver.Resolve<RuntimeCacheService>().MainCameraTransform ?? transform)
+                .WithParameter("poolSize", 8);
+            
             builder.Register<ILevelCommandInvoker, LevelCommandChannelInvoker>(Lifetime.Singleton)
                 .WithParameter(levelCommandEventChannel);
             builder.Register<IKnifeTracker, KnifeTracker>(Lifetime.Singleton);
@@ -73,9 +91,18 @@ namespace KnifeToss.Installers
 
             builder.Register<IStarRatingService, StarRatingService>(Lifetime.Singleton);
 
+            // Register knife factory with pooling
+            // Note: IObjectResolver is automatically injected by VContainer
+            builder.Register<PooledKnifeFactory>(Lifetime.Singleton)
+                .As<IKnifeFactory>()
+                .WithParameter("prefab", knifePrefab)
+                .WithParameter("parent", resolver => resolver.Resolve<KnivesHierarchyManager>().EnsureParent())
+                .WithParameter("warmupCount", 15);
+
             builder.Register<GameplayObjectProvider>(Lifetime.Singleton)
                 .WithParameter("targetPrefab", targetPrefab)
                 .WithParameter("knifeThrowerPrefab", knifeThrowerPrefab)
+                .WithParameter("knifePrefab", knifePrefab)
                 .WithParameter("lifetimeTransform", transform);
 
             builder.Register<ITargetScaleProvider>(resolver => resolver.Resolve<GameplayObjectProvider>().GetTargetGroupManager(), Lifetime.Singleton);

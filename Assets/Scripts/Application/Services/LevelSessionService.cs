@@ -212,11 +212,15 @@ namespace KnifeToss.Application.Services
         private void ConfigureThrower(Transform knivesParent, LevelRules rules)
         {
             KnifeThrower knifeThrower = gameplayObjectProvider.GetKnifeThrower();
+            GameObject knifePrefab = gameplayObjectProvider.GetKnifePrefab();
+
+            // Get prefab scale and color
+            Vector3 prefabScale = knifePrefab != null ? knifePrefab.transform.localScale : Vector3.one;
+            Color prefabColor = knifePrefab != null ? (knifePrefab.GetComponent<SpriteRenderer>()?.color ?? Color.white) : Color.white;
 
             knifeThrower.ResetState();
             knifeThrower.SetScaleProvider(gameplayObjectProvider.GetTargetGroupManager());
-            knifeThrower.SetTotalKnives(rules.KnifeCount);
-            knifeThrower.SetKnivesParent(knivesParent);
+            knifeThrower.Initialize(knivesParent, prefabScale, prefabColor, rules.KnifeCount);
             knifeThrower.SetCanThrow(true);
         }
 

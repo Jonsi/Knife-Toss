@@ -1,479 +1,245 @@
 using System;
+using KnifeToss.Core.Abstractions;
+using KnifeToss.Core.Abstractions.Factories;
+using KnifeToss.Infrastructure.Services;
 using KnifeToss.Presentation.Gameplay.Projectiles;
+using KnifeToss.Presentation.Gameplay.Throwing;
 using UnityEngine;
 using VContainer;
 
 namespace KnifeToss.Presentation.Gameplay
 {
     /// <summary>
-    /// Represents the KnifeThrower class.
+    /// Simplified facade for knife throwing. Coordinates input, aiming, launching, and magazine.
     /// </summary>
-    public class KnifeThrower : MonoBehaviour
+    [RequireComponent(typeof(ThrowingInput))]
+    [RequireComponent(typeof(AimCalculator))]
+    [RequireComponent(typeof(KnifeLauncher))]
+    public sealed class KnifeThrower : MonoBehaviour
     {
-        [Header("References")]
-        [SerializeField] private GameObject knifePrefab;
-        [SerializeField] private Transform launcherTransform;
-        [SerializeField] private MonoBehaviour throwInputSource;
-
-        [Header("Throwing Settings")]
-        [SerializeField] private float throwSpeed = 10f;
-
+        [SerializeField] private ThrowingInput _input;
+        [SerializeField] private AimCalculator _aim;
+        [SerializeField] private KnifeLauncher _launcher;
+        
         [Header("Magazine Settings")]
-        [SerializeField] private int poolWarmupCount = 10;
-        [SerializeField] private int visibleQueueCount = 5;
-        [SerializeField] private float queueSpacing = 0.5f;
+        [SerializeField] private int visibleQueueCount = 3;
+        [SerializeField] private float queueSpacing = 0.2f;
         [SerializeField] private float slideAnimationDuration = 0.3f;
         [SerializeField] private float queueScaleEnd = 0.5f;
         [SerializeField] private float queueOpacityEnd = 0.3f;
 
-        private IThrowInput throwInput;
-        private Knife currentKnife;
-        private bool isKnifeInFlight;
-        private int knivesThrown;
-        private bool canThrow = true;
-        private bool isAiming;
-        private Transform knivesParent;
-
-        private KnifePool knifePool;
-        private KnifeMagazine magazine;
-        private KnifeToss.Core.Abstractions.IKnifeTracker knifeTracker;
-        private IObjectResolver objectResolver;
-        private ITargetScaleProvider targetScaleProvider;
+        private KnifeMagazine _magazine;
+        private IKnifeTracker _knifeTracker;
+        private IKnifeFactory _knifeFactory;
+        private ITargetScaleProvider _scaleProvider;
+        private RuntimeCacheService _cacheService;
+        private GameObject _knifePrefab;
+        private IObjectResolver _resolver;
+        private Transform _knivesParent;
+        private Knife _currentKnife;
+        private bool _isKnifeInFlight;
+        private bool _canThrow = true;
+        private int _knivesThrown;
 
         public event Action KnifeThrown;
         public event Action KnifeResolved;
 
-        /// <summary>
-        /// Performs the Awake operation.
-        /// </summary>
         private void Awake()
         {
-            launcherTransform ??= transform;
-            throwInput = throwInputSource as IThrowInput ?? new NullThrowInput();
+            _input ??= GetComponent<ThrowingInput>();
+            _aim ??= GetComponent<AimCalculator>();
+            _launcher ??= GetComponent<KnifeLauncher>();
         }
 
-        /// <summary>
-        /// Performs the OnEnable operation.
-        /// </summary>
         private void OnEnable()
         {
-            throwInput.Pressed += OnThrowPressed;
-            throwInput.Released += OnThrowReleased;
-            throwInput.Enable();
+            if (_input != null)
+            {
+                _input.ThrowPressed += HandleThrowPressed;
+                _input.ThrowReleased += HandleThrowReleased;
+                _input.AimUpdated += HandleAimUpdated;
+            }
         }
 
-        /// <summary>
-        /// Performs the OnDisable operation.
-        /// </summary>
         private void OnDisable()
         {
-            throwInput.Pressed -= OnThrowPressed;
-            throwInput.Released -= OnThrowReleased;
-            throwInput.Disable();
+            if (_input != null)
+            {
+                _input.ThrowPressed -= HandleThrowPressed;
+                _input.ThrowReleased -= HandleThrowReleased;
+                _input.AimUpdated -= HandleAimUpdated;
+            }
         }
 
-        private void Update()
+        [VContainer.Inject]
+        public void Construct(
+            IKnifeTracker tracker,
+            IKnifeFactory knifeFactory,
+            ITargetScaleProvider scaleProvider,
+            RuntimeCacheService cacheService,
+            GameObject knifePrefab,
+            IObjectResolver resolver)
         {
-            if (!isAiming)
+            _knifeTracker = tracker;
+            _knifeFactory = knifeFactory;
+            _scaleProvider = scaleProvider;
+            _cacheService = cacheService;
+            _knifePrefab = knifePrefab;
+            _resolver = resolver;
+
+            _aim?.Initialize(_cacheService);
+        }
+
+        public void Initialize(
+            Transform knivesParent,
+            Vector3 prefabScale,
+            Color prefabColor,
+            int totalKnives)
+        {
+            _knivesParent = knivesParent;
+            
+            if (_launcher != null)
+            {
+                _launcher.Initialize(transform, knivesParent, _knifeFactory, _scaleProvider, prefabScale, prefabColor);
+            }
+
+            // Create KnifeMagazine if not already created
+            if (_magazine == null && _knifePrefab != null && _resolver != null && knivesParent != null)
+            {
+                // Create a queue parent for the magazine
+                GameObject queueParentObj = new GameObject("KnifeQueue");
+                queueParentObj.transform.SetParent(knivesParent);
+                queueParentObj.transform.localPosition = Vector3.zero;
+                Transform queueParent = queueParentObj.transform;
+
+                // Create KnifePool
+                KnifePool pool = new KnifePool(_knifePrefab, knivesParent, totalKnives, _resolver);
+
+                // Create KnifeMagazine
+                _magazine = new KnifeMagazine(
+                    pool,
+                    queueParent,
+                    transform,
+                    visibleQueueCount,
+                    queueSpacing,
+                    slideAnimationDuration,
+                    queueScaleEnd,
+                    queueOpacityEnd);
+            }
+
+            if (_magazine != null)
+            {
+                _magazine.Configure(totalKnives);
+            }
+
+            _canThrow = true;
+            _knivesThrown = 0;
+        }
+
+        public void SetCanThrow(bool allow)
+        {
+            _canThrow = allow;
+        }
+
+        public void SetTotalKnives(int total)
+        {
+            _magazine?.Configure(total);
+            _knivesThrown = 0;
+        }
+
+        public void SetKnivesParent(Transform parent)
+        {
+            _launcher?.SetKnivesParent(parent);
+        }
+
+        public void SetScaleProvider(ITargetScaleProvider scaleProvider)
+        {
+            _scaleProvider = scaleProvider;
+            _launcher?.SetScaleProvider(scaleProvider);
+        }
+
+        public void KillAllKnifeTweens()
+        {
+            _magazine?.KillTweens();
+        }
+
+        public void ResetState()
+        {
+            _isKnifeInFlight = false;
+            _knivesThrown = 0;
+            _canThrow = true;
+            _magazine?.Reset();
+        }
+
+        public void ReturnToPool(Knife knife)
+        {
+            if (knife == null || _knifeFactory == null)
             {
                 return;
             }
 
-            Vector2 aimDirection = ResolveAimDirection(throwInput.CurrentScreenPosition);
-            ApplyAimDirection(aimDirection);
+            _knifeFactory.Recycle(knife);
         }
 
-        /// <summary>
-        /// Performs the OnDestroy operation.
-        /// </summary>
-        private void OnDestroy()
+        public void OnKnifeResolved()
         {
-            KillAllKnifeTweens();
-            magazine?.Reset();
-            knifePool?.Clear();
+            _isKnifeInFlight = false;
+            _currentKnife = null;
+            KnifeResolved?.Invoke();
         }
 
-        /// <summary>
-        /// Performs the KillAllKnifeTweens operation.
-        /// </summary>
-        public void KillAllKnifeTweens()
+        private void HandleThrowPressed(Vector2 screenPosition)
         {
-            EnsureInitialized();
-            KillTweensFromRegistry();
-            magazine.KillTweens();
-            knifePool.KillTweens();
-            KillTweensOnChildren(transform);
-            if (knivesParent != null)
-            {
-                KillTweensOnChildren(knivesParent);
-            }
-
-            if (currentKnife != null)
-            {
-                TweenKiller.Kill(currentKnife.gameObject);
-            }
+            Vector2 direction = _aim.CalculateDirection(screenPosition);
+            _aim.UpdateAim(direction);
+            _magazine?.AlignFirstKnife(direction);
         }
 
-        private void OnThrowPressed(Vector2 screenPosition)
+        private void HandleThrowReleased(Vector2 screenPosition)
         {
-            isAiming = true;
-            Vector2 aimDirection = ResolveAimDirection(screenPosition);
-            ApplyAimDirection(aimDirection);
-        }
-
-        private void OnThrowReleased(Vector2 screenPosition)
-        {
-            isAiming = false;
-            Vector2 aimDirection = ResolveAimDirection(screenPosition);
-            ApplyAimDirection(aimDirection);
-
             if (!IsReadyToThrow())
             {
                 return;
             }
 
-            ThrowKnife(aimDirection);
+            Vector2 direction = _aim.CalculateDirection(screenPosition);
+            ThrowKnife(direction);
         }
 
-        /// <summary>
-        /// Performs the IsReadyToThrow operation.
-        /// </summary>
+        private void HandleAimUpdated(Vector2 screenPosition)
+        {
+            Vector2 direction = _aim.CalculateDirection(screenPosition);
+            _magazine?.AlignFirstKnife(direction);
+        }
+
         private bool IsReadyToThrow()
         {
-            EnsureInitialized();
-
-            if (!canThrow || isKnifeInFlight || knifePrefab == null || launcherTransform == null)
+            if (!_canThrow || _isKnifeInFlight || _magazine == null)
             {
                 return false;
             }
 
-            return magazine.KnivesRemaining > 0;
+            return _magazine.KnivesRemaining > 0;
         }
 
-        /// <summary>
-        /// Performs the ThrowKnife operation.
-        /// </summary>
-        private void ThrowKnife(Vector2 aimDirection)
+        private void ThrowKnife(Vector2 direction)
         {
-            EnsureInitialized();
-
-            if (!magazine.TryTakeNext(out GameObject knifeObject))
+            if (_magazine == null || !_magazine.TryTakeNext(out GameObject knifeObject))
             {
                 return;
             }
 
-            isKnifeInFlight = true;
-
-            PrepareKnifeForThrow(knifeObject);
-            ActivateKnife(knifeObject);
-
-            ApplyAimDirection(aimDirection);
-
-            currentKnife = knifeObject.GetComponent<Knife>();
-            if (currentKnife != null)
+            _isKnifeInFlight = true;
+            _currentKnife = knifeObject.GetComponent<Knife>();
+            if (_currentKnife == null)
             {
-                currentKnife.Initialize(this, throwSpeed, aimDirection);
+                _currentKnife = _launcher.Launch(direction);
             }
 
-            knivesThrown++;
+            _knivesThrown++;
             KnifeThrown?.Invoke();
-            magazine.SlideQueueForward();
-        }
-
-        private void ApplyAimDirection(Vector2 direction)
-        {
-            if (launcherTransform == null)
-            {
-                return;
-            }
-
-            Vector2 resolved = direction.sqrMagnitude > Mathf.Epsilon ? direction.normalized : Vector2.up;
-            AlignQueuedHead(resolved);
-        }
-
-        private Vector2 ResolveAimDirection(Vector2 screenPosition)
-        {
-            if (launcherTransform == null)
-            {
-                return Vector2.up;
-            }
-
-            Camera cam = Camera.main;
-            if (cam == null)
-            {
-                return launcherTransform.up;
-            }
-
-            float zDistance = Mathf.Abs(launcherTransform.position.z - cam.transform.position.z);
-            zDistance = Mathf.Approximately(zDistance, 0f) ? 1f : zDistance;
-            Vector3 worldPoint = cam.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, zDistance));
-            worldPoint.z = launcherTransform.position.z;
-
-            Vector2 direction = (Vector2)(worldPoint - launcherTransform.position);
-            if (direction.sqrMagnitude < Mathf.Epsilon)
-            {
-                return launcherTransform.up;
-            }
-
-            return direction.normalized;
-        }
-
-        private void AlignQueuedHead(Vector2 direction)
-        {
-            if (magazine == null || direction.sqrMagnitude <= Mathf.Epsilon)
-            {
-                return;
-            }
-
-            magazine.AlignFirstKnife(direction.normalized);
-        }
-
-
-        /// <summary>
-        /// Performs the PrepareKnifeForThrow operation.
-        /// </summary>
-        private void PrepareKnifeForThrow(GameObject knifeObject)
-        {
-            Transform parent = knivesParent != null ? knivesParent : null;
-            Transform knifeTransform = knifeObject.transform;
-
-            knifeTransform.SetParent(parent);
-            KnifeSetupUtility.PositionAtLauncher(knifeObject, launcherTransform);
-            KnifeSetupUtility.ApplyVisuals(knifeObject, ResolveKnifeScale(), knifePool.PrefabOriginalColor);
-            KnifeSetupUtility.EnableColliders(knifeObject, true);
-        }
-
-        /// <summary>
-        /// Performs the KillTweensOnChildren operation.
-        /// </summary>
-        private static void KillTweensOnChildren(Transform parent)
-        {
-            if (parent == null)
-            {
-                return;
-            }
-
-            for (int i = 0; i < parent.childCount; i++)
-            {
-                Transform child = parent.GetChild(i);
-                if (child != null)
-                {
-                    TweenKiller.Kill(child.gameObject);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Performs the KillTweensFromRegistry operation.
-        /// </summary>
-        private void KillTweensFromRegistry()
-        {
-            foreach (Knife knife in knifeTracker?.Snapshot() ?? Array.Empty<Knife>())
-            {
-                if (knife != null)
-                {
-                    TweenKiller.Kill(knife.gameObject);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Performs the OnKnifeResolved operation.
-        /// </summary>
-        public void OnKnifeResolved()
-        {
-            isKnifeInFlight = false;
-            currentKnife = null;
-            KnifeResolved?.Invoke();
-        }
-
-        /// <summary>
-        /// Returns a knife to the pool.
-        /// </summary>
-        /// <param name="knife">Knife to return.</param>
-        public void ReturnToPool(Knife knife)
-        {
-            if (knife == null)
-            {
-                return;
-            }
-
-            EnsureInitialized();
-            knifePool?.Return(knife.gameObject);
-        }
-
-        /// <summary>
-        /// Performs the ResetState operation.
-        /// </summary>
-        public void ResetState()
-        {
-            EnsureInitialized();
-            KillAllKnifeTweens();
-            magazine.Reset();
-            isKnifeInFlight = false;
-            knivesThrown = 0;
-            canThrow = true;
-        }
-
-        /// <summary>
-        /// Performs the SetTotalKnives operation.
-        /// </summary>
-        public void SetTotalKnives(int total)
-        {
-            EnsureInitialized();
-            magazine.Configure(total);
-            knivesThrown = 0;
-        }
-
-        /// <summary>
-        /// Performs the SetCanThrow operation.
-        /// </summary>
-        public void SetCanThrow(bool allow)
-        {
-            canThrow = allow;
-        }
-
-        /// <summary>
-        /// Performs the SetKnivesParent operation.
-        /// </summary>
-        public void SetKnivesParent(Transform parent)
-        {
-            knivesParent = parent;
-        }
-
-        /// <summary>
-        /// Performs the ActivateKnife operation.
-        /// </summary>
-        private static void ActivateKnife(GameObject knifeObject)
-        {
-            knifeObject.SetActive(true);
-        }
-
-        /// <summary>
-        /// Performs the Construct operation.
-        /// </summary>
-        [VContainer.Inject]
-        public void Construct(KnifeToss.Core.Abstractions.IKnifeTracker tracker, IObjectResolver resolver, ITargetScaleProvider scaleProvider = null)
-        {
-            knifeTracker = tracker;
-            objectResolver = resolver;
-            targetScaleProvider = scaleProvider;
-            InitializePoolAndMagazine();
-            UpdateMagazineScale();
-        }
-
-        /// <summary>
-        /// Performs the SetScaleProvider operation.
-        /// </summary>
-        public void SetScaleProvider(ITargetScaleProvider scaleProvider)
-        {
-            targetScaleProvider = scaleProvider;
-            UpdateMagazineScale();
-        }
-
-        /// <summary>
-        /// Performs the InitializePoolAndMagazine operation.
-        /// </summary>
-        private void InitializePoolAndMagazine()
-        {
-            if (knifePool != null && magazine != null)
-            {
-                return;
-            }
-
-            knifePool = new KnifePool(knifePrefab, transform, poolWarmupCount, objectResolver);
-            magazine = new KnifeMagazine(
-                knifePool,
-                transform,
-                launcherTransform,
-                visibleQueueCount,
-                queueSpacing,
-                slideAnimationDuration,
-                queueScaleEnd,
-                queueOpacityEnd);
-            UpdateMagazineScale();
-        }
-
-        /// <summary>
-        /// Performs the EnsureInitialized operation.
-        /// </summary>
-        private void EnsureInitialized()
-        {
-            if (knifePool == null || magazine == null)
-            {
-                InitializePoolAndMagazine();
-            }
-        }
-
-        /// <summary>
-        /// Performs the ResolveKnifeScale operation.
-        /// </summary>
-        private Vector3 ResolveKnifeScale()
-        {
-            float scaleFactor = ResolveScaleFactor();
-            return knifePool != null ? knifePool.PrefabOriginalScale * scaleFactor : Vector3.one * scaleFactor;
-        }
-
-        /// <summary>
-        /// Performs the ResolveScaleFactor operation.
-        /// </summary>
-        private float ResolveScaleFactor()
-        {
-            return targetScaleProvider != null ? targetScaleProvider.PrimaryScale : 1f;
-        }
-
-        /// <summary>
-        /// Performs the UpdateMagazineScale operation.
-        /// </summary>
-        private void UpdateMagazineScale()
-        {
-            if (magazine == null)
-            {
-                return;
-            }
-
-            magazine.SetScaleMultiplier(ResolveScaleFactor());
-        }
-
-        private sealed class NullThrowInput : IThrowInput
-        {
-            public event Action<Vector2> Pressed
-            {
-                add { }
-                remove { }
-            }
-            public event Action<Vector2> Released
-            {
-                add { }
-                remove { }
-            }
-            public Vector2 CurrentScreenPosition => Vector2.zero;
-            /// <summary>
-            /// Performs the Enable operation.
-            /// </summary>
-            public void Enable() { }
-            /// <summary>
-            /// Performs the Disable operation.
-            /// </summary>
-            public void Disable() { }
-        }
-
-        [System.Serializable]
-        public sealed class MagazineConfig
-        {
-            [SerializeField] private int poolWarmupCount = 10;
-            [SerializeField] private int visibleQueueCount = 5;
-            [SerializeField] private float queueSpacing = 0.5f;
-            [SerializeField] private float slideAnimationDuration = 0.3f;
-            [SerializeField] private float queueScaleEnd = 0.5f;
-            [SerializeField] private float queueOpacityEnd = 0.3f;
-
-            public int PoolWarmupCount => poolWarmupCount;
-            public int VisibleQueueCount => visibleQueueCount;
-            public float QueueSpacing => queueSpacing;
-            public float SlideAnimationDuration => slideAnimationDuration;
-            public float QueueScaleEnd => queueScaleEnd;
-            public float QueueOpacityEnd => queueOpacityEnd;
+            _magazine.SlideQueueForward();
         }
     }
 }
+

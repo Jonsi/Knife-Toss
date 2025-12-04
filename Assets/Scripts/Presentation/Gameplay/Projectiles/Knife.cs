@@ -1,7 +1,9 @@
-using DG.Tweening;
 using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Events;
+using KnifeToss.Core.Abstractions.Pooling;
+using KnifeToss.Core.Abstractions.Services;
 using KnifeToss.Core.Data;
+using KnifeToss.Core.Constants;
+using KnifeToss.Infrastructure.Services;
 using KnifeToss.Presentation.Gameplay;
 using UnityEngine;
 using VContainer;
@@ -9,274 +11,200 @@ using VContainer;
 namespace KnifeToss.Presentation.Gameplay.Projectiles
 {
     /// <summary>
-    /// Represents the Knife class.
+    /// Facade for knife projectile. Coordinates movement, collision, sticking, animation, audio, and visibility components.
+    /// Implements IPoolable for pool integration.
     /// </summary>
-    public class Knife : MonoBehaviour
+    [RequireComponent(typeof(KnifeMovement))]
+    [RequireComponent(typeof(KnifeCollision))]
+    [RequireComponent(typeof(KnifeSticking))]
+    [RequireComponent(typeof(KnifeBounceAnimation))]
+    [RequireComponent(typeof(KnifeAudio))]
+    [RequireComponent(typeof(KnifeVisibility))]
+    public sealed class Knife : MonoBehaviour, IPoolable
     {
-        private const float DefaultFallDistance = 3f;
-        private const float DefaultFallDuration = 0.5f;
-        private const float DefaultHorizontalDrift = 0.2f;
-        private const float DefaultRotationDegrees = 540f;
+        [SerializeField] private KnifeMovement _movement;
+        [SerializeField] private KnifeCollision _collision;
+        [SerializeField] private KnifeSticking _sticking;
+        [SerializeField] private KnifeBounceAnimation _bounceAnimation;
+        [SerializeField] private KnifeAudio _audio;
+        [SerializeField] private KnifeVisibility _visibility;
 
-        private static readonly Vector2 DefaultLaunchDirection = Vector2.up;
+        private KnifeThrower _thrower;
+        private IKnifeTracker _knifeTracker;
+        private IAudioService _audioService;
+        private SoundSettings _soundSettings;
+        private RuntimeCacheService _cacheService;
+        private bool _isResolved;
+        private bool _isReturnedToPool;
 
-        private KnifeThrower thrower;
-        private float speed;
-        private Vector2 launchDirection = DefaultLaunchDirection;
-        private bool isResolved;
-        private bool isStuck;
-        private bool isReturnedToPool;
-        private Rigidbody2D rb2d;
-        [SerializeField] private Transform snapPosition;
-        private Sequence bounceSequence;
-        private Collider2D[] cachedColliders;
-        private IKnifeTracker knifeTracker;
-        private IAudioPlayer audioPlayer;
-        [SerializeField] private Camera gameplayCamera;
-
-        [Header("Stick Settings")]
-        [SerializeField] private float embedOffset = 0.02f;
-        [SerializeField] private KnifeImpactEventChannel impactEventChannel;
-
-        [Header("Bounce Animation")]
-        [SerializeField] private KnifeBounceOffAnimationConfig bounceAnimationConfig;
-
-        [SerializeField] private float soundVolume = 1f;
-        private SoundSettings soundSettings;
-
-        /// <summary>
-        /// Performs the Awake operation.
-        /// </summary>
         private void Awake()
         {
-            cachedColliders = GetComponents<Collider2D>();
-            ResolveSnapPosition();
-            gameplayCamera ??= Camera.main;
+            // Auto-assign components if not set in inspector
+            _movement ??= GetComponent<KnifeMovement>();
+            _collision ??= GetComponent<KnifeCollision>();
+            _sticking ??= GetComponent<KnifeSticking>();
+            _bounceAnimation ??= GetComponent<KnifeBounceAnimation>();
+            _audio ??= GetComponent<KnifeAudio>();
+            _visibility ??= GetComponent<KnifeVisibility>();
         }
 
-        /// <summary>
-        /// Performs the OnEnable operation.
-        /// </summary>
         private void OnEnable()
         {
-            knifeTracker?.Register(this);
+            _knifeTracker?.Register(this);
+            if (_collision != null)
+            {
+                _collision.OnCollided += HandleCollision;
+            }
         }
 
-        /// <summary>
-        /// Performs the OnDisable operation.
-        /// </summary>
         private void OnDisable()
         {
-            knifeTracker?.Unregister(this);
-            KillBounceSequence();
-        }
-
-        /// <summary>
-        /// Performs the OnDestroy operation.
-        /// </summary>
-        private void OnDestroy()
-        {
-            knifeTracker?.Unregister(this);
-            KillBounceSequence();
-        }
-
-        /// <summary>
-        /// Performs the Construct operation.
-        /// </summary>
-        [VContainer.Inject]
-        public void Construct(IKnifeTracker tracker, IAudioPlayer audioPlayer, SoundSettings soundSettings)
-        {
-            knifeTracker = tracker;
-            this.audioPlayer = audioPlayer;
-            this.soundSettings = soundSettings;
-        }
-
-        /// <summary>
-        /// Performs the Initialize operation.
-        /// </summary>
-        public void Initialize(KnifeThrower knifeThrower, float throwSpeed, Vector2 direction)
-        {
-            thrower = knifeThrower;
-            speed = throwSpeed;
-            launchDirection = direction.sqrMagnitude > Mathf.Epsilon
-                ? direction.normalized
-                : DefaultLaunchDirection;
-            isResolved = false;
-            isStuck = false;
-            isReturnedToPool = false;
-
-            transform.up = launchDirection;
-
-            rb2d = GetComponent<Rigidbody2D>();
-            if (rb2d != null)
+            _knifeTracker?.Unregister(this);
+            if (_collision != null)
             {
-                rb2d.simulated = true;
-                rb2d.gravityScale = 0f;
-                rb2d.bodyType = RigidbodyType2D.Dynamic;
+                _collision.OnCollided -= HandleCollision;
             }
-
-            SetCollidersEnabled(true);
+            _bounceAnimation?.KillBounceSequence();
         }
 
-        /// <summary>
-        /// Performs the Update operation.
-        /// </summary>
         private void Update()
         {
-            if (isResolved || isStuck)
+            if (_isResolved || _sticking.IsStuck)
             {
                 return;
             }
 
-            if (rb2d != null)
-            {
-                rb2d.linearVelocity = launchDirection * speed;
-            }
-            else
-            {
-                transform.position += (Vector3)(launchDirection * speed * Time.deltaTime);
-            }
-
-            if (ShouldReturnBasedOnGameplayCamera())
+            // Check if knife is out of bounds
+            if (_visibility != null && _visibility.IsOutOfBounds())
             {
                 Debug.Log($"Knife '{name}' out of gameplay camera view, returning to pool");
                 ReturnToPool();
             }
         }
 
-        /// <summary>
-        /// Performs the OnTriggerEnter2D operation.
-        /// </summary>
-        private void OnTriggerEnter2D(Collider2D collision)
+        [VContainer.Inject]
+        public void Construct(
+            IKnifeTracker tracker,
+            IAudioService audioService,
+            SoundSettings soundSettings,
+            RuntimeCacheService cacheService)
         {
-            HandleCollision(collision.transform, collision.gameObject, ResolveImpactPoint(collision));
+            _knifeTracker = tracker;
+            _audioService = audioService;
+            _soundSettings = soundSettings;
+            _cacheService = cacheService;
+
+            _audio?.Initialize(_audioService, _soundSettings);
+            _visibility?.Initialize(_cacheService);
         }
 
         /// <summary>
-        /// Performs the OnCollisionEnter2D operation.
+        /// Initializes the knife for throwing.
         /// </summary>
-        private void OnCollisionEnter2D(Collision2D collision)
+        public void Initialize(KnifeThrower knifeThrower, float throwSpeed, Vector2 direction)
         {
-            HandleCollision(collision.transform, collision.gameObject, ResolveImpactPoint(collision));
+            _thrower = knifeThrower;
+            _isResolved = false;
+            _isReturnedToPool = false;
+
+            _movement?.Launch(direction, throwSpeed);
+            _collision?.Enable();
+            _sticking?.ResetState();
         }
 
         /// <summary>
-        /// Performs the OnBecameInvisible operation.
+        /// Marks the knife as pre-stuck (spawned already stuck to target).
         /// </summary>
-        private void OnBecameInvisible() { }
-
-        /// <summary>
-        /// Performs the HandleCollision operation.
-        /// </summary>
-        private void HandleCollision(Transform collisionTransform, GameObject collisionObject, Vector3 impactPoint)
+        public void MarkAsPreStuck()
         {
-            if (!CanResolveImpact() || collisionObject == null)
+            _movement?.Halt();
+            _collision?.Enable();
+            _sticking?.MarkAsPreStuck();
+            _isResolved = true;
+        }
+
+        public bool IsStuck => _sticking != null && _sticking.IsStuck;
+        public float EmbedOffset => _sticking != null ? _sticking.EmbedOffset : 0.02f;
+
+        private void HandleCollision(CollisionData data)
+        {
+            if (_isResolved || _sticking.IsStuck || _isReturnedToPool || data.Other == null)
             {
                 return;
             }
 
-            if (collisionObject.CompareTag("Knife"))
+            // Handle knife hitting another knife
+            if (data.Other.CompareTag(Tags.Knife))
             {
-                Knife otherKnife = collisionObject.GetComponent<Knife>();
+                Knife otherKnife = data.Other.GetComponent<Knife>();
                 if (otherKnife != null)
                 {
-                    HandleKnifeHitKnife(collisionTransform != null ? collisionTransform.position : transform.position);
+                    HandleKnifeHitKnife(data.ImpactPoint);
                 }
                 return;
             }
 
-            HitableObjectView hitableView = collisionObject.GetComponentInParent<HitableObjectView>();
+            // Handle hitable objects
+            HitableObjectView hitableView = data.Other.GetComponentInParent<HitableObjectView>();
             if (hitableView != null)
             {
-                hitableView.ProcessHit(impactPoint);
+                hitableView.ProcessHit(data.ImpactPoint);
                 Collider2D hitableCollider = hitableView.GetComponent<Collider2D>()
-                    ?? collisionObject.GetComponent<Collider2D>();
+                    ?? data.Other.GetComponent<Collider2D>();
                 Transform anchor = hitableCollider != null ? hitableCollider.transform : hitableView.transform;
-                StickToCollider(anchor, hitableCollider, impactPoint);
+                StickToTarget(anchor, hitableCollider, data.ImpactPoint);
                 return;
             }
 
-            if (collisionObject.CompareTag("Target"))
+            // Handle target
+            if (data.Other.CompareTag(Tags.Target))
             {
-                Collider2D targetCollider = collisionObject.GetComponent<Collider2D>()
-                    ?? collisionObject.GetComponentInParent<Collider2D>();
-                Transform anchor = targetCollider != null ? targetCollider.transform : collisionTransform;
-                StickToCollider(anchor, targetCollider, impactPoint);
+                Collider2D targetCollider = data.Other.GetComponent<Collider2D>()
+                    ?? data.Other.GetComponentInParent<Collider2D>();
+                Transform anchor = targetCollider != null ? targetCollider.transform : data.OtherTransform;
+                StickToTarget(anchor, targetCollider, data.ImpactPoint);
             }
         }
 
-        /// <summary>
-        /// Performs the StickToCircle operation using collider data.
-        /// </summary>
-        private void StickToCollider(Transform anchor, Collider2D collider, Vector3 impactPoint)
+        private void StickToTarget(Transform anchor, Collider2D collider, Vector3 impactPoint)
         {
-            if (anchor == null)
-            {
-                return;
-            }
-
-            ResolveCircleSnap(anchor, collider, impactPoint, out Vector3 center, out Vector3 surfacePoint, out Vector2 surfaceDirection);
-
-            ResolveAsStuck();
-            AlignToSurface(anchor, center, surfacePoint, surfaceDirection);
-            SetCollidersEnabled(false);
-            PlaySound(soundSettings != null ? soundSettings.HitTargetSound : null);
-            impactEventChannel?.RaiseKnifeStuck(impactPoint);
-            thrower?.OnKnifeResolved();
+            _movement?.Halt();
+            _collision?.Disable();
+            _sticking?.StickToCollider(anchor, collider, impactPoint);
+            _audio?.PlayHitTargetSound();
+            Resolve();
         }
 
-        /// <summary>
-        /// Performs the HandleKnifeHitKnife operation.
-        /// </summary>
         private void HandleKnifeHitKnife(Vector3 impactPoint)
         {
-            if (isResolved || isReturnedToPool)
-            {
-                return;
-            }
-
-            isResolved = true;
-            HaltMotion();
-            if (rb2d != null)
-            {
-                rb2d.simulated = false;
-            }
-
+            _isResolved = true;
+            _movement?.Halt();
             transform.position = impactPoint;
             transform.SetParent(null);
-            SetCollidersEnabled(false);
-
-            thrower?.OnKnifeResolved();
-            PlaySound(soundSettings != null ? soundSettings.HitKnifeSound : null);
-            PlayBounceOffAnimation();
+            _collision?.Disable();
+            _audio?.PlayHitKnifeSound();
+            _bounceAnimation?.PlayBounceOff(impactPoint, ReturnToPool);
+            Resolve();
         }
 
-        /// <summary>
-        /// Performs the ReturnToPool operation.
-        /// </summary>
         private void ReturnToPool()
         {
-            if (isReturnedToPool)
+            if (_isReturnedToPool)
             {
                 return;
             }
 
-            isReturnedToPool = true;
-            isResolved = true;
-            HaltMotion();
-            if (rb2d != null)
-            {
-                rb2d.simulated = false;
-            }
-
+            _isReturnedToPool = true;
+            _isResolved = true;
+            _movement?.Halt();
             transform.SetParent(null);
-            SetCollidersEnabled(false);
-            KillBounceSequence();
-            thrower?.OnKnifeResolved();
+            _collision?.Disable();
+            _bounceAnimation?.KillBounceSequence();
+            Resolve();
 
-            if (thrower != null)
+            if (_thrower != null)
             {
-                thrower.ReturnToPool(this);
+                _thrower.ReturnToPool(this);
             }
             else
             {
@@ -284,338 +212,37 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             }
         }
 
-        /// <summary>
-        /// Performs the Resolve operation.
-        /// </summary>
         public void Resolve()
         {
-            if (isResolved)
+            if (_isResolved)
             {
                 return;
             }
 
-            isResolved = true;
-            thrower?.OnKnifeResolved();
+            _isResolved = true;
+            _thrower?.OnKnifeResolved();
         }
 
-        /// <summary>
-        /// Performs the MarkAsPreStuck operation.
-        /// </summary>
-        public void MarkAsPreStuck()
+        public void OnSpawn()
         {
-            isStuck = true;
-            isResolved = true;
-            isReturnedToPool = false;
-            HaltMotion();
-            SetCollidersEnabled(true);
+            ResetState();
         }
 
-        public bool IsStuck => isStuck;
-        public float EmbedOffset => embedOffset;
-
-        /// <summary>
-        /// Performs the CanResolveImpact operation.
-        /// </summary>
-        private bool CanResolveImpact()
+        public void OnDespawn()
         {
-            return !isResolved && !isStuck && !isReturnedToPool;
+            ResetState();
+            _bounceAnimation?.KillBounceSequence();
         }
 
-        /// <summary>
-        /// Performs the ResolveAsStuck operation.
-        /// </summary>
-        private void ResolveAsStuck()
+        private void ResetState()
         {
-            isStuck = true;
-            isResolved = true;
-            isReturnedToPool = false;
-            HaltMotion();
-        }
-
-        /// <summary>
-        /// Performs the AlignToCircleEdge operation.
-        /// </summary>
-        private void AlignToSurface(Transform anchorParent, Vector3 circleCenter, Vector3 surfacePoint, Vector2 surfaceDirection)
-        {
-            Vector2 direction = surfaceDirection.sqrMagnitude > Mathf.Epsilon
-                ? surfaceDirection.normalized
-                : ResolveImpactDirection(circleCenter, surfacePoint);
-            Quaternion rotation = Quaternion.LookRotation(Vector3.forward, -direction);
-
-            Vector3 snapTarget = surfacePoint;
-            if (TryResolveSnapOffset(rotation, out Vector3 snapOffset))
-            {
-                transform.SetPositionAndRotation(snapTarget - snapOffset, rotation);
-            }
-            else
-            {
-                transform.SetPositionAndRotation(snapTarget, rotation);
-            }
-
-            transform.SetParent(anchorParent, true);
-        }
-
-        /// <summary>
-        /// Performs the HaltMotion operation.
-        /// </summary>
-        private void HaltMotion()
-        {
-            speed = 0f;
-
-            if (rb2d != null)
-            {
-                rb2d.linearVelocity = Vector2.zero;
-                rb2d.angularVelocity = 0f;
-            }
-        }
-
-        /// <summary>
-        /// Performs the SetCollidersEnabled operation.
-        /// </summary>
-        private void SetCollidersEnabled(bool enabled)
-        {
-            if (cachedColliders == null || cachedColliders.Length == 0)
-            {
-                cachedColliders = GetComponents<Collider2D>();
-            }
-
-            for (int i = 0; i < cachedColliders.Length; i++)
-            {
-                Collider2D collider = cachedColliders[i];
-                if (collider != null)
-                {
-                    collider.enabled = enabled;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Performs the PlayBounceOffAnimation operation.
-        /// </summary>
-        private void PlayBounceOffAnimation()
-        {
-            KillBounceSequence();
-
-            float fallDistance = ResolveOrDefault(() => bounceAnimationConfig.FallDistance, DefaultFallDistance);
-            float fallDuration = ResolveOrDefault(() => bounceAnimationConfig.FallDuration, DefaultFallDuration);
-            float drift = ResolveOrDefault(() => bounceAnimationConfig.HorizontalDrift, DefaultHorizontalDrift);
-            float rotationDegrees = ResolveOrDefault(() => bounceAnimationConfig.RotationDegrees, DefaultRotationDegrees);
-            float rotationDuration = ResolveOrDefault(() => bounceAnimationConfig.RotationDuration, fallDuration);
-            Ease moveEase = ResolveOrDefault(() => bounceAnimationConfig.MovementEase, Ease.InQuad);
-            Ease rotationEase = ResolveOrDefault(() => bounceAnimationConfig.RotationEase, Ease.OutQuad);
-
-            Vector3 horizontalOffset = Vector3.right * Random.Range(-drift, drift);
-            Vector3 targetPosition = transform.position + horizontalOffset + Vector3.down * fallDistance;
-
-            bounceSequence = DOTween.Sequence().SetTarget(this);
-            bounceSequence.Join(transform.DOMove(targetPosition, fallDuration).SetEase(moveEase));
-            bounceSequence.Join(
-                transform
-                    .DORotate(Vector3.forward * rotationDegrees, rotationDuration, RotateMode.FastBeyond360)
-                    .SetEase(rotationEase)
-                    .SetRelative());
-            bounceSequence.OnComplete(ReturnToPool);
-            bounceSequence.OnKill(() => bounceSequence = null);
-        }
-
-        /// <summary>
-        /// Performs the KillBounceSequence operation.
-        /// </summary>
-        private void KillBounceSequence()
-        {
-            if (bounceSequence != null)
-            {
-                bounceSequence.Kill();
-                bounceSequence = null;
-            }
-        }
-
-        /// <summary>
-        /// Performs the PlaySound operation.
-        /// </summary>
-        private void PlaySound(AudioClip clip)
-        {
-            if (clip == null)
-            {
-                return;
-            }
-
-            IAudioPlayer player = audioPlayer ?? NullAudioPlayer.Instance;
-
-            player.Play2D(clip, soundVolume);
-        }
-
-        /// <summary>
-        /// Performs the ResolveImpactPoint operation.
-        /// </summary>
-        private Vector3 ResolveImpactPoint(Collision2D collision)
-        {
-            if (collision == null)
-            {
-                return transform.position;
-            }
-
-            if (collision.contactCount > 0)
-            {
-                return collision.GetContact(0).point;
-            }
-
-            return ResolveImpactPoint(collision.collider);
-        }
-
-        /// <summary>
-        /// Performs the ResolveImpactPoint operation.
-        /// </summary>
-        private Vector3 ResolveImpactPoint(Collider2D collider)
-        {
-            if (collider == null)
-            {
-                return transform.position;
-            }
-
-            return collider.ClosestPoint(transform.position);
-        }
-
-        /// <summary>
-        /// Performs the ResolveImpactDirection operation.
-        /// </summary>
-        private Vector2 ResolveImpactDirection(Vector3 circleCenter, Vector3 impactPoint)
-        {
-            Vector2 fromCenter = (Vector2)(impactPoint - circleCenter);
-            if (fromCenter.sqrMagnitude < Mathf.Epsilon)
-            {
-                fromCenter = (Vector2)(transform.position - circleCenter);
-            }
-
-            return fromCenter.sqrMagnitude > Mathf.Epsilon ? fromCenter.normalized : Vector2.up;
-        }
-
-        /// <summary>
-        /// Performs the TryResolveSnapOffset operation.
-        /// </summary>
-        private bool TryResolveSnapOffset(Quaternion rotation, out Vector3 snapOffset)
-        {
-            Transform resolvedSnap = ResolveSnapPosition();
-            if (resolvedSnap == null)
-            {
-                snapOffset = Vector3.zero;
-                return false;
-            }
-
-            Vector3 scaledLocal = Vector3.Scale(resolvedSnap.localPosition, transform.lossyScale);
-            snapOffset = rotation * scaledLocal;
-            return true;
-        }
-
-        private bool ShouldReturnBasedOnGameplayCamera()
-        {
-            Camera cam = gameplayCamera != null ? gameplayCamera : Camera.main;
-            if (cam == null)
-            {
-                return false;
-            }
-
-            Vector3 viewportPosition = cam.WorldToViewportPoint(transform.position);
-            const float margin = 0.05f;
-
-            if (viewportPosition.z < 0f)
-            {
-                return true;
-            }
-
-            return viewportPosition.x < -margin
-                   || viewportPosition.x > 1f + margin
-                   || viewportPosition.y < -margin
-                   || viewportPosition.y > 1f + margin;
-        }
-
-        /// <summary>
-        /// Performs the ResolveSnapPosition operation.
-        /// </summary>
-        private Transform ResolveSnapPosition()
-        {
-            if (snapPosition != null)
-            {
-                return snapPosition;
-            }
-
-            snapPosition = transform.Find("SnapPosition");
-            return snapPosition;
-        }
-
-        /// <summary>
-        /// Resolves circle collider center and surface point for snapping.
-        /// </summary>
-        private void ResolveCircleSnap(Transform anchor, Collider2D collider, Vector3 impactPoint, out Vector3 center, out Vector3 surfacePoint, out Vector2 surfaceDirection)
-        {
-            CircleCollider2D circle = collider as CircleCollider2D;
-            if (circle == null && anchor != null)
-            {
-                circle = anchor.GetComponent<CircleCollider2D>();
-            }
-
-            center = anchor != null ? anchor.position : impactPoint;
-            surfaceDirection = ResolveImpactDirection(center, impactPoint);
-            surfacePoint = center;
-
-            if (circle == null)
-            {
-                return;
-            }
-
-            center = circle.transform.TransformPoint(circle.offset);
-            float uniformScale = Mathf.Max(circle.transform.lossyScale.x, circle.transform.lossyScale.y);
-            float radius = circle.radius * uniformScale;
-
-            surfaceDirection = ResolveImpactDirection(center, impactPoint);
-            surfaceDirection = surfaceDirection.sqrMagnitude > Mathf.Epsilon ? surfaceDirection.normalized : Vector2.up;
-            surfacePoint = center + (Vector3)(surfaceDirection * radius);
-        }
-
-        /// <summary>
-        /// Performs the ResolveOrDefault<T> operation.
-        /// </summary>
-        private T ResolveOrDefault<T>(System.Func<T> resolver, T fallback)
-        {
-            if (bounceAnimationConfig == null)
-            {
-                return fallback;
-            }
-
-            return resolver();
-        }
-
-        private sealed class NullAudioPlayer : IAudioPlayer
-        {
-            public static readonly NullAudioPlayer Instance = new NullAudioPlayer();
-
-            /// <summary>
-            /// Performs the Play operation.
-            /// </summary>
-            public void Play(AudioClip clip, Vector3 position, float volume)
-            {
-            }
-
-            /// <summary>
-            /// Performs the Play2D operation.
-            /// </summary>
-            public void Play2D(AudioClip clip)
-            {
-            }
-
-            /// <summary>
-            /// Performs the Play2D operation.
-            /// </summary>
-            public void Play2D(AudioClip clip, float volume)
-            {
-            }
-
-            /// <summary>
-            /// Performs the SetMuted operation.
-            /// </summary>
-            public void SetMuted(bool isMuted)
-            {
-            }
+            _isResolved = false;
+            _isReturnedToPool = false;
+            _thrower = null;
+            _movement?.OnDespawn();
+            _collision?.Disable();
+            _sticking?.ResetState();
         }
     }
 }
+

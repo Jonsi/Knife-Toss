@@ -11,6 +11,7 @@ namespace KnifeToss.Presentation.Gameplay
     {
         private readonly GameObject targetPrefab;
         private readonly GameObject knifeThrowerPrefab;
+        private readonly GameObject knifePrefab;
         private readonly Transform runtimeRoot;
         private readonly IObjectResolver resolver;
 
@@ -23,15 +24,25 @@ namespace KnifeToss.Presentation.Gameplay
         public GameplayObjectProvider(
             GameObject targetPrefab,
             GameObject knifeThrowerPrefab,
+            GameObject knifePrefab,
             Transform lifetimeTransform,
             IObjectResolver resolver)
         {
             this.targetPrefab = targetPrefab;
             this.knifeThrowerPrefab = knifeThrowerPrefab;
+            this.knifePrefab = knifePrefab;
             this.resolver = resolver;
 
             runtimeRoot = new GameObject("GameplayRoot").transform;
             runtimeRoot.SetParent(lifetimeTransform, false);
+        }
+
+        /// <summary>
+        /// Gets the knife prefab.
+        /// </summary>
+        public GameObject GetKnifePrefab()
+        {
+            return knifePrefab;
         }
 
         /// <summary>
