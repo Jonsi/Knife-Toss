@@ -22,6 +22,7 @@ namespace KnifeToss.Presentation.UI
         [SerializeField] private GameObject muteIcon;
         [SerializeField] private GameObject unmuteIcon;
         [SerializeField] private ButtonClickEventChannel buttonClickEventChannel;
+        [SerializeField] private KnifeMagazineDisplay magazineDisplay;
 
         private ILevelCommandInvoker commandInvoker;
         private ISettingsService _settingsService;
@@ -69,6 +70,7 @@ namespace KnifeToss.Presentation.UI
                 levelText.text = viewModel.LevelLabel;
             }
             levelCompletePopup?.SetLabel(viewModel.LevelCompleteLabel);
+            magazineDisplay?.Render(viewModel.TotalKnives, viewModel.KnivesThrown);
         }
 
         /// <summary>
@@ -99,6 +101,7 @@ namespace KnifeToss.Presentation.UI
         {
             ShowFail(false);
             ShowLevelComplete(false);
+            magazineDisplay?.ResetDisplay();
         }
 
         /// <summary>
