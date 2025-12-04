@@ -21,12 +21,6 @@ namespace KnifeToss.Core.Data
         [Tooltip("Angular spacing in degrees between spawned objects.")]
         public float angularSpacing = 60f;
 
-        [Tooltip("Randomness applied to the angular spacing (degrees).")]
-        public float spacingRandomness = 0f;
-
-        [Tooltip("Random angular jitter in degrees applied per object.")]
-        public float angularRandomness = 6f;
-
         [Tooltip("Rotate the prefab so it faces away from the target center.")]
         public bool orientOutwards = true;
     }

@@ -18,12 +18,12 @@ namespace KnifeToss.Core.Data
     [System.Serializable]
     public class LevelData
     {
+        [Tooltip("Total number of knives available to the player for this level.")]
+        public int knives = 5;
+
         [Header("Objectives")]
         [Tooltip("Objectives grouped by star rating. 1-star objectives gate level completion.")]
         public LevelObjectivesConfig objectives = new LevelObjectivesConfig();
-
-        [Tooltip("Total number of knives available to the player for this level.")]
-        public int knives = 5;
 
         [Header("Target Group")]
         [Tooltip("Defines the targets in this level and their orbit/scaling settings.")]

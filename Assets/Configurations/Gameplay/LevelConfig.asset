@@ -79,8 +79,6 @@ MonoBehaviour:
           count: 2
           radialOffset: 0
           angularSpacing: 0
-          spacingRandomness: 0
-          angularRandomness: 0
           orientOutwards: 1
   - objectives:
       oneStar:

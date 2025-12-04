@@ -78,14 +78,7 @@ namespace KnifeToss.Infrastructure.Leveling
 
                 for (int k = 0; k < hitable.count; k++)
                 {
-                    float spacingJitter = hitable.spacingRandomness > 0f
-                        ? Random.Range(-hitable.spacingRandomness, hitable.spacingRandomness)
-                        : 0f;
-
-                    float angle = startAngle + k * spacing + spacingJitter;
-                    angle += hitable.angularRandomness > 0f
-                        ? Random.Range(-hitable.angularRandomness, hitable.angularRandomness)
-                        : 0f;
+                    float angle = startAngle + k * spacing;
 
                     float rad = angle * Mathf.Deg2Rad;
                     Vector3 position = targetTransform.position + new Vector3(Mathf.Cos(rad), Mathf.Sin(rad), 0f) * radius;
