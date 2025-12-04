@@ -27,3 +27,4 @@ namespace KnifeToss.Core.Abstractions
         void Reset();
     }
 }
+

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace KnifeToss.Presentation.UI
 {
-    [CreateAssetMenu(fileName = "ScoreTextConfiguration", menuName = "Knife Toss/UI/Score Text Configuration")]
+    [CreateAssetMenu(fileName = "ScoreTextConfiguration", menuName = "Knife Toss/Configurations/UI/Score Text Configuration")]
     public sealed class ScoreTextConfiguration : ScriptableObject
     {
         [SerializeField] private ScoreTextEntry fail = new ScoreTextEntry("FAIL", new Color(0.82f, 0.19f, 0.19f));

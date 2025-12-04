@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace KnifeToss.Presentation.UI
 {
-    [CreateAssetMenu(fileName = "RetryButtonAnimationConfig", menuName = "Knife Toss/Retry Button Animation")]
+    [CreateAssetMenu(fileName = "RetryButtonAnimationConfig", menuName = "Knife Toss/Configurations/Animations/Retry Button Animation")]
     public sealed class RetryButtonAnimationConfig : ScriptableObject
     {
         [Header("Scale Animation")]

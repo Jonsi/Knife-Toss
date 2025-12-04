@@ -5,7 +5,7 @@ namespace KnifeToss.Presentation.Gameplay
 {
     [CreateAssetMenu(
         fileName = "TargetHitAnimationConfig",
-        menuName = "Knife Toss/Gameplay/Target Hit Animation")]
+        menuName = "Knife Toss/Configurations/Animations/Target Hit Animation")]
     public sealed class TargetHitAnimationConfig : ScriptableObject
     {
         [Header("Shake")]

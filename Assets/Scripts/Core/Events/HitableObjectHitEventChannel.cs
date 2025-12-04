@@ -6,7 +6,7 @@ namespace KnifeToss.Core.Events
     /// <summary>
     /// Event channel for hitable object impacts.
     /// </summary>
-    [CreateAssetMenu(fileName = "HitableObjectHitEventChannel", menuName = "Knife Toss/Events/Hitable Object Hit Channel")]
+    [CreateAssetMenu(fileName = "HitableObjectHitEventChannel", menuName = "Knife Toss/Configurations/Events/Hitable Object Hit Channel")]
     public sealed class HitableObjectHitEventChannel : ScriptableObject
     {
         public event Action<Vector3> HitableHitAt;

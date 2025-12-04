@@ -6,7 +6,7 @@ namespace KnifeToss.Core.Events
     /// <summary>
     /// Represents the KnifeImpactEventChannel class.
     /// </summary>
-    [CreateAssetMenu(fileName = "KnifeImpactEventChannel", menuName = "Knife Toss/Events/Knife Impact Channel")]
+    [CreateAssetMenu(fileName = "KnifeImpactEventChannel", menuName = "Knife Toss/Configurations/Events/Knife Impact Channel")]
     public class KnifeImpactEventChannel : ScriptableObject
     {
         public event Action KnifeStuck;

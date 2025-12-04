@@ -6,7 +6,7 @@ namespace KnifeToss.Core.Data
     /// <summary>
     /// Represents the LevelConfig class.
     /// </summary>
-    [CreateAssetMenu(fileName = "LevelConfig", menuName = "Knife Toss/Level Config")]
+    [CreateAssetMenu(fileName = "LevelConfig", menuName = "Knife Toss/Configurations/Gameplay/Level Config")]
     public class LevelConfig : ScriptableObject
     {
         [Header("Level Definitions")]

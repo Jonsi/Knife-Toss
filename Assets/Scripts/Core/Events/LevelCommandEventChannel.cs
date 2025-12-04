@@ -6,7 +6,7 @@ namespace KnifeToss.Core.Events
     /// <summary>
     /// Represents the LevelCommandEventChannel class.
     /// </summary>
-    [CreateAssetMenu(fileName = "LevelCommandEventChannel", menuName = "Knife Toss/Events/Level Command Channel")]
+    [CreateAssetMenu(fileName = "LevelCommandEventChannel", menuName = "Knife Toss/Configurations/Events/Level Command Channel")]
     public class LevelCommandEventChannel : ScriptableObject
     {
         public event Action RetryRequested;

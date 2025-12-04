@@ -5,7 +5,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
 {
     [CreateAssetMenu(
         fileName = "KnifeBounceOffAnimationConfig",
-        menuName = "Knife Toss/Gameplay/Knife Bounce Off Animation")]
+        menuName = "Knife Toss/Configurations/Animations/Knife Bounce Off Animation")]
     public sealed class KnifeBounceOffAnimationConfig : ScriptableObject
     {
         [SerializeField] private float fallDistance = 4f;
