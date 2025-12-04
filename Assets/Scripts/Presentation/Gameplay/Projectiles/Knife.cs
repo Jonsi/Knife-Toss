@@ -17,8 +17,11 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         private const float DefaultFallDuration = 0.5f;
         private const float DefaultHorizontalDrift = 0.2f;
         private const float DefaultRotationDegrees = 540f;
+        private const float HitableSearchRadius = 0.12f;
+        private const int HitableSearchBufferSize = 6;
 
         private static readonly Vector2 DefaultLaunchDirection = Vector2.up;
+        private static readonly Collider2D[] HitableSearchBuffer = new Collider2D[HitableSearchBufferSize];
 
         private KnifeThrower thrower;
         private float speed;
@@ -185,14 +188,21 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
                 return;
             }
 
-            HitableObjectView hitableView = collisionObject.GetComponentInParent<HitableObjectView>();
-            if (hitableView != null)
+            Collider2D collisionCollider = collisionObject.GetComponent<Collider2D>();
+            if (TryResolveHitableCollision(collisionObject, collisionCollider, impactPoint, out HitableObjectView hitableView, out Collider2D hitableCollider))
             {
                 hitableView.ProcessHit(impactPoint);
-                Collider2D hitableCollider = hitableView.GetComponent<Collider2D>()
-                    ?? collisionObject.GetComponent<Collider2D>();
-                Transform anchor = hitableCollider != null ? hitableCollider.transform : hitableView.transform;
-                StickToCollider(anchor, hitableCollider, impactPoint);
+
+                Transform anchor = ResolveTargetAnchor(collisionTransform, collisionObject, hitableView);
+                Collider2D anchorCollider = anchor != null ? anchor.GetComponent<Collider2D>() : null;
+
+                if (anchor == null)
+                {
+                    anchor = hitableCollider != null ? hitableCollider.transform : hitableView.transform;
+                    anchorCollider = hitableCollider;
+                }
+
+                StickToCollider(anchor, anchorCollider, impactPoint);
                 return;
             }
 
@@ -203,6 +213,90 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
                 Transform anchor = targetCollider != null ? targetCollider.transform : collisionTransform;
                 StickToCollider(anchor, targetCollider, impactPoint);
             }
+        }
+
+        /// <summary>
+        /// Attempts to resolve a hitable object near the provided collision data.
+        /// </summary>
+        private bool TryResolveHitableCollision(GameObject collisionObject, Collider2D primaryCollider, Vector3 impactPoint, out HitableObjectView hitableView, out Collider2D resolvedCollider)
+        {
+            hitableView = null;
+            resolvedCollider = null;
+
+            if (collisionObject != null)
+            {
+                hitableView = collisionObject.GetComponentInParent<HitableObjectView>();
+                if (hitableView != null)
+                {
+                    resolvedCollider = hitableView.GetComponent<Collider2D>()
+                        ?? primaryCollider
+                        ?? collisionObject.GetComponent<Collider2D>();
+                    return true;
+                }
+            }
+
+            int hitCount = Physics2D.OverlapCircleNonAlloc(impactPoint, HitableSearchRadius, HitableSearchBuffer);
+            for (int i = 0; i < hitCount; i++)
+            {
+                Collider2D candidate = HitableSearchBuffer[i];
+                if (candidate == null)
+                {
+                    continue;
+                }
+
+                HitableObjectView candidateView = candidate.GetComponentInParent<HitableObjectView>();
+                if (candidateView == null)
+                {
+                    continue;
+                }
+
+                hitableView = candidateView;
+                resolvedCollider = candidate;
+                return true;
+            }
+
+            return false;
+        }
+
+        private Transform ResolveTargetAnchor(Transform collisionTransform, GameObject collisionObject, HitableObjectView hitableView)
+        {
+            if (collisionObject != null && collisionObject.CompareTag("Target"))
+            {
+                return collisionObject.transform;
+            }
+
+            Transform anchor = FindTargetAncestor(collisionTransform);
+            if (anchor != null)
+            {
+                return anchor;
+            }
+
+            if (hitableView != null)
+            {
+                anchor = FindTargetAncestor(hitableView.transform);
+                if (anchor != null)
+                {
+                    return anchor;
+                }
+            }
+
+            return null;
+        }
+
+        private Transform FindTargetAncestor(Transform start)
+        {
+            Transform current = start;
+            while (current != null)
+            {
+                if (current.CompareTag("Target"))
+                {
+                    return current;
+                }
+
+                current = current.parent;
+            }
+
+            return null;
         }
 
         /// <summary>
