@@ -69,6 +69,12 @@ namespace KnifeToss.Presentation.UI
             ReturnActiveIcons();
             cachedTotal = targetCount;
 
+            if (targetCount <= 0)
+            {
+                SetContainerVisible(false);
+                return;
+            }
+
             for (int i = 0; i < targetCount; i++)
             {
                 Image icon = GetIcon();
@@ -78,17 +84,9 @@ namespace KnifeToss.Presentation.UI
                 }
 
                 activeIcons.Add(icon);
-                if (reverseOrder)
-                {
-                    icon.transform.SetAsFirstSibling();
-                }
-                else
-                {
-                    icon.transform.SetAsLastSibling();
-                }
             }
 
-            SetContainerVisible(targetCount > 0);
+            SetContainerVisible(true);
         }
 
         private void UpdateIconStates(int totalKnives, int knivesThrown)
@@ -108,9 +106,8 @@ namespace KnifeToss.Presentation.UI
                     continue;
                 }
 
-                bool hasKnife = reverseOrder
-                    ? i >= activeIcons.Count - remaining
-                    : i < remaining;
+                int slotIndex = reverseOrder ? activeIcons.Count - 1 - i : i;
+                bool hasKnife = slotIndex < remaining;
                 icon.color = hasKnife ? availableColor : spentColor;
             }
 
