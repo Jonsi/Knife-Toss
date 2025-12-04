@@ -486,7 +486,6 @@ MonoBehaviour:
   levelCompletePopup: {fileID: 519400801}
   commandChannel: {fileID: 11400000, guid: 76592a2f6c663224399fb72a23fe1509, type: 2}
   retryButton: {fileID: 2096806327}
-  retryButtonAnimator: {fileID: 2096806330}
   muteButton: {fileID: 0}
   muteIcon: {fileID: 0}
   unmuteIcon: {fileID: 0}
@@ -683,6 +682,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KnifeToss.Presentation.UI.LevelCompletePopup
   popupRoot: {fileID: 519400799}
   levelCompleteText: {fileID: 1212226831}
+  scoreText: {fileID: 1017030299}
   nextButton: {fileID: 726980825}
   retryButton: {fileID: 882002977}
   stars:
@@ -691,6 +691,7 @@ MonoBehaviour:
   - {fileID: 1815072488}
   commandChannel: {fileID: 11400000, guid: 76592a2f6c663224399fb72a23fe1509, type: 2}
   buttonClickEventChannel: {fileID: 11400000, guid: 721085d1c0ff9a14b96a5baa901e0c64, type: 2}
+  scoreTextConfiguration: {fileID: 11400000, guid: d64c2a70b00b49eaa4068b3dcf5d7557, type: 2}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -2697,7 +2698,6 @@ GameObject:
   - component: {fileID: 2096806329}
   - component: {fileID: 2096806328}
   - component: {fileID: 2096806327}
-  - component: {fileID: 2096806330}
   m_Layer: 5
   m_Name: ResetButton
   m_TagString: Untagged
@@ -2806,19 +2806,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2096806325}
   m_CullTransparentMesh: 1
---- !u!114 &2096806330
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2096806325}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a14d9232c45e964cbe084362b27641e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::KnifeToss.Presentation.UI.RetryButtonAnimator
-  config: {fileID: 11400000, guid: 9611f575cb22ed54a843eb9b63d08d82, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

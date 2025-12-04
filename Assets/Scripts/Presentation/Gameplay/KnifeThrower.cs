@@ -286,6 +286,21 @@ namespace KnifeToss.Presentation.Gameplay
         }
 
         /// <summary>
+        /// Returns a knife to the pool.
+        /// </summary>
+        /// <param name="knife">Knife to return.</param>
+        public void ReturnToPool(Knife knife)
+        {
+            if (knife == null)
+            {
+                return;
+            }
+
+            EnsureInitialized();
+            knifePool?.Return(knife.gameObject);
+        }
+
+        /// <summary>
         /// Performs the ResetState operation.
         /// </summary>
         public void ResetState()

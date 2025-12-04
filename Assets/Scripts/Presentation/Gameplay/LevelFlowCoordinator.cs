@@ -130,6 +130,7 @@ namespace KnifeToss.Presentation.Gameplay
             }
             
             hudPresenter.levelCompletePopup.SetStars(stars);
+            hudPresenter.levelCompletePopup.SetScoreText(stars);
             hudPresenter.ShowLevelComplete(true);
         }
 
@@ -144,7 +145,6 @@ namespace KnifeToss.Presentation.Gameplay
                 hudPresenter.retryButton.gameObject.SetActive(true);
                 hudPresenter.retryButton.interactable = true;
             }
-            hudPresenter?.PlayRetryAnimation();
         }
 
         /// <summary>

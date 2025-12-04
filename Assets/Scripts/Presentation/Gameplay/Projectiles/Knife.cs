@@ -25,19 +25,21 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         private Vector2 launchDirection = DefaultLaunchDirection;
         private bool isResolved;
         private bool isStuck;
+        private bool isReturnedToPool;
         private Rigidbody2D rb2d;
         [SerializeField] private Transform snapPosition;
-        private Sequence failSequence;
+        private Sequence bounceSequence;
         private Collider2D[] cachedColliders;
         private IKnifeTracker knifeTracker;
         private IAudioPlayer audioPlayer;
+        [SerializeField] private Camera gameplayCamera;
 
         [Header("Stick Settings")]
         [SerializeField] private float embedOffset = 0.02f;
         [SerializeField] private KnifeImpactEventChannel impactEventChannel;
 
-        [Header("Fail Animation")]
-        [SerializeField] private KnifeFailAnimationConfig failAnimationConfig;
+        [Header("Bounce Animation")]
+        [SerializeField] private KnifeBounceOffAnimationConfig bounceAnimationConfig;
 
         [SerializeField] private float soundVolume = 1f;
         private SoundSettings soundSettings;
@@ -49,6 +51,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         {
             cachedColliders = GetComponents<Collider2D>();
             ResolveSnapPosition();
+            gameplayCamera ??= Camera.main;
         }
 
         /// <summary>
@@ -65,7 +68,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         private void OnDisable()
         {
             knifeTracker?.Unregister(this);
-            KillFailSequence();
+            KillBounceSequence();
         }
 
         /// <summary>
@@ -74,7 +77,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         private void OnDestroy()
         {
             knifeTracker?.Unregister(this);
-            KillFailSequence();
+            KillBounceSequence();
         }
 
         /// <summary>
@@ -100,12 +103,14 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
                 : DefaultLaunchDirection;
             isResolved = false;
             isStuck = false;
+            isReturnedToPool = false;
 
             transform.up = launchDirection;
 
             rb2d = GetComponent<Rigidbody2D>();
             if (rb2d != null)
             {
+                rb2d.simulated = true;
                 rb2d.gravityScale = 0f;
                 rb2d.bodyType = RigidbodyType2D.Dynamic;
             }
@@ -131,6 +136,12 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             {
                 transform.position += (Vector3)(launchDirection * speed * Time.deltaTime);
             }
+
+            if (ShouldReturnBasedOnGameplayCamera())
+            {
+                Debug.Log($"Knife '{name}' out of gameplay camera view, returning to pool");
+                ReturnToPool();
+            }
         }
 
         /// <summary>
@@ -150,6 +161,11 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         }
 
         /// <summary>
+        /// Performs the OnBecameInvisible operation.
+        /// </summary>
+        private void OnBecameInvisible() { }
+
+        /// <summary>
         /// Performs the HandleCollision operation.
         /// </summary>
         private void HandleCollision(Transform collisionTransform, GameObject collisionObject, Vector3 impactPoint)
@@ -164,7 +180,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
                 Knife otherKnife = collisionObject.GetComponent<Knife>();
                 if (otherKnife != null)
                 {
-                    TriggerFail(collisionTransform != null ? collisionTransform.position : transform.position);
+                    HandleKnifeHitKnife(collisionTransform != null ? collisionTransform.position : transform.position);
                 }
                 return;
             }
@@ -208,11 +224,11 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         }
 
         /// <summary>
-        /// Performs the TriggerFail operation.
+        /// Performs the HandleKnifeHitKnife operation.
         /// </summary>
-        private void TriggerFail(Vector3 failurePoint)
+        private void HandleKnifeHitKnife(Vector3 impactPoint)
         {
-            if (isResolved)
+            if (isResolved || isReturnedToPool)
             {
                 return;
             }
@@ -224,12 +240,46 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
                 rb2d.simulated = false;
             }
 
+            transform.position = impactPoint;
             transform.SetParent(null);
             SetCollidersEnabled(false);
 
             thrower?.OnKnifeResolved();
             PlaySound(soundSettings != null ? soundSettings.HitKnifeSound : null);
-            impactEventChannel?.RaiseKnifeFailed(failurePoint);
+            PlayBounceOffAnimation();
+        }
+
+        /// <summary>
+        /// Performs the ReturnToPool operation.
+        /// </summary>
+        private void ReturnToPool()
+        {
+            if (isReturnedToPool)
+            {
+                return;
+            }
+
+            isReturnedToPool = true;
+            isResolved = true;
+            HaltMotion();
+            if (rb2d != null)
+            {
+                rb2d.simulated = false;
+            }
+
+            transform.SetParent(null);
+            SetCollidersEnabled(false);
+            KillBounceSequence();
+            thrower?.OnKnifeResolved();
+
+            if (thrower != null)
+            {
+                thrower.ReturnToPool(this);
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
         }
 
         /// <summary>
@@ -253,6 +303,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         {
             isStuck = true;
             isResolved = true;
+            isReturnedToPool = false;
             HaltMotion();
             SetCollidersEnabled(true);
         }
@@ -265,7 +316,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         /// </summary>
         private bool CanResolveImpact()
         {
-            return !isResolved && !isStuck;
+            return !isResolved && !isStuck && !isReturnedToPool;
         }
 
         /// <summary>
@@ -275,6 +326,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         {
             isStuck = true;
             isResolved = true;
+            isReturnedToPool = false;
             HaltMotion();
         }
 
@@ -336,42 +388,43 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         }
 
         /// <summary>
-        /// Performs the PlayFailAnimation operation.
+        /// Performs the PlayBounceOffAnimation operation.
         /// </summary>
-        private void PlayFailAnimation()
+        private void PlayBounceOffAnimation()
         {
-            KillFailSequence();
+            KillBounceSequence();
 
-            float fallDistance = ResolveOrDefault(() => failAnimationConfig.FallDistance, DefaultFallDistance);
-            float fallDuration = ResolveOrDefault(() => failAnimationConfig.FallDuration, DefaultFallDuration);
-            float drift = ResolveOrDefault(() => failAnimationConfig.HorizontalDrift, DefaultHorizontalDrift);
-            float rotationDegrees = ResolveOrDefault(() => failAnimationConfig.RotationDegrees, DefaultRotationDegrees);
-            float rotationDuration = ResolveOrDefault(() => failAnimationConfig.RotationDuration, fallDuration);
-            Ease moveEase = ResolveOrDefault(() => failAnimationConfig.MovementEase, Ease.InQuad);
-            Ease rotationEase = ResolveOrDefault(() => failAnimationConfig.RotationEase, Ease.OutQuad);
+            float fallDistance = ResolveOrDefault(() => bounceAnimationConfig.FallDistance, DefaultFallDistance);
+            float fallDuration = ResolveOrDefault(() => bounceAnimationConfig.FallDuration, DefaultFallDuration);
+            float drift = ResolveOrDefault(() => bounceAnimationConfig.HorizontalDrift, DefaultHorizontalDrift);
+            float rotationDegrees = ResolveOrDefault(() => bounceAnimationConfig.RotationDegrees, DefaultRotationDegrees);
+            float rotationDuration = ResolveOrDefault(() => bounceAnimationConfig.RotationDuration, fallDuration);
+            Ease moveEase = ResolveOrDefault(() => bounceAnimationConfig.MovementEase, Ease.InQuad);
+            Ease rotationEase = ResolveOrDefault(() => bounceAnimationConfig.RotationEase, Ease.OutQuad);
 
             Vector3 horizontalOffset = Vector3.right * Random.Range(-drift, drift);
             Vector3 targetPosition = transform.position + horizontalOffset + Vector3.down * fallDistance;
 
-            failSequence = DOTween.Sequence().SetTarget(this);
-            failSequence.Join(transform.DOMove(targetPosition, fallDuration).SetEase(moveEase));
-            failSequence.Join(
+            bounceSequence = DOTween.Sequence().SetTarget(this);
+            bounceSequence.Join(transform.DOMove(targetPosition, fallDuration).SetEase(moveEase));
+            bounceSequence.Join(
                 transform
                     .DORotate(Vector3.forward * rotationDegrees, rotationDuration, RotateMode.FastBeyond360)
                     .SetEase(rotationEase)
                     .SetRelative());
-            failSequence.OnKill(() => failSequence = null);
+            bounceSequence.OnComplete(ReturnToPool);
+            bounceSequence.OnKill(() => bounceSequence = null);
         }
 
         /// <summary>
-        /// Performs the KillFailSequence operation.
+        /// Performs the KillBounceSequence operation.
         /// </summary>
-        private void KillFailSequence()
+        private void KillBounceSequence()
         {
-            if (failSequence != null)
+            if (bounceSequence != null)
             {
-                failSequence.Kill();
-                failSequence = null;
+                bounceSequence.Kill();
+                bounceSequence = null;
             }
         }
 
@@ -452,6 +505,28 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             return true;
         }
 
+        private bool ShouldReturnBasedOnGameplayCamera()
+        {
+            Camera cam = gameplayCamera != null ? gameplayCamera : Camera.main;
+            if (cam == null)
+            {
+                return false;
+            }
+
+            Vector3 viewportPosition = cam.WorldToViewportPoint(transform.position);
+            const float margin = 0.05f;
+
+            if (viewportPosition.z < 0f)
+            {
+                return true;
+            }
+
+            return viewportPosition.x < -margin
+                   || viewportPosition.x > 1f + margin
+                   || viewportPosition.y < -margin
+                   || viewportPosition.y > 1f + margin;
+        }
+
         /// <summary>
         /// Performs the ResolveSnapPosition operation.
         /// </summary>
@@ -500,7 +575,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
         /// </summary>
         private T ResolveOrDefault<T>(System.Func<T> resolver, T fallback)
         {
-            if (failAnimationConfig == null)
+            if (bounceAnimationConfig == null)
             {
                 return fallback;
             }

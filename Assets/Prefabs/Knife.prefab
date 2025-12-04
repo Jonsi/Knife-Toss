@@ -128,10 +128,10 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.010036677, y: 1.08}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.09}
+    pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1.7066667, y: 2.56}
     newSize: {x: 1.7066667, y: 2.56}
     adaptiveTilingThreshold: 0.5
@@ -153,9 +153,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Knife
   snapPosition: {fileID: 4848405701984073073}
+  gameplayCamera: {fileID: 0}
   embedOffset: 0.02
   impactEventChannel: {fileID: 11400000, guid: a78030c48769aec48b1aeb7cf48a28cb, type: 2}
-  failAnimationConfig: {fileID: 11400000, guid: 09203f5a299b2204c9a04c195d2e7c87, type: 2}
+  bounceAnimationConfig: {fileID: 11400000, guid: 09203f5a299b2204c9a04c195d2e7c87, type: 2}
   soundVolume: 1
 --- !u!50 &8727754346152716786
 Rigidbody2D:
@@ -209,7 +210,7 @@ Transform:
   m_GameObject: {fileID: 3793690155325874301}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.19, z: 0}
+  m_LocalPosition: {x: 0, y: 0.11, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

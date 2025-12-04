@@ -159,7 +159,7 @@ namespace KnifeToss.Application.Services
             session.RecordThrow();
             if (session.HasExhaustedKnives())
             {
-                gameplayObjectProvider.GetKnifeThrower().SetCanThrow(false);
+                HandleKnifeFailure();
             }
         }
 

@@ -14,11 +14,13 @@ namespace KnifeToss.Presentation.UI
     {
         [SerializeField] private GameObject popupRoot;
         [SerializeField] private TextMeshProUGUI levelCompleteText;
+        [SerializeField] private TextMeshProUGUI scoreText;
         [SerializeField] private Button nextButton;
         [SerializeField] private Button retryButton;
         [SerializeField] private GameObject[] stars;
         [SerializeField] private LevelCommandEventChannel commandChannel;
         [SerializeField] private ButtonClickEventChannel buttonClickEventChannel;
+        [SerializeField] private ScoreTextConfiguration scoreTextConfiguration;
 
         private ILevelCommandInvoker commandInvoker;
 
@@ -76,6 +78,28 @@ namespace KnifeToss.Presentation.UI
             {
                 stars[i].SetActive(i < count);
             }
+        }
+
+        /// <summary>
+        /// Performs the SetScoreText operation.
+        /// </summary>
+        public void SetScoreText(int stars)
+        {
+            if (scoreText == null)
+            {
+                return;
+            }
+
+            ScoreTextEntry entry = scoreTextConfiguration != null
+                ? scoreTextConfiguration.GetEntry(stars)
+                : new ScoreTextEntry(scoreText.text, scoreText.color);
+
+            if (!string.IsNullOrEmpty(entry.Text))
+            {
+                scoreText.text = entry.Text;
+            }
+
+            scoreText.color = entry.Color;
         }
 
         /// <summary>

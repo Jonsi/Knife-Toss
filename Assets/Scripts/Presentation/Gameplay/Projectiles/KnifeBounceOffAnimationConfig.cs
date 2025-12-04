@@ -4,9 +4,9 @@ using UnityEngine;
 namespace KnifeToss.Presentation.Gameplay.Projectiles
 {
     [CreateAssetMenu(
-        fileName = "KnifeFailAnimationConfig",
-        menuName = "Knife Toss/Gameplay/Knife Fail Animation")]
-    public sealed class KnifeFailAnimationConfig : ScriptableObject
+        fileName = "KnifeBounceOffAnimationConfig",
+        menuName = "Knife Toss/Gameplay/Knife Bounce Off Animation")]
+    public sealed class KnifeBounceOffAnimationConfig : ScriptableObject
     {
         [SerializeField] private float fallDistance = 4f;
         [SerializeField] private float fallDuration = 0.6f;

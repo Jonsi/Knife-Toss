@@ -26,7 +26,7 @@ MonoBehaviour:
         - type: 1
           requireAll: 1
           count: 0
-    maxKnives: 0
+    knives: 5
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -86,7 +86,7 @@ MonoBehaviour:
         objectives: []
       threeStar:
         objectives: []
-    maxKnives: 0
+    knives: 5
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -139,7 +139,7 @@ MonoBehaviour:
         objectives: []
       threeStar:
         objectives: []
-    maxKnives: 0
+    knives: 5
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -192,7 +192,7 @@ MonoBehaviour:
         objectives: []
       threeStar:
         objectives: []
-    maxKnives: 0
+    knives: 5
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -288,7 +288,7 @@ MonoBehaviour:
         objectives: []
       threeStar:
         objectives: []
-    maxKnives: 0
+    knives: 5
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -384,7 +384,7 @@ MonoBehaviour:
         objectives: []
       threeStar:
         objectives: []
-    maxKnives: 0
+    knives: 5
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -480,7 +480,7 @@ MonoBehaviour:
         objectives: []
       threeStar:
         objectives: []
-    maxKnives: 0
+    knives: 5
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -619,7 +619,7 @@ MonoBehaviour:
         objectives: []
       threeStar:
         objectives: []
-    maxKnives: 0
+    knives: 5
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -758,7 +758,7 @@ MonoBehaviour:
         objectives: []
       threeStar:
         objectives: []
-    maxKnives: 0
+    knives: 5
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -897,7 +897,7 @@ MonoBehaviour:
         objectives: []
       threeStar:
         objectives: []
-    maxKnives: 0
+    knives: 5
     targetGroup:
       targets:
       - prefab: {fileID: 0}
