@@ -649,7 +649,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &519400800
 RectTransform:
   m_ObjectHideFlags: 0
@@ -898,7 +898,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.25}
   m_AnchorMax: {x: 0.5, y: 0.25}
-  m_AnchoredPosition: {x: 0, y: -51}
+  m_AnchoredPosition: {x: 0, y: -50.999992}
   m_SizeDelta: {x: 330.3, y: 135}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &726980825
@@ -1456,7 +1456,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 68.7
+  m_fontSize: 68.75
   m_fontSizeBase: 87.9
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2817,6 +2817,7 @@ MonoBehaviour:
   levelCommandEventChannel: {fileID: 11400000, guid: 76592a2f6c663224399fb72a23fe1509, type: 2}
   soundSettings: {fileID: 11400000, guid: 5def38df6d93db34286062cf0a77bf72, type: 2}
   buttonClickEventChannel: {fileID: 11400000, guid: 721085d1c0ff9a14b96a5baa901e0c64, type: 2}
+  targetHitAnimationConfig: {fileID: 11400000, guid: 0335b67848f59b3419222f0a23873a96, type: 2}
   startLevel: 1
   targetPrefab: {fileID: 5427965671015069626, guid: 0e557c846743ed044bf689812c8bae87, type: 3}
   knifeThrowerPrefab: {fileID: 5629078851861483033, guid: beef113832fb38942ba436dfd0328ae2, type: 3}

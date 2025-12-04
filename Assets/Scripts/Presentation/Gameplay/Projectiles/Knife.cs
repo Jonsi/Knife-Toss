@@ -219,7 +219,6 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
 
             ResolveAsStuck();
             AlignToSurface(anchor, center, surfacePoint, surfaceDirection);
-            SetCollidersEnabled(false);
             PlaySound(soundSettings != null ? soundSettings.HitTargetSound : null);
             impactEventChannel?.RaiseKnifeStuck(impactPoint);
             thrower?.OnKnifeResolved();
