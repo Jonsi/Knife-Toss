@@ -329,6 +329,16 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             isResolved = true;
             isReturnedToPool = false;
             HaltMotion();
+
+            if (rb2d == null)
+            {
+                rb2d = GetComponent<Rigidbody2D>();
+            }
+
+            if (rb2d != null)
+            {
+                rb2d.bodyType = RigidbodyType2D.Static;
+            }
         }
 
         /// <summary>
