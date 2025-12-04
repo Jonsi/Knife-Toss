@@ -41,6 +41,7 @@ namespace KnifeToss.Presentation.Gameplay
         private ITargetScaleProvider targetScaleProvider;
 
         public event Action KnifeThrown;
+        public event Action KnifeResolved;
 
         /// <summary>
         /// Performs the Awake operation.
@@ -283,6 +284,7 @@ namespace KnifeToss.Presentation.Gameplay
         {
             isKnifeInFlight = false;
             currentKnife = null;
+            KnifeResolved?.Invoke();
         }
 
         /// <summary>

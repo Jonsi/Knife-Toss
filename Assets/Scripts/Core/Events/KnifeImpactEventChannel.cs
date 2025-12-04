@@ -11,8 +11,6 @@ namespace KnifeToss.Core.Events
     {
         public event Action KnifeStuck;
         public event Action<Vector3> KnifeStuckAt;
-        public event Action KnifeFailed;
-        public event Action<Vector3> KnifeFailedAt;
 
         /// <summary>
         /// Performs the RaiseKnifeStuck operation.
@@ -31,21 +29,5 @@ namespace KnifeToss.Core.Events
             KnifeStuck?.Invoke();
         }
 
-        /// <summary>
-        /// Performs the RaiseKnifeFailed operation.
-        /// </summary>
-        public void RaiseKnifeFailed()
-        {
-            KnifeFailed?.Invoke();
-        }
-
-        /// <summary>
-        /// Performs the RaiseKnifeFailed operation.
-        /// </summary>
-        public void RaiseKnifeFailed(Vector3 position)
-        {
-            KnifeFailedAt?.Invoke(position);
-            KnifeFailed?.Invoke();
-        }
     }
 }

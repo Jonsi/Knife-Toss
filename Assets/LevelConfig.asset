@@ -15,7 +15,10 @@ MonoBehaviour:
   levels:
   - objectives:
       oneStar:
-        objectives: []
+        objectives:
+        - type: 0
+          requireAll: 0
+          count: 1
       twoStar:
         objectives:
         - type: 0

@@ -108,10 +108,6 @@ namespace KnifeToss.Installers
 
             builder.RegisterEntryPoint<MusicPlayerStart>();
 
-            builder.Register<RotatingTargetFailHandler>(Lifetime.Singleton)
-                .As<IStartable>()
-                .As<IDisposable>();
-
             builder.Register<ButtonClickSoundPlayer>(Lifetime.Singleton)
                 .WithParameter(soundSettings)
                 .WithParameter(buttonClickEventChannel)

@@ -45,6 +45,7 @@ namespace KnifeToss.Presentation.Gameplay
             if (knifeThrower != null)
             {
                 knifeThrower.KnifeThrown += HandleKnifeThrown;
+                knifeThrower.KnifeResolved += HandleKnifeResolved;
             }
         }
 
@@ -56,6 +57,7 @@ namespace KnifeToss.Presentation.Gameplay
             if (knifeThrower != null)
             {
                 knifeThrower.KnifeThrown -= HandleKnifeThrown;
+                knifeThrower.KnifeResolved -= HandleKnifeResolved;
             }
         }
 
@@ -64,7 +66,25 @@ namespace KnifeToss.Presentation.Gameplay
         /// </summary>
         private void HandleKnifeThrown()
         {
-            sessionService?.HandleKnifeThrown();
+            if (sessionService == null)
+            {
+                return;
+            }
+
+            sessionService.HandleKnifeThrown();
+        }
+
+        /// <summary>
+        /// Performs the HandleKnifeResolved operation.
+        /// </summary>
+        private void HandleKnifeResolved()
+        {
+            if (sessionService == null)
+            {
+                return;
+            }
+
+            sessionService.HandleKnifeResolved();
         }
     }
 }

@@ -39,7 +39,12 @@ namespace KnifeToss.Presentation.Gameplay
         /// </summary>
         private void OnTriggerEnter2D(Collider2D other)
         {
-            TryHandleHit(other != null ? other.gameObject : null, ResolveImpactPoint(other));
+            if (other == null)
+            {
+                return;
+            }
+
+            TryHandleHit(other.gameObject, ResolveImpactPoint(other));
         }
 
         /// <summary>
@@ -47,7 +52,12 @@ namespace KnifeToss.Presentation.Gameplay
         /// </summary>
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            TryHandleHit(collision != null ? collision.gameObject : null, ResolveImpactPoint(collision));
+            if (collision == null)
+            {
+                return;
+            }
+
+            TryHandleHit(collision.gameObject, ResolveImpactPoint(collision));
         }
 
         /// <summary>
@@ -55,7 +65,17 @@ namespace KnifeToss.Presentation.Gameplay
         /// </summary>
         private void TryHandleHit(GameObject otherObject, Vector3 impactPoint)
         {
-            if (hasBeenHit || otherObject == null || !otherObject.CompareTag("Knife"))
+            if (otherObject == null || !otherObject.CompareTag("Knife"))
+            {
+                return;
+            }
+
+            ProcessHit(impactPoint);
+        }
+
+        public void ProcessHit(Vector3 impactPoint)
+        {
+            if (hasBeenHit)
             {
                 return;
             }

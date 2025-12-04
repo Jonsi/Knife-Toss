@@ -188,6 +188,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             HitableObjectView hitableView = collisionObject.GetComponentInParent<HitableObjectView>();
             if (hitableView != null)
             {
+                hitableView.ProcessHit(impactPoint);
                 Collider2D hitableCollider = hitableView.GetComponent<Collider2D>()
                     ?? collisionObject.GetComponent<Collider2D>();
                 Transform anchor = hitableCollider != null ? hitableCollider.transform : hitableView.transform;
@@ -218,9 +219,10 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
 
             ResolveAsStuck();
             AlignToSurface(anchor, center, surfacePoint, surfaceDirection);
-            thrower?.OnKnifeResolved();
+            SetCollidersEnabled(false);
             PlaySound(soundSettings != null ? soundSettings.HitTargetSound : null);
             impactEventChannel?.RaiseKnifeStuck(impactPoint);
+            thrower?.OnKnifeResolved();
         }
 
         /// <summary>

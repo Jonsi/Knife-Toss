@@ -58,8 +58,8 @@ namespace KnifeToss.Presentation.Gameplay
 
             GameObject instance = Object.Instantiate(knifeThrowerPrefab, runtimeRoot);
             instance.name = "KnifeThrowerInstance";
-            resolver.InjectGameObject(instance);
             EnsureKnifeThrowRelay(instance);
+            resolver.InjectGameObject(instance);
             throwerInstance = instance.GetComponent<KnifeThrower>();
             if (throwerInstance == null)
             {

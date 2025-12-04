@@ -58,7 +58,6 @@ namespace KnifeToss.Application.Services
             if (impactEventChannel != null)
             {
                 impactEventChannel.KnifeStuck += HandleKnifeStuck;
-                impactEventChannel.KnifeFailed += HandleKnifeFailure;
             }
 
             if (hitableEventChannel != null)
@@ -122,11 +121,7 @@ namespace KnifeToss.Application.Services
         public void HandleKnifeStuck()
         {
             session.RecordKnifeStuck();
-            if (session.IsComplete)
-            {
-                DisableThrowerInput();
-                SaveProgress();
-            }
+            ScheduleEvaluation();
         }
 
         /// <summary>
@@ -135,20 +130,7 @@ namespace KnifeToss.Application.Services
         private void HandleHitableObjectHit(Vector3 _)
         {
             session.RecordHitableObjectHit();
-            if (session.IsComplete)
-            {
-                DisableThrowerInput();
-                SaveProgress();
-            }
-        }
-
-        /// <summary>
-        /// Performs the HandleKnifeFailure operation.
-        /// </summary>
-        public void HandleKnifeFailure()
-        {
-            session.RecordFailure();
-            DisableThrowerInput();
+            ScheduleEvaluation();
         }
 
         /// <summary>
@@ -157,9 +139,60 @@ namespace KnifeToss.Application.Services
         public void HandleKnifeThrown()
         {
             session.RecordThrow();
-            if (session.HasExhaustedKnives())
+            if (session.KnivesThrown >= session.Rules.KnifeCount)
             {
-                HandleKnifeFailure();
+                gameplayObjectProvider.GetKnifeThrower().SetCanThrow(false);
+            }
+        }
+
+        /// <summary>
+        /// Performs the HandleKnifeResolved operation.
+        /// </summary>
+        public void HandleKnifeResolved()
+        {
+            ScheduleEvaluation();
+        }
+
+        /// <summary>
+        /// Evaluates completion/failure after knife-related events.
+        /// </summary>
+        private bool evaluationScheduled;
+
+        private void ScheduleEvaluation()
+        {
+            if (evaluationScheduled || !session.HasExhaustedKnives())
+            {
+                return;
+            }
+
+            evaluationScheduled = true;
+            AwaitEvaluation().Forget();
+        }
+
+        private async UniTaskVoid AwaitEvaluation()
+        {
+            await UniTask.NextFrame();
+            evaluationScheduled = false;
+            EvaluateEndState();
+        }
+
+        private void EvaluateEndState()
+        {
+            if (!session.HasExhaustedKnives() || session.IsComplete || session.IsFailed)
+            {
+                return;
+            }
+
+            if (session.HasMetObjectives)
+            {
+                session.MarkCompleteIfNeeded();
+                DisableThrowerInput();
+                SaveProgress();
+            }
+            else
+            {
+                session.RecordFailure();
+                DisableThrowerInput();
             }
         }
 
@@ -251,7 +284,6 @@ namespace KnifeToss.Application.Services
             if (impactEventChannel != null)
             {
                 impactEventChannel.KnifeStuck -= HandleKnifeStuck;
-                impactEventChannel.KnifeFailed -= HandleKnifeFailure;
             }
 
             if (hitableEventChannel != null)

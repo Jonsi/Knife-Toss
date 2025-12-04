@@ -139,7 +139,14 @@ namespace KnifeToss.Presentation.Gameplay
         /// </summary>
         private void HandleLevelFailed(LevelSession _)
         {
-            Time.timeScale = 0f;
+            // Reuse the level-complete popup for failure flow as well.
+            if (hudPresenter?.levelCompletePopup != null)
+            {
+                hudPresenter.levelCompletePopup.SetStars(0);
+                hudPresenter.levelCompletePopup.SetScoreText(0);
+                hudPresenter.ShowLevelComplete(true);
+            }
+
             if (hudPresenter?.retryButton != null)
             {
                 hudPresenter.retryButton.gameObject.SetActive(true);
@@ -165,7 +172,6 @@ namespace KnifeToss.Presentation.Gameplay
         /// </summary>
         private void BeginTransition(UniTask transitionTask)
         {
-            Time.timeScale = 1f;
             hudPresenter?.ResetState();
             if (hudPresenter?.retryButton != null)
             {

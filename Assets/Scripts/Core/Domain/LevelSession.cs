@@ -1,4 +1,5 @@
 using System;
+using KnifeToss.Core.Data;
 
 namespace KnifeToss.Core.Domain
 {
@@ -27,6 +28,7 @@ namespace KnifeToss.Core.Domain
         public int TargetsRemaining { get; private set; }
         public int HitableObjectsHit { get; private set; }
         public int AchievedStars { get; private set; }
+        public bool HasMetObjectives => AchievedStars >= 1;
 
         private int preStuckBaseline;
 
@@ -82,7 +84,7 @@ namespace KnifeToss.Core.Domain
         /// </summary>
         public void RecordKnifeStuck()
         {
-            if (IsComplete || IsFailed)
+            if (IsFailed)
                 return;
 
             KnivesStuck++;
@@ -95,7 +97,7 @@ namespace KnifeToss.Core.Domain
         /// </summary>
         public void RecordHitableObjectHit()
         {
-            if (IsComplete || IsFailed)
+            if (IsFailed)
             {
                 return;
             }
@@ -147,7 +149,7 @@ namespace KnifeToss.Core.Domain
         /// </summary>
         public bool HasExhaustedKnives()
         {
-            return KnivesThrown >= Rules.KnifeCount && PlayerKnivesStuck < Rules.KnifeCount;
+            return KnivesThrown >= Rules.KnifeCount;
         }
 
         /// <summary>
@@ -155,19 +157,7 @@ namespace KnifeToss.Core.Domain
         /// </summary>
         private void EvaluateProgress()
         {
-            AchievedStars = ObjectiveEvaluator.CalculateStars(
-                Rules.Objectives,
-                new ObjectiveEvaluator.ObjectiveEvaluationContext(
-                    PlayerKnivesStuck,
-                    Rules.KnifeCount,
-                    HitableObjectsHit,
-                    Rules.TotalHitableObjects));
-
-            if (AchievedStars >= 1)
-            {
-                IsComplete = true;
-                Completed?.Invoke(this);
-            }
+            AchievedStars = ObjectiveEvaluator.CalculateStars(Rules.Objectives, BuildObjectiveContext());
         }
 
         /// <summary>
@@ -176,6 +166,49 @@ namespace KnifeToss.Core.Domain
         private void NotifyChanged()
         {
             SessionChanged?.Invoke(this);
+        }
+
+        /// <summary>
+        /// Marks the session complete if objectives were met.
+        /// </summary>
+        public void MarkCompleteIfNeeded()
+        {
+            if (IsComplete || !HasMetObjectives)
+            {
+                return;
+            }
+
+            IsComplete = true;
+            LogObjectiveEvaluation();
+            Completed?.Invoke(this);
+        }
+
+        private ObjectiveEvaluator.ObjectiveEvaluationContext BuildObjectiveContext()
+        {
+            return new ObjectiveEvaluator.ObjectiveEvaluationContext(
+                PlayerKnivesStuck,
+                Rules.KnifeCount,
+                HitableObjectsHit,
+                Rules.TotalHitableObjects);
+        }
+
+        private void LogObjectiveEvaluation()
+        {
+            LevelObjectivesConfig objectives = Rules.Objectives;
+            if (objectives == null)
+            {
+                UnityEngine.Debug.Log("LevelSession: objectives evaluated -> no objectives defined");
+                return;
+            }
+
+            ObjectiveEvaluator.ObjectiveEvaluationContext context = BuildObjectiveContext();
+            bool oneStarMet = ObjectiveEvaluator.AreObjectivesMet(objectives.oneStar, context);
+            bool twoStarMet = ObjectiveEvaluator.AreObjectivesMet(objectives.twoStar, context);
+            bool threeStarMet = ObjectiveEvaluator.AreObjectivesMet(objectives.threeStar, context);
+
+            UnityEngine.Debug.Log(
+                $"LevelSession: objectives evaluated -> 1★:{oneStarMet}, 2★:{twoStarMet}, 3★:{threeStarMet} " +
+                $"(knivesStuck={PlayerKnivesStuck}/{Rules.KnifeCount}, hitables={HitableObjectsHit}/{Rules.TotalHitableObjects})");
         }
     }
 }
