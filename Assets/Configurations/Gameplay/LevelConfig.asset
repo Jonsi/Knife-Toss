@@ -36,15 +36,15 @@ MonoBehaviour:
         orbitRadius: 0
         startingAngle: 0
         orbitDegreesPerSecond: 0
-        baseScale: 1.05
+        baseScale: 1.0770032
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: 65.831825
+          speed: 71.86656
           behaviourType: 0
           pulsating:
-            amplitude: 13.166366
-            frequency: 0.8
+            amplitude: 17.96664
+            frequency: 0.820971
           flipping:
             flipInterval: 2.6
             flipProbability: 0.25
@@ -54,7 +54,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6430546
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -63,7 +63,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -99,15 +99,15 @@ MonoBehaviour:
         orbitRadius: 0
         startingAngle: 0
         orbitDegreesPerSecond: 0
-        baseScale: 0.95
+        baseScale: 0.9959005
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: 53.18903
+          speed: 64.16943
           behaviourType: 0
           pulsating:
-            amplitude: 18.61616
-            frequency: 1.3
+            amplitude: 27.27201
+            frequency: 1.4240394
           flipping:
             flipInterval: 1.7249999
             flipProbability: 0.55
@@ -117,7 +117,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6069534
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -126,7 +126,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -162,15 +162,15 @@ MonoBehaviour:
         orbitRadius: 0
         startingAngle: 0
         orbitDegreesPerSecond: 0
-        baseScale: 0.85
+        baseScale: 0.90529823
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: 53.905952
+          speed: 82.85264
           behaviourType: 0
           pulsating:
-            amplitude: 26.952976
-            frequency: 1.8
+            amplitude: 49.711586
+            frequency: 2
           flipping:
             flipInterval: 0.85
             flipProbability: 0.85
@@ -180,7 +180,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.69231045
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -189,7 +189,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -224,16 +224,16 @@ MonoBehaviour:
       - prefab: {fileID: 0}
         orbitRadius: 1.1
         startingAngle: 0
-        orbitDegreesPerSecond: 86.81648
-        baseScale: 1.05
+        orbitDegreesPerSecond: 29.972456
+        baseScale: 1.1276041
         preStuckKnives: 1
         preStuckKnifeSpacing: 360
         rotation:
-          speed: 86.81648
+          speed: 117.40383
           behaviourType: 0
           pulsating:
-            amplitude: 17.363297
-            frequency: 0.8
+            amplitude: 29.350958
+            frequency: 0.820971
           flipping:
             flipInterval: 2.6
             flipProbability: 0.25
@@ -243,7 +243,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6430546
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -252,7 +252,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -266,18 +266,18 @@ MonoBehaviour:
         hitableObjects: []
         knifeQuota: 1
       - prefab: {fileID: 0}
-        orbitRadius: 1.25
+        orbitRadius: 1.3945148
         startingAngle: 180
-        orbitDegreesPerSecond: -68.49577
-        baseScale: 1.05
+        orbitDegreesPerSecond: -29.848766
+        baseScale: 1.1274887
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: -68.49577
+          speed: -101.82858
           behaviourType: 0
           pulsating:
-            amplitude: 13.699155
-            frequency: 0.8
+            amplitude: 25.457146
+            frequency: 0.8462367
           flipping:
             flipInterval: 2.6
             flipProbability: 0.25
@@ -287,7 +287,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6624898
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -296,7 +296,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -329,18 +329,18 @@ MonoBehaviour:
     targetGroup:
       targets:
       - prefab: {fileID: 0}
-        orbitRadius: 2.15
+        orbitRadius: 2.5
         startingAngle: 0
-        orbitDegreesPerSecond: 105.1663
-        baseScale: 0.95
+        orbitDegreesPerSecond: 29.891523
+        baseScale: 1.0201089
         preStuckKnives: 2
         preStuckKnifeSpacing: 180
         rotation:
-          speed: 105.1663
+          speed: 70.02268
           behaviourType: 1
           pulsating:
-            amplitude: 36.808205
-            frequency: 1.3
+            amplitude: 29.759642
+            frequency: 1.4240394
           flipping:
             flipInterval: 1.7249999
             flipProbability: 0.55
@@ -350,7 +350,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6069534
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -359,7 +359,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -373,18 +373,18 @@ MonoBehaviour:
         hitableObjects: []
         knifeQuota: 2
       - prefab: {fileID: 0}
-        orbitRadius: 2.3000002
+        orbitRadius: 2.3391058
         startingAngle: 180
-        orbitDegreesPerSecond: -122.47218
-        baseScale: 0.95
+        orbitDegreesPerSecond: -29.767832
+        baseScale: 1.0115036
         preStuckKnives: 2
         preStuckKnifeSpacing: 180
         rotation:
-          speed: -122.47218
+          speed: -117.42894
           behaviourType: 0
           pulsating:
-            amplitude: 42.865265
-            frequency: 1.3
+            amplitude: 49.9073
+            frequency: 1.449305
           flipping:
             flipInterval: 1.7249999
             flipProbability: 0.55
@@ -394,7 +394,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.62638855
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -403,7 +403,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -438,16 +438,16 @@ MonoBehaviour:
       - prefab: {fileID: 0}
         orbitRadius: 3.2
         startingAngle: 0
-        orbitDegreesPerSecond: 97.35252
-        baseScale: 0.85
+        orbitDegreesPerSecond: 29.84314
+        baseScale: 0.9050296
         preStuckKnives: 3
         preStuckKnifeSpacing: 120
         rotation:
-          speed: 97.35252
+          speed: 147.44156
           behaviourType: 1
           pulsating:
-            amplitude: 48.67626
-            frequency: 1.8
+            amplitude: 88.464935
+            frequency: 2
           flipping:
             flipInterval: 0.85
             flipProbability: 0.85
@@ -457,7 +457,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.69231045
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -466,7 +466,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -480,18 +480,18 @@ MonoBehaviour:
         hitableObjects: []
         knifeQuota: 3
       - prefab: {fileID: 0}
-        orbitRadius: 3.3500001
+        orbitRadius: 2.9054852
         startingAngle: 180
-        orbitDegreesPerSecond: -86.3072
-        baseScale: 0.85
+        orbitDegreesPerSecond: -29.71945
+        baseScale: 0.89065754
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: -86.3072
+          speed: -110.52348
           behaviourType: 0
           pulsating:
-            amplitude: 43.1536
-            frequency: 1.8
+            amplitude: 66.314095
+            frequency: 2
           flipping:
             flipInterval: 0.85
             flipProbability: 0.85
@@ -501,7 +501,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.70641696
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -510,7 +510,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -545,16 +545,16 @@ MonoBehaviour:
       - prefab: {fileID: 0}
         orbitRadius: 1.1
         startingAngle: 0
-        orbitDegreesPerSecond: 122.42854
-        baseScale: 1.05
+        orbitDegreesPerSecond: 44.854557
+        baseScale: 1.1002239
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: 122.42854
+          speed: 114.6409
           behaviourType: 0
           pulsating:
-            amplitude: 24.485708
-            frequency: 0.8
+            amplitude: 28.660225
+            frequency: 0.820971
           flipping:
             flipInterval: 2.6
             flipProbability: 0.25
@@ -564,7 +564,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6430546
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -573,7 +573,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -587,18 +587,18 @@ MonoBehaviour:
         hitableObjects: []
         knifeQuota: 2
       - prefab: {fileID: 0}
-        orbitRadius: 1.25
+        orbitRadius: 1.3945148
         startingAngle: 180
-        orbitDegreesPerSecond: -119.28292
-        baseScale: 1.05
+        orbitDegreesPerSecond: -44.73087
+        baseScale: 1.0763803
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: -119.28292
+          speed: -162.87451
           behaviourType: 0
           pulsating:
-            amplitude: 23.856585
-            frequency: 0.8
+            amplitude: 40.718628
+            frequency: 0.8462367
           flipping:
             flipInterval: 2.6
             flipProbability: 0.25
@@ -608,7 +608,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6624898
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -617,7 +617,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -653,18 +653,18 @@ MonoBehaviour:
     targetGroup:
       targets:
       - prefab: {fileID: 0}
-        orbitRadius: 1.8000001
+        orbitRadius: 2.103109
         startingAngle: 0
-        orbitDegreesPerSecond: 108.28901
-        baseScale: 0.9833333
+        orbitDegreesPerSecond: 44.92645
+        baseScale: 0.9847211
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: 108.28901
+          speed: 91.093544
           behaviourType: 0
           pulsating:
-            amplitude: 32.486706
-            frequency: 1.1333333
+            amplitude: 33.400967
+            frequency: 1.2169024
           flipping:
             flipInterval: 2.0166667
             flipProbability: 0.45000002
@@ -674,7 +674,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6142839
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -683,7 +683,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -697,23 +697,22 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 2
-          radialOffset: 0.4166667
           angularSpacing: 180
           orientOutwards: 1
         knifeQuota: 3
       - prefab: {fileID: 0}
-        orbitRadius: 1.95
+        orbitRadius: 2.111028
         startingAngle: 180
-        orbitDegreesPerSecond: -94.99028
-        baseScale: 0.9833333
+        orbitDegreesPerSecond: -44.802757
+        baseScale: 0.9565923
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: -94.99028
+          speed: -132.5584
           behaviourType: 0
           pulsating:
-            amplitude: 28.497086
-            frequency: 1.1333333
+            amplitude: 48.604748
+            frequency: 1.2421681
           flipping:
             flipInterval: 2.0166667
             flipProbability: 0.45000002
@@ -723,7 +722,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.633719
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -732,7 +731,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -746,7 +745,6 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 2
-          radialOffset: 0.4166667
           angularSpacing: 180
           orientOutwards: 1
         knifeQuota: 3
@@ -773,18 +771,18 @@ MonoBehaviour:
     targetGroup:
       targets:
       - prefab: {fileID: 0}
-        orbitRadius: 2.5
+        orbitRadius: 2.803109
         startingAngle: 0
-        orbitDegreesPerSecond: 98.457115
-        baseScale: 0.9166667
+        orbitDegreesPerSecond: 45.02614
+        baseScale: 0.89055276
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: 98.457115
+          speed: 167.30116
           behaviourType: 3
           pulsating:
-            amplitude: 39.382847
-            frequency: 1.4666667
+            amplitude: 80.86223
+            frequency: 1.6647109
           flipping:
             flipInterval: 1.4333333
             flipProbability: 0.65000004
@@ -794,7 +792,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6254186
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -803,7 +801,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -817,23 +815,22 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 3
-          radialOffset: 0.5833334
           angularSpacing: 120
           orientOutwards: 1
         knifeQuota: 2
       - prefab: {fileID: 0}
-        orbitRadius: 2.65
+        orbitRadius: 2.5165129
         startingAngle: 120
-        orbitDegreesPerSecond: -159.79355
-        baseScale: 0.9166667
+        orbitDegreesPerSecond: -44.901794
+        baseScale: 0.86418146
         preStuckKnives: 2
         preStuckKnifeSpacing: 180
         rotation:
-          speed: -159.79355
+          speed: -161.19086
           behaviourType: 2
           pulsating:
-            amplitude: 63.91742
-            frequency: 1.4666667
+            amplitude: 77.90892
+            frequency: 1.6899766
           flipping:
             flipInterval: 1.4333333
             flipProbability: 0.65000004
@@ -843,7 +840,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6448538
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -852,7 +849,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -866,23 +863,22 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 3
-          radialOffset: 0.5833334
           angularSpacing: 120
           orientOutwards: 1
         knifeQuota: 2
       - prefab: {fileID: 0}
-        orbitRadius: 2.8
+        orbitRadius: 2.214735
         startingAngle: 240
-        orbitDegreesPerSecond: 160.7127
-        baseScale: 0.9166667
+        orbitDegreesPerSecond: 44.821575
+        baseScale: 0.8719362
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: 160.7127
+          speed: 98.92873
           behaviourType: 1
           pulsating:
-            amplitude: 64.28509
-            frequency: 1.4666667
+            amplitude: 47.81555
+            frequency: 1.6765379
           flipping:
             flipInterval: 1.4333333
             flipProbability: 0.65000004
@@ -892,7 +888,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6345163
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -901,7 +897,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -939,16 +935,16 @@ MonoBehaviour:
       - prefab: {fileID: 0}
         orbitRadius: 3.2
         startingAngle: 0
-        orbitDegreesPerSecond: 87.72243
-        baseScale: 0.85
+        orbitDegreesPerSecond: 45.14828
+        baseScale: 0.79998547
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: 87.72243
+          speed: 201.76692
           behaviourType: 3
           pulsating:
-            amplitude: 43.861214
-            frequency: 1.8
+            amplitude: 121.06016
+            frequency: 2
           flipping:
             flipInterval: 0.85
             flipProbability: 0.85
@@ -958,7 +954,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.69231045
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -967,7 +963,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -981,23 +977,22 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 3
-          radialOffset: 0.75
           angularSpacing: 120
           orientOutwards: 1
         knifeQuota: 4
       - prefab: {fileID: 0}
-        orbitRadius: 3.3500001
+        orbitRadius: 2.9054852
         startingAngle: 120
-        orbitDegreesPerSecond: -143.10031
-        baseScale: 0.85
+        orbitDegreesPerSecond: -45.017555
+        baseScale: 0.7784332
         preStuckKnives: 3
         preStuckKnifeSpacing: 120
         rotation:
-          speed: -143.10031
+          speed: -106.74255
           behaviourType: 2
           pulsating:
-            amplitude: 71.550156
-            frequency: 1.8
+            amplitude: 64.04553
+            frequency: 2
           flipping:
             flipInterval: 0.85
             flipProbability: 0.85
@@ -1007,7 +1002,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.70641696
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1016,7 +1011,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1030,23 +1025,22 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 3
-          radialOffset: 0.75
           angularSpacing: 120
           orientOutwards: 1
         knifeQuota: 4
       - prefab: {fileID: 0}
-        orbitRadius: 3.5
+        orbitRadius: 2.881746
         startingAngle: 240
-        orbitDegreesPerSecond: 90.03762
-        baseScale: 0.85
+        orbitDegreesPerSecond: 44.931923
+        baseScale: 0.79443705
         preStuckKnives: 3
         preStuckKnifeSpacing: 120
         rotation:
-          speed: 90.03762
+          speed: 188.06679
           behaviourType: 1
           pulsating:
-            amplitude: 45.01881
-            frequency: 1.8
+            amplitude: 112.84008
+            frequency: 2
           flipping:
             flipInterval: 0.85
             flipProbability: 0.85
@@ -1056,7 +1050,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.69
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1065,7 +1059,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1100,16 +1094,16 @@ MonoBehaviour:
       - prefab: {fileID: 0}
         orbitRadius: 1.1
         startingAngle: 0
-        orbitDegreesPerSecond: 208.67447
-        baseScale: 1.05
+        orbitDegreesPerSecond: 60.272762
+        baseScale: 0.9987632
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: 208.67447
+          speed: 106.414246
           behaviourType: 0
           pulsating:
-            amplitude: 41.734894
-            frequency: 0.8
+            amplitude: 26.603561
+            frequency: 0.820971
           flipping:
             flipInterval: 2.6
             flipProbability: 0.25
@@ -1119,7 +1113,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6430546
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1128,7 +1122,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1142,18 +1136,18 @@ MonoBehaviour:
         hitableObjects: []
         knifeQuota: 3
       - prefab: {fileID: 0}
-        orbitRadius: 1.25
+        orbitRadius: 1.3945148
         startingAngle: 120
-        orbitDegreesPerSecond: -179.53906
-        baseScale: 1.05
+        orbitDegreesPerSecond: -60.130283
+        baseScale: 0.98136336
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: -179.53906
+          speed: -200.03357
           behaviourType: 0
           pulsating:
-            amplitude: 35.907814
-            frequency: 0.8
+            amplitude: 50.008392
+            frequency: 0.8462367
           flipping:
             flipInterval: 2.6
             flipProbability: 0.25
@@ -1163,7 +1157,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6624898
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1172,7 +1166,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1186,18 +1180,18 @@ MonoBehaviour:
         hitableObjects: []
         knifeQuota: 3
       - prefab: {fileID: 0}
-        orbitRadius: 1.4000001
+        orbitRadius: 1.4182541
         startingAngle: 240
-        orbitDegreesPerSecond: 148.99074
-        baseScale: 1.05
+        orbitDegreesPerSecond: 60.04168
+        baseScale: 0.972286
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: 148.99074
+          speed: 111.197556
           behaviourType: 0
           pulsating:
-            amplitude: 29.798147
-            frequency: 0.8
+            amplitude: 27.799389
+            frequency: 0.83279806
           flipping:
             flipInterval: 2.6
             flipProbability: 0.25
@@ -1207,7 +1201,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.65215236
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1216,7 +1210,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1252,18 +1246,18 @@ MonoBehaviour:
     targetGroup:
       targets:
       - prefab: {fileID: 0}
-        orbitRadius: 1.8000001
+        orbitRadius: 2.103109
         startingAngle: 0
-        orbitDegreesPerSecond: 95.011536
-        baseScale: 0.9833333
+        orbitDegreesPerSecond: 60.352093
+        baseScale: 0.8927363
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: 95.011536
+          speed: 96.95022
           behaviourType: 0
           pulsating:
-            amplitude: 28.503462
-            frequency: 1.1333333
+            amplitude: 35.548412
+            frequency: 1.2169024
           flipping:
             flipInterval: 2.0166667
             flipProbability: 0.45000002
@@ -1273,7 +1267,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6142839
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1282,7 +1276,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1296,23 +1290,22 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 2
-          radialOffset: 0.4166667
           angularSpacing: 180
           orientOutwards: 1
         knifeQuota: 4
       - prefab: {fileID: 0}
-        orbitRadius: 1.95
+        orbitRadius: 2.111028
         startingAngle: 120
-        orbitDegreesPerSecond: -97.8087
-        baseScale: 0.9833333
+        orbitDegreesPerSecond: -60.19895
+        baseScale: 0.9105536
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: -97.8087
+          speed: -126.94486
           behaviourType: 0
           pulsating:
-            amplitude: 29.342611
-            frequency: 1.1333333
+            amplitude: 46.54645
+            frequency: 1.2421681
           flipping:
             flipInterval: 2.0166667
             flipProbability: 0.45000002
@@ -1322,7 +1315,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.633719
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1331,7 +1324,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1345,18 +1338,18 @@ MonoBehaviour:
         hitableObjects: []
         knifeQuota: 4
       - prefab: {fileID: 0}
-        orbitRadius: 2.1000001
+        orbitRadius: 1.8329893
         startingAngle: 240
-        orbitDegreesPerSecond: 208.6684
-        baseScale: 0.9833333
+        orbitDegreesPerSecond: 60.12356
+        baseScale: 0.91087747
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: 208.6684
+          speed: 152.60478
           behaviourType: 0
           pulsating:
-            amplitude: 62.60052
-            frequency: 1.1333333
+            amplitude: 55.95509
+            frequency: 1.2287294
           flipping:
             flipInterval: 2.0166667
             flipProbability: 0.45000002
@@ -1366,7 +1359,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6233816
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1375,7 +1368,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1411,18 +1404,18 @@ MonoBehaviour:
     targetGroup:
       targets:
       - prefab: {fileID: 0}
-        orbitRadius: 2.5
+        orbitRadius: 2.803109
         startingAngle: 0
-        orbitDegreesPerSecond: 155.26741
-        baseScale: 0.9166667
+        orbitDegreesPerSecond: 60.352093
+        baseScale: 0.81361455
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: 155.26741
+          speed: 139.84727
           behaviourType: 0
           pulsating:
-            amplitude: 62.106964
-            frequency: 1.4666667
+            amplitude: 67.59285
+            frequency: 1.6647109
           flipping:
             flipInterval: 1.4333333
             flipProbability: 0.65000004
@@ -1432,7 +1425,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6254186
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1441,7 +1434,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1455,23 +1448,22 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 3
-          radialOffset: 0.5833334
           angularSpacing: 120
           orientOutwards: 1
         knifeQuota: 4
       - prefab: {fileID: 0}
-        orbitRadius: 2.65
+        orbitRadius: 2.5165129
         startingAngle: 90
-        orbitDegreesPerSecond: -104.06183
-        baseScale: 0.9166667
+        orbitDegreesPerSecond: -60.196026
+        baseScale: 0.8491231
         preStuckKnives: 2
         preStuckKnifeSpacing: 180
         rotation:
-          speed: -104.06183
+          speed: -179.75441
           behaviourType: 1
           pulsating:
-            amplitude: 41.624733
-            frequency: 1.4666667
+            amplitude: 86.8813
+            frequency: 1.6899766
           flipping:
             flipInterval: 1.4333333
             flipProbability: 0.65000004
@@ -1481,7 +1473,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6448538
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1490,7 +1482,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1504,18 +1496,18 @@ MonoBehaviour:
         hitableObjects: []
         knifeQuota: 4
       - prefab: {fileID: 0}
-        orbitRadius: 2.8
+        orbitRadius: 2.214735
         startingAngle: 180
-        orbitDegreesPerSecond: 92.341446
-        baseScale: 0.9166667
+        orbitDegreesPerSecond: 60.158703
+        baseScale: 0.8202653
         preStuckKnives: 2
         preStuckKnifeSpacing: 180
         rotation:
-          speed: 92.341446
+          speed: 110.587265
           behaviourType: 2
           pulsating:
-            amplitude: 36.93658
-            frequency: 1.4666667
+            amplitude: 53.450512
+            frequency: 1.6765379
           flipping:
             flipInterval: 1.4333333
             flipProbability: 0.65000004
@@ -1525,7 +1517,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6345163
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1534,7 +1526,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1548,23 +1540,22 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 3
-          radialOffset: 0.5833334
           angularSpacing: 120
           orientOutwards: 1
         knifeQuota: 4
       - prefab: {fileID: 0}
-        orbitRadius: 2.95
+        orbitRadius: 2.1752286
         startingAngle: 270
-        orbitDegreesPerSecond: -201.75507
-        baseScale: 0.9166667
+        orbitDegreesPerSecond: -60.126194
+        baseScale: 0.8365449
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: -201.75507
+          speed: -130.76604
           behaviourType: 3
           pulsating:
-            amplitude: 80.70203
-            frequency: 1.4666667
+            amplitude: 63.203587
+            frequency: 1.646655
           flipping:
             flipInterval: 1.4333333
             flipProbability: 0.65000004
@@ -1574,7 +1565,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.61152947
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1583,7 +1574,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1597,7 +1588,6 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 3
-          radialOffset: 0.5833334
           angularSpacing: 120
           orientOutwards: 1
         knifeQuota: 4
@@ -1626,16 +1616,16 @@ MonoBehaviour:
       - prefab: {fileID: 0}
         orbitRadius: 3.2
         startingAngle: 0
-        orbitDegreesPerSecond: 171.33786
-        baseScale: 0.85
+        orbitDegreesPerSecond: 60.272762
+        baseScale: 0.7873687
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: 171.33786
+          speed: 182.16841
           behaviourType: 0
           pulsating:
-            amplitude: 85.66893
-            frequency: 1.8
+            amplitude: 109.30105
+            frequency: 2
           flipping:
             flipInterval: 0.85
             flipProbability: 0.85
@@ -1645,7 +1635,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.69231045
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1654,7 +1644,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1668,18 +1658,18 @@ MonoBehaviour:
         hitableObjects: []
         knifeQuota: 5
       - prefab: {fileID: 0}
-        orbitRadius: 3.3500001
+        orbitRadius: 2.9054852
         startingAngle: 90
-        orbitDegreesPerSecond: -186.36092
-        baseScale: 0.85
+        orbitDegreesPerSecond: -60.12469
+        baseScale: 0.7583725
         preStuckKnives: 3
         preStuckKnifeSpacing: 120
         rotation:
-          speed: -186.36092
+          speed: -221.78638
           behaviourType: 1
           pulsating:
-            amplitude: 93.18046
-            frequency: 1.8
+            amplitude: 133.07184
+            frequency: 2
           flipping:
             flipInterval: 0.85
             flipProbability: 0.85
@@ -1689,7 +1679,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.70641696
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1698,7 +1688,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1712,23 +1702,22 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 3
-          radialOffset: 0.75
           angularSpacing: 120
           orientOutwards: 1
         knifeQuota: 5
       - prefab: {fileID: 0}
-        orbitRadius: 3.5
+        orbitRadius: 2.881746
         startingAngle: 180
-        orbitDegreesPerSecond: 116.43608
-        baseScale: 0.85
+        orbitDegreesPerSecond: 60.14832
+        baseScale: 0.7701812
         preStuckKnives: 3
         preStuckKnifeSpacing: 120
         rotation:
-          speed: 116.43608
+          speed: 232.04454
           behaviourType: 2
           pulsating:
-            amplitude: 58.21804
-            frequency: 1.8
+            amplitude: 139.22673
+            frequency: 2
           flipping:
             flipInterval: 0.85
             flipProbability: 0.85
@@ -1738,7 +1727,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.69
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1747,7 +1736,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1761,23 +1750,22 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 3
-          radialOffset: 0.75
           angularSpacing: 120
           orientOutwards: 1
         knifeQuota: 5
       - prefab: {fileID: 0}
-        orbitRadius: 3.65
+        orbitRadius: 3.150608
         startingAngle: 270
-        orbitDegreesPerSecond: -164.44516
-        baseScale: 0.85
+        orbitDegreesPerSecond: -60.039112
+        baseScale: 0.7901978
         preStuckKnives: 3
         preStuckKnifeSpacing: 120
         rotation:
-          speed: -164.44516
+          speed: -207.9999
           behaviourType: 3
           pulsating:
-            amplitude: 82.22258
-            frequency: 1.8
+            amplitude: 124.79994
+            frequency: 2
           flipping:
             flipInterval: 0.85
             flipProbability: 0.85
@@ -1787,7 +1775,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6634371
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1796,7 +1784,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1810,7 +1798,6 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 3
-          radialOffset: 0.75
           angularSpacing: 120
           orientOutwards: 1
         knifeQuota: 5
@@ -1839,16 +1826,16 @@ MonoBehaviour:
       - prefab: {fileID: 0}
         orbitRadius: 1.1
         startingAngle: 0
-        orbitDegreesPerSecond: 133.22899
-        baseScale: 1.05
+        orbitDegreesPerSecond: 75.148285
+        baseScale: 0.95769083
         preStuckKnives: 1
         preStuckKnifeSpacing: 360
         rotation:
-          speed: 133.22899
+          speed: 247.22365
           behaviourType: 0
           pulsating:
-            amplitude: 26.645798
-            frequency: 0.8
+            amplitude: 61.805912
+            frequency: 0.820971
           flipping:
             flipInterval: 2.6
             flipProbability: 0.25
@@ -1858,7 +1845,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6430546
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1867,7 +1854,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1881,23 +1868,22 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 1
-          radialOffset: 0.25
           angularSpacing: 360
           orientOutwards: 1
         knifeQuota: 4
       - prefab: {fileID: 0}
-        orbitRadius: 1.25
+        orbitRadius: 1.3945148
         startingAngle: 120
-        orbitDegreesPerSecond: -230.1579
-        baseScale: 1.05
+        orbitDegreesPerSecond: -75.01773
+        baseScale: 1.0002878
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: -230.1579
+          speed: -224.11313
           behaviourType: 0
           pulsating:
-            amplitude: 46.03158
-            frequency: 0.8
+            amplitude: 56.028282
+            frequency: 0.8462367
           flipping:
             flipInterval: 2.6
             flipProbability: 0.25
@@ -1907,7 +1893,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6624898
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1916,7 +1902,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1930,18 +1916,18 @@ MonoBehaviour:
         hitableObjects: []
         knifeQuota: 4
       - prefab: {fileID: 0}
-        orbitRadius: 1.4000001
+        orbitRadius: 1.4182541
         startingAngle: 240
-        orbitDegreesPerSecond: 228.04823
-        baseScale: 1.05
+        orbitDegreesPerSecond: 75.11329
+        baseScale: 1.0242444
         preStuckKnives: 1
         preStuckKnifeSpacing: 360
         rotation:
-          speed: 228.04823
+          speed: 125.37703
           behaviourType: 0
           pulsating:
-            amplitude: 45.609646
-            frequency: 0.8
+            amplitude: 31.344257
+            frequency: 0.83279806
           flipping:
             flipInterval: 2.6
             flipProbability: 0.25
@@ -1951,7 +1937,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.65215236
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1960,7 +1946,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -1996,18 +1982,18 @@ MonoBehaviour:
     targetGroup:
       targets:
       - prefab: {fileID: 0}
-        orbitRadius: 1.8000001
+        orbitRadius: 2.103109
         startingAngle: 0
-        orbitDegreesPerSecond: 234.68243
-        baseScale: 0.9833333
+        orbitDegreesPerSecond: 75.02614
+        baseScale: 0.9180062
         preStuckKnives: 2
         preStuckKnifeSpacing: 180
         rotation:
-          speed: 234.68243
+          speed: 212.29788
           behaviourType: 0
           pulsating:
-            amplitude: 70.40473
-            frequency: 1.1333333
+            amplitude: 77.84256
+            frequency: 1.2169024
           flipping:
             flipInterval: 2.0166667
             flipProbability: 0.45000002
@@ -2017,7 +2003,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6142839
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2026,7 +2012,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2040,23 +2026,22 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 2
-          radialOffset: 0.4166667
           angularSpacing: 180
           orientOutwards: 1
         knifeQuota: 4
       - prefab: {fileID: 0}
-        orbitRadius: 1.95
+        orbitRadius: 2.111028
         startingAngle: 120
-        orbitDegreesPerSecond: -213.25131
-        baseScale: 0.9833333
+        orbitDegreesPerSecond: -74.91792
+        baseScale: 0.959213
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: -213.25131
+          speed: -181.60594
           behaviourType: 0
           pulsating:
-            amplitude: 63.975395
-            frequency: 1.1333333
+            amplitude: 66.588844
+            frequency: 1.2421681
           flipping:
             flipInterval: 2.0166667
             flipProbability: 0.45000002
@@ -2066,7 +2051,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.633719
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2075,7 +2060,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2089,18 +2074,18 @@ MonoBehaviour:
         hitableObjects: []
         knifeQuota: 5
       - prefab: {fileID: 0}
-        orbitRadius: 2.1000001
+        orbitRadius: 1.8329893
         startingAngle: 240
-        orbitDegreesPerSecond: 160.80605
-        baseScale: 0.9833333
+        orbitDegreesPerSecond: 75.08157
+        baseScale: 0.98457325
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: 160.80605
+          speed: 232.0171
           behaviourType: 0
           pulsating:
-            amplitude: 48.241817
-            frequency: 1.1333333
+            amplitude: 85.07294
+            frequency: 1.2287294
           flipping:
             flipInterval: 2.0166667
             flipProbability: 0.45000002
@@ -2110,7 +2095,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6233816
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2119,7 +2104,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2155,18 +2140,18 @@ MonoBehaviour:
     targetGroup:
       targets:
       - prefab: {fileID: 0}
-        orbitRadius: 2.5
+        orbitRadius: 2.803109
         startingAngle: 0
-        orbitDegreesPerSecond: 192.72939
-        baseScale: 0.9166667
+        orbitDegreesPerSecond: 74.926445
+        baseScale: 0.89418167
         preStuckKnives: 2
         preStuckKnifeSpacing: 180
         rotation:
-          speed: 192.72939
+          speed: 259.5509
           behaviourType: 3
           pulsating:
-            amplitude: 77.09176
-            frequency: 1.4666667
+            amplitude: 125.44961
+            frequency: 1.6647109
           flipping:
             flipInterval: 1.4333333
             flipProbability: 0.65000004
@@ -2176,7 +2161,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6254186
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2185,7 +2170,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2199,18 +2184,18 @@ MonoBehaviour:
         hitableObjects: []
         knifeQuota: 5
       - prefab: {fileID: 0}
-        orbitRadius: 2.65
+        orbitRadius: 2.5165129
         startingAngle: 90
-        orbitDegreesPerSecond: -237.73042
-        baseScale: 0.9166667
+        orbitDegreesPerSecond: -74.84114
+        baseScale: 0.8898985
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: -237.73042
+          speed: -130.6771
           behaviourType: 2
           pulsating:
-            amplitude: 95.09217
-            frequency: 1.4666667
+            amplitude: 63.1606
+            frequency: 1.6899766
           flipping:
             flipInterval: 1.4333333
             flipProbability: 0.65000004
@@ -2220,7 +2205,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6448538
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2229,7 +2214,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2243,23 +2228,22 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 3
-          radialOffset: 0.5833334
           angularSpacing: 120
           orientOutwards: 1
         knifeQuota: 5
       - prefab: {fileID: 0}
-        orbitRadius: 2.8
+        orbitRadius: 2.214735
         startingAngle: 180
-        orbitDegreesPerSecond: 117.5224
-        baseScale: 0.9166667
+        orbitDegreesPerSecond: 75.06379
+        baseScale: 0.94132346
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: 117.5224
+          speed: 219.74086
           behaviourType: 1
           pulsating:
-            amplitude: 47.00896
-            frequency: 1.4666667
+            amplitude: 106.208084
+            frequency: 1.6765379
           flipping:
             flipInterval: 1.4333333
             flipProbability: 0.65000004
@@ -2269,7 +2253,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6345163
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2278,7 +2262,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2292,18 +2276,18 @@ MonoBehaviour:
         hitableObjects: []
         knifeQuota: 4
       - prefab: {fileID: 0}
-        orbitRadius: 2.95
+        orbitRadius: 2.1752286
         startingAngle: 270
-        orbitDegreesPerSecond: -230.89217
-        baseScale: 0.9166667
+        orbitDegreesPerSecond: -74.918816
+        baseScale: 0.9293749
         preStuckKnives: 2
         preStuckKnifeSpacing: 180
         rotation:
-          speed: -230.89217
+          speed: -222.16092
           behaviourType: 0
           pulsating:
-            amplitude: 92.356865
-            frequency: 1.4666667
+            amplitude: 107.377785
+            frequency: 1.646655
           flipping:
             flipInterval: 1.4333333
             flipProbability: 0.65000004
@@ -2313,7 +2297,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.61152947
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2322,7 +2306,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2336,7 +2320,6 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 3
-          radialOffset: 0.5833334
           angularSpacing: 120
           orientOutwards: 1
         knifeQuota: 5
@@ -2365,16 +2348,16 @@ MonoBehaviour:
       - prefab: {fileID: 0}
         orbitRadius: 3.2
         startingAngle: 0
-        orbitDegreesPerSecond: 167.70297
-        baseScale: 0.85
+        orbitDegreesPerSecond: 74.85456
+        baseScale: 0.8510719
         preStuckKnives: 3
         preStuckKnifeSpacing: 120
         rotation:
-          speed: 167.70297
+          speed: 231.53369
           behaviourType: 3
           pulsating:
-            amplitude: 83.85149
-            frequency: 1.8
+            amplitude: 138.92023
+            frequency: 2
           flipping:
             flipInterval: 0.85
             flipProbability: 0.85
@@ -2384,7 +2367,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.69231045
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2393,7 +2376,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2407,18 +2390,18 @@ MonoBehaviour:
         hitableObjects: []
         knifeQuota: 6
       - prefab: {fileID: 0}
-        orbitRadius: 3.3500001
+        orbitRadius: 2.9054852
         startingAngle: 90
-        orbitDegreesPerSecond: -189.33234
-        baseScale: 0.85
+        orbitDegreesPerSecond: -74.79195
+        baseScale: 0.87286353
         preStuckKnives: 3
         preStuckKnifeSpacing: 120
         rotation:
-          speed: -189.33234
+          speed: -318.26608
           behaviourType: 2
           pulsating:
-            amplitude: 94.66617
-            frequency: 1.8
+            amplitude: 190.95966
+            frequency: 2
           flipping:
             flipInterval: 0.85
             flipProbability: 0.85
@@ -2428,7 +2411,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.70641696
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2437,7 +2420,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2451,18 +2434,18 @@ MonoBehaviour:
         hitableObjects: []
         knifeQuota: 6
       - prefab: {fileID: 0}
-        orbitRadius: 3.5
+        orbitRadius: 2.881746
         startingAngle: 180
-        orbitDegreesPerSecond: 121.546555
-        baseScale: 0.85
+        orbitDegreesPerSecond: 75.04516
+        baseScale: 0.8918829
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: 121.546555
+          speed: 285.82486
           behaviourType: 1
           pulsating:
-            amplitude: 60.773277
-            frequency: 1.8
+            amplitude: 171.49492
+            frequency: 2
           flipping:
             flipInterval: 0.85
             flipProbability: 0.85
@@ -2472,7 +2455,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.69
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2481,7 +2464,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2495,18 +2478,18 @@ MonoBehaviour:
         hitableObjects: []
         knifeQuota: 6
       - prefab: {fileID: 0}
-        orbitRadius: 3.65
+        orbitRadius: 3.150608
         startingAngle: 270
-        orbitDegreesPerSecond: -111.8073
-        baseScale: 0.85
+        orbitDegreesPerSecond: -74.92115
+        baseScale: 0.86838573
         preStuckKnives: 0
         preStuckKnifeSpacing: 45
         rotation:
-          speed: -111.8073
+          speed: -220.08286
           behaviourType: 0
           pulsating:
-            amplitude: 55.90365
-            frequency: 1.8
+            amplitude: 132.04971
+            frequency: 2
           flipping:
             flipInterval: 0.85
             flipProbability: 0.85
@@ -2516,7 +2499,7 @@ MonoBehaviour:
               m_Curve:
               - serializedVersion: 3
                 time: 0
-                value: 0.65
+                value: 0.6634371
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2525,7 +2508,7 @@ MonoBehaviour:
                 outWeight: 0
               - serializedVersion: 3
                 time: 1
-                value: 1.35
+                value: 1.45
                 inSlope: 0
                 outSlope: 0
                 tangentMode: 0
@@ -2539,7 +2522,6 @@ MonoBehaviour:
         hitableObjects:
         - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
           count: 3
-          radialOffset: 0.75
           angularSpacing: 120
           orientOutwards: 1
         knifeQuota: 6

@@ -35,6 +35,7 @@ namespace Editor
                 EnablePreStuck = true,
                 BaseRotation = 90f,
                 RotationVariance = 35f,
+                BaseOrbitSpeed = 30f,
                 QuotaRange = new Vector2Int(1, 3)
             },
             new StageProfile("Orbit Rodeo", 7, 10, new Vector2Int(2, 3), new Vector2Int(8, 11))
@@ -46,6 +47,7 @@ namespace Editor
                 EnablePreStuck = true,
                 BaseRotation = 120f,
                 RotationVariance = 45f,
+                BaseOrbitSpeed = 45f,
                 QuotaRange = new Vector2Int(2, 4)
             },
             new StageProfile("Chaos Carnival", 11, 14, new Vector2Int(3, 4), new Vector2Int(10, 13))
@@ -57,6 +59,7 @@ namespace Editor
                 EnablePreStuck = true,
                 BaseRotation = 150f,
                 RotationVariance = 60f,
+                BaseOrbitSpeed = 60f,
                 QuotaRange = new Vector2Int(3, 5)
             },
             new StageProfile("Finale Frenzy", 15, 18, new Vector2Int(3, 4), new Vector2Int(12, 15))
@@ -68,6 +71,7 @@ namespace Editor
                 EnablePreStuck = true,
                 BaseRotation = 180f,
                 RotationVariance = 70f,
+                BaseOrbitSpeed = 75f,
                 QuotaRange = new Vector2Int(4, 6)
             }
         };
@@ -179,21 +183,27 @@ namespace Editor
             float baseRadius = stage.AllowOrbiting
                 ? Mathf.Lerp(1.1f, 3.2f, stageProgress)
                 : 0f;
-            float baseScale = Mathf.Lerp(1.05f, 0.85f, stageProgress);
 
             var targets = new List<TargetDefinition>(targetCount);
             for (int i = 0; i < targetCount; i++)
             {
                 float angle = targetCount == 1 ? 0f : (360f / targetCount) * i;
-                float orbitRadius = stage.AllowOrbiting ? baseRadius + 0.15f * i : 0f;
+                float orbitRadius = stage.AllowOrbiting ? baseRadius + Mathf.Sin(i + stageProgress * Mathf.PI) * 0.35f : 0f;
+
+                float orbitDriftPhase = stage.AllowOrbiting ? Mathf.PerlinNoise(levelNumber * 0.12f, i * 0.35f) : 0f;
+                float orbitDrift = stage.AllowOrbiting ? Mathf.Lerp(-0.6f, 0.6f, orbitDriftPhase) : 0f;
+                float orbitSpeed = stage.AllowOrbiting ? stage.BaseOrbitSpeed + orbitDrift : 0f;
+
                 float rotationSpeed = stage.BaseRotation + UnityEngine.Random.Range(-stage.RotationVariance, stage.RotationVariance);
+                float scalePulse = 1f + Mathf.Sin((levelNumber + i) * 0.35f) * 0.075f;
+                float baseScale = Mathf.Lerp(1.05f, 0.85f, stageProgress) * scalePulse;
 
                 TargetDefinition target = new TargetDefinition
                 {
                     orbitRadius = orbitRadius,
                     startingAngle = angle,
-                    orbitDegreesPerSecond = stage.AllowOrbiting ? rotationSpeed * (i % 2 == 0 ? 1f : -1f) : 0f,
-                    baseScale = baseScale,
+                    orbitDegreesPerSecond = stage.AllowOrbiting ? orbitSpeed * (i % 2 == 0 ? 1f : -1f) : 0f,
+                    baseScale = Mathf.Clamp(baseScale, 0.65f, 1.2f),
                     rotation = CreateRotation(stage, stageProgress, rotationSpeed, i, rng)
                 };
 
@@ -211,7 +221,7 @@ namespace Editor
                 quotaSum += quota;
                 target.knifeQuota = quota;
 
-                hitableCount += AddHitables(stage, stageProgress, rng, target);
+                hitableCount += AddHitables(stage, stageProgress, rng, levelNumber, i, target);
                 targets.Add(target);
             }
 
@@ -232,14 +242,18 @@ namespace Editor
                 }
             }
 
+            float curvePhase = Mathf.PerlinNoise(targetIndex * 0.21f, progress * 1.3f);
+            float localSpeedMod = Mathf.Lerp(0.85f, 1.4f, curvePhase);
+            float signedSpeed = rotationSpeed * localSpeedMod * (targetIndex % 2 == 0 ? 1f : -1f);
+
             TargetRotationConfig config = new TargetRotationConfig
             {
                 behaviourType = type,
-                speed = rotationSpeed * (targetIndex % 2 == 0 ? 1f : -1f),
+                speed = signedSpeed,
                 pulsating = new PulsatingRotationSettings
                 {
-                    amplitude = Mathf.Abs(rotationSpeed) * Mathf.Lerp(0.2f, 0.5f, progress),
-                    frequency = Mathf.Lerp(0.8f, 1.8f, progress)
+                    amplitude = Mathf.Abs(signedSpeed) * Mathf.Lerp(0.25f, 0.6f, progress),
+                    frequency = Mathf.Lerp(0.7f, 2f, progress + curvePhase * 0.2f)
                 },
                 flipping = new FlippingRotationSettings
                 {
@@ -248,7 +262,7 @@ namespace Editor
                 },
                 acceleration = new AccelerationRotationSettings
                 {
-                    accelerationCurve = AnimationCurve.EaseInOut(0f, 0.65f, 1f, 1.35f),
+                    accelerationCurve = AnimationCurve.EaseInOut(0f, 0.55f + curvePhase * 0.2f, 1f, 1.45f),
                     curveLoopDuration = Mathf.Lerp(2.4f, 0.8f, progress)
                 }
             };
@@ -256,7 +270,7 @@ namespace Editor
             return config;
         }
 
-        private static int AddHitables(StageProfile stage, float progress, System.Random rng, TargetDefinition target)
+        private static int AddHitables(StageProfile stage, float progress, System.Random rng, int levelNumber, int targetIndex, TargetDefinition target)
         {
             if (!stage.EnableHitables)
             {
@@ -270,13 +284,16 @@ namespace Editor
             }
 
             float chance = Mathf.Lerp(0.2f, 0.7f, progress);
-            if (rng.NextDouble() > chance)
+            double roll = rng.NextDouble();
+            if (roll > chance)
             {
                 return 0;
             }
 
             HitableObjectConfig config = configs[rng.Next(configs.Count)];
             int count = 1 + (int)Mathf.Round(progress * 2.5f);
+            float jitter = Mathf.PerlinNoise(levelNumber * 0.41f, targetIndex * 0.18f);
+            float targetRadiusOffset = Mathf.Lerp(0.3f, 0.85f, jitter);
 
             HitableObjectPlacement placement = new HitableObjectPlacement
             {
@@ -287,6 +304,7 @@ namespace Editor
             };
 
             target.hitableObjects.Add(placement);
+            target.baseScale = Mathf.Clamp(target.baseScale - targetRadiusOffset * 0.05f, 0.6f, 1.2f);
             return count;
         }
 
@@ -400,6 +418,7 @@ namespace Editor
             public bool EnableQuotas = true;
             public float BaseRotation = 120f;
             public float RotationVariance = 35f;
+            public float BaseOrbitSpeed = 30f;
             public Vector2Int QuotaRange = new Vector2Int(1, 4);
 
             public int StageSeed => Name.GetHashCode();
