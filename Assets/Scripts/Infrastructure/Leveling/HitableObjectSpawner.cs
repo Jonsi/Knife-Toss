@@ -73,7 +73,7 @@ namespace Infrastructure.Leveling
                     ? 360f / Mathf.Max(1, hitable.count)
                     : hitable.angularSpacing;
 
-                float radius = Mathf.Max(0f, targetRadius + hitable.radialOffset);
+                float radius = targetRadius;
                 float startAngle = Random.Range(0f, 360f);
 
                 for (int k = 0; k < hitable.count; k++)
