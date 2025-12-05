@@ -131,19 +131,38 @@ namespace Presentation.Gameplay.Input
                 }
             }
 
+            if (TryGetTouchscreenPosition(out position))
+            {
+                return true;
+            }
+
             if (Mouse.current != null)
             {
                 position = Mouse.current.position.ReadValue();
-                return true;
-            }
-
-            if (Touchscreen.current != null)
-            {
-                position = Touchscreen.current.primaryTouch.position.ReadValue();
-                return true;
+                return position != Vector2.zero;
             }
 
             return false;
+        }
+
+        private static bool TryGetTouchscreenPosition(out Vector2 position)
+        {
+            position = Vector2.zero;
+
+            Touchscreen touchscreen = Touchscreen.current;
+            if (touchscreen == null)
+            {
+                return false;
+            }
+
+            TouchControl touch = touchscreen.primaryTouch;
+            if (touch == null || !touch.press.isPressed)
+            {
+                return false;
+            }
+
+            position = touch.position.ReadValue();
+            return position != Vector2.zero;
         }
 
         private bool ShouldIgnorePointerInput(InputAction.CallbackContext context, Vector2 screenPosition)
