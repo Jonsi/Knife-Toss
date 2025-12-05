@@ -511,6 +511,8 @@ MonoBehaviour:
   - {fileID: 8943771378992521865}
   activeStarColor: {r: 1, g: 1, b: 1, a: 1}
   inactiveStarColor: {r: 0, g: 0, b: 0, a: 0.3}
+  activeLevelColor: {r: 1, g: 1, b: 1, a: 1}
+  inactiveLevelColor: {r: 1, g: 1, b: 1, a: 0.3}
   levelNumberText: {fileID: 4421377066903336448}
 --- !u!1 &8943771378992521865
 GameObject:

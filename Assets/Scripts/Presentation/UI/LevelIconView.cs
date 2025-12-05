@@ -17,6 +17,8 @@ namespace Presentation.UI
         [SerializeField] private Color inactiveLevelColor = new Color(1f, 1f, 1f, 0.3f);
         [SerializeField] private TextMeshProUGUI levelNumberText;
 
+        public bool IsActive { get; private set; }
+
         /// <summary>
         /// Sets the sprite used for the level icon.
         /// </summary>
@@ -57,6 +59,7 @@ namespace Presentation.UI
         /// </summary>
         public void SetLevelActive(bool isActive)
         {
+            IsActive = isActive;
             Color targetColor = isActive ? activeLevelColor : inactiveLevelColor;
 
             if (icon != null)

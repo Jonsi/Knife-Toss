@@ -178,7 +178,17 @@ namespace Presentation.UI
             }
 
             button.onClick.RemoveListener(HidePopup);
-            button.onClick.AddListener(HidePopup);
+            button.onClick.AddListener(() => HandleIconButtonClicked(icon));
+        }
+
+        private void HandleIconButtonClicked(LevelIconView icon)
+        {
+            if (icon == null || !icon.IsActive)
+            {
+                return;
+            }
+
+            HidePopup();
         }
 
         private void UpdateIcons(int levelCount)
