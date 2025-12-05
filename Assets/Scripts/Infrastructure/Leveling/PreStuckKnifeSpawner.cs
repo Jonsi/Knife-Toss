@@ -49,26 +49,37 @@ namespace Infrastructure.Leveling
                 }
 
                 CircleCollider2D targetCollider = targetTransform.GetComponent<CircleCollider2D>();
-                float uniformScale = targetTransform.lossyScale.x;
-                float targetRadius = targetCollider != null ? targetCollider.radius * uniformScale : 0.5f;
+                Vector3 circleCenter = targetTransform.position;
+                float uniformScale = Mathf.Max(targetTransform.lossyScale.x, targetTransform.lossyScale.y);
+                float targetRadius = 0.5f * uniformScale;
+                if (targetCollider != null)
+                {
+                    circleCenter = targetCollider.transform.TransformPoint(targetCollider.offset);
+                    uniformScale = Mathf.Max(targetCollider.transform.lossyScale.x, targetCollider.transform.lossyScale.y);
+                    targetRadius = targetCollider.radius * uniformScale;
+                }
+
                 float angleStep = targetDef.preStuckKnifeSpacing;
                 float startAngle = Random.Range(0f, 360f);
-                float embedOffset = ResolveEmbedOffset() * Mathf.Max(0.01f, targetTransform.lossyScale.x);
 
                 for (int k = 0; k < targetDef.preStuckKnives; k++)
                 {
                     float angle = (startAngle + k * angleStep) * Mathf.Deg2Rad;
                     Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-                    Vector2 position = (Vector2)targetTransform.position + direction * (targetRadius + embedOffset);
-                    Vector2 directionToCenter = ((Vector2)targetTransform.position - position).normalized;
+                    Vector3 surfacePoint = circleCenter + (Vector3)(direction * targetRadius);
+                    Vector2 directionToCenter = -direction;
                     float knifeAngle = Mathf.Atan2(directionToCenter.y, directionToCenter.x) * Mathf.Rad2Deg - 90f;
                     Quaternion rotation = Quaternion.Euler(0, 0, knifeAngle);
 
-                    GameObject knife = Object.Instantiate(knifePrefab, position, rotation);
-                    knife.transform.SetParent(targetTransform);
+                    GameObject knife = Object.Instantiate(knifePrefab, surfacePoint, rotation);
                     if (knife.TryGetComponent(out Knife knifeComponent))
                     {
+                        knifeComponent.SnapToSurface(targetTransform, circleCenter, surfacePoint);
                         knifeComponent.MarkAsPreStuck();
+                    }
+                    else
+                    {
+                        knife.transform.SetParent(targetTransform, true);
                     }
 
                     spawned++;
@@ -76,19 +87,6 @@ namespace Infrastructure.Leveling
             }
 
             return spawned;
-        }
-
-        /// <summary>
-        /// Performs the ResolveEmbedOffset operation.
-        /// </summary>
-        private float ResolveEmbedOffset()
-        {
-            if (knifePrefab != null && knifePrefab.TryGetComponent(out Knife knife))
-            {
-                return knife.EmbedOffset;
-            }
-
-            return 0.02f;
         }
     }
 }

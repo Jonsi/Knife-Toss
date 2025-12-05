@@ -412,6 +412,15 @@ namespace Presentation.Gameplay.Projectiles
             SetCollidersEnabled(true);
         }
 
+        /// <summary>
+        /// Aligns the knife so its snap point rests on the provided surface.
+        /// </summary>
+        public void SnapToSurface(Transform anchorParent, Vector3 circleCenter, Vector3 surfacePoint)
+        {
+            Vector2 surfaceDirection = ResolveImpactDirection(circleCenter, surfacePoint);
+            AlignToSurface(anchorParent, circleCenter, surfacePoint, surfaceDirection);
+        }
+
         public bool IsStuck => isStuck;
         public float EmbedOffset => embedOffset;
 
