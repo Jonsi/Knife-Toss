@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a8b5186f9b940a9b6c3fe54fb9dec63, type: 3}
   m_Name: KnifeBounceOffAnimation
   m_EditorClassIdentifier: Assembly-CSharp::KnifeToss.Presentation.Gameplay.Projectiles.KnifeBounceOffAnimationConfig
-  fallDistance: 6.82
-  fallDuration: 0.87
-  horizontalDrift: 5.34
-  rotationDegrees: 2306
-  rotationDuration: 1.8
-  movementEase: 1
-  rotationEase: 1
+  gravity: 9.81
+  impactForce: 0.5
+  rotationDegrees: 3600
+  rotationSpeed: 720
+  movementEase: 5
+  rotationEase: 6

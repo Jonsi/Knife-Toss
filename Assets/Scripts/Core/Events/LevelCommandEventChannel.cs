@@ -11,6 +11,7 @@ namespace Core.Events
     {
         public event Action RetryRequested;
         public event Action NextRequested;
+        public event Action<int> LevelRequested;
 
         /// <summary>
         /// Performs the RaiseRetry operation.
@@ -26,6 +27,14 @@ namespace Core.Events
         public void RaiseNext()
         {
             NextRequested?.Invoke();
+        }
+
+        /// <summary>
+        /// Raises a request to load a specific level.
+        /// </summary>
+        public void RaiseLevelRequest(int levelIndex)
+        {
+            LevelRequested?.Invoke(levelIndex);
         }
     }
 }

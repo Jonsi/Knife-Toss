@@ -22,15 +22,17 @@ namespace Presentation.UI
         private bool dependenciesReady;
         private IPlayerDataService playerDataService;
         private LevelConfig levelConfig;
+        private ILevelCommandInvoker commandInvoker;
 
         /// <summary>
         /// Injects dependencies used to populate the popup.
         /// </summary>
         [VContainer.Inject]
-        public void Construct(IPlayerDataService dataService, LevelConfig config)
+        public void Construct(IPlayerDataService dataService, LevelConfig config, ILevelCommandInvoker levelCommandInvoker)
         {
             playerDataService = dataService;
             levelConfig = config;
+            commandInvoker = levelCommandInvoker;
             dependenciesReady = true;
             Refresh();
         }
@@ -186,6 +188,11 @@ namespace Presentation.UI
             if (icon == null || !icon.IsActive)
             {
                 return;
+            }
+
+            if (commandInvoker != null && icon.LevelNumber > 0)
+            {
+                commandInvoker.LoadLevel(icon.LevelNumber);
             }
 
             HidePopup();

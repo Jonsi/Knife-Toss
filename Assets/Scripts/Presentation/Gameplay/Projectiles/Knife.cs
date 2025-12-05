@@ -11,10 +11,10 @@ namespace Presentation.Gameplay.Projectiles
     /// </summary>
     public class Knife : MonoBehaviour
     {
-        private const float DefaultFallDistance = 3f;
-        private const float DefaultFallDuration = 0.5f;
-        private const float DefaultHorizontalDrift = 0.2f;
+        private const float DefaultGravity = 9.81f;
+        private const float DefaultImpactForce = 0.2f;
         private const float DefaultRotationDegrees = 540f;
+        private const float DefaultRotationSpeed = 720f;
         private const float HitableSearchRadius = 0.12f;
         private const int HitableSearchBufferSize = 6;
 
@@ -503,16 +503,21 @@ namespace Presentation.Gameplay.Projectiles
         {
             KillBounceSequence();
 
-            float fallDistance = ResolveOrDefault(() => bounceAnimationConfig.FallDistance, DefaultFallDistance);
-            float fallDuration = ResolveOrDefault(() => bounceAnimationConfig.FallDuration, DefaultFallDuration);
-            float drift = ResolveOrDefault(() => bounceAnimationConfig.HorizontalDrift, DefaultHorizontalDrift);
+            float gravity = ResolveOrDefault(() => bounceAnimationConfig.Gravity, DefaultGravity);
+            float impactForce = ResolveOrDefault(() => bounceAnimationConfig.ImpactForce, DefaultImpactForce);
             float rotationDegrees = ResolveOrDefault(() => bounceAnimationConfig.RotationDegrees, DefaultRotationDegrees);
-            float rotationDuration = ResolveOrDefault(() => bounceAnimationConfig.RotationDuration, fallDuration);
+            float rotationSpeed = ResolveOrDefault(() => bounceAnimationConfig.RotationSpeed, DefaultRotationSpeed);
             Ease moveEase = ResolveOrDefault(() => bounceAnimationConfig.MovementEase, Ease.InQuad);
             Ease rotationEase = ResolveOrDefault(() => bounceAnimationConfig.RotationEase, Ease.OutQuad);
 
-            Vector3 horizontalOffset = Vector3.right * Random.Range(-drift, drift);
-            Vector3 targetPosition = transform.position + horizontalOffset + Vector3.down * fallDistance;
+            float rotationDuration = Mathf.Abs(rotationDegrees) > Mathf.Epsilon
+                ? Mathf.Abs(rotationDegrees) / rotationSpeed
+                : 1f / rotationSpeed;
+            rotationDuration = Mathf.Max(0.01f, rotationDuration);
+            float fallDuration = rotationDuration;
+            Vector3 impactOffset = Vector3.right * launchDirection.x * impactForce;
+            float fallDistance = 0.5f * gravity * fallDuration * fallDuration;
+            Vector3 targetPosition = transform.position + impactOffset + Vector3.down * fallDistance;
 
             bounceSequence = DG.Tweening.DOTween.Sequence().SetTarget(this);
             bounceSequence.Join(transform.DOMove(targetPosition, fallDuration).SetEase(moveEase));

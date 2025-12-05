@@ -18,6 +18,7 @@ namespace Presentation.UI
         [SerializeField] private TextMeshProUGUI levelNumberText;
 
         public bool IsActive { get; private set; }
+        public int LevelNumber { get; private set; }
 
         /// <summary>
         /// Sets the sprite used for the level icon.
@@ -52,6 +53,7 @@ namespace Presentation.UI
             }
 
             levelNumberText.text = levelNumber.ToString();
+            LevelNumber = levelNumber;
         }
 
         /// <summary>

@@ -50,6 +50,7 @@ namespace Presentation.Gameplay
             {
                 commandChannel.NextRequested += HandleNextRequested;
                 commandChannel.RetryRequested += HandleRetryRequested;
+                commandChannel.LevelRequested += HandleLevelRequested;
             }
 
             if (session != null)
@@ -71,6 +72,7 @@ namespace Presentation.Gameplay
             {
                 commandChannel.NextRequested -= HandleNextRequested;
                 commandChannel.RetryRequested -= HandleRetryRequested;
+                commandChannel.LevelRequested -= HandleLevelRequested;
             }
 
             if (session != null)
@@ -105,6 +107,16 @@ namespace Presentation.Gameplay
         private void HandleRetryRequested()
         {
             BeginTransition(sessionService.RetryLevelAsync());
+        }
+
+        /// <summary>
+        /// Performs the HandleLevelRequested operation.
+        /// </summary>
+        /// <param name="levelIndex">1-based index of the level to load.</param>
+        private void HandleLevelRequested(int levelIndex)
+        {
+            int clamped = Math.Max(1, levelIndex);
+            BeginTransition(sessionService.StartLevelAsync(clamped));
         }
 
         /// <summary>

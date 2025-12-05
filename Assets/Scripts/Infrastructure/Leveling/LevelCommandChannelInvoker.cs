@@ -30,5 +30,13 @@ namespace Infrastructure.Leveling
         {
             channel?.RaiseNext();
         }
+
+        /// <summary>
+        /// Requests loading a specific level.
+        /// </summary>
+        public void LoadLevel(int levelIndex)
+        {
+            channel?.RaiseLevelRequest(levelIndex);
+        }
     }
 }
