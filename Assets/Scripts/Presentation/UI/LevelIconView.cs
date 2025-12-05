@@ -13,6 +13,8 @@ namespace Presentation.UI
         [SerializeField] private GameObject[] stars;
         [SerializeField] private Color activeStarColor = Color.white;
         [SerializeField] private Color inactiveStarColor = new Color(1f, 1f, 1f, 0.3f);
+        [SerializeField] private Color activeLevelColor = Color.white;
+        [SerializeField] private Color inactiveLevelColor = new Color(1f, 1f, 1f, 0.3f);
         [SerializeField] private TextMeshProUGUI levelNumberText;
 
         /// <summary>
@@ -48,6 +50,24 @@ namespace Presentation.UI
             }
 
             levelNumberText.text = levelNumber.ToString();
+        }
+
+        /// <summary>
+        /// Applies unlocked/locked visuals to the level icon.
+        /// </summary>
+        public void SetLevelActive(bool isActive)
+        {
+            Color targetColor = isActive ? activeLevelColor : inactiveLevelColor;
+
+            if (icon != null)
+            {
+                icon.color = targetColor;
+            }
+
+            if (levelNumberText != null)
+            {
+                levelNumberText.color = targetColor;
+            }
         }
     }
 }

@@ -42,6 +42,7 @@ namespace Installers
 
         [Header("UI References")]
         [SerializeField] private LevelHudPresenter hudPresenter;
+        [SerializeField] private LevelsPopup levelsPopup;
 
         /// <summary>
         /// Performs the Configure operation.
@@ -57,6 +58,10 @@ namespace Installers
             builder.RegisterInstance(buttonClickEventChannel);
             builder.RegisterInstance(targetHitAnimationConfig);
             builder.RegisterComponent(hudPresenter);
+            if (levelsPopup != null)
+            {
+                builder.RegisterComponent(levelsPopup);
+            }
             builder.Register<IAudioPlayer, AudioPlayer>(Lifetime.Singleton);
             builder.Register<ILevelCommandInvoker, LevelCommandChannelInvoker>(Lifetime.Singleton)
                 .WithParameter(levelCommandEventChannel);

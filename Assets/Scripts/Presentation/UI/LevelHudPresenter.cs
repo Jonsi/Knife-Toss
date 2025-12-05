@@ -14,6 +14,7 @@ namespace Presentation.UI
     {
         [Header("UI References")]
         [SerializeField] private LevelIconView levelIconView;
+        [SerializeField] private LevelsPopup levelsPopup;
         public LevelCompletePopup levelCompletePopup;
         [SerializeField] private LevelCommandEventChannel commandChannel;
         public Button retryButton;
@@ -26,6 +27,7 @@ namespace Presentation.UI
         private ILevelCommandInvoker commandInvoker;
         private ISettingsService _settingsService;
         private IPlayerDataService _playerDataService;
+        private Button levelIconButton;
 
         /// <summary>
         /// Performs the Awake operation.
@@ -34,6 +36,7 @@ namespace Presentation.UI
         {
             EnsureCommandInvoker();
             PropagateInvokerToPopup();
+            BindLevelIconButton();
 
             if (retryButton != null)
             {
@@ -50,6 +53,10 @@ namespace Presentation.UI
         /// </summary>
         private void OnDestroy()
         {
+            if (levelIconButton != null)
+            {
+                levelIconButton.onClick.RemoveListener(HandleLevelIconClicked);
+            }
             if (retryButton != null)
             {
                 retryButton.onClick.RemoveListener(RaiseRetry);
@@ -142,6 +149,22 @@ namespace Presentation.UI
         }
 
         /// <summary>
+        /// Subscribes to the HUD level icon button to open the popup.
+        /// </summary>
+        private void BindLevelIconButton()
+        {
+            if (levelIconButton == null && levelIconView != null)
+            {
+                levelIconButton = levelIconView.GetComponent<Button>() ?? levelIconView.GetComponentInChildren<Button>();
+            }
+
+            if (levelIconButton != null)
+            {
+                levelIconButton.onClick.AddListener(HandleLevelIconClicked);
+            }
+        }
+
+        /// <summary>
         /// Performs the RaiseRetry operation.
         /// </summary>
         private void RaiseRetry()
@@ -190,6 +213,14 @@ namespace Presentation.UI
                 int stars = _playerDataService.GetStarsForLevel(viewModel.LevelIndex);
                 levelIconView.SetStars(stars);
             }
+        }
+
+        /// <summary>
+        /// Handles clicks on the HUD level icon.
+        /// </summary>
+        private void HandleLevelIconClicked()
+        {
+            levelsPopup?.ShowPopup();
         }
 
     }
