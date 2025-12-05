@@ -8,7 +8,6 @@ namespace Core.Data
     [Serializable]
     public class PlayerData
     {
-        public int version = 1;
         public PlayerSettingsData settings = new PlayerSettingsData();
         public PlayerProgressData progress = new PlayerProgressData();
 
@@ -16,7 +15,6 @@ namespace Core.Data
         {
             return new PlayerData
             {
-                version = 1,
                 settings = new PlayerSettingsData(),
                 progress = new PlayerProgressData()
             };

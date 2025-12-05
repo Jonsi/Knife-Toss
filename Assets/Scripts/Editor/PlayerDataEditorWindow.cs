@@ -85,8 +85,6 @@ namespace Editor
 
             EditorGUILayout.Space();
             DrawActions();
-            EditorGUILayout.Space();
-            DrawMigrationSection();
 
             GUI.enabled = prevEnabled;
         }
@@ -135,84 +133,6 @@ namespace Editor
 
         private void DrawMigrationSection()
         {
-            EditorGUILayout.LabelField("Migration", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox("Import existing PlayerPrefs values into the new PlayerData file, then clear the old keys.", MessageType.Info);
-
-            using (new EditorGUI.DisabledScope(!HasLegacyPrefs()))
-            {
-                if (GUILayout.Button("Migrate From PlayerPrefs"))
-                {
-                    if (EditorUtility.DisplayDialog("Migrate PlayerPrefs", "Import PlayerPrefs values into the new PlayerData and clear them?", "Migrate", "Cancel"))
-                    {
-                        MigrateFromPlayerPrefs();
-                    }
-                }
-            }
-        }
-
-        private bool HasLegacyPrefs()
-        {
-            return PlayerPrefs.HasKey("HighestLevel") || PlayerPrefs.HasKey("AudioSettings") || PlayerPrefs.HasKey("LevelProgress");
-        }
-
-        private void MigrateFromPlayerPrefs()
-        {
-            var migrated = Clone(workingCopy);
-
-            if (PlayerPrefs.HasKey("HighestLevel"))
-            {
-                migrated.progress.highestLevel = Mathf.Max(migrated.progress.highestLevel, PlayerPrefs.GetInt("HighestLevel"));
-            }
-
-            if (PlayerPrefs.HasKey("AudioSettings"))
-            {
-                try
-                {
-                    string json = PlayerPrefs.GetString("AudioSettings");
-                    var audio = JsonUtility.FromJson<AudioSettingsData>(json);
-                    if (audio != null)
-                    {
-                        migrated.settings.audio = audio;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"Failed to migrate audio settings: {e.Message}");
-                }
-            }
-
-            if (PlayerPrefs.HasKey("LevelProgress"))
-            {
-                try
-                {
-                    string json = PlayerPrefs.GetString("LevelProgress");
-                    var legacyProgress = JsonUtility.FromJson<LevelProgressData>(json);
-                    if (legacyProgress != null && legacyProgress.starsPerLevel != null)
-                    {
-                        foreach (var kvp in legacyProgress.starsPerLevel)
-                        {
-                            int existingStars = migrated.progress.levelProgress.GetStars(kvp.Key);
-                            if (kvp.Value > existingStars)
-                            {
-                                migrated.progress.levelProgress.SetStars(kvp.Key, kvp.Value);
-                            }
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"Failed to migrate level progress: {e.Message}");
-                }
-            }
-
-            PlayerPrefs.DeleteKey("HighestLevel");
-            PlayerPrefs.DeleteKey("AudioSettings");
-            PlayerPrefs.DeleteKey("LevelProgress");
-            PlayerPrefs.Save();
-
-            workingCopy = migrated;
-            BuildSerializedObject();
-            SaveToDisk();
         }
 
         private static PlayerData Clone(PlayerData source)
@@ -228,8 +148,6 @@ namespace Editor
                 EditorGUILayout.HelpBox("PlayerData is null.", MessageType.Error);
                 return;
             }
-
-            workingCopy.version = EditorGUILayout.IntField("Version", workingCopy.version);
 
             EditorGUILayout.LabelField("Settings", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
