@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Core.Data;
 using UnityEditor;
@@ -6,42 +7,101 @@ using UnityEngine;
 namespace Editor
 {
     /// <summary>
-    /// Represents the LevelConfigGenerator class.
+    /// Creates a refreshed LevelConfig that better reflects the shipped features.
     /// </summary>
-    public class LevelConfigGenerator : EditorWindow
+    public sealed class LevelConfigGenerator : EditorWindow
     {
-        private const int TotalLevels = 10;
+        private const string AssetPath = "Assets/Configurations/Gameplay/LevelConfig.asset";
+        private const int TotalLevels = 18;
 
-        /// <summary>
-        /// Performs the ShowWindow operation.
-        /// </summary>
+        private static readonly StageProfile[] StagePlan =
+        {
+            new StageProfile("Campfire Warmup", 1, 3, new Vector2Int(1, 1), new Vector2Int(5, 7))
+            {
+                AllowOrbiting = false,
+                AllowRotationMix = false,
+                EnableQuotas = false,
+                EnableHitables = false,
+                EnablePreStuck = false,
+                BaseRotation = 60f,
+                RotationVariance = 15f
+            },
+            new StageProfile("Juggling School", 4, 6, new Vector2Int(2, 2), new Vector2Int(7, 9))
+            {
+                AllowOrbiting = true,
+                AllowRotationMix = true,
+                EnableQuotas = true,
+                EnableHitables = false,
+                EnablePreStuck = true,
+                BaseRotation = 90f,
+                RotationVariance = 35f,
+                QuotaRange = new Vector2Int(1, 3)
+            },
+            new StageProfile("Orbit Rodeo", 7, 10, new Vector2Int(2, 3), new Vector2Int(8, 11))
+            {
+                AllowOrbiting = true,
+                AllowRotationMix = true,
+                EnableQuotas = true,
+                EnableHitables = true,
+                EnablePreStuck = true,
+                BaseRotation = 120f,
+                RotationVariance = 45f,
+                QuotaRange = new Vector2Int(2, 4)
+            },
+            new StageProfile("Chaos Carnival", 11, 14, new Vector2Int(3, 4), new Vector2Int(10, 13))
+            {
+                AllowOrbiting = true,
+                AllowRotationMix = true,
+                EnableQuotas = true,
+                EnableHitables = true,
+                EnablePreStuck = true,
+                BaseRotation = 150f,
+                RotationVariance = 60f,
+                QuotaRange = new Vector2Int(3, 5)
+            },
+            new StageProfile("Finale Frenzy", 15, 18, new Vector2Int(3, 4), new Vector2Int(12, 15))
+            {
+                AllowOrbiting = true,
+                AllowRotationMix = true,
+                EnableQuotas = true,
+                EnableHitables = true,
+                EnablePreStuck = true,
+                BaseRotation = 180f,
+                RotationVariance = 70f,
+                QuotaRange = new Vector2Int(4, 6)
+            }
+        };
+
+        private static List<HitableObjectConfig> cachedHitables;
+
         [MenuItem("Knife Toss/Generate Level Config")]
         public static void ShowWindow()
         {
             GetWindow<LevelConfigGenerator>("Level Config Generator");
         }
 
-        /// <summary>
-        /// Performs the OnGUI operation.
-        /// </summary>
         private void OnGUI()
         {
             GUILayout.Label("Level Configuration Generator", EditorStyles.boldLabel);
-            GUILayout.Space(10);
-
-            if (GUILayout.Button($"Create Level Config Asset with {TotalLevels} Levels"))
+            GUILayout.Space(6f);
+            if (GUILayout.Button($"Create Level Config Asset with {TotalLevels} levels"))
             {
                 CreateLevelConfig();
             }
         }
 
-        /// <summary>
-        /// Performs the CreateLevelConfig operation.
-        /// </summary>
         private static void CreateLevelConfig()
         {
-            LevelConfig config = ScriptableObject.CreateInstance<LevelConfig>();
-            config.levels = new List<LevelData>();
+            LevelConfig config = AssetDatabase.LoadAssetAtPath<LevelConfig>(AssetPath);
+            bool createdAsset = false;
+            if (config == null)
+            {
+                config = ScriptableObject.CreateInstance<LevelConfig>();
+                createdAsset = true;
+            }
+
+            config.levels ??= new List<LevelData>();
+            config.levels.Clear();
 
             for (int i = 0; i < TotalLevels; i++)
             {
@@ -50,126 +110,319 @@ namespace Editor
 
             config.generateProceduralLevels = true;
             config.proceduralBaseKnives = 12;
-            config.proceduralBaseRotationSpeed = 150f;
-            config.proceduralKnifeIncrease = 1f;
-            config.proceduralSpeedIncrease = 5f;
+            config.proceduralBaseRotationSpeed = 160f;
+            config.proceduralKnifeIncrease = 1.25f;
+            config.proceduralSpeedIncrease = 6f;
 
+            if (createdAsset)
+            {
+                AssetDatabase.CreateAsset(config, AssetPath);
+            }
+            else
+            {
+                EditorUtility.SetDirty(config);
+            }
 
-            string path = "Assets/LevelConfig.asset";
-            AssetDatabase.CreateAsset(config, path);
             AssetDatabase.SaveAssets();
-
-            EditorUtility.FocusProjectWindow();
+            AssetDatabase.Refresh();
             Selection.activeObject = config;
-
-            Debug.Log($"Created LevelConfig asset at {path} with {config.levels.Count} levels!");
+            Debug.Log($"LevelConfig updated with {config.levels.Count} handcrafted levels at {AssetPath}");
         }
 
-        /// <summary>
-        /// Performs the CreateLevel operation.
-        /// </summary>
         private static LevelData CreateLevel(int levelNumber)
         {
-            LevelData level = new LevelData();
-            float difficulty = Mathf.InverseLerp(1f, TotalLevels, levelNumber);
+            StageProfile stage = ResolveStage(levelNumber);
+            float stageProgress = stage.ResolveProgress(levelNumber);
+            System.Random rng = new System.Random(levelNumber * 7919);
 
-            int requiredKnives = Mathf.RoundToInt(Mathf.Lerp(3f, 10f, difficulty));
-            level.knives = requiredKnives;
-            level.objectives.oneStar.objectives = new List<ObjectiveDefinition>
+            int knives = Mathf.Clamp(
+                Mathf.RoundToInt(Mathf.Lerp(stage.BaseKnifeRange.x, stage.BaseKnifeRange.y, stageProgress)),
+                3,
+                20);
+
+            List<TargetDefinition> targets = BuildTargets(stage, levelNumber, stageProgress, rng, out int quotaSum, out int totalHitables);
+            LevelObjectivesConfig objectives = BuildObjectives(knives, quotaSum, totalHitables);
+
+            LevelData level = new LevelData
             {
-                new ObjectiveDefinition
-                {
-                    type = ObjectiveType.StickKnives,
-                    requireAll = false,
-                    count = requiredKnives
-                }
+                knives = knives,
+                objectives = objectives,
+                targetGroup = new TargetGroupConfig { targets = targets }
             };
 
-            float baseRotationSpeed = Mathf.Lerp(70f, 180f, difficulty);
-            float directionChangeInterval = Mathf.Lerp(3.5f, 1.1f, difficulty);
-
-            level.targetGroup.targets = BuildTargets(levelNumber, difficulty, baseRotationSpeed, directionChangeInterval);
             return level;
         }
 
-        /// <summary>
-        /// Performs the BuildTargets operation.
-        /// </summary>
-        private static List<TargetDefinition> BuildTargets(int levelNumber, float difficulty, float baseRotationSpeed, float directionChangeInterval)
+        private static StageProfile ResolveStage(int levelNumber)
         {
-            int targetCount = Mathf.Clamp(1 + Mathf.FloorToInt(difficulty * 3f + 0.2f), 1, 4);
-            float orbitRadius = targetCount == 1 ? 0f : Mathf.Lerp(1.25f, 3.5f, difficulty);
-            float orbitSpeed = targetCount == 1 ? 0f : Mathf.Lerp(6f, 42f, difficulty);
-            float baseScale = Mathf.Lerp(1.1f, 0.9f, difficulty);
+            for (int i = 0; i < StagePlan.Length; i++)
+            {
+                if (StagePlan[i].Contains(levelNumber))
+                {
+                    return StagePlan[i];
+                }
+            }
 
-            var targets = new List<TargetDefinition>();
+            return StagePlan[StagePlan.Length - 1];
+        }
+
+        private static List<TargetDefinition> BuildTargets(StageProfile stage, int levelNumber, float stageProgress, System.Random rng, out int quotaSum, out int hitableCount)
+        {
+            quotaSum = 0;
+            hitableCount = 0;
+
+            int targetCount = Mathf.Clamp(
+                Mathf.RoundToInt(Mathf.Lerp(stage.TargetCountRange.x, stage.TargetCountRange.y, stageProgress)),
+                stage.TargetCountRange.x,
+                stage.TargetCountRange.y);
+
+            float baseRadius = stage.AllowOrbiting
+                ? Mathf.Lerp(1.1f, 3.2f, stageProgress)
+                : 0f;
+            float baseScale = Mathf.Lerp(1.05f, 0.85f, stageProgress);
+
+            var targets = new List<TargetDefinition>(targetCount);
             for (int i = 0; i < targetCount; i++)
             {
-                float angle = (360f / targetCount) * i;
-                TargetDefinition def = new TargetDefinition
+                float angle = targetCount == 1 ? 0f : (360f / targetCount) * i;
+                float orbitRadius = stage.AllowOrbiting ? baseRadius + 0.15f * i : 0f;
+                float rotationSpeed = stage.BaseRotation + UnityEngine.Random.Range(-stage.RotationVariance, stage.RotationVariance);
+
+                TargetDefinition target = new TargetDefinition
                 {
                     orbitRadius = orbitRadius,
                     startingAngle = angle,
-                    orbitDegreesPerSecond = orbitSpeed * (i % 2 == 0 ? 1f : -1f),
+                    orbitDegreesPerSecond = stage.AllowOrbiting ? rotationSpeed * (i % 2 == 0 ? 1f : -1f) : 0f,
                     baseScale = baseScale,
-                    rotation = CreateRotationConfig(levelNumber, i, difficulty, baseRotationSpeed, directionChangeInterval),
-                    preStuckKnives = difficulty > 0.65f && i == 0 ? 1 : 0,
-                    preStuckKnifeSpacing = 360f
+                    rotation = CreateRotation(stage, stageProgress, rotationSpeed, i, rng)
                 };
 
-                targets.Add(def);
+                if (stage.EnablePreStuck)
+                {
+                    float chance = Mathf.Lerp(0.15f, 0.45f, stageProgress);
+                    if (rng.NextDouble() < chance)
+                    {
+                        target.preStuckKnives = 1 + Mathf.RoundToInt(stageProgress * 2f);
+                        target.preStuckKnifeSpacing = Mathf.Approximately(0f, target.preStuckKnives) ? 360f : 360f / Mathf.Max(1, target.preStuckKnives);
+                    }
+                }
+
+                int quota = ResolveQuota(stage, stageProgress, rng);
+                quotaSum += quota;
+                target.knifeQuota = quota;
+
+                hitableCount += AddHitables(stage, stageProgress, rng, target);
+                targets.Add(target);
             }
 
             return targets;
         }
 
-        /// <summary>
-        /// Performs the CreateRotationConfig operation.
-        /// </summary>
-        private static TargetRotationConfig CreateRotationConfig(int levelNumber, int targetIndex, float difficulty, float baseRotationSpeed, float directionChangeInterval)
+        private static TargetRotationConfig CreateRotation(StageProfile stage, float progress, float rotationSpeed, int targetIndex, System.Random rng)
         {
-            RotationBehaviourType behaviourType;
-            if (levelNumber <= 2)
+            RotationBehaviourType type = RotationBehaviourType.Constant;
+            if (stage.AllowRotationMix)
             {
-                behaviourType = RotationBehaviourType.Constant;
-            }
-            else if (levelNumber <= 4)
-            {
-                behaviourType = RotationBehaviourType.Flipping;
-            }
-            else if (levelNumber <= 7)
-            {
-                behaviourType = RotationBehaviourType.Pulsating;
-            }
-            else
-            {
-                behaviourType = targetIndex % 2 == 0 ? RotationBehaviourType.AccelerationCurve : RotationBehaviourType.Flipping;
+                int paletteSize = Enum.GetValues(typeof(RotationBehaviourType)).Length;
+                int paletteIndex = Mathf.Abs(targetIndex + stage.StageSeed) % Mathf.Max(1, paletteSize);
+                type = (RotationBehaviourType)paletteIndex;
+                if (progress < 0.35f)
+                {
+                    type = RotationBehaviourType.Constant;
+                }
             }
 
-            float speed = baseRotationSpeed * Mathf.Lerp(1.0f, 1.5f, Mathf.Clamp01(levelNumber / 30f));
-
-            return new TargetRotationConfig
+            TargetRotationConfig config = new TargetRotationConfig
             {
-                behaviourType = behaviourType,
-                speed = speed * (targetIndex % 2 == 0 ? 1f : -1f),
+                behaviourType = type,
+                speed = rotationSpeed * (targetIndex % 2 == 0 ? 1f : -1f),
                 pulsating = new PulsatingRotationSettings
                 {
-                    amplitude = speed * 0.35f,
-                    frequency = Mathf.Lerp(0.8f, 1.6f, difficulty)
+                    amplitude = Mathf.Abs(rotationSpeed) * Mathf.Lerp(0.2f, 0.5f, progress),
+                    frequency = Mathf.Lerp(0.8f, 1.8f, progress)
                 },
                 flipping = new FlippingRotationSettings
                 {
-                    flipInterval = Mathf.Lerp(2.5f, 0.9f, difficulty),
-                    flipProbability = Mathf.Clamp01(0.25f + difficulty * 0.55f)
+                    flipInterval = Mathf.Lerp(2.6f, 0.85f, progress),
+                    flipProbability = Mathf.Clamp01(0.25f + progress * 0.6f)
                 },
                 acceleration = new AccelerationRotationSettings
                 {
-                    accelerationCurve = AnimationCurve.EaseInOut(0f, 0.6f, 1f, 1.4f),
-                    curveLoopDuration = Mathf.Lerp(2.4f, 1.0f, difficulty)
+                    accelerationCurve = AnimationCurve.EaseInOut(0f, 0.65f, 1f, 1.35f),
+                    curveLoopDuration = Mathf.Lerp(2.4f, 0.8f, progress)
                 }
             };
+
+            return config;
+        }
+
+        private static int AddHitables(StageProfile stage, float progress, System.Random rng, TargetDefinition target)
+        {
+            if (!stage.EnableHitables)
+            {
+                return 0;
+            }
+
+            var configs = LoadHitableConfigs();
+            if (configs.Count == 0)
+            {
+                return 0;
+            }
+
+            float chance = Mathf.Lerp(0.2f, 0.7f, progress);
+            if (rng.NextDouble() > chance)
+            {
+                return 0;
+            }
+
+            HitableObjectConfig config = configs[rng.Next(configs.Count)];
+            int count = 1 + (int)Mathf.Round(progress * 2.5f);
+
+            HitableObjectPlacement placement = new HitableObjectPlacement
+            {
+                config = config,
+                count = count,
+                angularSpacing = Mathf.Approximately(count, 0) ? 360f : 360f / count,
+                orientOutwards = true
+            };
+
+            target.hitableObjects.Add(placement);
+            return count;
+        }
+
+        private static int ResolveQuota(StageProfile stage, float progress, System.Random rng)
+        {
+            if (!stage.EnableQuotas || stage.QuotaRange == Vector2Int.zero)
+            {
+                return 0;
+            }
+
+            int min = stage.QuotaRange.x;
+            int max = stage.QuotaRange.y;
+            float modifier = Mathf.Lerp(0f, max - min, progress);
+            int quota = min + Mathf.RoundToInt(modifier);
+
+            if (rng.NextDouble() < 0.2)
+            {
+                quota = Mathf.Max(min, quota - 1);
+            }
+
+            return Mathf.Clamp(quota, min, max);
+        }
+
+        private static LevelObjectivesConfig BuildObjectives(int knives, int quotaSum, int totalHitables)
+        {
+            LevelObjectivesConfig objectives = new LevelObjectivesConfig();
+
+            int primaryCount = Mathf.Max(1, Mathf.RoundToInt(knives * 0.6f));
+            if (quotaSum > 0)
+            {
+                primaryCount = Mathf.Min(primaryCount, quotaSum);
+            }
+
+            objectives.oneStar.objectives.Add(new ObjectiveDefinition
+            {
+                type = ObjectiveType.StickKnives,
+                requireAll = false,
+                count = primaryCount
+            });
+
+            objectives.twoStar.objectives.Add(new ObjectiveDefinition
+            {
+                type = ObjectiveType.StickKnives,
+                requireAll = true,
+                count = knives
+            });
+
+            if (totalHitables > 0)
+            {
+                objectives.twoStar.objectives.Add(new ObjectiveDefinition
+                {
+                    type = ObjectiveType.HitHitableObjects,
+                    requireAll = false,
+                    count = Mathf.Max(1, Mathf.CeilToInt(totalHitables * 0.5f))
+                });
+
+                objectives.threeStar.objectives.Add(new ObjectiveDefinition
+                {
+                    type = ObjectiveType.HitHitableObjects,
+                    requireAll = true,
+                    count = totalHitables
+                });
+            }
+            else
+            {
+                objectives.threeStar.objectives.Add(new ObjectiveDefinition
+                {
+                    type = ObjectiveType.StickKnives,
+                    requireAll = true,
+                    count = knives
+                });
+            }
+
+            return objectives;
+        }
+
+        private static List<HitableObjectConfig> LoadHitableConfigs()
+        {
+            if (cachedHitables != null)
+            {
+                return cachedHitables;
+            }
+
+            cachedHitables = new List<HitableObjectConfig>();
+            string[] guids = AssetDatabase.FindAssets("t:HitableObjectConfig");
+            for (int i = 0; i < guids.Length; i++)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+                HitableObjectConfig config = AssetDatabase.LoadAssetAtPath<HitableObjectConfig>(path);
+                if (config != null)
+                {
+                    cachedHitables.Add(config);
+                }
+            }
+
+            return cachedHitables;
+        }
+
+        private sealed class StageProfile
+        {
+            public readonly string Name;
+            public readonly int MinLevel;
+            public readonly int MaxLevel;
+            public readonly Vector2Int TargetCountRange;
+            public readonly Vector2Int BaseKnifeRange;
+
+            public bool AllowOrbiting = true;
+            public bool AllowRotationMix = true;
+            public bool EnableHitables = true;
+            public bool EnablePreStuck = true;
+            public bool EnableQuotas = true;
+            public float BaseRotation = 120f;
+            public float RotationVariance = 35f;
+            public Vector2Int QuotaRange = new Vector2Int(1, 4);
+
+            public int StageSeed => Name.GetHashCode();
+
+            public StageProfile(string name, int minLevel, int maxLevel, Vector2Int targetRange, Vector2Int knifeRange)
+            {
+                Name = name;
+                MinLevel = minLevel;
+                MaxLevel = maxLevel;
+                TargetCountRange = targetRange;
+                BaseKnifeRange = knifeRange;
+            }
+
+            public bool Contains(int level) => level >= MinLevel && level <= MaxLevel;
+
+            public float ResolveProgress(int level)
+            {
+                if (MaxLevel == MinLevel)
+                {
+                    return 1f;
+                }
+                return Mathf.InverseLerp(MinLevel, MaxLevel, level);
+            }
         }
     }
 }
-
-
