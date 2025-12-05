@@ -121,14 +121,59 @@ namespace Presentation.Gameplay
                 return;
             }
 
-            TweenKiller.Kill(target);
             Vector3 shakeStrength = new Vector3(strength, strength, 0f);
+            if (TryShakeRenderers(target, duration, shakeStrength))
+            {
+                return;
+            }
+
+            TweenKiller.Kill(target);
             target.DOShakePosition(
                 duration,
                 shakeStrength,
                 animationConfig.ShakeVibrato,
                 animationConfig.ShakeRandomness,
-                animationConfig.ShakeFadeOut);
+                snapping: false,
+                fadeOut: animationConfig.ShakeFadeOut)
+                .SetRelative();
+        }
+
+        /// <summary>
+        /// Attempts to shake the sprite renderers for a target to avoid disrupting orbit transforms.
+        /// </summary>
+        private bool TryShakeRenderers(Transform target, float duration, Vector3 shakeStrength)
+        {
+            SpriteRenderer[] renderers = target.GetComponentsInChildren<SpriteRenderer>(includeInactive: true);
+            if (renderers == null || renderers.Length == 0)
+            {
+                return false;
+            }
+
+            bool shookAny = false;
+
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                SpriteRenderer renderer = renderers[i];
+                Transform rendererTransform = renderer != null ? renderer.transform : null;
+                if (rendererTransform == null)
+                {
+                    continue;
+                }
+
+                shookAny = true;
+                TweenKiller.Kill(rendererTransform);
+                rendererTransform.DOShakePosition(
+                        duration,
+                        shakeStrength,
+                        animationConfig.ShakeVibrato,
+                        animationConfig.ShakeRandomness,
+                        snapping: false,
+                        fadeOut: animationConfig.ShakeFadeOut)
+                    .SetRelative()
+                    .SetTarget(rendererTransform);
+            }
+
+            return shookAny;
         }
 
         /// <summary>
