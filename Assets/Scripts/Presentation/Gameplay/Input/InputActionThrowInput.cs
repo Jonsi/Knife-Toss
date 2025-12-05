@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -6,162 +7,180 @@ using UnityEngine.InputSystem.Controls;
 
 namespace Presentation.Gameplay.Input
 {
-
-
-
+    /// <summary>
+    /// Bridges a Unity InputAction with the gameplay throw input contract while
+    /// suppressing pointer presses that interact with UI.
+    /// </summary>
     public sealed class InputActionThrowInput : MonoBehaviour, IThrowInput
     {
         [SerializeField] private InputActionReference actionReference;
 
+        private static readonly List<RaycastResult> RaycastResults = new List<RaycastResult>();
+
         private Vector2 lastScreenPosition;
+
+        private InputAction Action => actionReference != null ? actionReference.action : null;
 
         public event Action<Vector2> Pressed;
         public event Action<Vector2> Released;
         public Vector2 CurrentScreenPosition => ResolveScreenPosition();
 
-        /// <summary>
-        /// Performs the OnEnable operation.
-        /// </summary>
         private void OnEnable()
         {
-            if (actionReference != null && actionReference.action != null)
-            {
-                actionReference.action.Enable();
-                actionReference.action.started += HandleStarted;
-                actionReference.action.canceled += HandleCanceled;
-            }
-        }
-
-        /// <summary>
-        /// Performs the OnDisable operation.
-        /// </summary>
-        private void OnDisable()
-        {
-            if (actionReference != null && actionReference.action != null)
-            {
-                actionReference.action.started -= HandleStarted;
-                actionReference.action.canceled -= HandleCanceled;
-                actionReference.action.Disable();
-            }
-        }
-
-        /// <summary>
-        /// Performs the Enable operation.
-        /// </summary>
-        public void Enable()
-        {
-            actionReference?.action?.Enable();
-        }
-
-        /// <summary>
-        /// Performs the Disable operation.
-        /// </summary>
-        public void Disable()
-        {
-            actionReference?.action?.Disable();
-        }
-
-        /// <summary>
-        /// Performs the HandleStarted operation.
-        /// </summary>
-        private void HandleStarted(InputAction.CallbackContext context)
-        {
-            if (ShouldIgnorePointerInput(context))
+            if (Action == null)
             {
                 return;
             }
 
-            Vector2 screenPosition = ResolveScreenPosition();
+            Action.started += HandleStarted;
+            Action.canceled += HandleCanceled;
+            Action.Enable();
+        }
+
+        private void OnDisable()
+        {
+            if (Action == null)
+            {
+                return;
+            }
+
+            Action.started -= HandleStarted;
+            Action.canceled -= HandleCanceled;
+            Action.Disable();
+        }
+
+        public void Enable() => Action?.Enable();
+
+        public void Disable() => Action?.Disable();
+
+        private void HandleStarted(InputAction.CallbackContext context)
+        {
+            Vector2 screenPosition = ResolveScreenPosition(context);
+
+            if (ShouldIgnorePointerInput(context, screenPosition))
+            {
+                return;
+            }
+
             lastScreenPosition = screenPosition;
             Pressed?.Invoke(screenPosition);
         }
 
         private void HandleCanceled(InputAction.CallbackContext context)
         {
-            if (ShouldIgnorePointerInput(context))
+            Vector2 screenPosition = ResolveScreenPosition(context);
+
+            if (ShouldIgnorePointerInput(context, screenPosition))
             {
                 return;
             }
 
-            Vector2 screenPosition = ResolveScreenPosition();
             lastScreenPosition = screenPosition;
             Released?.Invoke(screenPosition);
         }
 
-        private Vector2 ResolveScreenPosition()
+        private Vector2 ResolveScreenPosition(InputAction.CallbackContext? context = null)
         {
-            if (TryGetScreenPosition(out Vector2 position))
+            if (context.HasValue && TryGetPointerPosition(context.Value, out Vector2 pointerPosition))
             {
-                return position;
+                return pointerPosition;
+            }
+
+            if (TryGetScreenPosition(out Vector2 actionPosition))
+            {
+                return actionPosition;
             }
 
             return lastScreenPosition;
+        }
+
+        private bool TryGetPointerPosition(InputAction.CallbackContext context, out Vector2 position)
+        {
+            position = Vector2.zero;
+
+            if (context.control is TouchControl touchControl)
+            {
+                position = touchControl.position.ReadValue();
+                return position != Vector2.zero;
+            }
+
+            if (context.control?.device is Pointer pointer && pointer.position != null)
+            {
+                position = pointer.position.ReadValue();
+                return position != Vector2.zero;
+            }
+
+            return false;
         }
 
         private bool TryGetScreenPosition(out Vector2 position)
         {
             position = Vector2.zero;
 
-            if (actionReference != null && actionReference.action != null)
+            if (Action != null)
             {
-                InputAction action = actionReference.action;
-                InputControl control = action.activeControl;
+                InputControl control = Action.activeControl;
 
                 if (control != null && control.valueType == typeof(Vector2))
                 {
-                    position = action.ReadValue<Vector2>();
-                    return position != Vector2.zero;
+                    position = Action.ReadValue<Vector2>();
+                    if (position != Vector2.zero)
+                    {
+                        return true;
+                    }
                 }
             }
 
-            if (UnityEngine.InputSystem.Mouse.current != null)
+            if (Mouse.current != null)
             {
-                position = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
+                position = Mouse.current.position.ReadValue();
                 return true;
             }
 
-            if (UnityEngine.InputSystem.Touchscreen.current != null)
+            if (Touchscreen.current != null)
             {
-                position = UnityEngine.InputSystem.Touchscreen.current.primaryTouch.position.ReadValue();
+                position = Touchscreen.current.primaryTouch.position.ReadValue();
                 return true;
             }
 
             return false;
         }
 
-        private bool ShouldIgnorePointerInput(InputAction.CallbackContext context)
+        private bool ShouldIgnorePointerInput(InputAction.CallbackContext context, Vector2 screenPosition)
         {
-            if (EventSystem.current == null)
+            if (EventSystem.current == null || screenPosition == Vector2.zero)
             {
                 return false;
             }
 
-            if (context.control?.device is Pointer pointerDevice)
+            // Only pointer-driven controls (mouse/touch) can interact with UI.
+            if (context.control?.device is Pointer == false)
             {
-                if (pointerDevice is Mouse)
-                {
-                    return EventSystem.current.IsPointerOverGameObject();
-                }
-
-                if (pointerDevice is Touchscreen touchscreen)
-                {
-                    foreach (TouchControl touch in touchscreen.touches)
-                    {
-                        if (!touch.press.isPressed)
-                        {
-                            continue;
-                        }
-
-                        int touchId = touch.touchId.ReadValue();
-                        if (EventSystem.current.IsPointerOverGameObject(touchId))
-                        {
-                            return true;
-                        }
-                    }
-                }
+                return false;
             }
 
-            return EventSystem.current.IsPointerOverGameObject();
+            return RaycastUI(screenPosition);
+        }
+
+        private bool RaycastUI(Vector2 screenPosition)
+        {
+            EventSystem eventSystem = EventSystem.current;
+            if (eventSystem == null)
+            {
+                return false;
+            }
+
+            PointerEventData pointerData = new PointerEventData(eventSystem)
+            {
+                position = screenPosition
+            };
+
+            RaycastResults.Clear();
+            eventSystem.RaycastAll(pointerData, RaycastResults);
+            bool hit = RaycastResults.Count > 0;
+            RaycastResults.Clear();
+
+            return hit;
         }
     }
 }
