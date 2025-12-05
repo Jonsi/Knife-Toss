@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KnifeToss.Core.Data
+namespace Core.Data
 {
     [CreateAssetMenu(fileName = "SoundSettings", menuName = "Knife Toss/Configurations/Audio/Sound Settings", order = 0)]
     public sealed class SoundSettings : ScriptableObject

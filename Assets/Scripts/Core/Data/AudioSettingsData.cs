@@ -1,6 +1,6 @@
 using System;
 
-namespace KnifeToss.Core.Data
+namespace Core.Data
 {
     /// <summary>
     /// Represents the AudioSettingsData class.

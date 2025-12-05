@@ -1,6 +1,6 @@
-using KnifeToss.Core.Domain;
+using Core.Domain;
 
-namespace KnifeToss.Presentation.UI
+namespace Presentation.UI.ViewModels
 {
 
 

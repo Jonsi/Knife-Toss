@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace KnifeToss.Presentation.UI
+namespace Presentation.UI
 {
 
 

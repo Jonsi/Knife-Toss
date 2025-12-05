@@ -2,7 +2,7 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace KnifeToss.Presentation.UI
+namespace Presentation.UI
 {
     [RequireComponent(typeof(Button))]
     public sealed class RetryButtonAnimator : MonoBehaviour

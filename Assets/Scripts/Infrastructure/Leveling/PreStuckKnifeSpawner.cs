@@ -1,10 +1,9 @@
-using KnifeToss.Core.Domain;
-using KnifeToss.Core.Data;
-using KnifeToss.Presentation.Gameplay;
-using KnifeToss.Presentation.Gameplay.Projectiles;
+using Core.Data;
+using Presentation.Gameplay;
+using Presentation.Gameplay.Projectiles;
 using UnityEngine;
 
-namespace KnifeToss.Infrastructure.Leveling
+namespace Infrastructure.Leveling
 {
 
 

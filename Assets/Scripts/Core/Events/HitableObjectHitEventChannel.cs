@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace KnifeToss.Core.Events
+namespace Core.Events
 {
     /// <summary>
     /// Event channel for hitable object impacts.

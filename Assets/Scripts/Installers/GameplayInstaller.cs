@@ -1,19 +1,19 @@
 using System;
-using KnifeToss.Application.Services;
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Data;
-using KnifeToss.Core.Domain;
-using KnifeToss.Core.Events;
-using KnifeToss.Infrastructure.Audio;
-using KnifeToss.Infrastructure.Leveling;
-using KnifeToss.Infrastructure.Persistence;
-using KnifeToss.Presentation.Gameplay;
-using KnifeToss.Presentation.UI;
+using App.Services;
+using Core.Abstractions;
+using Core.Data;
+using Core.Domain;
+using Core.Events;
+using Infrastructure.Audio;
+using Infrastructure.Leveling;
+using Infrastructure.Persistence;
+using Presentation.Gameplay;
+using Presentation.UI;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace KnifeToss.Installers
+namespace Installers
 {
 
 
@@ -23,8 +23,6 @@ namespace KnifeToss.Installers
     /// </summary>
     public class GameplayInstaller : LifetimeScope
     {
-        private static readonly string HighestLevelKey = Infrastructure.Persistence.PlayerPrefsProgressStore.DefaultHighestLevelKey;
-
         [Header("Configurations")]
         [SerializeField] private LevelConfig levelConfig;
         [SerializeField] private KnifeImpactEventChannel knifeImpactChannel;
@@ -58,14 +56,15 @@ namespace KnifeToss.Installers
             builder.RegisterInstance(hitableHitEventChannel);
             builder.RegisterInstance(buttonClickEventChannel);
             builder.RegisterInstance(targetHitAnimationConfig);
-            builder.RegisterInstance<ILevelProgressStore>(new PlayerPrefsProgressStore(HighestLevelKey));
             builder.RegisterInstance(hudPresenter);
             builder.Register<IAudioPlayer, AudioPlayer>(Lifetime.Singleton);
             builder.Register<ILevelCommandInvoker, LevelCommandChannelInvoker>(Lifetime.Singleton)
                 .WithParameter(levelCommandEventChannel);
             builder.Register<IKnifeTracker, KnifeTracker>(Lifetime.Singleton);
             builder.Register<IMusicPlayer, MusicPlayer>(Lifetime.Singleton);
-            builder.Register<ISettingsRepository, PlayerPrefsSettingsRepository>(Lifetime.Singleton);
+
+            builder.Register<IPlayerDataStore, FilePlayerDataStore>(Lifetime.Singleton);
+            builder.Register<IPlayerDataService, PlayerDataService>(Lifetime.Singleton);
 
             builder.Register<SettingsService>(Lifetime.Singleton)
                 .As<ISettingsService, IStartable>();
@@ -117,6 +116,10 @@ namespace KnifeToss.Installers
                 .As<IDisposable>();
 
             builder.Register<TargetHitFeedbackPlayer>(Lifetime.Singleton)
+                .As<IStartable>()
+                .As<IDisposable>();
+
+            builder.Register<PlayerDataLifecycle>(Lifetime.Singleton)
                 .As<IStartable>()
                 .As<IDisposable>();
         }

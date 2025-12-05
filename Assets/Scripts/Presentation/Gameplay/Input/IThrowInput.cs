@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace KnifeToss.Presentation.Gameplay
+namespace Presentation.Gameplay.Input
 {
     /// <summary>
     /// Defines the IThrowInput interface.

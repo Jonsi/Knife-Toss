@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KnifeToss.Core.Abstractions
+namespace Core.Abstractions
 {
     /// <summary>
     /// Defines the IAudioPlayer interface.

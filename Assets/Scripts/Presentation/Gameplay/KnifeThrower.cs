@@ -1,9 +1,12 @@
 using System;
-using KnifeToss.Presentation.Gameplay.Projectiles;
+using Core.Abstractions;
+using Presentation.Gameplay.Input;
+using Presentation.Gameplay.Projectiles;
+using Presentation.Gameplay.Utilities;
 using UnityEngine;
 using VContainer;
 
-namespace KnifeToss.Presentation.Gameplay
+namespace Presentation.Gameplay
 {
     /// <summary>
     /// Represents the KnifeThrower class.
@@ -36,7 +39,7 @@ namespace KnifeToss.Presentation.Gameplay
 
         private KnifePool knifePool;
         private KnifeMagazine magazine;
-        private KnifeToss.Core.Abstractions.IKnifeTracker knifeTracker;
+        private IKnifeTracker knifeTracker;
         private IObjectResolver objectResolver;
         private ITargetScaleProvider targetScaleProvider;
 
@@ -353,7 +356,7 @@ namespace KnifeToss.Presentation.Gameplay
         /// Performs the Construct operation.
         /// </summary>
         [VContainer.Inject]
-        public void Construct(KnifeToss.Core.Abstractions.IKnifeTracker tracker, IObjectResolver resolver, ITargetScaleProvider scaleProvider = null)
+        public void Construct(IKnifeTracker tracker, IObjectResolver resolver, ITargetScaleProvider scaleProvider = null)
         {
             knifeTracker = tracker;
             objectResolver = resolver;

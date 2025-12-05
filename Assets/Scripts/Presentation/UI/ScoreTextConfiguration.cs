@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KnifeToss.Presentation.UI
+namespace Presentation.UI
 {
     [CreateAssetMenu(fileName = "ScoreTextConfiguration", menuName = "Knife Toss/Configurations/UI/Score Text Configuration")]
     public sealed class ScoreTextConfiguration : ScriptableObject

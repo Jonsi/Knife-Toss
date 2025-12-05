@@ -1,8 +1,8 @@
-using KnifeToss.Core.Data;
-using KnifeToss.Core.Events;
+using Core.Data;
+using Core.Events;
 using UnityEngine;
 
-namespace KnifeToss.Presentation.Gameplay
+namespace Presentation.Gameplay
 {
     /// <summary>
     /// Handles knife collisions for hitable objects and plays configured feedback.

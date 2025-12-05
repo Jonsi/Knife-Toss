@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using KnifeToss.Core.Data;
+using Core.Data;
 using UnityEngine;
 
-namespace KnifeToss.Core.Domain
+namespace Core.Domain
 {
 
 

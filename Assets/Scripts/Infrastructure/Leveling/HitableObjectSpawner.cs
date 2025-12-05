@@ -1,9 +1,9 @@
-using KnifeToss.Core.Data;
-using KnifeToss.Core.Events;
-using KnifeToss.Presentation.Gameplay;
+using Core.Data;
+using Core.Events;
+using Presentation.Gameplay;
 using UnityEngine;
 
-namespace KnifeToss.Infrastructure.Leveling
+namespace Infrastructure.Leveling
 {
     /// <summary>
     /// Spawns hitable objects (e.g. tomatoes) around targets based on level data.

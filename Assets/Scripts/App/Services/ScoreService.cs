@@ -1,9 +1,9 @@
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Domain;
-using KnifeToss.Core.Events;
+using Core.Abstractions;
+using Core.Domain;
+using Core.Events;
 using VContainer.Unity;
 
-namespace KnifeToss.Application.Services
+namespace App.Services
 {
     /// <summary>
     /// Represents the ScoreService class.

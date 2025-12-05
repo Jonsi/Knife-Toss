@@ -1,11 +1,8 @@
 using DG.Tweening;
 using UnityEngine;
 
-namespace KnifeToss.Presentation.Gameplay
+namespace Presentation.Gameplay.Views
 {
-
-
-
     [DisallowMultipleComponent]
     public sealed class KnifeView : MonoBehaviour
     {

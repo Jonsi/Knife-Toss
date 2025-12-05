@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KnifeToss.Core.Data
+namespace Core.Data
 {
     /// <summary>
     /// Represents the TargetGroupConfig class.

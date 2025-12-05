@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KnifeToss.Presentation.Gameplay.Rotation
+namespace Presentation.Gameplay.Rotation
 {
     public sealed class ConstantRotation : IRotationBehaviour
     {

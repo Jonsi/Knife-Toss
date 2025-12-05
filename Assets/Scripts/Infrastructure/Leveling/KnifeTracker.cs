@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Presentation.Gameplay.Projectiles;
+using Core.Abstractions;
+using Presentation.Gameplay.Projectiles;
 
-namespace KnifeToss.Infrastructure.Leveling
+namespace Infrastructure.Leveling
 {
     public sealed class KnifeTracker : IKnifeTracker
     {

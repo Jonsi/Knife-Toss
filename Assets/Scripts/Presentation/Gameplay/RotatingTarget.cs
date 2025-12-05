@@ -1,7 +1,7 @@
-using KnifeToss.Presentation.Gameplay.Rotation;
+using Presentation.Gameplay.Rotation;
 using UnityEngine;
 
-namespace KnifeToss.Presentation.Gameplay
+namespace Presentation.Gameplay
 {
     /// <summary>
     /// Represents the RotatingTarget class.

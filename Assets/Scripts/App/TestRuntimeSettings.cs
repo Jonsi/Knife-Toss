@@ -1,7 +1,7 @@
 #if TEST_ENABLED
 using UnityEngine;
 
-namespace KnifeToss.Application
+namespace App
 {
 
 

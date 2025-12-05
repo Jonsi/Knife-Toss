@@ -1,4 +1,4 @@
-namespace KnifeToss.Core.Abstractions
+namespace Core.Abstractions
 {
     /// <summary>
     /// Defines the ISettingsService interface.

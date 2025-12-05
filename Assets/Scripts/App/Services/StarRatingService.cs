@@ -1,7 +1,7 @@
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Domain;
+using Core.Abstractions;
+using Core.Domain;
 
-namespace KnifeToss.Application.Services
+namespace App.Services
 {
     /// <summary>
     /// Represents the StarRatingService class.

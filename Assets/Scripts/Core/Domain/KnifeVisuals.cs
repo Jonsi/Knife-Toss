@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KnifeToss.Core.Domain
+namespace Core.Domain
 {
     public readonly struct KnifeVisuals
     {

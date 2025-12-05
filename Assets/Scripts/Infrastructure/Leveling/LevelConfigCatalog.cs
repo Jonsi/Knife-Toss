@@ -1,8 +1,8 @@
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Data;
-using KnifeToss.Core.Domain;
+using Core.Abstractions;
+using Core.Data;
+using Core.Domain;
 
-namespace KnifeToss.Infrastructure.Leveling
+namespace Infrastructure.Leveling
 {
     /// <summary>
     /// Represents the LevelConfigCatalog class.

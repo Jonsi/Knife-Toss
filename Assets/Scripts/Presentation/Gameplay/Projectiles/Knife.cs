@@ -1,12 +1,10 @@
+using Core.Abstractions;
+using Core.Data;
+using Core.Events;
 using DG.Tweening;
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Events;
-using KnifeToss.Core.Data;
-using KnifeToss.Presentation.Gameplay;
 using UnityEngine;
-using VContainer;
 
-namespace KnifeToss.Presentation.Gameplay.Projectiles
+namespace Presentation.Gameplay.Projectiles
 {
     /// <summary>
     /// Represents the Knife class.
@@ -235,7 +233,13 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
                 }
             }
 
-            int hitCount = Physics2D.OverlapCircleNonAlloc(impactPoint, HitableSearchRadius, HitableSearchBuffer);
+            ContactFilter2D contactFilter = new ContactFilter2D
+            {
+                useTriggers = Physics2D.queriesHitTriggers,
+                useLayerMask = true,
+                layerMask = Physics2D.AllLayers
+            };
+            int hitCount = Physics2D.OverlapCircle(impactPoint, HitableSearchRadius, contactFilter, HitableSearchBuffer);
             for (int i = 0; i < hitCount; i++)
             {
                 Collider2D candidate = HitableSearchBuffer[i];
@@ -510,7 +514,7 @@ namespace KnifeToss.Presentation.Gameplay.Projectiles
             Vector3 horizontalOffset = Vector3.right * Random.Range(-drift, drift);
             Vector3 targetPosition = transform.position + horizontalOffset + Vector3.down * fallDistance;
 
-            bounceSequence = DOTween.Sequence().SetTarget(this);
+            bounceSequence = DG.Tweening.DOTween.Sequence().SetTarget(this);
             bounceSequence.Join(transform.DOMove(targetPosition, fallDuration).SetEase(moveEase));
             bounceSequence.Join(
                 transform

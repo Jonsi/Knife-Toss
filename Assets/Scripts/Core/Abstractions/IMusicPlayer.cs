@@ -1,6 +1,4 @@
-using Cysharp.Threading.Tasks;
-
-namespace KnifeToss.Core.Abstractions
+namespace Core.Abstractions
 {
     /// <summary>
     /// Defines the IMusicPlayer interface.

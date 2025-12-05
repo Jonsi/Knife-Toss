@@ -1,7 +1,7 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
-namespace KnifeToss.Core.Data
+namespace Core.Data
 {
     /// <summary>
     /// Represents the LevelConfig class.

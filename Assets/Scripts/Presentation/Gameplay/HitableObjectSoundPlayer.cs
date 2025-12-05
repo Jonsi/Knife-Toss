@@ -1,10 +1,10 @@
 using System;
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Data;
-using KnifeToss.Core.Events;
+using Core.Abstractions;
+using Core.Data;
+using Core.Events;
 using VContainer.Unity;
 
-namespace KnifeToss.Presentation.Gameplay
+namespace Presentation.Gameplay
 {
     /// <summary>
     /// Plays hitable hit sounds in response to the hit event channel.

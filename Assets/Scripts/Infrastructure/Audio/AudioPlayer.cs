@@ -1,7 +1,7 @@
-using KnifeToss.Core.Abstractions;
+using Core.Abstractions;
 using UnityEngine;
 
-namespace KnifeToss.Infrastructure.Audio
+namespace Infrastructure.Audio
 {
     public sealed class AudioPlayer : IAudioPlayer
     {

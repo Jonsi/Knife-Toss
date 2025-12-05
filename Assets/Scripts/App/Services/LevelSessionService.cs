@@ -1,14 +1,14 @@
 using System;
+using Core.Abstractions;
+using Core.Data;
+using Core.Domain;
+using Core.Events;
 using Cysharp.Threading.Tasks;
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Data;
-using KnifeToss.Core.Domain;
-using KnifeToss.Core.Events;
-using KnifeToss.Infrastructure.Leveling;
-using KnifeToss.Presentation.Gameplay;
+using Infrastructure.Leveling;
+using Presentation.Gameplay;
 using UnityEngine;
 
-namespace KnifeToss.Application.Services
+namespace App.Services
 {
 
 
@@ -17,7 +17,7 @@ namespace KnifeToss.Application.Services
     {
         private readonly LevelSession session;
         private readonly ILevelCatalog catalog;
-        private readonly ILevelProgressStore progressStore;
+        private readonly IPlayerDataService playerDataService;
         private readonly GameplayObjectProvider gameplayObjectProvider;
         private readonly KnivesHierarchyManager hierarchyManager;
         private readonly PreStuckKnifeSpawner preStuckSpawner;
@@ -35,7 +35,7 @@ namespace KnifeToss.Application.Services
         public LevelSessionService(
             LevelSession levelSession,
             ILevelCatalog levelCatalog,
-            ILevelProgressStore levelProgressStore,
+            IPlayerDataService playerDataService,
             GameplayObjectProvider gameplayObjectProvider,
             KnivesHierarchyManager knivesHierarchy,
             PreStuckKnifeSpawner preStuckKnifeSpawner,
@@ -46,7 +46,7 @@ namespace KnifeToss.Application.Services
         {
             session = levelSession;
             catalog = levelCatalog;
-            progressStore = levelProgressStore;
+            this.playerDataService = playerDataService;
             this.gameplayObjectProvider = gameplayObjectProvider;
             hierarchyManager = knivesHierarchy;
             preStuckSpawner = preStuckKnifeSpawner;
@@ -75,7 +75,7 @@ namespace KnifeToss.Application.Services
         /// </summary>
         public UniTask StartInitialLevelAsync()
         {
-            int highestLevel = progressStore.LoadHighestLevel(startLevel);
+            int highestLevel = playerDataService.GetHighestLevel(startLevel);
             int levelToStart = Mathf.Max(startLevel, highestLevel);
             return StartLevelAsync(levelToStart);
         }
@@ -225,10 +225,7 @@ namespace KnifeToss.Application.Services
         /// </summary>
         private void SaveProgress()
         {
-            if (progressStore == null)
-                return;
-
-            progressStore.SaveHighestLevel(session.LevelIndex);
+            playerDataService?.SetHighestLevel(session.LevelIndex);
         }
 
         /// <summary>

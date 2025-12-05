@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace KnifeToss.Core.Events
+namespace Core.Events
 {
     [CreateAssetMenu(fileName = "ButtonClickEventChannel", menuName = "Knife Toss/Configurations/Events/Button Click Channel")]
     public sealed class ButtonClickEventChannel : ScriptableObject

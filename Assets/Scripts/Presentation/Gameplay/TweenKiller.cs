@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-namespace KnifeToss.Presentation.Gameplay
+namespace Presentation.Gameplay
 {
 
 
@@ -19,7 +19,7 @@ namespace KnifeToss.Presentation.Gameplay
                 return;
             }
 
-            DOTween.Kill(target, true);
+            DG.Tweening.DOTween.Kill(target, true);
         }
 
         /// <summary>

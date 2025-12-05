@@ -1,7 +1,6 @@
-using KnifeToss.Presentation.Gameplay;
-using KnifeToss.Presentation.Gameplay.Projectiles;
+using Presentation.Gameplay.Projectiles;
 
-namespace KnifeToss.Core.Abstractions
+namespace Core.Abstractions
 {
     /// <summary>
     /// Defines the IKnifeService interface.

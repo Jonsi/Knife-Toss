@@ -1,9 +1,9 @@
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Data;
+using Core.Abstractions;
+using Core.Data;
 using UnityEngine;
 using VContainer;
 
-namespace KnifeToss.Infrastructure.Audio
+namespace Infrastructure.Audio
 {
     /// <summary>
     /// Represents the MusicPlayer class.

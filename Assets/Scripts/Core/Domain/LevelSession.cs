@@ -1,7 +1,7 @@
 using System;
-using KnifeToss.Core.Data;
+using Core.Data;
 
-namespace KnifeToss.Core.Domain
+namespace Core.Domain
 {
 
 

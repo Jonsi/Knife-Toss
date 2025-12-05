@@ -1,8 +1,8 @@
-using KnifeToss.Application.Services;
+using App.Services;
 using UnityEngine;
 using VContainer;
 
-namespace KnifeToss.Presentation.Gameplay
+namespace Presentation.Gameplay
 {
 
 

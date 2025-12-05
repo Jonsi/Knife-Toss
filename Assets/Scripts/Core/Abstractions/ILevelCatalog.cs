@@ -1,7 +1,7 @@
-using KnifeToss.Core.Data;
-using KnifeToss.Core.Domain;
+using Core.Data;
+using Core.Domain;
 
-namespace KnifeToss.Core.Abstractions
+namespace Core.Abstractions
 {
     /// <summary>
     /// Defines the ILevelCatalog interface.

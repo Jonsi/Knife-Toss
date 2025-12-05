@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-using KnifeToss.Core.Data;
-using KnifeToss.Presentation.Gameplay.Rotation;
+using Core.Data;
+using Presentation.Gameplay.Rotation;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace KnifeToss.Presentation.Gameplay
+namespace Presentation.Gameplay
 {
     [DisallowMultipleComponent]
     public sealed class TargetGroupManager : MonoBehaviour, ITargetScaleProvider

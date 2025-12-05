@@ -1,14 +1,14 @@
 using System;
+using App.Services;
+using Core.Abstractions;
+using Core.Domain;
+using Core.Events;
 using Cysharp.Threading.Tasks;
-using KnifeToss.Application.Services;
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Domain;
-using KnifeToss.Core.Events;
-using KnifeToss.Presentation.UI;
-using UnityEngine;
+using Presentation.UI;
+using Presentation.UI.ViewModels;
 using VContainer.Unity;
 
-namespace KnifeToss.Presentation.Gameplay
+namespace Presentation.Gameplay
 {
 
 
@@ -20,7 +20,7 @@ namespace KnifeToss.Presentation.Gameplay
         private readonly LevelHudPresenter hudPresenter;
         private readonly LevelCommandEventChannel commandChannel;
         private readonly IStarRatingService _starRatingService;
-        private readonly ILevelProgressStore _levelProgressStore;
+        private readonly IPlayerDataService _playerDataService;
 
         /// <summary>
         /// Performs the LevelFlowCoordinator operation.
@@ -31,14 +31,14 @@ namespace KnifeToss.Presentation.Gameplay
             LevelHudPresenter hudPresenter,
             LevelCommandEventChannel commandChannel,
             IStarRatingService starRatingService,
-            ILevelProgressStore levelProgressStore)
+            IPlayerDataService playerDataService)
         {
             this.sessionService = sessionService;
             this.session = session;
             this.hudPresenter = hudPresenter;
             this.commandChannel = commandChannel;
             _starRatingService = starRatingService;
-            _levelProgressStore = levelProgressStore;
+            _playerDataService = playerDataService;
         }
 
         /// <summary>
@@ -121,14 +121,9 @@ namespace KnifeToss.Presentation.Gameplay
         private void HandleLevelCompleted(LevelSession completedSession)
         {
             var stars = _starRatingService.CalculateStars(completedSession);
-            
-            var progress = _levelProgressStore.LoadProgress();
-            if (!progress.starsPerLevel.ContainsKey(completedSession.LevelIndex) || progress.starsPerLevel[completedSession.LevelIndex] < stars)
-            {
-                progress.starsPerLevel[completedSession.LevelIndex] = stars;
-                _levelProgressStore.SaveProgress(progress);
-            }
-            
+
+            _playerDataService.SetStarsForLevel(completedSession.LevelIndex, stars);
+
             hudPresenter.levelCompletePopup.SetStars(stars);
             hudPresenter.levelCompletePopup.SetScoreText(stars);
             hudPresenter.ShowLevelComplete(true);

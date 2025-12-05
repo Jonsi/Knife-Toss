@@ -1,7 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-namespace KnifeToss.Presentation.Gameplay.Projectiles
+namespace Presentation.Gameplay.Projectiles
 {
     [CreateAssetMenu(
         fileName = "KnifeBounceOffAnimationConfig",

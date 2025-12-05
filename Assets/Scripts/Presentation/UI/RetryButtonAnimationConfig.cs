@@ -1,7 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-namespace KnifeToss.Presentation.UI
+namespace Presentation.UI
 {
     [CreateAssetMenu(fileName = "RetryButtonAnimationConfig", menuName = "Knife Toss/Configurations/Animations/Retry Button Animation")]
     public sealed class RetryButtonAnimationConfig : ScriptableObject

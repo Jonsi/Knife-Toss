@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace KnifeToss.Core.Data
+namespace Core.Data
 {
     /// <summary>
     /// Placement settings for a hitable object type on a target.

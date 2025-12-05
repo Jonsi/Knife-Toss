@@ -1,12 +1,12 @@
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Events;
-using KnifeToss.Infrastructure.Leveling;
+using Core.Abstractions;
+using Core.Events;
+using Infrastructure.Leveling;
+using Presentation.UI.ViewModels;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using VContainer;
 
-namespace KnifeToss.Presentation.UI
+namespace Presentation.UI
 {
     /// <summary>
     /// Represents the LevelHudPresenter class.

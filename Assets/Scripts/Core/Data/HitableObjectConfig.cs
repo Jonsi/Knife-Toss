@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KnifeToss.Core.Data
+namespace Core.Data
 {
     /// <summary>
     /// Defines a hitable object's visuals and feedback.

@@ -806,24 +806,24 @@ PlayerSettings:
   webWasm2023: 0
   webEnableSubmoduleStrippingCompatibility: 0
   scriptingDefineSymbols:
-    Android: DOTWEEN;TEST_ENABLED
-    EmbeddedLinux: DOTWEEN;TEST_ENABLED
-    GameCoreScarlett: DOTWEEN;TEST_ENABLED
-    GameCoreXboxOne: DOTWEEN;TEST_ENABLED
-    Kepler: DOTWEEN;TEST_ENABLED
-    LinuxHeadlessSimulation: DOTWEEN;TEST_ENABLED
-    Nintendo Switch: DOTWEEN;TEST_ENABLED
-    PS4: DOTWEEN;TEST_ENABLED
-    PS5: DOTWEEN;TEST_ENABLED
-    QNX: DOTWEEN;TEST_ENABLED
-    ReservedCFE: DOTWEEN;TEST_ENABLED
-    Standalone: DOTWEEN;TEST_ENABLED
-    VisionOS: DOTWEEN;TEST_ENABLED
-    WebGL: DOTWEEN;TEST_ENABLED
-    Windows Store Apps: DOTWEEN;TEST_ENABLED
-    XboxOne: DOTWEEN;TEST_ENABLED
-    iPhone: DOTWEEN;TEST_ENABLED
-    tvOS: DOTWEEN;TEST_ENABLED
+    Android: TEST_ENABLED;DOTWEEN
+    EmbeddedLinux: TEST_ENABLED;DOTWEEN
+    GameCoreScarlett: TEST_ENABLED;DOTWEEN
+    GameCoreXboxOne: TEST_ENABLED;DOTWEEN
+    Kepler: TEST_ENABLED;DOTWEEN
+    LinuxHeadlessSimulation: TEST_ENABLED;DOTWEEN
+    Nintendo Switch: TEST_ENABLED;DOTWEEN
+    PS4: TEST_ENABLED;DOTWEEN
+    PS5: TEST_ENABLED;DOTWEEN
+    QNX: TEST_ENABLED;DOTWEEN
+    ReservedCFE: TEST_ENABLED;DOTWEEN
+    Standalone: TEST_ENABLED;DOTWEEN
+    VisionOS: TEST_ENABLED;DOTWEEN
+    WebGL: TEST_ENABLED;DOTWEEN
+    Windows Store Apps: TEST_ENABLED;DOTWEEN
+    XboxOne: TEST_ENABLED;DOTWEEN
+    iPhone: TEST_ENABLED;DOTWEEN
+    tvOS: TEST_ENABLED;DOTWEEN
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:

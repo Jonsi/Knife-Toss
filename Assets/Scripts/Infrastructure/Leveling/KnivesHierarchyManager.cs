@@ -1,7 +1,7 @@
-using KnifeToss.Presentation.Gameplay.Projectiles;
+using Presentation.Gameplay.Projectiles;
 using UnityEngine;
 
-namespace KnifeToss.Infrastructure.Leveling
+namespace Infrastructure.Leveling
 {
 
 

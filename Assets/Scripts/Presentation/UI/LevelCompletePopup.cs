@@ -1,11 +1,11 @@
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Events;
-using KnifeToss.Infrastructure.Leveling;
+using Core.Abstractions;
+using Core.Events;
+using Infrastructure.Leveling;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace KnifeToss.Presentation.UI
+namespace Presentation.UI
 {
 
 

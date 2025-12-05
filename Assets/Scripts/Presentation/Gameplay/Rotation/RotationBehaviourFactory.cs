@@ -1,6 +1,6 @@
-using KnifeToss.Core.Data;
+using Core.Data;
 
-namespace KnifeToss.Presentation.Gameplay.Rotation
+namespace Presentation.Gameplay.Rotation
 {
     public sealed class RotationBehaviourFactory
     {

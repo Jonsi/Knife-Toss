@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
+using Core.Events;
 using DG.Tweening;
-using KnifeToss.Core.Events;
 using UnityEngine;
 using VContainer.Unity;
 
-namespace KnifeToss.Presentation.Gameplay
+namespace Presentation.Gameplay
 {
     /// <summary>
     /// Plays shake/tint feedback on the active target whenever a knife sticks into it.
@@ -170,7 +170,7 @@ namespace KnifeToss.Presentation.Gameplay
                 Color baseColor = ResolveBaseColor(renderer);
                 TweenKiller.Kill(renderer);
 
-                Sequence sequence = DOTween.Sequence().SetTarget(renderer);
+                Sequence sequence = DG.Tweening.DOTween.Sequence().SetTarget(renderer);
 
                 if (fadeIn > 0f)
                 {

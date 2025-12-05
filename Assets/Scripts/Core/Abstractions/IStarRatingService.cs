@@ -1,6 +1,6 @@
-using KnifeToss.Core.Domain;
+using Core.Domain;
 
-namespace KnifeToss.Core.Abstractions
+namespace Core.Abstractions
 {
     /// <summary>
     /// Defines the IStarRatingService interface.

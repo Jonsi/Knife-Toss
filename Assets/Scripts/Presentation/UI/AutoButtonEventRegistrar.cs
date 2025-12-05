@@ -1,10 +1,10 @@
-using KnifeToss.Core.Events;
 using System.Collections.Generic;
+using Core.Events;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace KnifeToss.Presentation.UI
+namespace Presentation.UI
 {
 
 

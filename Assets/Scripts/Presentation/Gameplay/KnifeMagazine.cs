@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using DG.Tweening;
+using Presentation.Gameplay.Utilities;
 using UnityEngine;
 
-namespace KnifeToss.Presentation.Gameplay
+namespace Presentation.Gameplay
 {
-
-
-
     internal sealed class KnifeMagazine
     {
         private readonly KnifePool pool;

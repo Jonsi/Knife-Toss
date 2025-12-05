@@ -1,7 +1,7 @@
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Events;
+using Core.Abstractions;
+using Core.Events;
 
-namespace KnifeToss.Infrastructure.Leveling
+namespace Infrastructure.Leveling
 {
     public sealed class LevelCommandChannelInvoker : ILevelCommandInvoker
     {

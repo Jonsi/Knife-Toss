@@ -1,12 +1,13 @@
 using System.Collections.Generic;
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Presentation.Gameplay;
-using KnifeToss.Presentation.Gameplay.Projectiles;
+using Core.Abstractions;
+using Presentation.Gameplay;
+using Presentation.Gameplay.Projectiles;
+using Presentation.Gameplay.Views;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace KnifeToss.Application.Services
+namespace App.Services
 {
     /// <summary>
     /// Represents the KnifeService class.

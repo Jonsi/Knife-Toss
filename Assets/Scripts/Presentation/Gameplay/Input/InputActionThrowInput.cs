@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace KnifeToss.Presentation.Gameplay
+namespace Presentation.Gameplay.Input
 {
 
 

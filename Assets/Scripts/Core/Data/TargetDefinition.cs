@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace KnifeToss.Core.Data
+namespace Core.Data
 {
     [Serializable]
     public sealed class TargetDefinition

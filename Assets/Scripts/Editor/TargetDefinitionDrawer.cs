@@ -1,9 +1,9 @@
-using KnifeToss.Core.Data;
 using System.Collections.Generic;
+using Core.Data;
 using UnityEditor;
 using UnityEngine;
 
-namespace KnifeToss.Editor
+namespace Editor
 {
     [CustomPropertyDrawer(typeof(TargetDefinition))]
     public sealed class TargetDefinitionDrawer : PropertyDrawer

@@ -1,15 +1,15 @@
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Data;
+using Core.Abstractions;
+using Core.Data;
 using VContainer.Unity;
 
-namespace KnifeToss.Application.Services
+namespace App.Services
 {
     /// <summary>
     /// Represents the SettingsService class.
     /// </summary>
     public class SettingsService : ISettingsService, IStartable
     {
-        private readonly ISettingsRepository _settingsRepository;
+        private readonly IPlayerDataService playerDataService;
         private readonly IMusicPlayer _musicPlayer;
         private readonly IAudioPlayer _audioPlayer;
         private AudioSettingsData _audioSettings;
@@ -17,9 +17,9 @@ namespace KnifeToss.Application.Services
         /// <summary>
         /// Performs the SettingsService operation.
         /// </summary>
-        public SettingsService(ISettingsRepository settingsRepository, IMusicPlayer musicPlayer, IAudioPlayer audioPlayer)
+        public SettingsService(IPlayerDataService playerDataService, IMusicPlayer musicPlayer, IAudioPlayer audioPlayer)
         {
-            _settingsRepository = settingsRepository;
+            this.playerDataService = playerDataService;
             _musicPlayer = musicPlayer;
             _audioPlayer = audioPlayer;
         }
@@ -29,7 +29,7 @@ namespace KnifeToss.Application.Services
         /// </summary>
         public void Start()
         {
-            _audioSettings = _settingsRepository.Load();
+            _audioSettings = playerDataService.Settings.audio;
             ApplyMuteState();
         }
 
@@ -39,7 +39,7 @@ namespace KnifeToss.Application.Services
         public void ToggleMute()
         {
             _audioSettings.isMuted = !_audioSettings.isMuted;
-            _settingsRepository.Save(_audioSettings);
+            playerDataService.Save();
             ApplyMuteState();
         }
         

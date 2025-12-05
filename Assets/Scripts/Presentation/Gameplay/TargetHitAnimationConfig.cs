@@ -1,7 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-namespace KnifeToss.Presentation.Gameplay
+namespace Presentation.Gameplay
 {
     [CreateAssetMenu(
         fileName = "TargetHitAnimationConfig",
