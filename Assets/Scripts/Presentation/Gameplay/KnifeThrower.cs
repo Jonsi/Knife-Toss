@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Core.Abstractions;
+using DG.Tweening;
 using Presentation.Gameplay.Input;
 using Presentation.Gameplay.Projectiles;
 using Presentation.Gameplay.Utilities;
@@ -29,6 +31,11 @@ namespace Presentation.Gameplay
         [SerializeField] private float queueScaleEnd = 0.5f;
         [SerializeField] private float queueOpacityEnd = 0.3f;
 
+        [Header("Load Animation")]
+        [SerializeField] private float loadPullbackDistance = 0.15f;
+        [SerializeField] private float loadAnimationDuration = 0.12f;
+        [SerializeField] private Ease loadAnimationEase = Ease.OutQuad;
+
         private IThrowInput throwInput;
         private Knife currentKnife;
         private bool isKnifeInFlight;
@@ -36,6 +43,10 @@ namespace Presentation.Gameplay
         private bool canThrow = true;
         private bool isAiming;
         private Transform knivesParent;
+        private Tween loadTween;
+        private GameObject loadingKnife;
+        private Vector3 loadingKnifeStartPosition;
+        private bool hasLoadingKnifeStart;
 
         private KnifePool knifePool;
         private KnifeMagazine magazine;
@@ -102,6 +113,8 @@ namespace Presentation.Gameplay
         public void KillAllKnifeTweens()
         {
             EnsureInitialized();
+            KillLoadTween();
+            ClearLoadAnimationState();
             KillTweensFromRegistry();
             magazine.KillTweens();
             knifePool.KillTweens();
@@ -122,6 +135,7 @@ namespace Presentation.Gameplay
             isAiming = true;
             Vector2 aimDirection = ResolveAimDirection(screenPosition);
             ApplyAimDirection(aimDirection);
+            PlayLoadAnimation();
         }
 
         private void OnThrowReleased(Vector2 screenPosition)
@@ -132,9 +146,11 @@ namespace Presentation.Gameplay
 
             if (!IsReadyToThrow())
             {
+                ResetLoadAnimation();
                 return;
             }
 
+            CompleteLoadAnimation();
             ThrowKnife(aimDirection);
         }
 
@@ -159,6 +175,8 @@ namespace Presentation.Gameplay
         private void ThrowKnife(Vector2 aimDirection)
         {
             EnsureInitialized();
+            KillLoadTween();
+            ClearLoadAnimationState();
 
             if (!magazine.TryTakeNext(out GameObject knifeObject))
             {
@@ -229,6 +247,82 @@ namespace Presentation.Gameplay
             }
 
             magazine.AlignFirstKnife(direction.normalized);
+        }
+
+        private void PlayLoadAnimation()
+        {
+            if (!IsReadyToThrow())
+            {
+                return;
+            }
+
+            GameObject knifeObject = ResolveQueuedKnifeHead();
+            if (knifeObject == null)
+            {
+                return;
+            }
+
+            loadingKnife = knifeObject;
+            hasLoadingKnifeStart = true;
+            loadingKnifeStartPosition = knifeObject.transform.position;
+
+            KillLoadTween();
+
+            Vector3 backDirection = launcherTransform != null ? -launcherTransform.up : Vector3.down;
+            Vector3 targetPosition = loadingKnifeStartPosition + backDirection * loadPullbackDistance;
+
+            loadTween = knifeObject.transform.DOMove(targetPosition, loadAnimationDuration)
+                .SetEase(loadAnimationEase);
+        }
+
+        private void ResetLoadAnimation()
+        {
+            if (loadingKnife == null || !hasLoadingKnifeStart)
+            {
+                KillLoadTween();
+                ClearLoadAnimationState();
+                return;
+            }
+
+            KillLoadTween();
+            loadTween = loadingKnife.transform.DOMove(loadingKnifeStartPosition, loadAnimationDuration)
+                .SetEase(loadAnimationEase);
+            ClearLoadAnimationState();
+        }
+
+        private void CompleteLoadAnimation()
+        {
+            KillLoadTween(true);
+            ClearLoadAnimationState();
+        }
+
+        private void KillLoadTween(bool complete = false)
+        {
+            if (loadTween == null)
+            {
+                return;
+            }
+
+            loadTween.Kill(complete);
+            loadTween = null;
+        }
+
+        private void ClearLoadAnimationState()
+        {
+            loadingKnife = null;
+            hasLoadingKnifeStart = false;
+            loadingKnifeStartPosition = Vector3.zero;
+        }
+
+        private GameObject ResolveQueuedKnifeHead()
+        {
+            IReadOnlyList<GameObject> queuedKnives = magazine?.QueuedKnives;
+            if (queuedKnives == null || queuedKnives.Count == 0)
+            {
+                return null;
+            }
+
+            return queuedKnives[0];
         }
 
 
@@ -480,4 +574,3 @@ namespace Presentation.Gameplay
         }
     }
 }
-
