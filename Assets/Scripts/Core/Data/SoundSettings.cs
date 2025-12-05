@@ -9,6 +9,8 @@ namespace Core.Data
         [SerializeField] private AudioClip hitTargetSound;
         [SerializeField] private AudioClip hitKnifeSound;
         [SerializeField] private AudioClip hitHitableSound;
+        [SerializeField] private AudioClip knifeLoadSound;
+        [SerializeField] private AudioClip knifeThrowSound;
 
         [Header("Music")]
         [SerializeField] private AudioClip music;
@@ -19,6 +21,8 @@ namespace Core.Data
         public AudioClip HitTargetSound => hitTargetSound;
         public AudioClip HitKnifeSound => hitKnifeSound;
         public AudioClip HitHitableSound => hitHitableSound;
+        public AudioClip KnifeLoadSound => knifeLoadSound;
+        public AudioClip KnifeThrowSound => knifeThrowSound;
         public AudioClip Music => music;
         public AudioClip ButtonClickSound => buttonClickSound;
     }
