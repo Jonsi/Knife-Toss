@@ -145,6 +145,12 @@ namespace Presentation.Gameplay
             rotatingTarget.Resume();
             rotatingTarget.ResetRotation();
 
+            TargetQuotaIndicator quotaIndicator = instance.GetComponentInChildren<TargetQuotaIndicator>(includeInactive: true);
+            if (quotaIndicator != null)
+            {
+                quotaIndicator.Configure(Mathf.Max(0, definition.knifeQuota));
+            }
+
             TargetEntry entry = new TargetEntry
             {
                 Definition = definition,

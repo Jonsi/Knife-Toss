@@ -2,6 +2,7 @@ using Core.Abstractions;
 using Core.Data;
 using Core.Events;
 using DG.Tweening;
+using Presentation.Gameplay;
 using UnityEngine;
 
 namespace Presentation.Gameplay.Projectiles
@@ -318,6 +319,10 @@ namespace Presentation.Gameplay.Projectiles
             ResolveAsStuck();
             AlignToSurface(anchor, center, surfacePoint, surfaceDirection);
             PlaySound(soundSettings != null ? soundSettings.HitTargetSound : null);
+            if (TargetQuotaIndicatorRegistry.TryResolve(anchor, out TargetQuotaIndicator quotaIndicator))
+            {
+                quotaIndicator.RegisterHit();
+            }
             impactEventChannel?.RaiseKnifeStuck(impactPoint);
             thrower?.OnKnifeResolved();
         }

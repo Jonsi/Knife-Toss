@@ -34,5 +34,8 @@ namespace Core.Data
         [Header("Hitable Objects")]
         [Tooltip("Optional hitable objects placed around this target.")]
         public System.Collections.Generic.List<HitableObjectPlacement> hitableObjects = new System.Collections.Generic.List<HitableObjectPlacement>();
+
+        [Tooltip("Optional number of knives required to satisfy this target's quota. 0 hides the indicator.")]
+        public int knifeQuota = 0;
     }
 }
