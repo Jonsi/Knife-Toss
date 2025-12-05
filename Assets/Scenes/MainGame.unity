@@ -498,8 +498,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KnifeToss.Presentation.UI.LevelHudPresenter
   levelIconView: {fileID: 2008561025}
-  levelCompletePopup: {fileID: 519400801}
   levelsPopup: {fileID: 1293027642}
+  levelCompletePopup: {fileID: 519400801}
   commandChannel: {fileID: 11400000, guid: 76592a2f6c663224399fb72a23fe1509, type: 2}
   retryButton: {fileID: 2096806327}
   muteButton: {fileID: 0}
@@ -2068,7 +2068,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
