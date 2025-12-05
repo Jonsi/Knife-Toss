@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 namespace Presentation.Gameplay.Input
 {
@@ -62,15 +64,25 @@ namespace Presentation.Gameplay.Input
         /// <summary>
         /// Performs the HandleStarted operation.
         /// </summary>
-        private void HandleStarted(InputAction.CallbackContext _)
+        private void HandleStarted(InputAction.CallbackContext context)
         {
+            if (ShouldIgnorePointerInput(context))
+            {
+                return;
+            }
+
             Vector2 screenPosition = ResolveScreenPosition();
             lastScreenPosition = screenPosition;
             Pressed?.Invoke(screenPosition);
         }
 
-        private void HandleCanceled(InputAction.CallbackContext _)
+        private void HandleCanceled(InputAction.CallbackContext context)
         {
+            if (ShouldIgnorePointerInput(context))
+            {
+                return;
+            }
+
             Vector2 screenPosition = ResolveScreenPosition();
             lastScreenPosition = screenPosition;
             Released?.Invoke(screenPosition);
@@ -115,6 +127,41 @@ namespace Presentation.Gameplay.Input
             }
 
             return false;
+        }
+
+        private bool ShouldIgnorePointerInput(InputAction.CallbackContext context)
+        {
+            if (EventSystem.current == null)
+            {
+                return false;
+            }
+
+            if (context.control?.device is Pointer pointerDevice)
+            {
+                if (pointerDevice is Mouse)
+                {
+                    return EventSystem.current.IsPointerOverGameObject();
+                }
+
+                if (pointerDevice is Touchscreen touchscreen)
+                {
+                    foreach (TouchControl touch in touchscreen.touches)
+                    {
+                        if (!touch.press.isPressed)
+                        {
+                            continue;
+                        }
+
+                        int touchId = touch.touchId.ReadValue();
+                        if (EventSystem.current.IsPointerOverGameObject(touchId))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return EventSystem.current.IsPointerOverGameObject();
         }
     }
 }
