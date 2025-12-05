@@ -56,7 +56,7 @@ namespace Installers
             builder.RegisterInstance(hitableHitEventChannel);
             builder.RegisterInstance(buttonClickEventChannel);
             builder.RegisterInstance(targetHitAnimationConfig);
-            builder.RegisterInstance(hudPresenter);
+            builder.RegisterComponent(hudPresenter);
             builder.Register<IAudioPlayer, AudioPlayer>(Lifetime.Singleton);
             builder.Register<ILevelCommandInvoker, LevelCommandChannelInvoker>(Lifetime.Singleton)
                 .WithParameter(levelCommandEventChannel);

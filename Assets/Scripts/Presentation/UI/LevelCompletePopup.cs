@@ -18,6 +18,8 @@ namespace Presentation.UI
         [SerializeField] private Button nextButton;
         [SerializeField] private Button retryButton;
         [SerializeField] private GameObject[] stars;
+        [SerializeField] private Color activeStarColor = Color.white;
+        [SerializeField] private Color inactiveStarColor = new Color(1f, 1f, 1f, 0.3f);
         [SerializeField] private LevelCommandEventChannel commandChannel;
         [SerializeField] private ButtonClickEventChannel buttonClickEventChannel;
         [SerializeField] private ScoreTextConfiguration scoreTextConfiguration;
@@ -74,10 +76,7 @@ namespace Presentation.UI
         /// </summary>
         public void SetStars(int count)
         {
-            for (var i = 0; i < stars.Length; i++)
-            {
-                stars[i].SetActive(i < count);
-            }
+            StarDisplay.SetStars(stars, count, activeStarColor, inactiveStarColor);
         }
 
         /// <summary>

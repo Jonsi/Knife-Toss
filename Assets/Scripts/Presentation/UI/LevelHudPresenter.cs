@@ -2,7 +2,6 @@ using Core.Abstractions;
 using Core.Events;
 using Infrastructure.Leveling;
 using Presentation.UI.ViewModels;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,8 +12,8 @@ namespace Presentation.UI
     /// </summary>
     public class LevelHudPresenter : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI levelText;
         [Header("UI References")]
+        [SerializeField] private LevelIconView levelIconView;
         public LevelCompletePopup levelCompletePopup;
         [SerializeField] private LevelCommandEventChannel commandChannel;
         public Button retryButton;
@@ -26,6 +25,7 @@ namespace Presentation.UI
 
         private ILevelCommandInvoker commandInvoker;
         private ISettingsService _settingsService;
+        private IPlayerDataService _playerDataService;
 
         /// <summary>
         /// Performs the Awake operation.
@@ -65,10 +65,7 @@ namespace Presentation.UI
         /// </summary>
         public void Render(LevelHudViewModel viewModel)
         {
-            if (levelText != null)
-            {
-                levelText.text = viewModel.LevelLabel;
-            }
+            RenderLevelIcon(viewModel);
             levelCompletePopup?.SetLabel(viewModel.LevelCompleteLabel);
             magazineDisplay?.Render(viewModel.TotalKnives, viewModel.KnivesThrown);
         }
@@ -108,10 +105,11 @@ namespace Presentation.UI
         /// Performs the Construct operation.
         /// </summary>
         [VContainer.Inject]
-        public void Construct(ILevelCommandInvoker invoker, ISettingsService settingsService)
+        public void Construct(ILevelCommandInvoker invoker, ISettingsService settingsService, IPlayerDataService playerDataService)
         {
             commandInvoker = invoker;
             _settingsService = settingsService;
+            _playerDataService = playerDataService;
             PropagateInvokerToPopup();
             UpdateMuteButtonIcon();
         }
@@ -173,6 +171,25 @@ namespace Presentation.UI
             var isMuted = _settingsService.IsMuted();
             muteIcon.SetActive(isMuted);
             unmuteIcon.SetActive(!isMuted);
+        }
+
+        /// <summary>
+        /// Updates the level icon display based on the current view model.
+        /// </summary>
+        private void RenderLevelIcon(LevelHudViewModel viewModel)
+        {
+            if (levelIconView == null)
+            {
+                return;
+            }
+
+            levelIconView.SetLevelNumber(viewModel.LevelIndex);
+
+            if (_playerDataService != null)
+            {
+                int stars = _playerDataService.GetStarsForLevel(viewModel.LevelIndex);
+                levelIconView.SetStars(stars);
+            }
         }
 
     }
