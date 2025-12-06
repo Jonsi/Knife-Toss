@@ -200,6 +200,31 @@ namespace Presentation.Gameplay
         }
 
         /// <summary>
+        /// Destroys a specific target and removes it from tracking.
+        /// </summary>
+        public void DestroyTarget(Transform target)
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            for (int i = entries.Count - 1; i >= 0; i--)
+            {
+                if (entries[i].Transform == target)
+                {
+                    TargetEntry entry = entries[i];
+                    KillAllTweensOnTarget(entry.Transform.gameObject);
+                    Destroy(entry.Transform.gameObject);
+                    entries.RemoveAt(i);
+                    break;
+                }
+            }
+
+            targetTransforms.Remove(target);
+        }
+
+        /// <summary>
         /// Performs the ClearEntries operation.
         /// </summary>
         private void ClearEntries()

@@ -37,6 +37,7 @@ namespace Presentation.Gameplay.Projectiles
         private IAudioPlayer audioPlayer;
         [SerializeField] private Camera gameplayCamera;
         private LevelSessionService sessionService;
+        private TargetHitTracker targetHitTracker;
 
         [Header("Stick Settings")]
         [SerializeField] private float embedOffset = 0.02f;
@@ -88,12 +89,13 @@ namespace Presentation.Gameplay.Projectiles
         /// Performs the Construct operation.
         /// </summary>
         [VContainer.Inject]
-        public void Construct(IKnifeTracker tracker, IAudioPlayer audioPlayer, SoundSettings soundSettings, LevelSessionService sessionService)
+        public void Construct(IKnifeTracker tracker, IAudioPlayer audioPlayer, SoundSettings soundSettings, LevelSessionService sessionService, TargetHitTracker hitTracker)
         {
             knifeTracker = tracker;
             this.audioPlayer = audioPlayer;
             this.soundSettings = soundSettings;
             this.sessionService = sessionService;
+            targetHitTracker = hitTracker;
         }
 
         /// <summary>
@@ -323,6 +325,13 @@ namespace Presentation.Gameplay.Projectiles
             AlignToSurface(anchor, center, surfacePoint, surfaceDirection);
             PlaySound(soundSettings != null ? soundSettings.HitTargetSound : null);
             impactEventChannel?.RaiseKnifeStuck(impactPoint);
+            
+            Transform targetTransform = FindTargetAncestor(anchor);
+            if (targetTransform != null)
+            {
+                targetHitTracker?.RecordHit(targetTransform);
+            }
+            
             thrower?.OnKnifeResolved();
         }
 

@@ -25,6 +25,7 @@ namespace App.Services
         private readonly int startLevel;
         private readonly KnifeImpactEventChannel impactEventChannel;
         private readonly HitableObjectHitEventChannel hitableEventChannel;
+        private readonly TargetHitTracker targetHitTracker;
 
         private LevelRules currentRules;
         private LevelData currentLevelData;
@@ -42,7 +43,8 @@ namespace App.Services
             HitableObjectSpawner hitableObjectSpawner,
             int startingLevel,
             KnifeImpactEventChannel eventChannel,
-            HitableObjectHitEventChannel hitableHitEventChannel)
+            HitableObjectHitEventChannel hitableHitEventChannel,
+            TargetHitTracker hitTracker)
         {
             session = levelSession;
             catalog = levelCatalog;
@@ -54,6 +56,7 @@ namespace App.Services
             startLevel = Mathf.Max(1, startingLevel);
             impactEventChannel = eventChannel;
             hitableEventChannel = hitableHitEventChannel;
+            targetHitTracker = hitTracker;
 
             if (impactEventChannel != null)
             {
@@ -97,6 +100,7 @@ namespace App.Services
             SpawnHitableObjects();
             int preStuckSpawned = preStuckSpawner.Spawn(currentLevelData);
             session.SeedPreStuckKnives(preStuckSpawned);
+            targetHitTracker?.InitializeTargets(currentLevelData);
         }
 
         /// <summary>
@@ -121,7 +125,7 @@ namespace App.Services
         public void HandleKnifeStuck()
         {
             session.RecordKnifeStuck();
-            ScheduleEvaluation();
+            CheckCompletion();
         }
 
         /// <summary>
@@ -130,9 +134,7 @@ namespace App.Services
         private void HandleHitableObjectHit(Vector3 _)
         {
             session.RecordHitableObjectHit();
-            // Save fruits immediately to data so the display updates in real-time
             playerDataService?.AddFruitsHit(1);
-            ScheduleEvaluation();
         }
 
         /// <summary>
@@ -152,7 +154,7 @@ namespace App.Services
         /// </summary>
         public void HandleKnifeResolved()
         {
-            ScheduleEvaluation();
+            CheckCompletion();
         }
 
         /// <summary>
@@ -172,46 +174,24 @@ namespace App.Services
         }
 
         /// <summary>
-        /// Evaluates completion/failure after knife-related events.
+        /// Checks if level should complete or fail based on current state.
         /// </summary>
-        private bool evaluationScheduled;
-
-        private void ScheduleEvaluation()
+        private void CheckCompletion()
         {
-            if (evaluationScheduled || !session.HasExhaustedKnives())
+            if (session.IsComplete || session.IsFailed)
             {
                 return;
             }
 
-            evaluationScheduled = true;
-            AwaitEvaluation().Forget();
-        }
-
-        private async UniTaskVoid AwaitEvaluation()
-        {
-            await UniTask.NextFrame();
-            evaluationScheduled = false;
-            EvaluateEndState();
-        }
-
-        private void EvaluateEndState()
-        {
-            if (!session.HasExhaustedKnives() || session.IsComplete || session.IsFailed)
-            {
-                return;
-            }
-
-            // Complete when all targets are destroyed
             session.MarkCompleteIfNeeded();
-            
+
             if (session.IsComplete)
             {
                 DisableThrowerInput();
                 SaveProgress();
             }
-            else if (session.TargetsRemaining > 0)
+            else if (session.HasExhaustedKnives() && session.TargetsRemaining > 0)
             {
-                // Level failed if knives exhausted but targets remain
                 session.RecordFailure();
                 DisableThrowerInput();
             }

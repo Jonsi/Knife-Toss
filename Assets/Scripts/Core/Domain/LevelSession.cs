@@ -60,7 +60,6 @@ namespace Core.Domain
 
             KnivesStuck = count;
             preStuckBaseline = KnivesStuck;
-            EvaluateProgress();
             NotifyChanged();
         }
 
@@ -85,7 +84,6 @@ namespace Core.Domain
                 return;
 
             KnivesStuck++;
-            EvaluateProgress();
             NotifyChanged();
         }
 
@@ -100,7 +98,6 @@ namespace Core.Domain
             }
 
             HitableObjectsHit++;
-            EvaluateProgress();
             NotifyChanged();
         }
 
@@ -147,14 +144,6 @@ namespace Core.Domain
         public bool HasExhaustedKnives()
         {
             return KnivesThrown >= Rules.KnifeCount;
-        }
-
-        /// <summary>
-        /// Performs the EvaluateProgress operation.
-        /// </summary>
-        private void EvaluateProgress()
-        {
-            // Progress evaluation removed - no stars/objectives
         }
 
         /// <summary>

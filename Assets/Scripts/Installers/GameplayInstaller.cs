@@ -127,6 +127,10 @@ namespace Installers
                 .As<IStartable>()
                 .As<IDisposable>();
 
+            builder.Register<TargetHitTracker>(Lifetime.Singleton)
+                .WithParameter(resolver => resolver.Resolve<LevelSession>())
+                .WithParameter(resolver => resolver.Resolve<GameplayObjectProvider>());
+
             builder.Register<PlayerDataLifecycle>(Lifetime.Singleton)
                 .As<IStartable>()
                 .As<IDisposable>();
