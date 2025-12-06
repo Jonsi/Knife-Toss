@@ -22,7 +22,6 @@ namespace Presentation.UI
         /// </summary>
         private void Awake()
         {
-            // Hide buttons initially, but keep the holder active so this component can run
             if (retryButton != null)
             {
                 retryButton.gameObject.SetActive(false);
@@ -78,9 +77,6 @@ namespace Presentation.UI
             {
                 giveUpButton.gameObject.SetActive(show);
             }
-            
-            // Debug log to verify the method is being called
-            Debug.Log($"[FailButtonsPresenter] ShowFailButtons({show}) - RetryButton: {retryButton != null}, GiveUpButton: {giveUpButton != null}");
         }
 
         /// <summary>

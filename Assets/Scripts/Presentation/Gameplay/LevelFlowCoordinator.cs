@@ -86,6 +86,7 @@ namespace Presentation.Gameplay
         /// </summary>
         private async UniTaskVoid InitializeAsync()
         {
+            Time.timeScale = 1f;
             hudPresenter?.ResetState();
             await sessionService.StartInitialLevelAsync();
             RenderHud();
@@ -130,7 +131,6 @@ namespace Presentation.Gameplay
         /// </summary>
         private void HandleLevelCompleted(LevelSession completedSession)
         {
-            // Automatically move to next level when all targets are destroyed
             BeginTransition(sessionService.NextLevelAsync());
         }
 
@@ -139,8 +139,7 @@ namespace Presentation.Gameplay
         /// </summary>
         private void HandleLevelFailed(LevelSession _)
         {
-            // Show fail buttons when level fails
-            Debug.Log("[LevelFlowCoordinator] Level failed - showing fail buttons");
+            Time.timeScale = 0f;
             hudPresenter?.ShowFail(true);
         }
 
@@ -162,6 +161,7 @@ namespace Presentation.Gameplay
         /// </summary>
         private void BeginTransition(UniTask transitionTask)
         {
+            Time.timeScale = 1f;
             hudPresenter?.ResetState();
             CompleteTransitionAsync(transitionTask).Forget();
         }
