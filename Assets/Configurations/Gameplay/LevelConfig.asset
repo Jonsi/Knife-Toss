@@ -13,23 +13,7 @@ MonoBehaviour:
   m_Name: LevelConfig
   m_EditorClassIdentifier: Assembly-CSharp::Core.Data.LevelConfig
   levels:
-  - knives: 5
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 3
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 5
-      threeStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 5
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -75,24 +59,8 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 2.4
         hitableObjects: []
-        knifeQuota: 0
-  - knives: 6
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 4
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 6
-      threeStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 6
+        knivesToBreak: 3
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -138,24 +106,8 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 1.6
         hitableObjects: []
-        knifeQuota: 0
-  - knives: 7
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 4
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 7
-      threeStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 7
+        knivesToBreak: 4
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -201,24 +153,8 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 0.8
         hitableObjects: []
-        knifeQuota: 0
-  - knives: 7
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 2
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 7
-      threeStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 7
+        knivesToBreak: 5
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -264,7 +200,7 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 2.4
         hitableObjects: []
-        knifeQuota: 1
+        knivesToBreak: 3
       - prefab: {fileID: 0}
         orbitRadius: 1.3945148
         startingAngle: 180
@@ -308,24 +244,8 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 2.4
         hitableObjects: []
-        knifeQuota: 1
-  - knives: 8
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 4
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 8
-      threeStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 8
+        knivesToBreak: 4
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -371,7 +291,7 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 1.6
         hitableObjects: []
-        knifeQuota: 2
+        knivesToBreak: 4
       - prefab: {fileID: 0}
         orbitRadius: 2.3391058
         startingAngle: 180
@@ -415,24 +335,8 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 1.6
         hitableObjects: []
-        knifeQuota: 2
-  - knives: 9
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 5
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 9
-      threeStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 9
+        knivesToBreak: 4
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -478,7 +382,7 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 0.8
         hitableObjects: []
-        knifeQuota: 3
+        knivesToBreak: 4
       - prefab: {fileID: 0}
         orbitRadius: 2.9054852
         startingAngle: 180
@@ -522,24 +426,8 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 0.8
         hitableObjects: []
-        knifeQuota: 2
-  - knives: 8
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 4
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 8
-      threeStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 8
+        knivesToBreak: 5
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -585,7 +473,7 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 2.4
         hitableObjects: []
-        knifeQuota: 2
+        knivesToBreak: 5
       - prefab: {fileID: 0}
         orbitRadius: 1.3945148
         startingAngle: 180
@@ -629,27 +517,8 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 2.4
         hitableObjects: []
-        knifeQuota: 2
-  - knives: 9
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 5
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 9
-        - type: 1
-          requireAll: 0
-          count: 2
-      threeStar:
-        objectives:
-        - type: 1
-          requireAll: 1
-          count: 4
+        knivesToBreak: 5
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -699,7 +568,7 @@ MonoBehaviour:
           count: 2
           angularSpacing: 180
           orientOutwards: 1
-        knifeQuota: 3
+        knivesToBreak: 5
       - prefab: {fileID: 0}
         orbitRadius: 2.111028
         startingAngle: 180
@@ -747,27 +616,8 @@ MonoBehaviour:
           count: 2
           angularSpacing: 180
           orientOutwards: 1
-        knifeQuota: 3
-  - knives: 10
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 6
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 10
-        - type: 1
-          requireAll: 0
-          count: 3
-      threeStar:
-        objectives:
-        - type: 1
-          requireAll: 1
-          count: 6
+        knivesToBreak: 6
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -817,7 +667,7 @@ MonoBehaviour:
           count: 3
           angularSpacing: 120
           orientOutwards: 1
-        knifeQuota: 2
+        knivesToBreak: 4
       - prefab: {fileID: 0}
         orbitRadius: 2.5165129
         startingAngle: 120
@@ -865,7 +715,7 @@ MonoBehaviour:
           count: 3
           angularSpacing: 120
           orientOutwards: 1
-        knifeQuota: 2
+        knivesToBreak: 4
       - prefab: {fileID: 0}
         orbitRadius: 2.214735
         startingAngle: 240
@@ -909,27 +759,8 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 1.3333334
         hitableObjects: []
-        knifeQuota: 3
-  - knives: 11
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 7
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 11
-        - type: 1
-          requireAll: 0
-          count: 3
-      threeStar:
-        objectives:
-        - type: 1
-          requireAll: 1
-          count: 6
+        knivesToBreak: 4
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -979,7 +810,7 @@ MonoBehaviour:
           count: 3
           angularSpacing: 120
           orientOutwards: 1
-        knifeQuota: 4
+        knivesToBreak: 4
       - prefab: {fileID: 0}
         orbitRadius: 2.9054852
         startingAngle: 120
@@ -1027,7 +858,7 @@ MonoBehaviour:
           count: 3
           angularSpacing: 120
           orientOutwards: 1
-        knifeQuota: 4
+        knivesToBreak: 4
       - prefab: {fileID: 0}
         orbitRadius: 2.881746
         startingAngle: 240
@@ -1071,24 +902,8 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 0.8
         hitableObjects: []
-        knifeQuota: 4
-  - knives: 10
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 6
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 10
-      threeStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 10
+        knivesToBreak: 5
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -1134,7 +949,7 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 2.4
         hitableObjects: []
-        knifeQuota: 3
+        knivesToBreak: 4
       - prefab: {fileID: 0}
         orbitRadius: 1.3945148
         startingAngle: 120
@@ -1178,7 +993,7 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 2.4
         hitableObjects: []
-        knifeQuota: 3
+        knivesToBreak: 5
       - prefab: {fileID: 0}
         orbitRadius: 1.4182541
         startingAngle: 240
@@ -1222,27 +1037,8 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 2.4
         hitableObjects: []
-        knifeQuota: 3
-  - knives: 11
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 7
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 11
-        - type: 1
-          requireAll: 0
-          count: 1
-      threeStar:
-        objectives:
-        - type: 1
-          requireAll: 1
-          count: 2
+        knivesToBreak: 5
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -1292,7 +1088,7 @@ MonoBehaviour:
           count: 2
           angularSpacing: 180
           orientOutwards: 1
-        knifeQuota: 4
+        knivesToBreak: 5
       - prefab: {fileID: 0}
         orbitRadius: 2.111028
         startingAngle: 120
@@ -1336,7 +1132,7 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 1.8666667
         hitableObjects: []
-        knifeQuota: 4
+        knivesToBreak: 5
       - prefab: {fileID: 0}
         orbitRadius: 1.8329893
         startingAngle: 240
@@ -1380,27 +1176,8 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 1.8666667
         hitableObjects: []
-        knifeQuota: 4
-  - knives: 12
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 7
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 12
-        - type: 1
-          requireAll: 0
-          count: 5
-      threeStar:
-        objectives:
-        - type: 1
-          requireAll: 1
-          count: 9
+        knivesToBreak: 5
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -1450,7 +1227,7 @@ MonoBehaviour:
           count: 3
           angularSpacing: 120
           orientOutwards: 1
-        knifeQuota: 4
+        knivesToBreak: 4
       - prefab: {fileID: 0}
         orbitRadius: 2.5165129
         startingAngle: 90
@@ -1494,7 +1271,7 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 1.3333334
         hitableObjects: []
-        knifeQuota: 4
+        knivesToBreak: 4
       - prefab: {fileID: 0}
         orbitRadius: 2.214735
         startingAngle: 180
@@ -1542,7 +1319,7 @@ MonoBehaviour:
           count: 3
           angularSpacing: 120
           orientOutwards: 1
-        knifeQuota: 4
+        knivesToBreak: 4
       - prefab: {fileID: 0}
         orbitRadius: 2.1752286
         startingAngle: 270
@@ -1590,27 +1367,8 @@ MonoBehaviour:
           count: 3
           angularSpacing: 120
           orientOutwards: 1
-        knifeQuota: 4
-  - knives: 13
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 8
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 13
-        - type: 1
-          requireAll: 0
-          count: 5
-      threeStar:
-        objectives:
-        - type: 1
-          requireAll: 1
-          count: 9
+        knivesToBreak: 4
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -1656,7 +1414,7 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 0.8
         hitableObjects: []
-        knifeQuota: 5
+        knivesToBreak: 4
       - prefab: {fileID: 0}
         orbitRadius: 2.9054852
         startingAngle: 90
@@ -1704,7 +1462,7 @@ MonoBehaviour:
           count: 3
           angularSpacing: 120
           orientOutwards: 1
-        knifeQuota: 5
+        knivesToBreak: 4
       - prefab: {fileID: 0}
         orbitRadius: 2.881746
         startingAngle: 180
@@ -1752,7 +1510,7 @@ MonoBehaviour:
           count: 3
           angularSpacing: 120
           orientOutwards: 1
-        knifeQuota: 5
+        knivesToBreak: 4
       - prefab: {fileID: 0}
         orbitRadius: 3.150608
         startingAngle: 270
@@ -1800,27 +1558,8 @@ MonoBehaviour:
           count: 3
           angularSpacing: 120
           orientOutwards: 1
-        knifeQuota: 5
-  - knives: 12
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 7
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 12
-        - type: 1
-          requireAll: 0
-          count: 1
-      threeStar:
-        objectives:
-        - type: 1
-          requireAll: 1
-          count: 1
+        knivesToBreak: 5
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -1870,7 +1609,7 @@ MonoBehaviour:
           count: 1
           angularSpacing: 360
           orientOutwards: 1
-        knifeQuota: 4
+        knivesToBreak: 5
       - prefab: {fileID: 0}
         orbitRadius: 1.3945148
         startingAngle: 120
@@ -1914,7 +1653,7 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 2.4
         hitableObjects: []
-        knifeQuota: 4
+        knivesToBreak: 5
       - prefab: {fileID: 0}
         orbitRadius: 1.4182541
         startingAngle: 240
@@ -1958,27 +1697,8 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 2.4
         hitableObjects: []
-        knifeQuota: 4
-  - knives: 13
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 8
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 13
-        - type: 1
-          requireAll: 0
-          count: 1
-      threeStar:
-        objectives:
-        - type: 1
-          requireAll: 1
-          count: 2
+        knivesToBreak: 6
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -2028,7 +1748,7 @@ MonoBehaviour:
           count: 2
           angularSpacing: 180
           orientOutwards: 1
-        knifeQuota: 4
+        knivesToBreak: 5
       - prefab: {fileID: 0}
         orbitRadius: 2.111028
         startingAngle: 120
@@ -2072,7 +1792,7 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 1.8666667
         hitableObjects: []
-        knifeQuota: 5
+        knivesToBreak: 6
       - prefab: {fileID: 0}
         orbitRadius: 1.8329893
         startingAngle: 240
@@ -2116,27 +1836,8 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 1.8666667
         hitableObjects: []
-        knifeQuota: 5
-  - knives: 14
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 8
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 14
-        - type: 1
-          requireAll: 0
-          count: 3
-      threeStar:
-        objectives:
-        - type: 1
-          requireAll: 1
-          count: 6
+        knivesToBreak: 6
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -2182,7 +1883,7 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 1.3333334
         hitableObjects: []
-        knifeQuota: 5
+        knivesToBreak: 4
       - prefab: {fileID: 0}
         orbitRadius: 2.5165129
         startingAngle: 90
@@ -2230,7 +1931,7 @@ MonoBehaviour:
           count: 3
           angularSpacing: 120
           orientOutwards: 1
-        knifeQuota: 5
+        knivesToBreak: 5
       - prefab: {fileID: 0}
         orbitRadius: 2.214735
         startingAngle: 180
@@ -2274,7 +1975,7 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 1.3333334
         hitableObjects: []
-        knifeQuota: 4
+        knivesToBreak: 5
       - prefab: {fileID: 0}
         orbitRadius: 2.1752286
         startingAngle: 270
@@ -2322,27 +2023,8 @@ MonoBehaviour:
           count: 3
           angularSpacing: 120
           orientOutwards: 1
-        knifeQuota: 5
-  - knives: 15
-    objectives:
-      oneStar:
-        objectives:
-        - type: 0
-          requireAll: 0
-          count: 9
-      twoStar:
-        objectives:
-        - type: 0
-          requireAll: 1
-          count: 15
-        - type: 1
-          requireAll: 0
-          count: 2
-      threeStar:
-        objectives:
-        - type: 1
-          requireAll: 1
-          count: 3
+        knivesToBreak: 5
+  - knives: 0
     targetGroup:
       targets:
       - prefab: {fileID: 0}
@@ -2388,7 +2070,7 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 0.8
         hitableObjects: []
-        knifeQuota: 6
+        knivesToBreak: 5
       - prefab: {fileID: 0}
         orbitRadius: 2.9054852
         startingAngle: 90
@@ -2432,7 +2114,7 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 0.8
         hitableObjects: []
-        knifeQuota: 6
+        knivesToBreak: 5
       - prefab: {fileID: 0}
         orbitRadius: 2.881746
         startingAngle: 180
@@ -2476,7 +2158,7 @@ MonoBehaviour:
               m_RotationOrder: 4
             curveLoopDuration: 0.8
         hitableObjects: []
-        knifeQuota: 6
+        knivesToBreak: 5
       - prefab: {fileID: 0}
         orbitRadius: 3.150608
         startingAngle: 270
@@ -2524,7 +2206,7 @@ MonoBehaviour:
           count: 3
           angularSpacing: 120
           orientOutwards: 1
-        knifeQuota: 6
+        knivesToBreak: 6
   generateProceduralLevels: 1
   proceduralBaseKnives: 12
   proceduralBaseRotationSpeed: 160

@@ -49,7 +49,7 @@ namespace Core.Domain
 
             int targetCount = targetGroup.targets != null && targetGroup.targets.Count > 0 ? targetGroup.targets.Count : 1;
             int totalHitables = CountTotalHitableObjects(targetGroup);
-            int knifeCount = Mathf.Max(1, data.knives);
+            int knifeCount = data.GetEffectiveKnifeCount();
 
             float rotationSpeed = ResolveFallbackRotationSpeed(targetGroup);
             float directionChangeInterval = 0f;

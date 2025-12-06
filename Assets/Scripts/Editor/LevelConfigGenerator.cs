@@ -217,7 +217,7 @@ namespace Editor
 
                 int quota = ResolveQuota(stage, stageProgress, rng);
                 quotaSum += quota;
-                target.knifeQuota = quota;
+                target.knivesToBreak = quota;
 
                 hitableCount += AddHitables(stage, stageProgress, rng, levelNumber, i, target);
                 targets.Add(target);

@@ -181,7 +181,7 @@ namespace Presentation.Gameplay
         /// </summary>
         private void ApplyTint(Transform target)
         {
-            if (target == null)
+            if (target == null || target.gameObject == null)
             {
                 return;
             }
@@ -207,46 +207,141 @@ namespace Presentation.Gameplay
             for (int i = 0; i < renderers.Length; i++)
             {
                 SpriteRenderer renderer = renderers[i];
-                if (renderer == null)
+                if (renderer == null || renderer.gameObject == null)
                 {
                     continue;
                 }
 
+                // Store reference to GameObject for null checking
+                GameObject rendererGameObject = renderer.gameObject;
+
                 Color baseColor = ResolveBaseColor(renderer);
                 TweenKiller.Kill(renderer);
+                TweenKiller.Kill(rendererGameObject);
 
-                Sequence sequence = DG.Tweening.DOTween.Sequence().SetTarget(renderer);
-
-                if (fadeIn > 0f)
+                // Double-check renderer is still valid before creating sequence
+                // Use Unity's destroyed object check
+                if (renderer == null || !renderer || rendererGameObject == null || !rendererGameObject)
                 {
-                    sequence.Append(renderer.DOColor(targetColor, fadeIn).SetEase(tintEase));
-                }
-                else
-                {
-                    renderer.color = targetColor;
+                    continue;
                 }
 
-                if (hold > 0f)
+                // Helper to create a safe color tween that checks for null
+                Tween CreateSafeColorTween(Color endColor, float duration)
                 {
-                    sequence.AppendInterval(hold);
-                }
-
-                if (fadeOut > 0f)
-                {
-                    sequence.Append(renderer.DOColor(baseColor, fadeOut).SetEase(tintEase));
-                }
-                else
-                {
-                    renderer.color = baseColor;
-                }
-
-                sequence.OnKill(() =>
-                {
-                    if (renderer != null)
+                    // Validate renderer is still valid before creating tween
+                    // Use Unity's destroyed object check
+                    if (renderer == null || !renderer || rendererGameObject == null || !rendererGameObject)
                     {
-                        renderer.color = baseColor;
+                        return null;
                     }
-                });
+
+                    try
+                    {
+                        Tween tween = renderer.DOColor(endColor, duration).SetEase(tintEase).SetAutoKill(true);
+                        
+                        // Validate on start - if target is destroyed, kill immediately
+                        tween.OnStart(() =>
+                        {
+                            if (renderer == null || !renderer || rendererGameObject == null || !rendererGameObject)
+                            {
+                                tween.Kill();
+                            }
+                        });
+                        
+                        tween.OnUpdate(() =>
+                        {
+                            if (renderer == null || !renderer || rendererGameObject == null || !rendererGameObject)
+                            {
+                                tween.Kill();
+                            }
+                        });
+                        
+                        return tween;
+                    }
+                    catch
+                    {
+                        // If tween creation fails (e.g., object destroyed), return null
+                        return null;
+                    }
+                }
+
+                try
+                {
+                    Sequence sequence = DG.Tweening.DOTween.Sequence().SetTarget(renderer).SetAutoKill(true);
+                    
+                    // Validate sequence target on start
+                    sequence.OnStart(() =>
+                    {
+                        if (renderer == null || !renderer || rendererGameObject == null || !rendererGameObject)
+                        {
+                            sequence.Kill();
+                        }
+                    });
+
+                    if (fadeIn > 0f)
+                    {
+                        Tween fadeInTween = CreateSafeColorTween(targetColor, fadeIn);
+                        if (fadeInTween != null)
+                        {
+                            sequence.Append(fadeInTween);
+                        }
+                        else
+                        {
+                            // If tween creation failed, skip this renderer
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        if (renderer != null && rendererGameObject != null)
+                        {
+                            renderer.color = targetColor;
+                        }
+                    }
+
+                    if (hold > 0f)
+                    {
+                        sequence.AppendInterval(hold);
+                    }
+
+                    if (fadeOut > 0f)
+                    {
+                        Tween fadeOutTween = CreateSafeColorTween(baseColor, fadeOut);
+                        if (fadeOutTween != null)
+                        {
+                            sequence.Append(fadeOutTween);
+                        }
+                    }
+                    else
+                    {
+                        if (renderer != null && rendererGameObject != null)
+                        {
+                            renderer.color = baseColor;
+                        }
+                    }
+
+                    sequence.OnUpdate(() =>
+                    {
+                        if (renderer == null || !renderer || rendererGameObject == null || !rendererGameObject)
+                        {
+                            sequence.Kill();
+                        }
+                    });
+
+                    sequence.OnKill(() =>
+                    {
+                        if (renderer != null && rendererGameObject != null)
+                        {
+                            renderer.color = baseColor;
+                        }
+                    });
+                }
+                catch
+                {
+                    // If sequence creation fails, skip this renderer
+                    continue;
+                }
             }
         }
 

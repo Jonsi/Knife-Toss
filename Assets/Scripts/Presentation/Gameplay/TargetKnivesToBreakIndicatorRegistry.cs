@@ -4,13 +4,13 @@ using UnityEngine;
 namespace Presentation.Gameplay
 {
     /// <summary>
-    /// Lightweight registry that maps target transforms to their quota indicator.
+    /// Lightweight registry that maps target transforms to their knives to break indicator.
     /// </summary>
-    public static class TargetQuotaIndicatorRegistry
+    public static class TargetKnivesToBreakIndicatorRegistry
     {
-        private static readonly Dictionary<Transform, TargetQuotaIndicator> Indicators = new Dictionary<Transform, TargetQuotaIndicator>();
+        private static readonly Dictionary<Transform, TargetKnivesToBreakIndicator> Indicators = new Dictionary<Transform, TargetKnivesToBreakIndicator>();
 
-        public static void Register(TargetQuotaIndicator indicator)
+        public static void Register(TargetKnivesToBreakIndicator indicator)
         {
             if (indicator == null)
             {
@@ -26,7 +26,7 @@ namespace Presentation.Gameplay
             Indicators[key] = indicator;
         }
 
-        public static void Unregister(TargetQuotaIndicator indicator)
+        public static void Unregister(TargetKnivesToBreakIndicator indicator)
         {
             if (indicator == null)
             {
@@ -42,7 +42,7 @@ namespace Presentation.Gameplay
             Indicators.Remove(key);
         }
 
-        public static bool TryResolve(Transform startingPoint, out TargetQuotaIndicator indicator)
+        public static bool TryResolve(Transform startingPoint, out TargetKnivesToBreakIndicator indicator)
         {
             indicator = null;
             Transform current = startingPoint;

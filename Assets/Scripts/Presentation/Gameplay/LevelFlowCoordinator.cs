@@ -126,7 +126,8 @@ namespace Presentation.Gameplay
         /// </summary>
         private void HandleLevelCompleted(LevelSession completedSession)
         {
-            // Level completed - no popup or stars needed
+            // Automatically move to next level when all targets are destroyed
+            BeginTransition(sessionService.NextLevelAsync());
         }
 
         /// <summary>

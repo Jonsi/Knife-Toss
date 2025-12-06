@@ -6,10 +6,6 @@ using VContainer;
 
 namespace Presentation.UI
 {
-
-
-
-
     public sealed class AutoButtonEventRegistrar : MonoBehaviour
     {
         [Header("Configuration")]
@@ -89,11 +85,6 @@ namespace Presentation.UI
                     registeredButtons.Add(button);
                     registeredCount++;
                 }
-            }
-
-            if (registeredCount > 0)
-            {
-                Debug.Log($"[AutoButtonEventRegistrar] Registered {registeredCount} button(s) to ButtonClickEventChannel.", this);
             }
         }
 

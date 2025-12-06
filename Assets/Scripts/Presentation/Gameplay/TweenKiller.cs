@@ -34,7 +34,16 @@ namespace Presentation.Gameplay
 
             Kill((object)gameObject);
             Kill(gameObject.transform);
-            Kill(gameObject.GetComponent<SpriteRenderer>());
+            
+            // Kill tweens on all SpriteRenderers in the GameObject and its children
+            SpriteRenderer[] renderers = gameObject.GetComponentsInChildren<SpriteRenderer>(includeInactive: true);
+            if (renderers != null)
+            {
+                for (int i = 0; i < renderers.Length; i++)
+                {
+                    Kill(renderers[i]);
+                }
+            }
         }
 
         /// <summary>

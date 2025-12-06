@@ -145,10 +145,10 @@ namespace Presentation.Gameplay
             rotatingTarget.Resume();
             rotatingTarget.ResetRotation();
 
-            TargetQuotaIndicator quotaIndicator = instance.GetComponentInChildren<TargetQuotaIndicator>(includeInactive: true);
-            if (quotaIndicator != null)
+            TargetKnivesToBreakIndicator knivesIndicator = instance.GetComponentInChildren<TargetKnivesToBreakIndicator>(includeInactive: true);
+            if (knivesIndicator != null)
             {
-                quotaIndicator.Configure(Mathf.Max(0, definition.knifeQuota));
+                knivesIndicator.Configure(definition.knivesToBreak);
             }
 
             TargetEntry entry = new TargetEntry
@@ -215,13 +215,51 @@ namespace Presentation.Gameplay
                 TargetEntry entry = entries[i];
                 if (entry.Transform != null)
                 {
-                    TweenKiller.Kill(entry.Transform.gameObject);
+                    KillAllTweensOnTarget(entry.Transform.gameObject);
                     Destroy(entry.Transform.gameObject);
                 }
             }
 
             entries.Clear();
             targetTransforms.Clear();
+        }
+
+        /// <summary>
+        /// Kills all tweens on the target GameObject and all its children.
+        /// </summary>
+        private static void KillAllTweensOnTarget(GameObject target)
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            // Kill tweens on the target itself
+            TweenKiller.Kill(target);
+
+            // Kill tweens on all children recursively
+            KillTweensOnChildren(target.transform);
+        }
+
+        /// <summary>
+        /// Recursively kills all tweens on children transforms.
+        /// </summary>
+        private static void KillTweensOnChildren(Transform parent)
+        {
+            if (parent == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child != null)
+                {
+                    TweenKiller.Kill(child.gameObject);
+                    KillTweensOnChildren(child);
+                }
+            }
         }
 
         /// <summary>

@@ -61,12 +61,17 @@ namespace Core.Data
         {
             LevelData level = new LevelData();
 
-
             int proceduralLevelNumber = levelIndex - levels.Count;
-
-
             int knifeTarget = Mathf.RoundToInt(proceduralBaseKnives + proceduralLevelNumber * proceduralKnifeIncrease);
-            level.knives = Mathf.Max(1, knifeTarget);
+            int knivesToBreak = Mathf.Max(1, knifeTarget);
+
+            // Create a default target with the calculated knivesToBreak
+            TargetDefinition defaultTarget = new TargetDefinition
+            {
+                knivesToBreak = knivesToBreak
+            };
+            level.targetGroup.targets.Add(defaultTarget);
+            level.knives = 0; // Will be calculated from targets
 
             return level;
         }

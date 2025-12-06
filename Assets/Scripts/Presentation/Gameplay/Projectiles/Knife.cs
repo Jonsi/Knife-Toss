@@ -319,9 +319,9 @@ namespace Presentation.Gameplay.Projectiles
             ResolveAsStuck();
             AlignToSurface(anchor, center, surfacePoint, surfaceDirection);
             PlaySound(soundSettings != null ? soundSettings.HitTargetSound : null);
-            if (TargetQuotaIndicatorRegistry.TryResolve(anchor, out TargetQuotaIndicator quotaIndicator))
+            if (TargetKnivesToBreakIndicatorRegistry.TryResolve(anchor, out TargetKnivesToBreakIndicator knivesIndicator))
             {
-                quotaIndicator.RegisterHit();
+                knivesIndicator.RegisterHit();
             }
             impactEventChannel?.RaiseKnifeStuck(impactPoint);
             thrower?.OnKnifeResolved();

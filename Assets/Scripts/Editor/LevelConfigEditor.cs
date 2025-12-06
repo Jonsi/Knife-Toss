@@ -40,7 +40,7 @@ namespace Editor
                 int newIndex = levelsProp.arraySize;
                 levelsProp.InsertArrayElementAtIndex(newIndex);
                 SerializedProperty element = levelsProp.GetArrayElementAtIndex(newIndex);
-                element.FindPropertyRelative(nameof(LevelData.knives)).intValue = 5;
+                element.FindPropertyRelative(nameof(LevelData.knives)).intValue = 0; // Will be calculated from targets
                 selectedLevel = newIndex;
             };
             levelList.drawElementCallback = DrawLevelElement;
@@ -96,12 +96,26 @@ namespace Editor
             }
 
             SerializedProperty element = levelsProp.GetArrayElementAtIndex(index);
-            SerializedProperty knivesProp = element.FindPropertyRelative(nameof(LevelData.knives));
             SerializedProperty targetGroupProp = element.FindPropertyRelative(nameof(LevelData.targetGroup));
             SerializedProperty targetsProp = targetGroupProp?.FindPropertyRelative(nameof(TargetGroupConfig.targets));
             int targetCount = targetsProp != null ? targetsProp.arraySize : 0;
 
-            string label = $"Level {index + 1}  •  Knives: {knivesProp.intValue}  •  Targets: {targetCount}";
+            // Calculate knives from targets
+            int calculatedKnives = 0;
+            if (targetsProp != null)
+            {
+                for (int i = 0; i < targetsProp.arraySize; i++)
+                {
+                    SerializedProperty target = targetsProp.GetArrayElementAtIndex(i);
+                    SerializedProperty knivesToBreak = target.FindPropertyRelative(nameof(TargetDefinition.knivesToBreak));
+                    if (knivesToBreak != null)
+                    {
+                        calculatedKnives += Mathf.Max(0, knivesToBreak.intValue);
+                    }
+                }
+            }
+
+            string label = $"Level {index + 1}  •  Knives: {calculatedKnives} (calculated)  •  Targets: {targetCount}";
             EditorGUI.LabelField(rect, label);
         }
 
@@ -110,12 +124,31 @@ namespace Editor
             using (new EditorGUILayout.VerticalScope("box"))
             {
                 EditorGUILayout.LabelField($"Level {levelIndex + 1} Details", EditorStyles.boldLabel);
-                EditorGUILayout.PropertyField(levelProp.FindPropertyRelative(nameof(LevelData.knives)));
-
+                
+                // Calculate and display knives from targets
                 SerializedProperty targetGroup = levelProp.FindPropertyRelative(nameof(LevelData.targetGroup));
+                SerializedProperty targets = targetGroup?.FindPropertyRelative(nameof(TargetGroupConfig.targets));
+                int calculatedKnives = 0;
+                if (targets != null)
+                {
+                    for (int i = 0; i < targets.arraySize; i++)
+                    {
+                        SerializedProperty target = targets.GetArrayElementAtIndex(i);
+                        SerializedProperty knivesToBreak = target.FindPropertyRelative(nameof(TargetDefinition.knivesToBreak));
+                        if (knivesToBreak != null)
+                        {
+                            calculatedKnives += Mathf.Max(0, knivesToBreak.intValue);
+                        }
+                    }
+                }
+                
+                EditorGUI.BeginDisabledGroup(true);
+                EditorGUILayout.IntField("Total Knives (Calculated)", calculatedKnives);
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.HelpBox("Total knives are automatically calculated from the sum of all targets' 'Knives To Break' values.", MessageType.Info);
+
                 if (targetGroup != null)
                 {
-                    SerializedProperty targets = targetGroup.FindPropertyRelative(nameof(TargetGroupConfig.targets));
                     DrawTargetsSection(levelIndex, targets);
                 }
             }
@@ -155,9 +188,9 @@ namespace Editor
                 SerializedProperty target = targetsProp.GetArrayElementAtIndex(index);
                 SerializedProperty prefab = target.FindPropertyRelative(nameof(TargetDefinition.prefab));
                 SerializedProperty orbit = target.FindPropertyRelative(nameof(TargetDefinition.orbitRadius));
-                SerializedProperty quota = target.FindPropertyRelative(nameof(TargetDefinition.knifeQuota));
+                SerializedProperty quota = target.FindPropertyRelative(nameof(TargetDefinition.knivesToBreak));
                 string prefabName = prefab.objectReferenceValue != null ? prefab.objectReferenceValue.name : "Default Prefab";
-                string label = $"Target {index + 1}  •  {prefabName}  •  Orbit {orbit.floatValue:0.##}  •  Quota {quota.intValue}";
+                string label = $"Target {index + 1}  •  {prefabName}  •  Orbit {orbit.floatValue:0.##}  •  Knives To Break {quota.intValue}";
                 EditorGUI.LabelField(rect, label);
             };
             list.onSelectCallback = l =>
@@ -223,7 +256,7 @@ namespace Editor
                 DrawHitableSection(levelIndex, targetIndex, targetProp.FindPropertyRelative(nameof(TargetDefinition.hitableObjects)));
 
                 EditorGUILayout.Space();
-                EditorGUILayout.PropertyField(targetProp.FindPropertyRelative(nameof(TargetDefinition.knifeQuota)));
+                EditorGUILayout.PropertyField(targetProp.FindPropertyRelative(nameof(TargetDefinition.knivesToBreak)));
             }
         }
 
