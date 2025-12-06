@@ -35,7 +35,6 @@ namespace Presentation.Gameplay.Projectiles
         private Collider2D[] cachedColliders;
         private IKnifeTracker knifeTracker;
         private IAudioPlayer audioPlayer;
-        [SerializeField] private Camera gameplayCamera;
         private LevelSessionService sessionService;
         private TargetHitTracker targetHitTracker;
 
@@ -49,36 +48,23 @@ namespace Presentation.Gameplay.Projectiles
         [SerializeField] private float soundVolume = 1f;
         private SoundSettings soundSettings;
 
-        /// <summary>
-        /// Performs the Awake operation.
-        /// </summary>
         private void Awake()
         {
             cachedColliders = GetComponents<Collider2D>();
             ResolveSnapPosition();
-            gameplayCamera ??= Camera.main;
         }
 
-        /// <summary>
-        /// Performs the OnEnable operation.
-        /// </summary>
         private void OnEnable()
         {
             knifeTracker?.Register(this);
         }
 
-        /// <summary>
-        /// Performs the OnDisable operation.
-        /// </summary>
         private void OnDisable()
         {
             knifeTracker?.Unregister(this);
             KillBounceSequence();
         }
 
-        /// <summary>
-        /// Performs the OnDestroy operation.
-        /// </summary>
         private void OnDestroy()
         {
             knifeTracker?.Unregister(this);
@@ -125,13 +111,16 @@ namespace Presentation.Gameplay.Projectiles
             SetCollidersEnabled(true);
         }
 
-        /// <summary>
-        /// Performs the Update operation.
-        /// </summary>
         private void Update()
         {
             if (isResolved || isStuck)
             {
+                return;
+            }
+
+            if (ShouldReturnBasedOnGameplayCamera())
+            {
+                HandleOutOfBounds();
                 return;
             }
 
@@ -143,38 +132,18 @@ namespace Presentation.Gameplay.Projectiles
             {
                 transform.position += (Vector3)(launchDirection * speed * Time.deltaTime);
             }
-
-            if (ShouldReturnBasedOnGameplayCamera())
-            {
-                Debug.Log($"Knife '{name}' out of gameplay camera view, returning to pool");
-                ReturnToPool();
-            }
         }
 
-        /// <summary>
-        /// Performs the OnTriggerEnter2D operation.
-        /// </summary>
         private void OnTriggerEnter2D(Collider2D collision)
         {
             HandleCollision(collision.transform, collision.gameObject, ResolveImpactPoint(collision));
         }
 
-        /// <summary>
-        /// Performs the OnCollisionEnter2D operation.
-        /// </summary>
         private void OnCollisionEnter2D(Collision2D collision)
         {
             HandleCollision(collision.transform, collision.gameObject, ResolveImpactPoint(collision));
         }
 
-        /// <summary>
-        /// Performs the OnBecameInvisible operation.
-        /// </summary>
-        private void OnBecameInvisible() { }
-
-        /// <summary>
-        /// Performs the HandleCollision operation.
-        /// </summary>
         private void HandleCollision(Transform collisionTransform, GameObject collisionObject, Vector3 impactPoint)
         {
             if (!CanResolveImpact() || collisionObject == null)
@@ -184,28 +153,17 @@ namespace Presentation.Gameplay.Projectiles
 
             if (collisionObject.CompareTag("Knife"))
             {
-                Knife otherKnife = collisionObject.GetComponent<Knife>();
-                if (otherKnife != null)
-                {
-                    HandleKnifeHitKnife(collisionTransform != null ? collisionTransform.position : transform.position);
-                }
+                HandleKnifeHitKnife(collisionTransform?.position ?? transform.position);
                 return;
             }
 
-            Collider2D collisionCollider = collisionObject.GetComponent<Collider2D>();
-            if (TryResolveHitableCollision(collisionObject, collisionCollider, impactPoint, out HitableObjectView hitableView, out Collider2D hitableCollider))
+            if (TryResolveHitableCollision(collisionObject, collisionObject.GetComponent<Collider2D>(), impactPoint, out HitableObjectView hitableView, out Collider2D hitableCollider))
             {
                 hitableView.ProcessHit(impactPoint);
 
-                Transform anchor = ResolveTargetAnchor(collisionTransform, collisionObject, hitableView);
-                Collider2D anchorCollider = anchor != null ? anchor.GetComponent<Collider2D>() : null;
-
-                if (anchor == null)
-                {
-                    anchor = hitableCollider != null ? hitableCollider.transform : hitableView.transform;
-                    anchorCollider = hitableCollider;
-                }
-
+                Transform anchor = ResolveTargetAnchor(collisionTransform, collisionObject, hitableView)
+                    ?? (hitableCollider != null ? hitableCollider.transform : hitableView.transform);
+                Collider2D anchorCollider = anchor?.GetComponent<Collider2D>() ?? hitableCollider;
                 StickToCollider(anchor, anchorCollider, impactPoint);
                 return;
             }
@@ -214,7 +172,7 @@ namespace Presentation.Gameplay.Projectiles
             {
                 Collider2D targetCollider = collisionObject.GetComponent<Collider2D>()
                     ?? collisionObject.GetComponentInParent<Collider2D>();
-                Transform anchor = targetCollider != null ? targetCollider.transform : collisionTransform;
+                Transform anchor = targetCollider?.transform ?? collisionTransform;
                 StickToCollider(anchor, targetCollider, impactPoint);
             }
         }
@@ -309,9 +267,6 @@ namespace Presentation.Gameplay.Projectiles
             return null;
         }
 
-        /// <summary>
-        /// Performs the StickToCircle operation using collider data.
-        /// </summary>
         private void StickToCollider(Transform anchor, Collider2D collider, Vector3 impactPoint)
         {
             if (anchor == null)
@@ -323,21 +278,14 @@ namespace Presentation.Gameplay.Projectiles
 
             ResolveAsStuck();
             AlignToSurface(anchor, center, surfacePoint, surfaceDirection);
-            PlaySound(soundSettings != null ? soundSettings.HitTargetSound : null);
+            PlaySound(soundSettings?.HitTargetSound);
             impactEventChannel?.RaiseKnifeStuck(impactPoint);
             
             Transform targetTransform = FindTargetAncestor(anchor);
-            if (targetTransform != null)
-            {
-                targetHitTracker?.RecordHit(targetTransform);
-            }
-            
+            targetHitTracker?.RecordHit(targetTransform);
             thrower?.OnKnifeResolved();
         }
 
-        /// <summary>
-        /// Performs the HandleKnifeHitKnife operation.
-        /// </summary>
         private void HandleKnifeHitKnife(Vector3 impactPoint)
         {
             if (isResolved || isReturnedToPool)
@@ -356,18 +304,23 @@ namespace Presentation.Gameplay.Projectiles
             transform.SetParent(null);
             SetCollidersEnabled(false);
 
-            // Record failure when knife hits another knife
-            Debug.Log("[Knife] Knife hit another knife - recording failure");
             sessionService?.RecordKnifeToKnifeFailure();
-
             thrower?.OnKnifeResolved();
-            PlaySound(soundSettings != null ? soundSettings.HitKnifeSound : null);
+            PlaySound(soundSettings?.HitKnifeSound);
             PlayBounceOffAnimation();
         }
 
-        /// <summary>
-        /// Performs the ReturnToPool operation.
-        /// </summary>
+        private void HandleOutOfBounds()
+        {
+            if (isResolved || isStuck || isReturnedToPool)
+            {
+                return;
+            }
+
+            sessionService?.RecordOutOfBoundsFailure();
+            ReturnToPool();
+        }
+
         private void ReturnToPool()
         {
             if (isReturnedToPool)
@@ -377,6 +330,7 @@ namespace Presentation.Gameplay.Projectiles
 
             isReturnedToPool = true;
             isResolved = true;
+            
             HaltMotion();
             if (rb2d != null)
             {
@@ -388,14 +342,13 @@ namespace Presentation.Gameplay.Projectiles
             KillBounceSequence();
             thrower?.OnKnifeResolved();
 
-            if (thrower != null)
-            {
-                thrower.ReturnToPool(this);
-            }
-            else
+            if (thrower == null)
             {
                 gameObject.SetActive(false);
+                return;
             }
+
+            thrower.ReturnToPool(this);
         }
 
         /// <summary>
@@ -436,17 +389,11 @@ namespace Presentation.Gameplay.Projectiles
         public bool IsStuck => isStuck;
         public float EmbedOffset => embedOffset;
 
-        /// <summary>
-        /// Performs the CanResolveImpact operation.
-        /// </summary>
         private bool CanResolveImpact()
         {
             return !isResolved && !isStuck && !isReturnedToPool;
         }
 
-        /// <summary>
-        /// Performs the ResolveAsStuck operation.
-        /// </summary>
         private void ResolveAsStuck()
         {
             isStuck = true;
@@ -454,20 +401,13 @@ namespace Presentation.Gameplay.Projectiles
             isReturnedToPool = false;
             HaltMotion();
 
-            if (rb2d == null)
-            {
-                rb2d = GetComponent<Rigidbody2D>();
-            }
-
+            rb2d ??= GetComponent<Rigidbody2D>();
             if (rb2d != null)
             {
                 rb2d.bodyType = RigidbodyType2D.Static;
             }
         }
 
-        /// <summary>
-        /// Performs the AlignToCircleEdge operation.
-        /// </summary>
         private void AlignToSurface(Transform anchorParent, Vector3 circleCenter, Vector3 surfacePoint, Vector2 surfaceDirection)
         {
             Vector2 direction = surfaceDirection.sqrMagnitude > Mathf.Epsilon
@@ -488,9 +428,6 @@ namespace Presentation.Gameplay.Projectiles
             transform.SetParent(anchorParent, true);
         }
 
-        /// <summary>
-        /// Performs the HaltMotion operation.
-        /// </summary>
         private void HaltMotion()
         {
             speed = 0f;
@@ -502,9 +439,6 @@ namespace Presentation.Gameplay.Projectiles
             }
         }
 
-        /// <summary>
-        /// Performs the SetCollidersEnabled operation.
-        /// </summary>
         private void SetCollidersEnabled(bool enabled)
         {
             if (cachedColliders == null || cachedColliders.Length == 0)
@@ -522,9 +456,6 @@ namespace Presentation.Gameplay.Projectiles
             }
         }
 
-        /// <summary>
-        /// Performs the PlayBounceOffAnimation operation.
-        /// </summary>
         private void PlayBounceOffAnimation()
         {
             KillBounceSequence();
@@ -556,9 +487,6 @@ namespace Presentation.Gameplay.Projectiles
             bounceSequence.OnKill(() => bounceSequence = null);
         }
 
-        /// <summary>
-        /// Performs the KillBounceSequence operation.
-        /// </summary>
         private void KillBounceSequence()
         {
             if (bounceSequence != null)
@@ -568,9 +496,6 @@ namespace Presentation.Gameplay.Projectiles
             }
         }
 
-        /// <summary>
-        /// Performs the PlaySound operation.
-        /// </summary>
         private void PlaySound(AudioClip clip)
         {
             if (clip == null)
@@ -583,9 +508,6 @@ namespace Presentation.Gameplay.Projectiles
             player.Play2D(clip, soundVolume);
         }
 
-        /// <summary>
-        /// Performs the ResolveImpactPoint operation.
-        /// </summary>
         private Vector3 ResolveImpactPoint(Collision2D collision)
         {
             if (collision == null)
@@ -601,9 +523,6 @@ namespace Presentation.Gameplay.Projectiles
             return ResolveImpactPoint(collision.collider);
         }
 
-        /// <summary>
-        /// Performs the ResolveImpactPoint operation.
-        /// </summary>
         private Vector3 ResolveImpactPoint(Collider2D collider)
         {
             if (collider == null)
@@ -614,9 +533,6 @@ namespace Presentation.Gameplay.Projectiles
             return collider.ClosestPoint(transform.position);
         }
 
-        /// <summary>
-        /// Performs the ResolveImpactDirection operation.
-        /// </summary>
         private Vector2 ResolveImpactDirection(Vector3 circleCenter, Vector3 impactPoint)
         {
             Vector2 fromCenter = (Vector2)(impactPoint - circleCenter);
@@ -628,9 +544,6 @@ namespace Presentation.Gameplay.Projectiles
             return fromCenter.sqrMagnitude > Mathf.Epsilon ? fromCenter.normalized : Vector2.up;
         }
 
-        /// <summary>
-        /// Performs the TryResolveSnapOffset operation.
-        /// </summary>
         private bool TryResolveSnapOffset(Quaternion rotation, out Vector3 snapOffset)
         {
             Transform resolvedSnap = ResolveSnapPosition();
@@ -647,7 +560,7 @@ namespace Presentation.Gameplay.Projectiles
 
         private bool ShouldReturnBasedOnGameplayCamera()
         {
-            Camera cam = gameplayCamera != null ? gameplayCamera : Camera.main;
+            Camera cam = Camera.main;
             if (cam == null)
             {
                 return false;
@@ -662,14 +575,11 @@ namespace Presentation.Gameplay.Projectiles
             }
 
             return viewportPosition.x < -margin
-                   || viewportPosition.x > 1f + margin
-                   || viewportPosition.y < -margin
-                   || viewportPosition.y > 1f + margin;
+                || viewportPosition.x > 1f + margin
+                || viewportPosition.y < -margin
+                || viewportPosition.y > 1f + margin;
         }
 
-        /// <summary>
-        /// Performs the ResolveSnapPosition operation.
-        /// </summary>
         private Transform ResolveSnapPosition()
         {
             if (snapPosition != null)
@@ -710,9 +620,6 @@ namespace Presentation.Gameplay.Projectiles
             surfacePoint = center + (Vector3)(surfaceDirection * radius);
         }
 
-        /// <summary>
-        /// Performs the ResolveOrDefault<T> operation.
-        /// </summary>
         private T ResolveOrDefault<T>(System.Func<T> resolver, T fallback)
         {
             if (bounceAnimationConfig == null)

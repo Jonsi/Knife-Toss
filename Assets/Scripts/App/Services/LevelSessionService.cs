@@ -162,13 +162,27 @@ namespace App.Services
         /// </summary>
         public void RecordKnifeToKnifeFailure()
         {
+            RecordFailure();
+        }
+
+        /// <summary>
+        /// Records failure when a knife goes out of bounds without hitting a target.
+        /// </summary>
+        public void RecordOutOfBoundsFailure()
+        {
+            RecordFailure();
+        }
+
+        /// <summary>
+        /// Records a failure and disables thrower input.
+        /// </summary>
+        private void RecordFailure()
+        {
             if (session == null || session.IsFailed || session.IsComplete)
             {
-                Debug.LogWarning("[LevelSessionService] Cannot record failure - session is null or already failed/complete");
                 return;
             }
 
-            Debug.Log("[LevelSessionService] Recording knife-to-knife failure");
             session.RecordFailure();
             DisableThrowerInput();
         }
@@ -227,7 +241,6 @@ namespace App.Services
         private void SaveProgress()
         {
             playerDataService?.SetHighestLevel(session.LevelIndex);
-            // Fruits are already saved immediately when hit, so no need to save again here
         }
 
         /// <summary>

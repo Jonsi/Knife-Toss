@@ -31,12 +31,12 @@ namespace Presentation.Gameplay
         {
             targetHits.Clear();
 
-            if (levelData?.targetGroup?.targets == null || gameplayObjectProvider == null)
+            if (levelData?.targetGroup?.targets == null)
             {
                 return;
             }
 
-            TargetGroupManager manager = gameplayObjectProvider.GetTargetGroupManager();
+            TargetGroupManager manager = gameplayObjectProvider?.GetTargetGroupManager();
             if (manager == null)
             {
                 return;
