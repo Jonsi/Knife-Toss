@@ -39,7 +39,7 @@ namespace Core.Data
     public class PlayerProgressData
     {
         public int highestLevel = 1;
-        public int coins = 0;
+        public int totalFruitsHit = 0;
         public LevelProgressData levelProgress = new LevelProgressData();
     }
 }

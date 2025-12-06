@@ -67,6 +67,20 @@ namespace Infrastructure.Persistence
             }
         }
 
+        public void AddFruitsHit(int count)
+        {
+            if (count > 0)
+            {
+                playerData.progress.totalFruitsHit += count;
+                Save();
+            }
+        }
+
+        public int GetTotalFruitsHit()
+        {
+            return playerData.progress.totalFruitsHit;
+        }
+
         private void EnsureDefaultSections()
         {
             if (playerData.settings == null)

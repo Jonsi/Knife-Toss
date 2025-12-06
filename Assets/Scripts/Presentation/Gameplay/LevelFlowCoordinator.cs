@@ -6,6 +6,7 @@ using Core.Events;
 using Cysharp.Threading.Tasks;
 using Presentation.UI;
 using Presentation.UI.ViewModels;
+using UnityEngine;
 using VContainer.Unity;
 
 namespace Presentation.Gameplay
@@ -19,6 +20,7 @@ namespace Presentation.Gameplay
         private readonly LevelSession session;
         private readonly LevelHudPresenter hudPresenter;
         private readonly LevelCommandEventChannel commandChannel;
+        private readonly IPlayerDataService playerDataService;
 
         /// <summary>
         /// Performs the LevelFlowCoordinator operation.
@@ -27,12 +29,14 @@ namespace Presentation.Gameplay
             LevelSessionService sessionService,
             LevelSession session,
             LevelHudPresenter hudPresenter,
-            LevelCommandEventChannel commandChannel)
+            LevelCommandEventChannel commandChannel,
+            IPlayerDataService playerDataService)
         {
             this.sessionService = sessionService;
             this.session = session;
             this.hudPresenter = hudPresenter;
             this.commandChannel = commandChannel;
+            this.playerDataService = playerDataService;
         }
 
         /// <summary>
@@ -150,7 +154,7 @@ namespace Presentation.Gameplay
                 return;
             }
 
-            hudPresenter.Render(LevelHudViewModel.FromSession(session));
+            hudPresenter.Render(LevelHudViewModel.FromSession(session, playerDataService));
         }
 
         /// <summary>

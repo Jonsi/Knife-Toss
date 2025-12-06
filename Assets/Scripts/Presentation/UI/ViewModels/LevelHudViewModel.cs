@@ -1,3 +1,4 @@
+using Core.Abstractions;
 using Core.Domain;
 
 namespace Presentation.UI.ViewModels
@@ -14,6 +15,8 @@ namespace Presentation.UI.ViewModels
         public int TotalKnives { get; }
         public int KnivesThrown { get; }
         public int KnivesRemaining => UnityEngine.Mathf.Max(0, TotalKnives - KnivesThrown);
+        public int FruitsHit { get; }
+        public int TotalFruitsHit { get; }
 
         /// <summary>
         /// Performs the LevelHudViewModel operation.
@@ -24,7 +27,9 @@ namespace Presentation.UI.ViewModels
             string knivesRemainingLabel,
             string levelCompleteLabel,
             int totalKnives,
-            int knivesThrown)
+            int knivesThrown,
+            int fruitsHit,
+            int totalFruitsHit)
         {
             LevelIndex = levelIndex;
             LevelLabel = levelLabel;
@@ -32,16 +37,19 @@ namespace Presentation.UI.ViewModels
             LevelCompleteLabel = levelCompleteLabel;
             TotalKnives = totalKnives;
             KnivesThrown = knivesThrown;
+            FruitsHit = fruitsHit;
+            TotalFruitsHit = totalFruitsHit;
         }
 
         /// <summary>
         /// Performs the FromSession operation.
         /// </summary>
-        public static LevelHudViewModel FromSession(LevelSession session)
+        public static LevelHudViewModel FromSession(LevelSession session, IPlayerDataService playerDataService = null)
         {
             if (session?.Rules == null || session.Rules.KnifeCount <= 0)
             {
-                return new LevelHudViewModel(0, string.Empty, string.Empty, string.Empty, 0, 0);
+                int totalFruits = playerDataService?.GetTotalFruitsHit() ?? 0;
+                return new LevelHudViewModel(0, string.Empty, string.Empty, string.Empty, 0, 0, 0, totalFruits);
             }
 
             int levelIndex = session.LevelIndex;
@@ -50,7 +58,9 @@ namespace Presentation.UI.ViewModels
             int remainingLabelValue = UnityEngine.Mathf.Max(0, session.Rules.KnifeCount - session.PlayerKnivesStuck);
             string levelLabel = $"{levelIndex}";
             string completeLabel = $"LEVEL {levelLabel}";
-            return new LevelHudViewModel(levelIndex, levelLabel, remainingLabelValue.ToString(), completeLabel, total, thrown);
+            int fruitsHit = session.HitableObjectsHit;
+            int totalFruitsHit = playerDataService?.GetTotalFruitsHit() ?? 0;
+            return new LevelHudViewModel(levelIndex, levelLabel, remainingLabelValue.ToString(), completeLabel, total, thrown, fruitsHit, totalFruitsHit);
         }
     }
 }

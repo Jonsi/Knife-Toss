@@ -165,7 +165,7 @@ namespace Editor
             if (workingCopy.progress != null)
             {
                 workingCopy.progress.highestLevel = EditorGUILayout.IntField("Highest Level", workingCopy.progress.highestLevel);
-                workingCopy.progress.coins = EditorGUILayout.IntField("Coins", workingCopy.progress.coins);
+                workingCopy.progress.totalFruitsHit = EditorGUILayout.IntField("Total Fruits Hit", workingCopy.progress.totalFruitsHit);
 
                 EditorGUILayout.Space(4f);
                 EditorGUILayout.LabelField("Level Progress (Stars per Level)", EditorStyles.boldLabel);

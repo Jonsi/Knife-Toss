@@ -25,6 +25,10 @@ namespace Core.Data
         [Tooltip("Defines the targets in this level and their orbit/scaling settings.")]
         public TargetGroupConfig targetGroup = new TargetGroupConfig();
 
+        [Header("Fruit Count Display")]
+        [Tooltip("Total fruits hit across all levels (displayed in UI). This is read from PlayerData and updated in real-time.")]
+        public int totalFruitsHit = 0;
+
         /// <summary>
         /// Calculates the total number of knives needed based on all targets' knivesToBreak values.
         /// </summary>

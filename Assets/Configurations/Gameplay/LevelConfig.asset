@@ -16,12 +16,12 @@ MonoBehaviour:
   - knives: 0
     targetGroup:
       targets:
-      - prefab: {fileID: 0}
+      - prefab: {fileID: 5427965671015069626, guid: 0e557c846743ed044bf689812c8bae87, type: 3}
         orbitRadius: 0
         startingAngle: 0
         orbitDegreesPerSecond: 0
         baseScale: 1.0770032
-        preStuckKnives: 0
+        preStuckKnives: 1
         preStuckKnifeSpacing: 45
         rotation:
           speed: 71.86656
@@ -58,7 +58,11 @@ MonoBehaviour:
               m_PostInfinity: 2
               m_RotationOrder: 4
             curveLoopDuration: 2.4
-        hitableObjects: []
+        hitableObjects:
+        - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+          count: 2
+          angularSpacing: 0
+          orientOutwards: 1
         knivesToBreak: 3
   - knives: 0
     targetGroup:

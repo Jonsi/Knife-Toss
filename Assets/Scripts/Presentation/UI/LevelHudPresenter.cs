@@ -22,6 +22,7 @@ namespace Presentation.UI
         [SerializeField] private ButtonClickEventChannel buttonClickEventChannel;
         [SerializeField] private KnifeMagazineDisplay magazineDisplay;
         [SerializeField] private FailButtonsPresenter failButtonsPresenter;
+        [SerializeField] private FruitCountDisplay fruitCountDisplay;
 
         private ILevelCommandInvoker commandInvoker;
         private ISettingsService _settingsService;
@@ -64,6 +65,7 @@ namespace Presentation.UI
         {
             RenderLevelIcon(viewModel);
             magazineDisplay?.Render(viewModel.TotalKnives, viewModel.KnivesThrown);
+            fruitCountDisplay?.Render(viewModel.TotalFruitsHit);
         }
 
         /// <summary>

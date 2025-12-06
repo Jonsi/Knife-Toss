@@ -130,6 +130,8 @@ namespace App.Services
         private void HandleHitableObjectHit(Vector3 _)
         {
             session.RecordHitableObjectHit();
+            // Save fruits immediately to data so the display updates in real-time
+            playerDataService?.AddFruitsHit(1);
             ScheduleEvaluation();
         }
 
@@ -245,6 +247,7 @@ namespace App.Services
         private void SaveProgress()
         {
             playerDataService?.SetHighestLevel(session.LevelIndex);
+            // Fruits are already saved immediately when hit, so no need to save again here
         }
 
         /// <summary>

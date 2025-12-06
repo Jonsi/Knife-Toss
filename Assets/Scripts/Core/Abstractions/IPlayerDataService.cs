@@ -19,5 +19,7 @@ namespace Core.Abstractions
 
         int GetHighestLevel(int fallbackLevel);
         void SetHighestLevel(int levelIndex);
+        void AddFruitsHit(int count);
+        int GetTotalFruitsHit();
     }
 }
