@@ -21,6 +21,7 @@ namespace Presentation.UI
         [SerializeField] private GameObject unmuteIcon;
         [SerializeField] private ButtonClickEventChannel buttonClickEventChannel;
         [SerializeField] private KnifeMagazineDisplay magazineDisplay;
+        [SerializeField] private FailButtonsPresenter failButtonsPresenter;
 
         private ILevelCommandInvoker commandInvoker;
         private ISettingsService _settingsService;
@@ -70,6 +71,14 @@ namespace Presentation.UI
         /// </summary>
         public void ShowFail(bool show)
         {
+            if (failButtonsPresenter != null)
+            {
+                failButtonsPresenter.ShowFailButtons(show);
+            }
+            else
+            {
+                Debug.LogWarning("[LevelHudPresenter] failButtonsPresenter is null, cannot show fail buttons");
+            }
         }
 
         /// <summary>

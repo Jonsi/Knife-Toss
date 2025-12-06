@@ -135,7 +135,9 @@ namespace Presentation.Gameplay
         /// </summary>
         private void HandleLevelFailed(LevelSession _)
         {
-            // Level failed - no popup or retry button needed
+            // Show fail buttons when level fails
+            Debug.Log("[LevelFlowCoordinator] Level failed - showing fail buttons");
+            hudPresenter?.ShowFail(true);
         }
 
         /// <summary>

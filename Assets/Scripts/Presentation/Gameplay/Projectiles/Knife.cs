@@ -1,3 +1,4 @@
+using App.Services;
 using Core.Abstractions;
 using Core.Data;
 using Core.Events;
@@ -35,6 +36,7 @@ namespace Presentation.Gameplay.Projectiles
         private IKnifeTracker knifeTracker;
         private IAudioPlayer audioPlayer;
         [SerializeField] private Camera gameplayCamera;
+        private LevelSessionService sessionService;
 
         [Header("Stick Settings")]
         [SerializeField] private float embedOffset = 0.02f;
@@ -86,11 +88,12 @@ namespace Presentation.Gameplay.Projectiles
         /// Performs the Construct operation.
         /// </summary>
         [VContainer.Inject]
-        public void Construct(IKnifeTracker tracker, IAudioPlayer audioPlayer, SoundSettings soundSettings)
+        public void Construct(IKnifeTracker tracker, IAudioPlayer audioPlayer, SoundSettings soundSettings, LevelSessionService sessionService)
         {
             knifeTracker = tracker;
             this.audioPlayer = audioPlayer;
             this.soundSettings = soundSettings;
+            this.sessionService = sessionService;
         }
 
         /// <summary>
@@ -347,6 +350,10 @@ namespace Presentation.Gameplay.Projectiles
             transform.position = impactPoint;
             transform.SetParent(null);
             SetCollidersEnabled(false);
+
+            // Record failure when knife hits another knife
+            Debug.Log("[Knife] Knife hit another knife - recording failure");
+            sessionService?.RecordKnifeToKnifeFailure();
 
             thrower?.OnKnifeResolved();
             PlaySound(soundSettings != null ? soundSettings.HitKnifeSound : null);

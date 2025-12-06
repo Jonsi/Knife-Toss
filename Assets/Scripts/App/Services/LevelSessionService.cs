@@ -154,6 +154,22 @@ namespace App.Services
         }
 
         /// <summary>
+        /// Records failure when a knife hits another knife.
+        /// </summary>
+        public void RecordKnifeToKnifeFailure()
+        {
+            if (session == null || session.IsFailed || session.IsComplete)
+            {
+                Debug.LogWarning("[LevelSessionService] Cannot record failure - session is null or already failed/complete");
+                return;
+            }
+
+            Debug.Log("[LevelSessionService] Recording knife-to-knife failure");
+            session.RecordFailure();
+            DisableThrowerInput();
+        }
+
+        /// <summary>
         /// Evaluates completion/failure after knife-related events.
         /// </summary>
         private bool evaluationScheduled;

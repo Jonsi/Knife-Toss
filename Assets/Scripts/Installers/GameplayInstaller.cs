@@ -43,6 +43,7 @@ namespace Installers
         [Header("UI References")]
         [SerializeField] private LevelHudPresenter hudPresenter;
         [SerializeField] private LevelsPopup levelsPopup;
+        [SerializeField] private Presentation.UI.FailButtonsPresenter failButtonsPresenter;
 
         /// <summary>
         /// Performs the Configure operation.
@@ -61,6 +62,10 @@ namespace Installers
             if (levelsPopup != null)
             {
                 builder.RegisterComponent(levelsPopup);
+            }
+            if (failButtonsPresenter != null)
+            {
+                builder.RegisterComponent(failButtonsPresenter);
             }
             builder.Register<IAudioPlayer, AudioPlayer>(Lifetime.Singleton);
             builder.Register<ILevelCommandInvoker, LevelCommandChannelInvoker>(Lifetime.Singleton)

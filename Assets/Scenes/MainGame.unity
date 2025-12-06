@@ -303,8 +303,6 @@ RectTransform:
   - {fileID: 321186378}
   - {fileID: 2033171433}
   - {fileID: 1556291775}
-  - {fileID: 2130866518}
-  - {fileID: 1324129127}
   m_Father: {fileID: 1672016116}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -332,6 +330,7 @@ MonoBehaviour:
   unmuteIcon: {fileID: 0}
   buttonClickEventChannel: {fileID: 11400000, guid: 721085d1c0ff9a14b96a5baa901e0c64, type: 2}
   magazineDisplay: {fileID: 2033171437}
+  failButtonsPresenter: {fileID: 1556291776}
 --- !u!1 &294740849
 GameObject:
   m_ObjectHideFlags: 0
@@ -828,7 +827,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1324129127
 RectTransform:
   m_ObjectHideFlags: 0
@@ -842,7 +841,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1582231239}
-  m_Father: {fileID: 197163807}
+  m_Father: {fileID: 1556291775}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1332,8 +1331,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1556291775}
+  - component: {fileID: 1556291776}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: FailButtonsHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1350,14 +1350,31 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2130866518}
+  - {fileID: 1324129127}
   m_Father: {fileID: 197163807}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1556291776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1556291774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 927a20f24d642e44e8bfefc78086fcf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Presentation.UI.FailButtonsPresenter
+  retryButton: {fileID: 2130866519}
+  giveUpButton: {fileID: 1324129128}
+  commandChannel: {fileID: 11400000, guid: 76592a2f6c663224399fb72a23fe1509, type: 2}
 --- !u!1 &1582231238
 GameObject:
   m_ObjectHideFlags: 0
@@ -2021,7 +2038,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2130866518
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2035,7 +2052,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1362958133}
-  m_Father: {fileID: 197163807}
+  m_Father: {fileID: 1556291775}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
