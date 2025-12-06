@@ -322,10 +322,6 @@ namespace Presentation.Gameplay.Projectiles
             ResolveAsStuck();
             AlignToSurface(anchor, center, surfacePoint, surfaceDirection);
             PlaySound(soundSettings != null ? soundSettings.HitTargetSound : null);
-            if (TargetKnivesToBreakIndicatorRegistry.TryResolve(anchor, out TargetKnivesToBreakIndicator knivesIndicator))
-            {
-                knivesIndicator.RegisterHit();
-            }
             impactEventChannel?.RaiseKnifeStuck(impactPoint);
             thrower?.OnKnifeResolved();
         }

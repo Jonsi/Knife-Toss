@@ -145,12 +145,6 @@ namespace Presentation.Gameplay
             rotatingTarget.Resume();
             rotatingTarget.ResetRotation();
 
-            TargetKnivesToBreakIndicator knivesIndicator = instance.GetComponentInChildren<TargetKnivesToBreakIndicator>(includeInactive: true);
-            if (knivesIndicator != null)
-            {
-                knivesIndicator.Configure(definition.knivesToBreak);
-            }
-
             TargetEntry entry = new TargetEntry
             {
                 Definition = definition,

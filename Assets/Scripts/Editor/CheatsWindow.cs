@@ -12,7 +12,9 @@ namespace Editor
     public class CheatsWindow : EditorWindow
     {
         private const string Title = "Cheats";
-        private LevelCommandEventChannel commandChannel;
+        private const string CommandChannelPrefKey = "CheatsWindow.CommandChannel";
+        
+        [SerializeField] private LevelCommandEventChannel commandChannel;
         private Vector2 scrollPosition;
 
         [MenuItem("Knife Toss/Cheats")]
@@ -24,6 +26,7 @@ namespace Editor
         private void OnEnable()
         {
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+            LoadCommandChannelFromPrefs();
             FindCommandChannel();
         }
 
@@ -77,6 +80,21 @@ namespace Editor
                 Repaint();
             }
             EditorGUILayout.EndHorizontal();
+            
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Channel Assignment", EditorStyles.boldLabel);
+            LevelCommandEventChannel newChannel = EditorGUILayout.ObjectField(
+                "Level Command Event Channel", 
+                commandChannel, 
+                typeof(LevelCommandEventChannel), 
+                true) as LevelCommandEventChannel;
+            
+            if (newChannel != commandChannel)
+            {
+                commandChannel = newChannel;
+                SaveCommandChannelToPrefs();
+            }
+            
             EditorGUILayout.Space();
 
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
@@ -116,27 +134,52 @@ namespace Editor
 
         private void FindCommandChannel()
         {
-            commandChannel = null;
-
             if (!Application.isPlaying)
             {
                 return;
             }
 
-            // Try to find the channel through GameplayInstaller in the scene
-            GameplayInstaller installer = FindObjectOfType<GameplayInstaller>();
-            if (installer != null)
+            // If channel is already assigned, use it
+            if (commandChannel != null)
             {
-                // Use SerializedObject to access the private serialized field
-                SerializedObject serializedInstaller = new SerializedObject(installer);
-                SerializedProperty channelProperty = serializedInstaller.FindProperty("levelCommandEventChannel");
-                
-                if (channelProperty != null && channelProperty.objectReferenceValue != null)
+                return;
+            }
+
+            // Try to find the channel through GameplayInstaller in the scene
+            var allInstallers = Resources.FindObjectsOfTypeAll<GameplayInstaller>();
+            if (allInstallers != null && allInstallers.Length > 0)
+            {
+                // Prefer one that's not an asset (runtime instance)
+                GameplayInstaller installer = null;
+                foreach (var inst in allInstallers)
                 {
-                    commandChannel = channelProperty.objectReferenceValue as LevelCommandEventChannel;
-                    if (commandChannel != null)
+                    if (inst.hideFlags == HideFlags.None || inst.hideFlags == HideFlags.DontSave)
                     {
-                        return;
+                        installer = inst;
+                        break;
+                    }
+                }
+
+                // If no runtime instance found, use the first one
+                if (installer == null && allInstallers.Length > 0)
+                {
+                    installer = allInstallers[0];
+                }
+
+                if (installer != null)
+                {
+                    // Use SerializedObject to access the private serialized field
+                    SerializedObject serializedInstaller = new SerializedObject(installer);
+                    SerializedProperty channelProperty = serializedInstaller.FindProperty("levelCommandEventChannel");
+                    
+                    if (channelProperty != null && channelProperty.objectReferenceValue != null)
+                    {
+                        commandChannel = channelProperty.objectReferenceValue as LevelCommandEventChannel;
+                        if (commandChannel != null)
+                        {
+                            SaveCommandChannelToPrefs();
+                            return;
+                        }
                     }
                 }
             }
@@ -151,7 +194,8 @@ namespace Editor
                     if (channel.hideFlags == HideFlags.None || channel.hideFlags == HideFlags.DontSave)
                     {
                         commandChannel = channel;
-                        break;
+                        SaveCommandChannelToPrefs();
+                        return;
                     }
                 }
 
@@ -159,7 +203,38 @@ namespace Editor
                 if (commandChannel == null)
                 {
                     commandChannel = allChannels[0];
+                    SaveCommandChannelToPrefs();
                 }
+            }
+        }
+
+        private void LoadCommandChannelFromPrefs()
+        {
+            string guid = EditorPrefs.GetString(CommandChannelPrefKey, string.Empty);
+            if (!string.IsNullOrEmpty(guid))
+            {
+                string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                if (!string.IsNullOrEmpty(assetPath))
+                {
+                    commandChannel = AssetDatabase.LoadAssetAtPath<LevelCommandEventChannel>(assetPath);
+                }
+            }
+        }
+
+        private void SaveCommandChannelToPrefs()
+        {
+            if (commandChannel != null)
+            {
+                string assetPath = AssetDatabase.GetAssetPath(commandChannel);
+                if (!string.IsNullOrEmpty(assetPath))
+                {
+                    string guid = AssetDatabase.AssetPathToGUID(assetPath);
+                    EditorPrefs.SetString(CommandChannelPrefKey, guid);
+                }
+            }
+            else
+            {
+                EditorPrefs.DeleteKey(CommandChannelPrefKey);
             }
         }
     }
