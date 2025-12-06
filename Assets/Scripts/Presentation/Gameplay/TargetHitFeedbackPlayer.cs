@@ -37,7 +37,7 @@ namespace Presentation.Gameplay
 
         private void HandleKnifeStuckAt(Vector3 impactPosition)
         {
-            TargetGroupManager manager = gameplayObjectProvider.GetTargetGroupManager();
+            TargetGroupManager manager = gameplayObjectProvider?.GetTargetGroupManager();
             if (manager == null)
             {
                 return;
@@ -90,26 +90,33 @@ namespace Presentation.Gameplay
             }
 
             SpriteRenderer[] renderers = target.GetComponentsInChildren<SpriteRenderer>();
-            if (renderers != null && renderers.Length > 0)
+            if (renderers == null || renderers.Length == 0)
             {
-                Vector3 shakeStrength = new Vector3(animationConfig.ShakeStrength, animationConfig.ShakeStrength, 0f);
-                for (int i = 0; i < renderers.Length; i++)
+                return;
+            }
+
+            Vector3 shakeStrength = new Vector3(animationConfig.ShakeStrength, animationConfig.ShakeStrength, 0f);
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                SpriteRenderer renderer = renderers[i];
+                Transform rendererTransform = renderer?.transform;
+                if (rendererTransform == null)
                 {
-                    SpriteRenderer renderer = renderers[i];
-                    if (renderer != null && renderer.transform != null)
-                    {
-                        TweenKiller.Kill(renderer.transform);
-                        renderer.transform
-                            .DOShakePosition(
-                                animationConfig.ShakeDuration,
-                                shakeStrength,
-                                animationConfig.ShakeVibrato,
-                                animationConfig.ShakeRandomness,
-                                snapping: false,
-                                fadeOut: animationConfig.ShakeFadeOut)
-                            .SetRelative();
-                    }
+                    continue;
                 }
+
+                TweenKiller.Kill(rendererTransform);
+                rendererTransform
+                    .DOShakePosition(
+                        animationConfig.ShakeDuration,
+                        shakeStrength,
+                        animationConfig.ShakeVibrato,
+                        animationConfig.ShakeRandomness,
+                        snapping: false,
+                        fadeOut: animationConfig.ShakeFadeOut)
+                    .SetRelative()
+                    .SetTarget(rendererTransform)
+                    .SetAutoKill(true);
             }
         }
 
@@ -146,39 +153,49 @@ namespace Presentation.Gameplay
                     continue;
                 }
 
-                Color baseColor = renderer.color;
-                TweenKiller.Kill(renderer);
+                ApplyTintToRenderer(renderer, targetColor, tintEase, fadeIn, hold, fadeOut);
+            }
+        }
 
-                Sequence sequence = DOTween.Sequence().SetTarget(renderer).SetAutoKill(true);
+        private static void ApplyTintToRenderer(SpriteRenderer renderer, Color targetColor, Ease tintEase, float fadeIn, float hold, float fadeOut)
+        {
+            Color baseColor = renderer.color;
+            TweenKiller.Kill(renderer);
 
-                if (fadeIn > 0f)
-                {
-                    sequence.Append(renderer.DOColor(targetColor, fadeIn).SetEase(tintEase));
-                }
-                else
-                {
-                    renderer.color = targetColor;
-                }
+            if (fadeIn <= 0f && hold <= 0f && fadeOut <= 0f)
+            {
+                return;
+            }
 
-                if (hold > 0f)
-                {
-                    sequence.AppendInterval(hold);
-                }
+            Sequence sequence = DOTween.Sequence()
+                .SetTarget(renderer)
+                .SetAutoKill(true);
 
-                if (fadeOut > 0f)
-                {
-                    sequence.Append(renderer.DOColor(baseColor, fadeOut).SetEase(tintEase));
-                }
-                else if (fadeIn > 0f || hold > 0f)
-                {
-                    sequence.AppendCallback(() => { if (renderer != null) renderer.color = baseColor; });
-                }
-                else
-                {
-                    renderer.color = baseColor;
-                }
+            if (fadeIn > 0f)
+            {
+                sequence.Append(renderer.DOColor(targetColor, fadeIn)
+                    .SetEase(tintEase)
+                    .SetTarget(renderer));
+            }
+            else
+            {
+                renderer.color = targetColor;
+            }
 
-                sequence.OnKill(() =>
+            if (hold > 0f)
+            {
+                sequence.AppendInterval(hold);
+            }
+
+            if (fadeOut > 0f)
+            {
+                sequence.Append(renderer.DOColor(baseColor, fadeOut)
+                    .SetEase(tintEase)
+                    .SetTarget(renderer));
+            }
+            else if (fadeIn > 0f || hold > 0f)
+            {
+                sequence.AppendCallback(() =>
                 {
                     if (renderer != null)
                     {
@@ -186,6 +203,14 @@ namespace Presentation.Gameplay
                     }
                 });
             }
+
+            sequence.OnKill(() =>
+            {
+                if (renderer != null)
+                {
+                    renderer.color = baseColor;
+                }
+            });
         }
     }
 }

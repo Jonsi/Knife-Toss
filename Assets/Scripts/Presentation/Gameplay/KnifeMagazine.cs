@@ -174,18 +174,33 @@ namespace Presentation.Gameplay
                 TweenKiller.Kill(knife);
 
                 Transform knifeTransform = knife.transform;
+                if (knifeTransform == null)
+                {
+                    continue;
+                }
+
                 SpriteRenderer renderer = knife.GetComponent<SpriteRenderer>();
 
                 Vector3 targetPosition = GetQueuePosition(i);
                 Vector3 targetScale = pool.PrefabOriginalScale * GetQueueScaleMultiplier(i) * ResolveScaleMultiplier();
                 Color targetColor = pool.PrefabOriginalColor * new Color(1f, 1f, 1f, GetQueueOpacityMultiplier(i));
 
-                knifeTransform.DOMove(targetPosition, slideAnimationDuration).SetEase(Ease.OutQuad);
-                knifeTransform.DOScale(targetScale, slideAnimationDuration).SetEase(Ease.OutQuad);
+                knifeTransform.DOMove(targetPosition, slideAnimationDuration)
+                    .SetEase(Ease.OutQuad)
+                    .SetTarget(knifeTransform)
+                    .SetAutoKill(true);
+                
+                knifeTransform.DOScale(targetScale, slideAnimationDuration)
+                    .SetEase(Ease.OutQuad)
+                    .SetTarget(knifeTransform)
+                    .SetAutoKill(true);
 
                 if (renderer != null)
                 {
-                    renderer.DOColor(targetColor, slideAnimationDuration).SetEase(Ease.OutQuad);
+                    renderer.DOColor(targetColor, slideAnimationDuration)
+                        .SetEase(Ease.OutQuad)
+                        .SetTarget(renderer)
+                        .SetAutoKill(true);
                 }
             }
         }

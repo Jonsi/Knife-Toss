@@ -97,12 +97,25 @@ namespace Presentation.Gameplay.Views
         {
             KillTweens();
 
-            transform.DOMove(position, duration).SetEase(Ease.OutQuad);
-            transform.DOScale(scale, duration).SetEase(Ease.OutQuad);
+            if (transform != null)
+            {
+                transform.DOMove(position, duration)
+                    .SetEase(Ease.OutQuad)
+                    .SetTarget(transform)
+                    .SetAutoKill(true);
+                
+                transform.DOScale(scale, duration)
+                    .SetEase(Ease.OutQuad)
+                    .SetTarget(transform)
+                    .SetAutoKill(true);
+            }
 
             if (Renderer != null)
             {
-                Renderer.DOColor(color, duration).SetEase(Ease.OutQuad);
+                Renderer.DOColor(color, duration)
+                    .SetEase(Ease.OutQuad)
+                    .SetTarget(Renderer)
+                    .SetAutoKill(true);
             }
         }
 

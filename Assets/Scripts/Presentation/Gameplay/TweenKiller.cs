@@ -4,13 +4,10 @@ using UnityEngine;
 
 namespace Presentation.Gameplay
 {
-
-
-
     internal static class TweenKiller
     {
         /// <summary>
-        /// Performs the Kill operation.
+        /// Kills all tweens associated with the target object.
         /// </summary>
         public static void Kill(object target)
         {
@@ -19,11 +16,11 @@ namespace Presentation.Gameplay
                 return;
             }
 
-            DG.Tweening.DOTween.Kill(target, true);
+            DOTween.Kill(target, true);
         }
 
         /// <summary>
-        /// Performs the Kill operation.
+        /// Kills all tweens on a GameObject, its Transform, and all SpriteRenderers in its hierarchy.
         /// </summary>
         public static void Kill(GameObject gameObject)
         {
@@ -33,9 +30,13 @@ namespace Presentation.Gameplay
             }
 
             Kill((object)gameObject);
-            Kill(gameObject.transform);
             
-            // Kill tweens on all SpriteRenderers in the GameObject and its children
+            Transform transform = gameObject.transform;
+            if (transform != null)
+            {
+                Kill(transform);
+            }
+            
             SpriteRenderer[] renderers = gameObject.GetComponentsInChildren<SpriteRenderer>(includeInactive: true);
             if (renderers != null)
             {
@@ -47,7 +48,7 @@ namespace Presentation.Gameplay
         }
 
         /// <summary>
-        /// Performs the Kill operation.
+        /// Kills all tweens on a Transform.
         /// </summary>
         public static void Kill(Transform transform)
         {
@@ -61,7 +62,7 @@ namespace Presentation.Gameplay
         }
 
         /// <summary>
-        /// Performs the Kill operation.
+        /// Kills all tweens on a SpriteRenderer.
         /// </summary>
         public static void Kill(SpriteRenderer renderer)
         {
@@ -75,7 +76,7 @@ namespace Presentation.Gameplay
         }
 
         /// <summary>
-        /// Performs the Kill operation.
+        /// Kills all tweens on a collection of GameObjects.
         /// </summary>
         public static void Kill(IEnumerable<GameObject> gameObjects)
         {

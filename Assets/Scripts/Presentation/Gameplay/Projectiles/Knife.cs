@@ -460,6 +460,11 @@ namespace Presentation.Gameplay.Projectiles
         {
             KillBounceSequence();
 
+            if (transform == null)
+            {
+                return;
+            }
+
             float gravity = ResolveOrDefault(() => bounceAnimationConfig.Gravity, DefaultGravity);
             float impactForce = ResolveOrDefault(() => bounceAnimationConfig.ImpactForce, DefaultImpactForce);
             float rotationDegrees = ResolveOrDefault(() => bounceAnimationConfig.RotationDegrees, DefaultRotationDegrees);
@@ -476,14 +481,28 @@ namespace Presentation.Gameplay.Projectiles
             float fallDistance = 0.5f * gravity * fallDuration * fallDuration;
             Vector3 targetPosition = transform.position + impactOffset + Vector3.down * fallDistance;
 
-            bounceSequence = DG.Tweening.DOTween.Sequence().SetTarget(this);
-            bounceSequence.Join(transform.DOMove(targetPosition, fallDuration).SetEase(moveEase));
-            bounceSequence.Join(
-                transform
-                    .DORotate(Vector3.forward * rotationDegrees, rotationDuration, RotateMode.FastBeyond360)
-                    .SetEase(rotationEase)
-                    .SetRelative());
-            bounceSequence.OnComplete(ReturnToPool);
+            bounceSequence = DOTween.Sequence()
+                .SetTarget(this)
+                .SetAutoKill(true);
+            
+            bounceSequence.Join(transform.DOMove(targetPosition, fallDuration)
+                .SetEase(moveEase)
+                .SetTarget(transform));
+            
+            bounceSequence.Join(transform
+                .DORotate(Vector3.forward * rotationDegrees, rotationDuration, RotateMode.FastBeyond360)
+                .SetEase(rotationEase)
+                .SetRelative()
+                .SetTarget(transform));
+            
+            bounceSequence.OnComplete(() =>
+            {
+                if (this != null)
+                {
+                    ReturnToPool();
+                }
+            });
+            
             bounceSequence.OnKill(() => bounceSequence = null);
         }
 
