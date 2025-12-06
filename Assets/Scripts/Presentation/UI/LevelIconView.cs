@@ -5,14 +5,11 @@ using UnityEngine.UI;
 namespace Presentation.UI
 {
     /// <summary>
-    /// Represents a reusable level icon view that can display an icon, star rating, and level number.
+    /// Represents a reusable level icon view that can display an icon and level number.
     /// </summary>
     public sealed class LevelIconView : MonoBehaviour
     {
         [SerializeField] private Image icon;
-        [SerializeField] private GameObject[] stars;
-        [SerializeField] private Color activeStarColor = Color.white;
-        [SerializeField] private Color inactiveStarColor = new Color(1f, 1f, 1f, 0.3f);
         [SerializeField] private Color activeLevelColor = Color.white;
         [SerializeField] private Color inactiveLevelColor = new Color(1f, 1f, 1f, 0.3f);
         [SerializeField] private TextMeshProUGUI levelNumberText;
@@ -32,14 +29,6 @@ namespace Presentation.UI
 
             icon.sprite = sprite;
             icon.enabled = sprite != null;
-        }
-
-        /// <summary>
-        /// Toggles star visuals based on the number of stars earned.
-        /// </summary>
-        public void SetStars(int count)
-        {
-            StarDisplay.SetStars(stars, count, activeStarColor, inactiveStarColor);
         }
 
         /// <summary>

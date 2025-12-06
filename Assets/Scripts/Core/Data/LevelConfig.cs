@@ -67,15 +67,6 @@ namespace Core.Data
 
             int knifeTarget = Mathf.RoundToInt(proceduralBaseKnives + proceduralLevelNumber * proceduralKnifeIncrease);
             level.knives = Mathf.Max(1, knifeTarget);
-            level.objectives.oneStar.objectives = new List<ObjectiveDefinition>
-            {
-                new ObjectiveDefinition
-                {
-                    type = ObjectiveType.StickKnives,
-                    requireAll = false,
-                    count = Mathf.Max(1, knifeTarget)
-                }
-            };
 
             return level;
         }

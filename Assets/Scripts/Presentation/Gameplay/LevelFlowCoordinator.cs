@@ -19,8 +19,6 @@ namespace Presentation.Gameplay
         private readonly LevelSession session;
         private readonly LevelHudPresenter hudPresenter;
         private readonly LevelCommandEventChannel commandChannel;
-        private readonly IStarRatingService _starRatingService;
-        private readonly IPlayerDataService _playerDataService;
 
         /// <summary>
         /// Performs the LevelFlowCoordinator operation.
@@ -29,16 +27,12 @@ namespace Presentation.Gameplay
             LevelSessionService sessionService,
             LevelSession session,
             LevelHudPresenter hudPresenter,
-            LevelCommandEventChannel commandChannel,
-            IStarRatingService starRatingService,
-            IPlayerDataService playerDataService)
+            LevelCommandEventChannel commandChannel)
         {
             this.sessionService = sessionService;
             this.session = session;
             this.hudPresenter = hudPresenter;
             this.commandChannel = commandChannel;
-            _starRatingService = starRatingService;
-            _playerDataService = playerDataService;
         }
 
         /// <summary>
@@ -132,13 +126,7 @@ namespace Presentation.Gameplay
         /// </summary>
         private void HandleLevelCompleted(LevelSession completedSession)
         {
-            var stars = _starRatingService.CalculateStars(completedSession);
-
-            _playerDataService.SetStarsForLevel(completedSession.LevelIndex, stars);
-
-            hudPresenter.levelCompletePopup.SetStars(stars);
-            hudPresenter.levelCompletePopup.SetScoreText(stars);
-            hudPresenter.ShowLevelComplete(true);
+            // Level completed - no popup or stars needed
         }
 
         /// <summary>
@@ -146,19 +134,7 @@ namespace Presentation.Gameplay
         /// </summary>
         private void HandleLevelFailed(LevelSession _)
         {
-            // Reuse the level-complete popup for failure flow as well.
-            if (hudPresenter?.levelCompletePopup != null)
-            {
-                hudPresenter.levelCompletePopup.SetStars(0);
-                hudPresenter.levelCompletePopup.SetScoreText(0);
-                hudPresenter.ShowLevelComplete(true);
-            }
-
-            if (hudPresenter?.retryButton != null)
-            {
-                hudPresenter.retryButton.gameObject.SetActive(true);
-                hudPresenter.retryButton.interactable = true;
-            }
+            // Level failed - no popup or retry button needed
         }
 
         /// <summary>
@@ -180,10 +156,6 @@ namespace Presentation.Gameplay
         private void BeginTransition(UniTask transitionTask)
         {
             hudPresenter?.ResetState();
-            if (hudPresenter?.retryButton != null)
-            {
-                hudPresenter.retryButton.interactable = false;
-            }
             CompleteTransitionAsync(transitionTask).Forget();
         }
 
@@ -193,10 +165,6 @@ namespace Presentation.Gameplay
         private async UniTaskVoid CompleteTransitionAsync(UniTask transitionTask)
         {
             await transitionTask;
-            if (hudPresenter?.retryButton != null)
-            {
-                hudPresenter.retryButton.interactable = true;
-            }
             RenderHud();
         }
     }

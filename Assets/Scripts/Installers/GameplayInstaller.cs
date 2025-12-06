@@ -77,8 +77,6 @@ namespace Installers
             builder.Register<ScoreService>(Lifetime.Singleton)
                 .As<IScoreService, IStartable, IDisposable>();
 
-            builder.Register<IStarRatingService, StarRatingService>(Lifetime.Singleton);
-
             builder.Register<GameplayObjectProvider>(Lifetime.Singleton)
                 .WithParameter("targetPrefab", targetPrefab)
                 .WithParameter("knifeThrowerPrefab", knifeThrowerPrefab)

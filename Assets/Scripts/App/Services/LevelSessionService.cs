@@ -183,14 +183,17 @@ namespace App.Services
                 return;
             }
 
-            if (session.HasMetObjectives)
+            // Complete when all targets are destroyed
+            session.MarkCompleteIfNeeded();
+            
+            if (session.IsComplete)
             {
-                session.MarkCompleteIfNeeded();
                 DisableThrowerInput();
                 SaveProgress();
             }
-            else
+            else if (session.TargetsRemaining > 0)
             {
+                // Level failed if knives exhausted but targets remain
                 session.RecordFailure();
                 DisableThrowerInput();
             }

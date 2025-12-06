@@ -145,12 +145,10 @@ namespace Editor
                 20);
 
             List<TargetDefinition> targets = BuildTargets(stage, levelNumber, stageProgress, rng, out int quotaSum, out int totalHitables);
-            LevelObjectivesConfig objectives = BuildObjectives(knives, quotaSum, totalHitables);
 
             LevelData level = new LevelData
             {
                 knives = knives,
-                objectives = objectives,
                 targetGroup = new TargetGroupConfig { targets = targets }
             };
 
@@ -326,59 +324,6 @@ namespace Editor
             }
 
             return Mathf.Clamp(quota, min, max);
-        }
-
-        private static LevelObjectivesConfig BuildObjectives(int knives, int quotaSum, int totalHitables)
-        {
-            LevelObjectivesConfig objectives = new LevelObjectivesConfig();
-
-            int primaryCount = Mathf.Max(1, Mathf.RoundToInt(knives * 0.6f));
-            if (quotaSum > 0)
-            {
-                primaryCount = Mathf.Min(primaryCount, quotaSum);
-            }
-
-            objectives.oneStar.objectives.Add(new ObjectiveDefinition
-            {
-                type = ObjectiveType.StickKnives,
-                requireAll = false,
-                count = primaryCount
-            });
-
-            objectives.twoStar.objectives.Add(new ObjectiveDefinition
-            {
-                type = ObjectiveType.StickKnives,
-                requireAll = true,
-                count = knives
-            });
-
-            if (totalHitables > 0)
-            {
-                objectives.twoStar.objectives.Add(new ObjectiveDefinition
-                {
-                    type = ObjectiveType.HitHitableObjects,
-                    requireAll = false,
-                    count = Mathf.Max(1, Mathf.CeilToInt(totalHitables * 0.5f))
-                });
-
-                objectives.threeStar.objectives.Add(new ObjectiveDefinition
-                {
-                    type = ObjectiveType.HitHitableObjects,
-                    requireAll = true,
-                    count = totalHitables
-                });
-            }
-            else
-            {
-                objectives.threeStar.objectives.Add(new ObjectiveDefinition
-                {
-                    type = ObjectiveType.StickKnives,
-                    requireAll = true,
-                    count = knives
-                });
-            }
-
-            return objectives;
         }
 
         private static List<HitableObjectConfig> LoadHitableConfigs()

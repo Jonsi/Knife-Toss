@@ -67,22 +67,6 @@ namespace Infrastructure.Persistence
             }
         }
 
-        public int GetStarsForLevel(int levelIndex)
-        {
-            return playerData.progress.levelProgress.GetStars(levelIndex);
-        }
-
-        public void SetStarsForLevel(int levelIndex, int starCount)
-        {
-            int clamped = Mathf.Max(0, starCount);
-            int current = GetStarsForLevel(levelIndex);
-            if (clamped >= 0 && clamped > current)
-            {
-                playerData.progress.levelProgress.SetStars(levelIndex, clamped);
-                Save();
-            }
-        }
-
         private void EnsureDefaultSections()
         {
             if (playerData.settings == null)

@@ -49,7 +49,6 @@ namespace Presentation.Gameplay
         private bool isKnifeInFlight;
         private int knivesThrown;
         private bool canThrow = true;
-        private bool isAiming;
         private Transform knivesParent;
         private Tween loadTween;
         private GameObject loadingKnife;
@@ -98,16 +97,6 @@ namespace Presentation.Gameplay
             throwInput.Disable();
         }
 
-        private void Update()
-        {
-            if (!isAiming)
-            {
-                return;
-            }
-
-            Vector2 aimDirection = ResolveAimDirection(throwInput.CurrentScreenPosition);
-            ApplyAimDirection(aimDirection);
-        }
 
         /// <summary>
         /// Performs the OnDestroy operation.
@@ -146,18 +135,12 @@ namespace Presentation.Gameplay
 
         private void OnThrowPressed(Vector2 screenPosition)
         {
-            isAiming = true;
-            Vector2 aimDirection = ResolveAimDirection(screenPosition);
-            ApplyAimDirection(aimDirection);
             PlayLoadAnimation();
         }
 
         private void OnThrowReleased(Vector2 screenPosition)
         {
-            isAiming = false;
             StopLoadSound();
-            Vector2 aimDirection = ResolveAimDirection(screenPosition);
-            ApplyAimDirection(aimDirection);
 
             if (!IsReadyToThrow())
             {
@@ -166,7 +149,7 @@ namespace Presentation.Gameplay
             }
 
             CompleteLoadAnimation();
-            ThrowKnife(aimDirection);
+            ThrowKnife(Vector2.up);
         }
 
         /// <summary>
@@ -187,7 +170,7 @@ namespace Presentation.Gameplay
         /// <summary>
         /// Performs the ThrowKnife operation.
         /// </summary>
-        private void ThrowKnife(Vector2 aimDirection)
+        private void ThrowKnife(Vector2 direction)
         {
             EnsureInitialized();
             KillLoadTween();
@@ -208,74 +191,24 @@ namespace Presentation.Gameplay
             PrepareKnifeForThrow(knifeObject, shouldKeepPosition);
             ActivateKnife(knifeObject);
 
-            ApplyAimDirection(aimDirection);
-
             PlayThrowAnimation(knifeObject, () =>
             {
-                LaunchKnife(knifeObject, aimDirection);
+                LaunchKnife(knifeObject, direction);
                 PlayThrowSound();
             });
         }
 
-        private void LaunchKnife(GameObject knifeObject, Vector2 aimDirection)
+        private void LaunchKnife(GameObject knifeObject, Vector2 direction)
         {
             currentKnife = knifeObject != null ? knifeObject.GetComponent<Knife>() : null;
             if (currentKnife != null)
             {
-                currentKnife.Initialize(this, throwSpeed, aimDirection);
+                currentKnife.Initialize(this, throwSpeed, direction);
             }
 
             knivesThrown++;
             KnifeThrown?.Invoke();
             magazine.SlideQueueForward();
-        }
-
-        private void ApplyAimDirection(Vector2 direction)
-        {
-            if (launcherTransform == null)
-            {
-                return;
-            }
-
-            Vector2 resolved = direction.sqrMagnitude > Mathf.Epsilon ? direction.normalized : Vector2.up;
-            AlignQueuedHead(resolved);
-        }
-
-        private Vector2 ResolveAimDirection(Vector2 screenPosition)
-        {
-            if (launcherTransform == null)
-            {
-                return Vector2.up;
-            }
-
-            Camera cam = Camera.main;
-            if (cam == null)
-            {
-                return launcherTransform.up;
-            }
-
-            float zDistance = Mathf.Abs(launcherTransform.position.z - cam.transform.position.z);
-            zDistance = Mathf.Approximately(zDistance, 0f) ? 1f : zDistance;
-            Vector3 worldPoint = cam.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, zDistance));
-            worldPoint.z = launcherTransform.position.z;
-
-            Vector2 direction = (Vector2)(worldPoint - launcherTransform.position);
-            if (direction.sqrMagnitude < Mathf.Epsilon)
-            {
-                return launcherTransform.up;
-            }
-
-            return direction.normalized;
-        }
-
-        private void AlignQueuedHead(Vector2 direction)
-        {
-            if (magazine == null || direction.sqrMagnitude <= Mathf.Epsilon)
-            {
-                return;
-            }
-
-            magazine.AlignFirstKnife(direction.normalized);
         }
 
         private void PlayLoadAnimation()
@@ -455,7 +388,8 @@ namespace Presentation.Gameplay
                     knifeTransform.position = launcherTransform.position;
                 }
 
-                knifeTransform.rotation = launcherTransform.rotation;
+                // Always point upwards
+                knifeTransform.rotation = Quaternion.identity;
             }
             KnifeSetupUtility.ApplyVisuals(knifeObject, ResolveKnifeScale(), knifePool.PrefabOriginalColor);
             KnifeSetupUtility.EnableColliders(knifeObject, true);

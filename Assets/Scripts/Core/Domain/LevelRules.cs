@@ -14,7 +14,6 @@ namespace Core.Domain
         public float DirectionChangeInterval { get; }
         public bool RandomizeDirection { get; }
         public int TargetCount { get; }
-        public LevelObjectivesConfig Objectives { get; }
         public int TotalHitableObjects { get; }
 
         /// <summary>
@@ -26,7 +25,6 @@ namespace Core.Domain
             float directionChangeInterval,
             bool randomizeDirection,
             int targetCount,
-            LevelObjectivesConfig objectives,
             int totalHitableObjects)
         {
             KnifeCount = Mathf.Max(1, knifeCount);
@@ -34,7 +32,6 @@ namespace Core.Domain
             DirectionChangeInterval = Mathf.Max(0f, directionChangeInterval);
             RandomizeDirection = randomizeDirection;
             TargetCount = Mathf.Max(1, targetCount);
-            Objectives = objectives ?? new LevelObjectivesConfig();
             TotalHitableObjects = Mathf.Max(0, totalHitableObjects);
         }
 
@@ -45,17 +42,14 @@ namespace Core.Domain
         {
             if (data == null)
             {
-                LevelObjectivesConfig fallbackObjectives = BuildFallbackObjectives(5);
-                return new LevelRules(5, 90f, 3f, true, 1, fallbackObjectives, 0);
+                return new LevelRules(5, 90f, 3f, true, 1, 0);
             }
 
-            LevelObjectivesConfig objectives = CloneObjectives(data.objectives);
             TargetGroupConfig targetGroup = data.targetGroup ?? new TargetGroupConfig();
 
             int targetCount = targetGroup.targets != null && targetGroup.targets.Count > 0 ? targetGroup.targets.Count : 1;
             int totalHitables = CountTotalHitableObjects(targetGroup);
             int knifeCount = Mathf.Max(1, data.knives);
-            EnsureOneStarObjective(objectives, knifeCount);
 
             float rotationSpeed = ResolveFallbackRotationSpeed(targetGroup);
             float directionChangeInterval = 0f;
@@ -67,7 +61,6 @@ namespace Core.Domain
                 directionChangeInterval,
                 randomizeDirection,
                 targetCount,
-                objectives,
                 totalHitables);
         }
 
@@ -86,45 +79,6 @@ namespace Core.Domain
             }
 
             return 90f;
-        }
-
-        /// <summary>
-        /// Builds a fallback objective set for simple levels.
-        /// </summary>
-        private static LevelObjectivesConfig BuildFallbackObjectives(int requiredKnives)
-        {
-            LevelObjectivesConfig objectives = new LevelObjectivesConfig();
-            objectives.oneStar.objectives.Add(new ObjectiveDefinition
-            {
-                type = ObjectiveType.StickKnives,
-                requireAll = false,
-                count = Mathf.Max(1, requiredKnives)
-            });
-            return objectives;
-        }
-
-        /// <summary>
-        /// Ensures the primary tier has at least one objective to gate completion.
-        /// </summary>
-        private static void EnsureOneStarObjective(LevelObjectivesConfig objectives, int knifeCount)
-        {
-            if (objectives == null)
-            {
-                return;
-            }
-
-            objectives.oneStar ??= new LevelObjectiveTier();
-            objectives.oneStar.objectives ??= new List<ObjectiveDefinition>();
-
-            if (objectives.oneStar.objectives.Count == 0)
-            {
-                objectives.oneStar.objectives.Add(new ObjectiveDefinition
-                {
-                    type = ObjectiveType.StickKnives,
-                    requireAll = true,
-                    count = knifeCount
-                });
-            }
         }
 
         /// <summary>
@@ -157,45 +111,6 @@ namespace Core.Domain
             }
 
             return total;
-        }
-
-        /// <summary>
-        /// Creates a runtime copy of the objectives so the asset stays untouched.
-        /// </summary>
-        private static LevelObjectivesConfig CloneObjectives(LevelObjectivesConfig source)
-        {
-            LevelObjectivesConfig clone = new LevelObjectivesConfig();
-            clone.oneStar.objectives = CloneObjectiveList(source?.oneStar?.objectives);
-            clone.twoStar.objectives = CloneObjectiveList(source?.twoStar?.objectives);
-            clone.threeStar.objectives = CloneObjectiveList(source?.threeStar?.objectives);
-            return clone;
-        }
-
-        private static List<ObjectiveDefinition> CloneObjectiveList(List<ObjectiveDefinition> source)
-        {
-            if (source == null || source.Count == 0)
-            {
-                return new List<ObjectiveDefinition>();
-            }
-
-            List<ObjectiveDefinition> clone = new List<ObjectiveDefinition>(source.Count);
-            for (int i = 0; i < source.Count; i++)
-            {
-                ObjectiveDefinition objective = source[i];
-                if (objective == null)
-                {
-                    continue;
-                }
-
-                clone.Add(new ObjectiveDefinition
-                {
-                    type = objective.type,
-                    requireAll = objective.requireAll,
-                    count = objective.count
-                });
-            }
-
-            return clone;
         }
     }
 }

@@ -217,7 +217,6 @@ namespace Presentation.UI
 
                 int levelIndex = i + 1;
                 icon.SetLevelNumber(levelIndex);
-                icon.SetStars(playerDataService.GetStarsForLevel(levelIndex));
                 icon.SetLevelActive(levelIndex <= highestLevelPlayed);
             }
         }

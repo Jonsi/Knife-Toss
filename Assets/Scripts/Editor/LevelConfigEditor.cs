@@ -111,7 +111,6 @@ namespace Editor
             {
                 EditorGUILayout.LabelField($"Level {levelIndex + 1} Details", EditorStyles.boldLabel);
                 EditorGUILayout.PropertyField(levelProp.FindPropertyRelative(nameof(LevelData.knives)));
-                EditorGUILayout.PropertyField(levelProp.FindPropertyRelative(nameof(LevelData.objectives)), true);
 
                 SerializedProperty targetGroup = levelProp.FindPropertyRelative(nameof(LevelData.targetGroup));
                 if (targetGroup != null)

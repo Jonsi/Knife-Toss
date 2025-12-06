@@ -19,8 +19,5 @@ namespace Core.Abstractions
 
         int GetHighestLevel(int fallbackLevel);
         void SetHighestLevel(int levelIndex);
-
-        int GetStarsForLevel(int levelIndex);
-        void SetStarsForLevel(int levelIndex, int starCount);
     }
 }

@@ -15,9 +15,7 @@ namespace Presentation.UI
         [Header("UI References")]
         [SerializeField] private LevelIconView levelIconView;
         [SerializeField] private LevelsPopup levelsPopup;
-        public LevelCompletePopup levelCompletePopup;
         [SerializeField] private LevelCommandEventChannel commandChannel;
-        public Button retryButton;
         [SerializeField] private Button muteButton;
         [SerializeField] private GameObject muteIcon;
         [SerializeField] private GameObject unmuteIcon;
@@ -35,13 +33,8 @@ namespace Presentation.UI
         private void Awake()
         {
             EnsureCommandInvoker();
-            PropagateInvokerToPopup();
             BindLevelIconButton();
 
-            if (retryButton != null)
-            {
-                retryButton.onClick.AddListener(RaiseRetry);
-            }
             if (muteButton != null)
             {
                 muteButton.onClick.AddListener(ToggleMute);
@@ -57,10 +50,6 @@ namespace Presentation.UI
             {
                 levelIconButton.onClick.RemoveListener(HandleLevelIconClicked);
             }
-            if (retryButton != null)
-            {
-                retryButton.onClick.RemoveListener(RaiseRetry);
-            }
             if (muteButton != null)
             {
                 muteButton.onClick.RemoveListener(ToggleMute);
@@ -73,7 +62,6 @@ namespace Presentation.UI
         public void Render(LevelHudViewModel viewModel)
         {
             RenderLevelIcon(viewModel);
-            levelCompletePopup?.SetLabel(viewModel.LevelCompleteLabel);
             magazineDisplay?.Render(viewModel.TotalKnives, viewModel.KnivesThrown);
         }
 
@@ -85,26 +73,11 @@ namespace Presentation.UI
         }
 
         /// <summary>
-        /// Performs the ShowLevelComplete operation.
-        /// </summary>
-        public void ShowLevelComplete(bool show)
-        {
-            if (levelCompletePopup == null)
-                return;
-
-            if (show)
-                levelCompletePopup.Show();
-            else
-                levelCompletePopup.Hide();
-        }
-
-        /// <summary>
         /// Performs the ResetState operation.
         /// </summary>
         public void ResetState()
         {
             ShowFail(false);
-            ShowLevelComplete(false);
             magazineDisplay?.ResetDisplay();
         }
 
@@ -117,7 +90,6 @@ namespace Presentation.UI
             commandInvoker = invoker;
             _settingsService = settingsService;
             _playerDataService = playerDataService;
-            PropagateInvokerToPopup();
             UpdateMuteButtonIcon();
         }
 
@@ -138,17 +110,6 @@ namespace Presentation.UI
         }
 
         /// <summary>
-        /// Performs the PropagateInvokerToPopup operation.
-        /// </summary>
-        private void PropagateInvokerToPopup()
-        {
-            if (levelCompletePopup != null)
-            {
-                levelCompletePopup.SetCommandInvoker(commandInvoker);
-            }
-        }
-
-        /// <summary>
         /// Subscribes to the HUD level icon button to open the popup.
         /// </summary>
         private void BindLevelIconButton()
@@ -162,14 +123,6 @@ namespace Presentation.UI
             {
                 levelIconButton.onClick.AddListener(HandleLevelIconClicked);
             }
-        }
-
-        /// <summary>
-        /// Performs the RaiseRetry operation.
-        /// </summary>
-        private void RaiseRetry()
-        {
-            commandInvoker?.Retry();
         }
 
         /// <summary>
@@ -207,12 +160,6 @@ namespace Presentation.UI
             }
 
             levelIconView.SetLevelNumber(viewModel.LevelIndex);
-
-            if (_playerDataService != null)
-            {
-                int stars = _playerDataService.GetStarsForLevel(viewModel.LevelIndex);
-                levelIconView.SetStars(stars);
-            }
         }
 
         /// <summary>

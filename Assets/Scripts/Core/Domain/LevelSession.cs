@@ -27,8 +27,6 @@ namespace Core.Domain
         public int TargetCount { get; private set; }
         public int TargetsRemaining { get; private set; }
         public int HitableObjectsHit { get; private set; }
-        public int AchievedStars { get; private set; }
-        public bool HasMetObjectives => AchievedStars >= 1;
 
         private int preStuckBaseline;
 
@@ -49,7 +47,6 @@ namespace Core.Domain
             TargetCount = Math.Max(1, rules.TargetCount);
             TargetsRemaining = TargetCount;
             HitableObjectsHit = 0;
-            AchievedStars = 0;
             NotifyChanged();
         }
 
@@ -157,7 +154,7 @@ namespace Core.Domain
         /// </summary>
         private void EvaluateProgress()
         {
-            AchievedStars = ObjectiveEvaluator.CalculateStars(Rules.Objectives, BuildObjectiveContext());
+            // Progress evaluation removed - no stars/objectives
         }
 
         /// <summary>
@@ -169,46 +166,21 @@ namespace Core.Domain
         }
 
         /// <summary>
-        /// Marks the session complete if objectives were met.
+        /// Marks the session complete when all targets are destroyed.
         /// </summary>
         public void MarkCompleteIfNeeded()
         {
-            if (IsComplete || !HasMetObjectives)
+            if (IsComplete)
             {
                 return;
             }
 
-            IsComplete = true;
-            LogObjectiveEvaluation();
-            Completed?.Invoke(this);
-        }
-
-        private ObjectiveEvaluator.ObjectiveEvaluationContext BuildObjectiveContext()
-        {
-            return new ObjectiveEvaluator.ObjectiveEvaluationContext(
-                PlayerKnivesStuck,
-                Rules.KnifeCount,
-                HitableObjectsHit,
-                Rules.TotalHitableObjects);
-        }
-
-        private void LogObjectiveEvaluation()
-        {
-            LevelObjectivesConfig objectives = Rules.Objectives;
-            if (objectives == null)
+            // Complete when all targets are destroyed
+            if (TargetsRemaining <= 0)
             {
-                UnityEngine.Debug.Log("LevelSession: objectives evaluated -> no objectives defined");
-                return;
+                IsComplete = true;
+                Completed?.Invoke(this);
             }
-
-            ObjectiveEvaluator.ObjectiveEvaluationContext context = BuildObjectiveContext();
-            bool oneStarMet = ObjectiveEvaluator.AreObjectivesMet(objectives.oneStar, context);
-            bool twoStarMet = ObjectiveEvaluator.AreObjectivesMet(objectives.twoStar, context);
-            bool threeStarMet = ObjectiveEvaluator.AreObjectivesMet(objectives.threeStar, context);
-
-            UnityEngine.Debug.Log(
-                $"LevelSession: objectives evaluated -> 1★:{oneStarMet}, 2★:{twoStarMet}, 3★:{threeStarMet} " +
-                $"(knivesStuck={PlayerKnivesStuck}/{Rules.KnifeCount}, hitables={HitableObjectsHit}/{Rules.TotalHitableObjects})");
         }
     }
 }
