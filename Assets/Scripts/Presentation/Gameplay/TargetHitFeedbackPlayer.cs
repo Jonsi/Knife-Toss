@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Core.Events;
 using DG.Tweening;
 using UnityEngine;
@@ -15,11 +14,7 @@ namespace Presentation.Gameplay
         private readonly KnifeImpactEventChannel impactEventChannel;
         private readonly GameplayObjectProvider gameplayObjectProvider;
         private readonly TargetHitAnimationConfig animationConfig;
-        private readonly Dictionary<SpriteRenderer, Color> baseColors = new Dictionary<SpriteRenderer, Color>();
 
-        /// <summary>
-        /// Performs the TargetHitFeedbackPlayer operation.
-        /// </summary>
         public TargetHitFeedbackPlayer(
             KnifeImpactEventChannel impactEventChannel,
             GameplayObjectProvider gameplayObjectProvider,
@@ -30,44 +25,25 @@ namespace Presentation.Gameplay
             this.animationConfig = animationConfig;
         }
 
-        /// <summary>
-        /// Performs the Start operation.
-        /// </summary>
         public void Start()
         {
-            if (impactEventChannel == null)
-            {
-                return;
-            }
-
             impactEventChannel.KnifeStuckAt += HandleKnifeStuckAt;
         }
 
-        /// <summary>
-        /// Performs the Dispose operation.
-        /// </summary>
         public void Dispose()
         {
-            if (impactEventChannel == null)
-            {
-                return;
-            }
-
             impactEventChannel.KnifeStuckAt -= HandleKnifeStuckAt;
         }
 
-        /// <summary>
-        /// Performs the HandleKnifeStuckAt operation.
-        /// </summary>
         private void HandleKnifeStuckAt(Vector3 impactPosition)
         {
-            if (animationConfig == null || gameplayObjectProvider == null)
+            TargetGroupManager manager = gameplayObjectProvider.GetTargetGroupManager();
+            if (manager == null)
             {
                 return;
             }
 
-            TargetGroupManager manager = gameplayObjectProvider.GetTargetGroupManager();
-            Transform target = FindImpactedTarget(manager?.AllTargets, impactPosition) ?? manager?.PrimaryTarget;
+            Transform target = FindImpactedTarget(manager.AllTargets, impactPosition) ?? manager.PrimaryTarget;
             if (target == null)
             {
                 return;
@@ -77,10 +53,7 @@ namespace Presentation.Gameplay
             ApplyTint(target);
         }
 
-        /// <summary>
-        /// Performs the FindImpactedTarget operation.
-        /// </summary>
-        private static Transform FindImpactedTarget(IReadOnlyList<Transform> candidates, Vector3 impactPosition)
+        private static Transform FindImpactedTarget(System.Collections.Generic.IReadOnlyList<Transform> candidates, Vector3 impactPosition)
         {
             if (candidates == null || candidates.Count == 0)
             {
@@ -88,7 +61,7 @@ namespace Presentation.Gameplay
             }
 
             Transform closest = null;
-            float bestScore = float.MaxValue;
+            float closestDistance = float.MaxValue;
 
             for (int i = 0; i < candidates.Count; i++)
             {
@@ -99,9 +72,9 @@ namespace Presentation.Gameplay
                 }
 
                 float distance = (candidate.position - impactPosition).sqrMagnitude;
-                if (distance < bestScore)
+                if (distance < closestDistance)
                 {
-                    bestScore = distance;
+                    closestDistance = distance;
                     closest = candidate;
                 }
             }
@@ -109,79 +82,40 @@ namespace Presentation.Gameplay
             return closest;
         }
 
-        /// <summary>
-        /// Performs the PlayShake operation.
-        /// </summary>
         private void PlayShake(Transform target)
         {
-            float duration = animationConfig.ShakeDuration;
-            float strength = animationConfig.ShakeStrength;
-            if (target == null || duration <= 0f || strength <= 0f)
+            if (target == null || animationConfig.ShakeDuration <= 0f || animationConfig.ShakeStrength <= 0f)
             {
                 return;
             }
 
-            Vector3 shakeStrength = new Vector3(strength, strength, 0f);
-            if (TryShakeRenderers(target, duration, shakeStrength))
+            SpriteRenderer[] renderers = target.GetComponentsInChildren<SpriteRenderer>();
+            if (renderers != null && renderers.Length > 0)
             {
-                return;
-            }
-
-            TweenKiller.Kill(target);
-            target.DOShakePosition(
-                duration,
-                shakeStrength,
-                animationConfig.ShakeVibrato,
-                animationConfig.ShakeRandomness,
-                snapping: false,
-                fadeOut: animationConfig.ShakeFadeOut)
-                .SetRelative();
-        }
-
-        /// <summary>
-        /// Attempts to shake the sprite renderers for a target to avoid disrupting orbit transforms.
-        /// </summary>
-        private bool TryShakeRenderers(Transform target, float duration, Vector3 shakeStrength)
-        {
-            SpriteRenderer[] renderers = target.GetComponentsInChildren<SpriteRenderer>(includeInactive: true);
-            if (renderers == null || renderers.Length == 0)
-            {
-                return false;
-            }
-
-            bool shookAny = false;
-
-            for (int i = 0; i < renderers.Length; i++)
-            {
-                SpriteRenderer renderer = renderers[i];
-                Transform rendererTransform = renderer != null ? renderer.transform : null;
-                if (rendererTransform == null)
+                Vector3 shakeStrength = new Vector3(animationConfig.ShakeStrength, animationConfig.ShakeStrength, 0f);
+                for (int i = 0; i < renderers.Length; i++)
                 {
-                    continue;
+                    SpriteRenderer renderer = renderers[i];
+                    if (renderer != null && renderer.transform != null)
+                    {
+                        TweenKiller.Kill(renderer.transform);
+                        renderer.transform
+                            .DOShakePosition(
+                                animationConfig.ShakeDuration,
+                                shakeStrength,
+                                animationConfig.ShakeVibrato,
+                                animationConfig.ShakeRandomness,
+                                snapping: false,
+                                fadeOut: animationConfig.ShakeFadeOut)
+                            .SetRelative();
+                    }
                 }
-
-                shookAny = true;
-                TweenKiller.Kill(rendererTransform);
-                rendererTransform.DOShakePosition(
-                        duration,
-                        shakeStrength,
-                        animationConfig.ShakeVibrato,
-                        animationConfig.ShakeRandomness,
-                        snapping: false,
-                        fadeOut: animationConfig.ShakeFadeOut)
-                    .SetRelative()
-                    .SetTarget(rendererTransform);
             }
-
-            return shookAny;
         }
 
-        /// <summary>
-        /// Performs the ApplyTint operation.
-        /// </summary>
         private void ApplyTint(Transform target)
         {
-            if (target == null || target.gameObject == null)
+            if (target == null)
             {
                 return;
             }
@@ -195,7 +129,7 @@ namespace Presentation.Gameplay
                 return;
             }
 
-            SpriteRenderer[] renderers = target.GetComponentsInChildren<SpriteRenderer>(includeInactive: true);
+            SpriteRenderer[] renderers = target.GetComponentsInChildren<SpriteRenderer>();
             if (renderers == null || renderers.Length == 0)
             {
                 return;
@@ -207,162 +141,51 @@ namespace Presentation.Gameplay
             for (int i = 0; i < renderers.Length; i++)
             {
                 SpriteRenderer renderer = renderers[i];
-                if (renderer == null || renderer.gameObject == null)
+                if (renderer == null)
                 {
                     continue;
                 }
 
-                // Store reference to GameObject for null checking
-                GameObject rendererGameObject = renderer.gameObject;
-
-                Color baseColor = ResolveBaseColor(renderer);
+                Color baseColor = renderer.color;
                 TweenKiller.Kill(renderer);
-                TweenKiller.Kill(rendererGameObject);
 
-                // Double-check renderer is still valid before creating sequence
-                // Use Unity's destroyed object check
-                if (renderer == null || !renderer || rendererGameObject == null || !rendererGameObject)
+                Sequence sequence = DOTween.Sequence().SetTarget(renderer).SetAutoKill(true);
+
+                if (fadeIn > 0f)
                 {
-                    continue;
+                    sequence.Append(renderer.DOColor(targetColor, fadeIn).SetEase(tintEase));
+                }
+                else
+                {
+                    renderer.color = targetColor;
                 }
 
-                // Helper to create a safe color tween that checks for null
-                Tween CreateSafeColorTween(Color endColor, float duration)
+                if (hold > 0f)
                 {
-                    // Validate renderer is still valid before creating tween
-                    // Use Unity's destroyed object check
-                    if (renderer == null || !renderer || rendererGameObject == null || !rendererGameObject)
-                    {
-                        return null;
-                    }
-
-                    try
-                    {
-                        Tween tween = renderer.DOColor(endColor, duration).SetEase(tintEase).SetAutoKill(true);
-                        
-                        // Validate on start - if target is destroyed, kill immediately
-                        tween.OnStart(() =>
-                        {
-                            if (renderer == null || !renderer || rendererGameObject == null || !rendererGameObject)
-                            {
-                                tween.Kill();
-                            }
-                        });
-                        
-                        tween.OnUpdate(() =>
-                        {
-                            if (renderer == null || !renderer || rendererGameObject == null || !rendererGameObject)
-                            {
-                                tween.Kill();
-                            }
-                        });
-                        
-                        return tween;
-                    }
-                    catch
-                    {
-                        // If tween creation fails (e.g., object destroyed), return null
-                        return null;
-                    }
+                    sequence.AppendInterval(hold);
                 }
 
-                try
+                if (fadeOut > 0f)
                 {
-                    Sequence sequence = DG.Tweening.DOTween.Sequence().SetTarget(renderer).SetAutoKill(true);
-                    
-                    // Validate sequence target on start
-                    sequence.OnStart(() =>
-                    {
-                        if (renderer == null || !renderer || rendererGameObject == null || !rendererGameObject)
-                        {
-                            sequence.Kill();
-                        }
-                    });
-
-                    if (fadeIn > 0f)
-                    {
-                        Tween fadeInTween = CreateSafeColorTween(targetColor, fadeIn);
-                        if (fadeInTween != null)
-                        {
-                            sequence.Append(fadeInTween);
-                        }
-                        else
-                        {
-                            // If tween creation failed, skip this renderer
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        if (renderer != null && rendererGameObject != null)
-                        {
-                            renderer.color = targetColor;
-                        }
-                    }
-
-                    if (hold > 0f)
-                    {
-                        sequence.AppendInterval(hold);
-                    }
-
-                    if (fadeOut > 0f)
-                    {
-                        Tween fadeOutTween = CreateSafeColorTween(baseColor, fadeOut);
-                        if (fadeOutTween != null)
-                        {
-                            sequence.Append(fadeOutTween);
-                        }
-                    }
-                    else
-                    {
-                        if (renderer != null && rendererGameObject != null)
-                        {
-                            renderer.color = baseColor;
-                        }
-                    }
-
-                    sequence.OnUpdate(() =>
-                    {
-                        if (renderer == null || !renderer || rendererGameObject == null || !rendererGameObject)
-                        {
-                            sequence.Kill();
-                        }
-                    });
-
-                    sequence.OnKill(() =>
-                    {
-                        if (renderer != null && rendererGameObject != null)
-                        {
-                            renderer.color = baseColor;
-                        }
-                    });
+                    sequence.Append(renderer.DOColor(baseColor, fadeOut).SetEase(tintEase));
                 }
-                catch
+                else if (fadeIn > 0f || hold > 0f)
                 {
-                    // If sequence creation fails, skip this renderer
-                    continue;
+                    sequence.AppendCallback(() => { if (renderer != null) renderer.color = baseColor; });
                 }
+                else
+                {
+                    renderer.color = baseColor;
+                }
+
+                sequence.OnKill(() =>
+                {
+                    if (renderer != null)
+                    {
+                        renderer.color = baseColor;
+                    }
+                });
             }
-        }
-
-        /// <summary>
-        /// Performs the ResolveBaseColor operation.
-        /// </summary>
-        private Color ResolveBaseColor(SpriteRenderer renderer)
-        {
-            if (renderer == null)
-            {
-                return Color.white;
-            }
-
-            if (baseColors.TryGetValue(renderer, out Color cachedColor))
-            {
-                return cachedColor;
-            }
-
-            Color color = renderer.color;
-            baseColors[renderer] = color;
-            return color;
         }
     }
 }

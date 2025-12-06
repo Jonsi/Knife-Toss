@@ -22,16 +22,16 @@ namespace Presentation.Gameplay
         [SerializeField] private float tintFadeOutDuration = 0.2f;
         [SerializeField] private Ease tintEase = Ease.OutQuad;
 
-        public float ShakeDuration => Mathf.Max(0f, shakeDuration);
-        public float ShakeStrength => Mathf.Max(0f, shakeStrength);
-        public int ShakeVibrato => Mathf.Max(1, shakeVibrato);
-        public float ShakeRandomness => Mathf.Clamp(shakeRandomness, 0f, 180f);
+        public float ShakeDuration => shakeDuration;
+        public float ShakeStrength => shakeStrength;
+        public int ShakeVibrato => shakeVibrato;
+        public float ShakeRandomness => shakeRandomness;
         public bool ShakeFadeOut => shakeFadeOut;
 
         public Color TintColor => tintColor;
-        public float TintFadeInDuration => Mathf.Max(0f, tintFadeInDuration);
-        public float TintHoldDuration => Mathf.Max(0f, tintHoldDuration);
-        public float TintFadeOutDuration => Mathf.Max(0f, tintFadeOutDuration);
+        public float TintFadeInDuration => tintFadeInDuration;
+        public float TintHoldDuration => tintHoldDuration;
+        public float TintFadeOutDuration => tintFadeOutDuration;
         public Ease TintEase => tintEase;
     }
 }
