@@ -1,0 +1,2331 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17667a22748121240aaef8f56f1975e6, type: 3}
+  m_Name: StagesConfig
+  m_EditorClassIdentifier: Assembly-CSharp::Core.Data.StagesConfig
+  stages:
+  - stageName: Campfire Warmup
+    levels:
+    - knives: 5
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 0
+          startingAngle: 0
+          orbitDegreesPerSecond: 0
+          baseScale: 1.0770032
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 51.625275
+            behaviourType: 0
+            pulsating:
+              amplitude: 12.906319
+              frequency: 0.820971
+            flipping:
+              flipInterval: 2.6
+              flipProbability: 0.25
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6430546
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 2.4
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 0
+      totalFruitsHit: 0
+    - knives: 6
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 0
+          startingAngle: 0
+          orbitDegreesPerSecond: 0
+          baseScale: 0.9959005
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 52.698483
+            behaviourType: 0
+            pulsating:
+              amplitude: 22.396856
+              frequency: 1.4240394
+            flipping:
+              flipInterval: 1.7249999
+              flipProbability: 0.55
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6069534
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.6
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 0
+      totalFruitsHit: 0
+    - knives: 7
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 0
+          startingAngle: 0
+          orbitDegreesPerSecond: 0
+          baseScale: 0.90529823
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 89.36727
+            behaviourType: 0
+            pulsating:
+              amplitude: 53.620365
+              frequency: 2
+            flipping:
+              flipInterval: 0.85
+              flipProbability: 0.85
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.69231045
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 0.8
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 0
+      totalFruitsHit: 0
+  - stageName: Juggling School
+    levels:
+    - knives: 7
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 1.1
+          startingAngle: 0
+          orbitDegreesPerSecond: 29.972456
+          baseScale: 1.1276041
+          preStuckKnives: 1
+          preStuckKnifeSpacing: 360
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 111.10235
+            behaviourType: 0
+            pulsating:
+              amplitude: 27.775587
+              frequency: 0.820971
+            flipping:
+              flipInterval: 2.6
+              flipProbability: 0.25
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6430546
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 2.4
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 1
+        - prefab: {fileID: 0}
+          orbitRadius: 1.3945148
+          startingAngle: 180
+          orbitDegreesPerSecond: -29.848766
+          baseScale: 1.1274887
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -108.89922
+            behaviourType: 0
+            pulsating:
+              amplitude: 27.224806
+              frequency: 0.8462367
+            flipping:
+              flipInterval: 2.6
+              flipProbability: 0.25
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6624898
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 2.4
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 1
+      totalFruitsHit: 0
+    - knives: 8
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 2.5
+          startingAngle: 0
+          orbitDegreesPerSecond: 29.891523
+          baseScale: 1.0201089
+          preStuckKnives: 2
+          preStuckKnifeSpacing: 180
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 85.4906
+            behaviourType: 1
+            pulsating:
+              amplitude: 36.333508
+              frequency: 1.4240394
+            flipping:
+              flipInterval: 1.7249999
+              flipProbability: 0.55
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6069534
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.6
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 2
+        - prefab: {fileID: 0}
+          orbitRadius: 2.3391058
+          startingAngle: 180
+          orbitDegreesPerSecond: -29.767832
+          baseScale: 1.0115036
+          preStuckKnives: 2
+          preStuckKnifeSpacing: 180
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -91.028854
+            behaviourType: 0
+            pulsating:
+              amplitude: 38.687263
+              frequency: 1.449305
+            flipping:
+              flipInterval: 1.7249999
+              flipProbability: 0.55
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.62638855
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.6
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 2
+      totalFruitsHit: 0
+    - knives: 9
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 3.2
+          startingAngle: 0
+          orbitDegreesPerSecond: 29.84314
+          baseScale: 0.9050296
+          preStuckKnives: 3
+          preStuckKnifeSpacing: 120
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 128.39046
+            behaviourType: 1
+            pulsating:
+              amplitude: 77.03428
+              frequency: 2
+            flipping:
+              flipInterval: 0.85
+              flipProbability: 0.85
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.69231045
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 0.8
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 3
+        - prefab: {fileID: 0}
+          orbitRadius: 2.9054852
+          startingAngle: 180
+          orbitDegreesPerSecond: -29.71945
+          baseScale: 0.89065754
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -144.77612
+            behaviourType: 0
+            pulsating:
+              amplitude: 86.86568
+              frequency: 2
+            flipping:
+              flipInterval: 0.85
+              flipProbability: 0.85
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.70641696
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 0.8
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 2
+      totalFruitsHit: 0
+  - stageName: Orbit Rodeo
+    levels:
+    - knives: 8
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 1.1
+          startingAngle: 0
+          orbitDegreesPerSecond: 44.854557
+          baseScale: 1.1002239
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 176.12755
+            behaviourType: 0
+            pulsating:
+              amplitude: 44.031887
+              frequency: 0.820971
+            flipping:
+              flipInterval: 2.6
+              flipProbability: 0.25
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6430546
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 2.4
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 2
+        - prefab: {fileID: 0}
+          orbitRadius: 1.3945148
+          startingAngle: 180
+          orbitDegreesPerSecond: -44.73087
+          baseScale: 1.0763803
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -172.32822
+            behaviourType: 0
+            pulsating:
+              amplitude: 43.082054
+              frequency: 0.8462367
+            flipping:
+              flipInterval: 2.6
+              flipProbability: 0.25
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6624898
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 2.4
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 2
+      totalFruitsHit: 0
+    - knives: 9
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 2.103109
+          startingAngle: 0
+          orbitDegreesPerSecond: 44.92645
+          baseScale: 0.9847211
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 127.86922
+            behaviourType: 0
+            pulsating:
+              amplitude: 46.88538
+              frequency: 1.2169024
+            flipping:
+              flipInterval: 2.0166667
+              flipProbability: 0.45000002
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6142839
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.8666667
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 2
+            angularSpacing: 180
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 3
+        - prefab: {fileID: 0}
+          orbitRadius: 2.111028
+          startingAngle: 180
+          orbitDegreesPerSecond: -44.802757
+          baseScale: 0.9565923
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -85.685295
+            behaviourType: 0
+            pulsating:
+              amplitude: 31.417942
+              frequency: 1.2421681
+            flipping:
+              flipInterval: 2.0166667
+              flipProbability: 0.45000002
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.633719
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.8666667
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 2
+            angularSpacing: 180
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 3
+      totalFruitsHit: 0
+    - knives: 10
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 2.803109
+          startingAngle: 0
+          orbitDegreesPerSecond: 45.02614
+          baseScale: 0.89055276
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 119.65052
+            behaviourType: 3
+            pulsating:
+              amplitude: 57.831085
+              frequency: 1.6647109
+            flipping:
+              flipInterval: 1.4333333
+              flipProbability: 0.65000004
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6254186
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.3333334
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 3
+            angularSpacing: 120
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 2
+        - prefab: {fileID: 0}
+          orbitRadius: 2.5165129
+          startingAngle: 120
+          orbitDegreesPerSecond: -44.901794
+          baseScale: 0.86418146
+          preStuckKnives: 2
+          preStuckKnifeSpacing: 180
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -92.00366
+            behaviourType: 2
+            pulsating:
+              amplitude: 44.468437
+              frequency: 1.6899766
+            flipping:
+              flipInterval: 1.4333333
+              flipProbability: 0.65000004
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6448538
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.3333334
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 3
+            angularSpacing: 120
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 2
+        - prefab: {fileID: 0}
+          orbitRadius: 2.214735
+          startingAngle: 240
+          orbitDegreesPerSecond: 44.821575
+          baseScale: 0.8719362
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 81.58748
+            behaviourType: 1
+            pulsating:
+              amplitude: 39.43395
+              frequency: 1.6765379
+            flipping:
+              flipInterval: 1.4333333
+              flipProbability: 0.65000004
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6345163
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.3333334
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 3
+      totalFruitsHit: 0
+    - knives: 11
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 3.2
+          startingAngle: 0
+          orbitDegreesPerSecond: 45.14828
+          baseScale: 0.79998547
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 103.9347
+            behaviourType: 3
+            pulsating:
+              amplitude: 62.36082
+              frequency: 2
+            flipping:
+              flipInterval: 0.85
+              flipProbability: 0.85
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.69231045
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 0.8
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 3
+            angularSpacing: 120
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 4
+        - prefab: {fileID: 0}
+          orbitRadius: 2.9054852
+          startingAngle: 120
+          orbitDegreesPerSecond: -45.017555
+          baseScale: 0.7784332
+          preStuckKnives: 3
+          preStuckKnifeSpacing: 120
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -202.0487
+            behaviourType: 2
+            pulsating:
+              amplitude: 121.229225
+              frequency: 2
+            flipping:
+              flipInterval: 0.85
+              flipProbability: 0.85
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.70641696
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 0.8
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 3
+            angularSpacing: 120
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 4
+        - prefab: {fileID: 0}
+          orbitRadius: 2.881746
+          startingAngle: 240
+          orbitDegreesPerSecond: 44.931923
+          baseScale: 0.79443705
+          preStuckKnives: 3
+          preStuckKnifeSpacing: 120
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 191.71059
+            behaviourType: 1
+            pulsating:
+              amplitude: 115.02636
+              frequency: 2
+            flipping:
+              flipInterval: 0.85
+              flipProbability: 0.85
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.69
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 0.8
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 4
+      totalFruitsHit: 0
+  - stageName: Chaos Carnival
+    levels:
+    - knives: 10
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 1.1
+          startingAngle: 0
+          orbitDegreesPerSecond: 60.272762
+          baseScale: 0.9987632
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 163.10571
+            behaviourType: 0
+            pulsating:
+              amplitude: 40.77643
+              frequency: 0.820971
+            flipping:
+              flipInterval: 2.6
+              flipProbability: 0.25
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6430546
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 2.4
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 3
+        - prefab: {fileID: 0}
+          orbitRadius: 1.3945148
+          startingAngle: 120
+          orbitDegreesPerSecond: -60.130283
+          baseScale: 0.98136336
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -163.68452
+            behaviourType: 0
+            pulsating:
+              amplitude: 40.92113
+              frequency: 0.8462367
+            flipping:
+              flipInterval: 2.6
+              flipProbability: 0.25
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6624898
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 2.4
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 3
+        - prefab: {fileID: 0}
+          orbitRadius: 1.4182541
+          startingAngle: 240
+          orbitDegreesPerSecond: 60.04168
+          baseScale: 0.972286
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 204.39162
+            behaviourType: 0
+            pulsating:
+              amplitude: 51.097904
+              frequency: 0.83279806
+            flipping:
+              flipInterval: 2.6
+              flipProbability: 0.25
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.65215236
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 2.4
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 3
+      totalFruitsHit: 0
+    - knives: 11
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 2.103109
+          startingAngle: 0
+          orbitDegreesPerSecond: 60.352093
+          baseScale: 0.8927363
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 133.89626
+            behaviourType: 0
+            pulsating:
+              amplitude: 49.095295
+              frequency: 1.2169024
+            flipping:
+              flipInterval: 2.0166667
+              flipProbability: 0.45000002
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6142839
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.8666667
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 2
+            angularSpacing: 180
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 4
+        - prefab: {fileID: 0}
+          orbitRadius: 2.111028
+          startingAngle: 120
+          orbitDegreesPerSecond: -60.19895
+          baseScale: 0.9105536
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -106.90934
+            behaviourType: 0
+            pulsating:
+              amplitude: 39.200092
+              frequency: 1.2421681
+            flipping:
+              flipInterval: 2.0166667
+              flipProbability: 0.45000002
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.633719
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.8666667
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 4
+        - prefab: {fileID: 0}
+          orbitRadius: 1.8329893
+          startingAngle: 240
+          orbitDegreesPerSecond: 60.12356
+          baseScale: 0.91087747
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 210.24323
+            behaviourType: 0
+            pulsating:
+              amplitude: 77.08919
+              frequency: 1.2287294
+            flipping:
+              flipInterval: 2.0166667
+              flipProbability: 0.45000002
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6233816
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.8666667
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 4
+      totalFruitsHit: 0
+    - knives: 12
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 2.803109
+          startingAngle: 0
+          orbitDegreesPerSecond: 60.352093
+          baseScale: 0.81361455
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 172.27922
+            behaviourType: 0
+            pulsating:
+              amplitude: 83.268295
+              frequency: 1.6647109
+            flipping:
+              flipInterval: 1.4333333
+              flipProbability: 0.65000004
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6254186
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.3333334
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 3
+            angularSpacing: 120
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 4
+        - prefab: {fileID: 0}
+          orbitRadius: 2.5165129
+          startingAngle: 90
+          orbitDegreesPerSecond: -60.196026
+          baseScale: 0.8491231
+          preStuckKnives: 2
+          preStuckKnifeSpacing: 180
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -233.1931
+            behaviourType: 1
+            pulsating:
+              amplitude: 112.71
+              frequency: 1.6899766
+            flipping:
+              flipInterval: 1.4333333
+              flipProbability: 0.65000004
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6448538
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.3333334
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 4
+        - prefab: {fileID: 0}
+          orbitRadius: 2.214735
+          startingAngle: 180
+          orbitDegreesPerSecond: 60.158703
+          baseScale: 0.8202653
+          preStuckKnives: 2
+          preStuckKnifeSpacing: 180
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 137.81444
+            behaviourType: 2
+            pulsating:
+              amplitude: 66.61031
+              frequency: 1.6765379
+            flipping:
+              flipInterval: 1.4333333
+              flipProbability: 0.65000004
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6345163
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.3333334
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 3
+            angularSpacing: 120
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 4
+        - prefab: {fileID: 0}
+          orbitRadius: 2.1752286
+          startingAngle: 270
+          orbitDegreesPerSecond: -60.126194
+          baseScale: 0.8365449
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -174.30304
+            behaviourType: 3
+            pulsating:
+              amplitude: 84.246475
+              frequency: 1.646655
+            flipping:
+              flipInterval: 1.4333333
+              flipProbability: 0.65000004
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.61152947
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.3333334
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 3
+            angularSpacing: 120
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 4
+      totalFruitsHit: 0
+    - knives: 13
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 3.2
+          startingAngle: 0
+          orbitDegreesPerSecond: 60.272762
+          baseScale: 0.7873687
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 200.31966
+            behaviourType: 0
+            pulsating:
+              amplitude: 120.191795
+              frequency: 2
+            flipping:
+              flipInterval: 0.85
+              flipProbability: 0.85
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.69231045
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 0.8
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 5
+        - prefab: {fileID: 0}
+          orbitRadius: 2.9054852
+          startingAngle: 90
+          orbitDegreesPerSecond: -60.12469
+          baseScale: 0.7583725
+          preStuckKnives: 3
+          preStuckKnifeSpacing: 120
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -187.37059
+            behaviourType: 1
+            pulsating:
+              amplitude: 112.422356
+              frequency: 2
+            flipping:
+              flipInterval: 0.85
+              flipProbability: 0.85
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.70641696
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 0.8
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 3
+            angularSpacing: 120
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 5
+        - prefab: {fileID: 0}
+          orbitRadius: 2.881746
+          startingAngle: 180
+          orbitDegreesPerSecond: 60.14832
+          baseScale: 0.7701812
+          preStuckKnives: 3
+          preStuckKnifeSpacing: 120
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 164.15228
+            behaviourType: 2
+            pulsating:
+              amplitude: 98.49137
+              frequency: 2
+            flipping:
+              flipInterval: 0.85
+              flipProbability: 0.85
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.69
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 0.8
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 3
+            angularSpacing: 120
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 5
+        - prefab: {fileID: 0}
+          orbitRadius: 3.150608
+          startingAngle: 270
+          orbitDegreesPerSecond: -60.039112
+          baseScale: 0.7901978
+          preStuckKnives: 3
+          preStuckKnifeSpacing: 120
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -208.37257
+            behaviourType: 3
+            pulsating:
+              amplitude: 125.02355
+              frequency: 2
+            flipping:
+              flipInterval: 0.85
+              flipProbability: 0.85
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6634371
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 0.8
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 3
+            angularSpacing: 120
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 5
+      totalFruitsHit: 0
+  - stageName: Finale Frenzy
+    levels:
+    - knives: 12
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 1.1
+          startingAngle: 0
+          orbitDegreesPerSecond: 75.148285
+          baseScale: 0.95769083
+          preStuckKnives: 1
+          preStuckKnifeSpacing: 360
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 175.97417
+            behaviourType: 0
+            pulsating:
+              amplitude: 43.99354
+              frequency: 0.820971
+            flipping:
+              flipInterval: 2.6
+              flipProbability: 0.25
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6430546
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 2.4
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 1
+            angularSpacing: 360
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 4
+        - prefab: {fileID: 0}
+          orbitRadius: 1.3945148
+          startingAngle: 120
+          orbitDegreesPerSecond: -75.01773
+          baseScale: 1.0002878
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -144.31062
+            behaviourType: 0
+            pulsating:
+              amplitude: 36.077656
+              frequency: 0.8462367
+            flipping:
+              flipInterval: 2.6
+              flipProbability: 0.25
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6624898
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 2.4
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 4
+        - prefab: {fileID: 0}
+          orbitRadius: 1.4182541
+          startingAngle: 240
+          orbitDegreesPerSecond: 75.11329
+          baseScale: 1.0242444
+          preStuckKnives: 1
+          preStuckKnifeSpacing: 360
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 197.16518
+            behaviourType: 0
+            pulsating:
+              amplitude: 49.291294
+              frequency: 0.83279806
+            flipping:
+              flipInterval: 2.6
+              flipProbability: 0.25
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.65215236
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 2.4
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 4
+      totalFruitsHit: 0
+    - knives: 13
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 2.103109
+          startingAngle: 0
+          orbitDegreesPerSecond: 75.02614
+          baseScale: 0.9180062
+          preStuckKnives: 2
+          preStuckKnifeSpacing: 180
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 232.88287
+            behaviourType: 0
+            pulsating:
+              amplitude: 85.39039
+              frequency: 1.2169024
+            flipping:
+              flipInterval: 2.0166667
+              flipProbability: 0.45000002
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6142839
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.8666667
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 2
+            angularSpacing: 180
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 4
+        - prefab: {fileID: 0}
+          orbitRadius: 2.111028
+          startingAngle: 120
+          orbitDegreesPerSecond: -74.91792
+          baseScale: 0.959213
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -244.52457
+            behaviourType: 0
+            pulsating:
+              amplitude: 89.65901
+              frequency: 1.2421681
+            flipping:
+              flipInterval: 2.0166667
+              flipProbability: 0.45000002
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.633719
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.8666667
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 5
+        - prefab: {fileID: 0}
+          orbitRadius: 1.8329893
+          startingAngle: 240
+          orbitDegreesPerSecond: 75.08157
+          baseScale: 0.98457325
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 128.81267
+            behaviourType: 0
+            pulsating:
+              amplitude: 47.23131
+              frequency: 1.2287294
+            flipping:
+              flipInterval: 2.0166667
+              flipProbability: 0.45000002
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6233816
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.8666667
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 5
+      totalFruitsHit: 0
+    - knives: 14
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 2.803109
+          startingAngle: 0
+          orbitDegreesPerSecond: 74.926445
+          baseScale: 0.89418167
+          preStuckKnives: 2
+          preStuckKnifeSpacing: 180
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 185.27568
+            behaviourType: 3
+            pulsating:
+              amplitude: 89.54991
+              frequency: 1.6647109
+            flipping:
+              flipInterval: 1.4333333
+              flipProbability: 0.65000004
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6254186
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.3333334
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 5
+        - prefab: {fileID: 0}
+          orbitRadius: 2.5165129
+          startingAngle: 90
+          orbitDegreesPerSecond: -74.84114
+          baseScale: 0.8898985
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -228.65947
+            behaviourType: 2
+            pulsating:
+              amplitude: 110.518745
+              frequency: 1.6899766
+            flipping:
+              flipInterval: 1.4333333
+              flipProbability: 0.65000004
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6448538
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.3333334
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 3
+            angularSpacing: 120
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 5
+        - prefab: {fileID: 0}
+          orbitRadius: 2.214735
+          startingAngle: 180
+          orbitDegreesPerSecond: 75.06379
+          baseScale: 0.94132346
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 156.5206
+            behaviourType: 1
+            pulsating:
+              amplitude: 75.65163
+              frequency: 1.6765379
+            flipping:
+              flipInterval: 1.4333333
+              flipProbability: 0.65000004
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6345163
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.3333334
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 4
+        - prefab: {fileID: 0}
+          orbitRadius: 2.1752286
+          startingAngle: 270
+          orbitDegreesPerSecond: -74.918816
+          baseScale: 0.9293749
+          preStuckKnives: 2
+          preStuckKnifeSpacing: 180
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -146.24449
+            behaviourType: 0
+            pulsating:
+              amplitude: 70.68484
+              frequency: 1.646655
+            flipping:
+              flipInterval: 1.4333333
+              flipProbability: 0.65000004
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.61152947
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 1.3333334
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 3
+            angularSpacing: 120
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 5
+      totalFruitsHit: 0
+    - knives: 15
+      targetGroup:
+        targets:
+        - prefab: {fileID: 0}
+          orbitRadius: 3.2
+          startingAngle: 0
+          orbitDegreesPerSecond: 74.85456
+          baseScale: 0.8510719
+          preStuckKnives: 3
+          preStuckKnifeSpacing: 120
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 156.81564
+            behaviourType: 3
+            pulsating:
+              amplitude: 94.089386
+              frequency: 2
+            flipping:
+              flipInterval: 0.85
+              flipProbability: 0.85
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.69231045
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 0.8
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 6
+        - prefab: {fileID: 0}
+          orbitRadius: 2.9054852
+          startingAngle: 90
+          orbitDegreesPerSecond: -74.79195
+          baseScale: 0.87286353
+          preStuckKnives: 3
+          preStuckKnifeSpacing: 120
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -244.55273
+            behaviourType: 2
+            pulsating:
+              amplitude: 146.73164
+              frequency: 2
+            flipping:
+              flipInterval: 0.85
+              flipProbability: 0.85
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.70641696
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 0.8
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 6
+        - prefab: {fileID: 0}
+          orbitRadius: 2.881746
+          startingAngle: 180
+          orbitDegreesPerSecond: 75.04516
+          baseScale: 0.8918829
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: 192.071
+            behaviourType: 1
+            pulsating:
+              amplitude: 115.24261
+              frequency: 2
+            flipping:
+              flipInterval: 0.85
+              flipProbability: 0.85
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.69
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 0.8
+          hitableObjects: []
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 6
+        - prefab: {fileID: 0}
+          orbitRadius: 3.150608
+          startingAngle: 270
+          orbitDegreesPerSecond: -74.92115
+          baseScale: 0.86838573
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
+          preStuckKnifeSpacingOffset: 0
+          rotation:
+            speed: -166.55441
+            behaviourType: 0
+            pulsating:
+              amplitude: 99.932655
+              frequency: 2
+            flipping:
+              flipInterval: 0.85
+              flipProbability: 0.85
+            acceleration:
+              accelerationCurve:
+                serializedVersion: 2
+                m_Curve:
+                - serializedVersion: 3
+                  time: 0
+                  value: 0.6634371
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                - serializedVersion: 3
+                  time: 1
+                  value: 1.45
+                  inSlope: 0
+                  outSlope: 0
+                  tangentMode: 0
+                  weightedMode: 0
+                  inWeight: 0
+                  outWeight: 0
+                m_PreInfinity: 2
+                m_PostInfinity: 2
+                m_RotationOrder: 4
+              curveLoopDuration: 0.8
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 3
+            angularSpacing: 120
+            orientOutwards: 1
+          hitableObjectSpacingOffset: 0
+          knivesToBreak: 6
+      totalFruitsHit: 0

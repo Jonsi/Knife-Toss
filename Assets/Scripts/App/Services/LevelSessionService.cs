@@ -22,7 +22,8 @@ namespace App.Services
         private readonly KnivesHierarchyManager hierarchyManager;
         private readonly PreStuckKnifeSpawner preStuckSpawner;
         private readonly HitableObjectSpawner hitableSpawner;
-        private readonly int startLevel;
+        private readonly int startStageIndex;
+        private readonly int startLevelIndex;
         private readonly KnifeImpactEventChannel impactEventChannel;
         private readonly HitableObjectHitEventChannel hitableEventChannel;
         private readonly TargetHitTracker targetHitTracker;
@@ -41,7 +42,8 @@ namespace App.Services
             KnivesHierarchyManager knivesHierarchy,
             PreStuckKnifeSpawner preStuckKnifeSpawner,
             HitableObjectSpawner hitableObjectSpawner,
-            int startingLevel,
+            int startingStageIndex,
+            int startingLevelIndex,
             KnifeImpactEventChannel eventChannel,
             HitableObjectHitEventChannel hitableHitEventChannel,
             TargetHitTracker hitTracker)
@@ -53,7 +55,8 @@ namespace App.Services
             hierarchyManager = knivesHierarchy;
             preStuckSpawner = preStuckKnifeSpawner;
             hitableSpawner = hitableObjectSpawner;
-            startLevel = Mathf.Max(1, startingLevel);
+            startStageIndex = Mathf.Max(1, startingStageIndex);
+            startLevelIndex = Mathf.Max(1, startingLevelIndex);
             impactEventChannel = eventChannel;
             hitableEventChannel = hitableHitEventChannel;
             targetHitTracker = hitTracker;
@@ -71,28 +74,28 @@ namespace App.Services
 
         public LevelSession Session => session;
         public LevelRules CurrentRules => currentRules;
-        public int CurrentLevel => session.LevelIndex;
+        public int CurrentStageIndex => session.StageIndex;
+        public int CurrentLevelIndex => session.LevelIndex;
 
         /// <summary>
         /// Performs the StartInitialLevelAsync operation.
         /// </summary>
         public UniTask StartInitialLevelAsync()
         {
-            int highestLevel = playerDataService.GetHighestLevel(startLevel);
-            int levelToStart = Mathf.Max(startLevel, highestLevel);
-            return StartLevelAsync(levelToStart);
+            (int stage, int level) = playerDataService.GetCurrentStageAndLevel(startStageIndex, startLevelIndex);
+            return StartLevelAsync(stage, level);
         }
 
         /// <summary>
         /// Performs the StartLevelAsync operation.
         /// </summary>
-        public async UniTask StartLevelAsync(int levelIndex)
+        public async UniTask StartLevelAsync(int stageIndex, int levelIndex)
         {
             ResetThrowerTweens();
             await RebuildKnifeHierarchyAsync();
             Transform knivesParent = hierarchyManager.EnsureParent();
 
-            ApplyRules(levelIndex);
+            ApplyRules(stageIndex, levelIndex);
             ConfigureTarget(currentRules);
             ConfigureThrower(knivesParent, currentRules);
 
@@ -108,7 +111,7 @@ namespace App.Services
         /// </summary>
         public UniTask RetryLevelAsync()
         {
-            return StartLevelAsync(session.LevelIndex);
+            return StartLevelAsync(session.StageIndex, session.LevelIndex);
         }
 
         /// <summary>
@@ -116,7 +119,34 @@ namespace App.Services
         /// </summary>
         public UniTask NextLevelAsync()
         {
-            return StartLevelAsync(session.LevelIndex + 1);
+            int currentStage = session.StageIndex;
+            int currentLevel = session.LevelIndex;
+            int levelCountInStage = catalog.GetLevelCountInStage(currentStage);
+
+            if (currentLevel < levelCountInStage)
+            {
+                return StartLevelAsync(currentStage, currentLevel + 1);
+            }
+            else
+            {
+                int nextStage = currentStage + 1;
+                if (catalog.IsValidStageAndLevel(nextStage, 1))
+                {
+                    return StartLevelAsync(nextStage, 1);
+                }
+                else
+                {
+                    return StartLevelAsync(currentStage, currentLevel);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Resets to level 1 of the current stage.
+        /// </summary>
+        public UniTask ResetToStageStartAsync()
+        {
+            return StartLevelAsync(session.StageIndex, 1);
         }
 
         /// <summary>
@@ -240,7 +270,7 @@ namespace App.Services
         /// </summary>
         private void SaveProgress()
         {
-            playerDataService?.SetHighestLevel(session.LevelIndex);
+            playerDataService?.SetCurrentStageAndLevel(session.StageIndex, session.LevelIndex);
         }
 
         /// <summary>
@@ -273,11 +303,11 @@ namespace App.Services
         /// <summary>
         /// Performs the ApplyRules operation.
         /// </summary>
-        private void ApplyRules(int levelIndex)
+        private void ApplyRules(int stageIndex, int levelIndex)
         {
-            currentLevelData = catalog.GetLevelData(levelIndex);
-            currentRules = catalog.GetRules(levelIndex);
-            session.Begin(levelIndex, currentRules);
+            currentLevelData = catalog.GetLevelData(stageIndex, levelIndex);
+            currentRules = catalog.GetRules(stageIndex, levelIndex);
+            session.Begin(stageIndex, levelIndex, currentRules);
         }
 
         /// <summary>

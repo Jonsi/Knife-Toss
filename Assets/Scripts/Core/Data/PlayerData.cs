@@ -38,7 +38,8 @@ namespace Core.Data
     [Serializable]
     public class PlayerProgressData
     {
-        public int highestLevel = 1;
+        public int currentStageIndex = 1;
+        public int currentLevelIndex = 1;
         public int totalFruitsHit = 0;
         public LevelProgressData levelProgress = new LevelProgressData();
     }

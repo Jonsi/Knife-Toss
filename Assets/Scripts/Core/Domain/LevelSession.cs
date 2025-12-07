@@ -15,6 +15,7 @@ namespace Core.Domain
         public event Action<LevelSession> Completed;
         public event Action<LevelSession> Failed;
 
+        public int StageIndex { get; private set; }
         public int LevelIndex { get; private set; }
         public LevelRules Rules { get; private set; }
         public int KnivesStuck { get; private set; }
@@ -33,8 +34,9 @@ namespace Core.Domain
         /// <summary>
         /// Performs the Begin operation.
         /// </summary>
-        public void Begin(int levelIndex, LevelRules rules)
+        public void Begin(int stageIndex, int levelIndex, LevelRules rules)
         {
+            StageIndex = stageIndex;
             LevelIndex = levelIndex;
             Rules = rules;
             KnivesStuck = 0;

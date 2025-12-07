@@ -7,12 +7,11 @@ using UnityEngine;
 namespace Editor
 {
     /// <summary>
-    /// Creates a refreshed LevelConfig that better reflects the shipped features.
+    /// Creates a refreshed StagesConfig that organizes levels into stages.
     /// </summary>
-    public sealed class LevelConfigGenerator : EditorWindow
+    public sealed class StagesConfigGenerator : EditorWindow
     {
-        private const string AssetPath = "Assets/Configurations/Gameplay/LevelConfig.asset";
-        private const int TotalLevels = 18;
+        private const string AssetPath = "Assets/Configurations/Gameplay/StagesConfig.asset";
 
         private static readonly StageProfile[] StagePlan =
         {
@@ -78,38 +77,61 @@ namespace Editor
 
         private static List<HitableObjectConfig> cachedHitables;
 
-        [MenuItem("Knife Toss/Generate Level Config")]
+        [MenuItem("Knife Toss/Generate Stages Config")]
         public static void ShowWindow()
         {
-            GetWindow<LevelConfigGenerator>("Level Config Generator");
+            GetWindow<StagesConfigGenerator>("Stages Config Generator");
         }
 
         private void OnGUI()
         {
-            GUILayout.Label("Level Configuration Generator", EditorStyles.boldLabel);
+            GUILayout.Label("Stages Configuration Generator", EditorStyles.boldLabel);
             GUILayout.Space(6f);
-            if (GUILayout.Button($"Create Level Config Asset with {TotalLevels} levels"))
+            int totalLevels = CalculateTotalLevels();
+            if (GUILayout.Button($"Create Stages Config Asset with {StagePlan.Length} stages ({totalLevels} total levels)"))
             {
-                CreateLevelConfig();
+                CreateStagesConfig();
             }
         }
 
-        private static void CreateLevelConfig()
+        private static int CalculateTotalLevels()
         {
-            LevelConfig config = AssetDatabase.LoadAssetAtPath<LevelConfig>(AssetPath);
+            int total = 0;
+            for (int i = 0; i < StagePlan.Length; i++)
+            {
+                total += StagePlan[i].MaxLevel - StagePlan[i].MinLevel + 1;
+            }
+            return total;
+        }
+
+        private static void CreateStagesConfig()
+        {
+            StagesConfig config = AssetDatabase.LoadAssetAtPath<StagesConfig>(AssetPath);
             bool createdAsset = false;
             if (config == null)
             {
-                config = ScriptableObject.CreateInstance<LevelConfig>();
+                config = ScriptableObject.CreateInstance<StagesConfig>();
                 createdAsset = true;
             }
 
-            config.levels ??= new List<LevelData>();
-            config.levels.Clear();
+            config.stages ??= new List<StageData>();
+            config.stages.Clear();
 
-            for (int i = 0; i < TotalLevels; i++)
+            for (int stageIndex = 0; stageIndex < StagePlan.Length; stageIndex++)
             {
-                config.levels.Add(CreateLevel(i + 1));
+                StageProfile stageProfile = StagePlan[stageIndex];
+                StageData stageData = new StageData
+                {
+                    stageName = stageProfile.Name,
+                    levels = new List<LevelData>()
+                };
+
+                for (int levelNumber = stageProfile.MinLevel; levelNumber <= stageProfile.MaxLevel; levelNumber++)
+                {
+                    stageData.levels.Add(CreateLevel(levelNumber, stageProfile));
+                }
+
+                config.stages.Add(stageData);
             }
 
             if (createdAsset)
@@ -124,12 +146,11 @@ namespace Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Selection.activeObject = config;
-            Debug.Log($"LevelConfig updated with {config.levels.Count} handcrafted levels at {AssetPath}");
+            Debug.Log($"StagesConfig updated with {config.stages.Count} stages at {AssetPath}");
         }
 
-        private static LevelData CreateLevel(int levelNumber)
+        private static LevelData CreateLevel(int levelNumber, StageProfile stage)
         {
-            StageProfile stage = ResolveStage(levelNumber);
             float stageProgress = stage.ResolveProgress(levelNumber);
             System.Random rng = new System.Random(levelNumber * 7919);
 
@@ -147,19 +168,6 @@ namespace Editor
             };
 
             return level;
-        }
-
-        private static StageProfile ResolveStage(int levelNumber)
-        {
-            for (int i = 0; i < StagePlan.Length; i++)
-            {
-                if (StagePlan[i].Contains(levelNumber))
-                {
-                    return StagePlan[i];
-                }
-            }
-
-            return StagePlan[StagePlan.Length - 1];
         }
 
         private static List<TargetDefinition> BuildTargets(StageProfile stage, int levelNumber, float stageProgress, System.Random rng, out int quotaSum, out int hitableCount)
@@ -384,3 +392,4 @@ namespace Editor
         }
     }
 }
+

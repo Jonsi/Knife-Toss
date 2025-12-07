@@ -17,8 +17,9 @@ namespace Core.Abstractions
         void Reset();
         void Replace(PlayerData newData);
 
-        int GetHighestLevel(int fallbackLevel);
-        void SetHighestLevel(int levelIndex);
+        (int stageIndex, int levelIndex) GetCurrentStageAndLevel(int fallbackStage, int fallbackLevel);
+        void SetCurrentStageAndLevel(int stageIndex, int levelIndex);
+        void ResetToStageLevel(int stageIndex, int levelIndex);
         void AddFruitsHit(int count);
         int GetTotalFruitsHit();
     }

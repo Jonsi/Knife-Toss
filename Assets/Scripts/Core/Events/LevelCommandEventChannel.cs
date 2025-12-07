@@ -12,6 +12,7 @@ namespace Core.Events
         public event Action RetryRequested;
         public event Action NextRequested;
         public event Action<int> LevelRequested;
+        public event Action ResetToStageStartRequested;
 
         /// <summary>
         /// Performs the RaiseRetry operation.
@@ -35,6 +36,14 @@ namespace Core.Events
         public void RaiseLevelRequest(int levelIndex)
         {
             LevelRequested?.Invoke(levelIndex);
+        }
+
+        /// <summary>
+        /// Raises a request to reset to level 1 of the current stage.
+        /// </summary>
+        public void RaiseResetToStageStart()
+        {
+            ResetToStageStartRequested?.Invoke();
         }
     }
 }

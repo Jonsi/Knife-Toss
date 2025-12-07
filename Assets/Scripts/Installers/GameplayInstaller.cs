@@ -24,13 +24,14 @@ namespace Installers
     public class GameplayInstaller : LifetimeScope
     {
         [Header("Configurations")]
-        [SerializeField] private LevelConfig levelConfig;
+        [SerializeField] private StagesConfig stagesConfig;
         [SerializeField] private KnifeImpactEventChannel knifeImpactChannel;
         [SerializeField] private LevelCommandEventChannel levelCommandEventChannel;
         [SerializeField] private SoundSettings soundSettings;
         [SerializeField] private ButtonClickEventChannel buttonClickEventChannel;
         [SerializeField] private TargetHitAnimationConfig targetHitAnimationConfig;
-        [SerializeField] private int startLevel = 1;
+        [SerializeField] private int startStageIndex = 1;
+        [SerializeField] private int startLevelIndex = 1;
 
         [Header("Prefabs For Gameplay")]
         [SerializeField] private GameObject targetPrefab;
@@ -49,7 +50,7 @@ namespace Installers
         /// </summary>
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.RegisterInstance(levelConfig);
+            builder.RegisterInstance(stagesConfig);
             builder.RegisterInstance(knifeImpactChannel);
             builder.RegisterInstance(levelCommandEventChannel);
             builder.RegisterInstance(knifePrefab);
@@ -85,7 +86,7 @@ namespace Installers
             builder.Register<ITargetScaleProvider>(resolver => resolver.Resolve<GameplayObjectProvider>().GetTargetGroupManager(), Lifetime.Singleton);
 
             builder.Register<LevelSession>(Lifetime.Singleton);
-            builder.Register<ILevelCatalog, LevelConfigCatalog>(Lifetime.Singleton);
+            builder.Register<ILevelCatalog, StagesConfigCatalog>(Lifetime.Singleton);
             builder.Register<KnivesHierarchyManager>(Lifetime.Singleton)
                 .WithParameter(transform)
                 .WithParameter("Knives");
@@ -97,7 +98,8 @@ namespace Installers
                 .WithParameter(knifePrefab);
             builder.Register<LevelSessionService>(Lifetime.Singleton)
                 .WithParameter(resolver => resolver.Resolve<GameplayObjectProvider>())
-                .WithParameter(startLevel)
+                .WithParameter(startStageIndex)
+                .WithParameter(startLevelIndex)
                 .WithParameter(knifeImpactChannel)
                 .WithParameter(hitableHitEventChannel);
 

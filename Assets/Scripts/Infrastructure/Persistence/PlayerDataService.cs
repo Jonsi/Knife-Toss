@@ -52,19 +52,39 @@ namespace Infrastructure.Persistence
             Save();
         }
 
-        public int GetHighestLevel(int fallbackLevel)
+        public (int stageIndex, int levelIndex) GetCurrentStageAndLevel(int fallbackStage, int fallbackLevel)
         {
-            int minimum = Mathf.Max(1, fallbackLevel);
-            return Mathf.Max(minimum, playerData.progress.highestLevel);
+            int stage = Mathf.Max(1, Mathf.Max(fallbackStage, playerData.progress.currentStageIndex));
+            int level = Mathf.Max(1, Mathf.Max(fallbackLevel, playerData.progress.currentLevelIndex));
+            return (stage, level);
         }
 
-        public void SetHighestLevel(int levelIndex)
+        public void SetCurrentStageAndLevel(int stageIndex, int levelIndex)
         {
-            if (levelIndex > playerData.progress.highestLevel)
+            bool changed = false;
+            if (stageIndex > playerData.progress.currentStageIndex)
             {
-                playerData.progress.highestLevel = levelIndex;
+                playerData.progress.currentStageIndex = stageIndex;
+                playerData.progress.currentLevelIndex = levelIndex;
+                changed = true;
+            }
+            else if (stageIndex == playerData.progress.currentStageIndex && levelIndex > playerData.progress.currentLevelIndex)
+            {
+                playerData.progress.currentLevelIndex = levelIndex;
+                changed = true;
+            }
+
+            if (changed)
+            {
                 Save();
             }
+        }
+
+        public void ResetToStageLevel(int stageIndex, int levelIndex)
+        {
+            playerData.progress.currentStageIndex = Mathf.Max(1, stageIndex);
+            playerData.progress.currentLevelIndex = Mathf.Max(1, levelIndex);
+            Save();
         }
 
         public void AddFruitsHit(int count)

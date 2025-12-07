@@ -164,7 +164,8 @@ namespace Editor
             EditorGUI.indentLevel++;
             if (workingCopy.progress != null)
             {
-                workingCopy.progress.highestLevel = EditorGUILayout.IntField("Highest Level", workingCopy.progress.highestLevel);
+                workingCopy.progress.currentStageIndex = EditorGUILayout.IntField("Current Stage Index", workingCopy.progress.currentStageIndex);
+                workingCopy.progress.currentLevelIndex = EditorGUILayout.IntField("Current Level Index", workingCopy.progress.currentLevelIndex);
                 workingCopy.progress.totalFruitsHit = EditorGUILayout.IntField("Total Fruits Hit", workingCopy.progress.totalFruitsHit);
 
                 EditorGUILayout.Space(4f);

@@ -49,6 +49,7 @@ namespace Presentation.Gameplay
                 commandChannel.NextRequested += HandleNextRequested;
                 commandChannel.RetryRequested += HandleRetryRequested;
                 commandChannel.LevelRequested += HandleLevelRequested;
+                commandChannel.ResetToStageStartRequested += HandleResetToStageStartRequested;
             }
 
             if (session != null)
@@ -71,6 +72,7 @@ namespace Presentation.Gameplay
                 commandChannel.NextRequested -= HandleNextRequested;
                 commandChannel.RetryRequested -= HandleRetryRequested;
                 commandChannel.LevelRequested -= HandleLevelRequested;
+                commandChannel.ResetToStageStartRequested -= HandleResetToStageStartRequested;
             }
 
             if (session != null)
@@ -115,7 +117,15 @@ namespace Presentation.Gameplay
         private void HandleLevelRequested(int levelIndex)
         {
             int clamped = Math.Max(1, levelIndex);
-            BeginTransition(sessionService.StartLevelAsync(clamped));
+            BeginTransition(sessionService.StartLevelAsync(session.StageIndex, clamped));
+        }
+
+        /// <summary>
+        /// Performs the HandleResetToStageStartRequested operation.
+        /// </summary>
+        private void HandleResetToStageStartRequested()
+        {
+            BeginTransition(sessionService.ResetToStageStartAsync());
         }
 
         /// <summary>

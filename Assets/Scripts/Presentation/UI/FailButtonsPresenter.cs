@@ -89,11 +89,11 @@ namespace Presentation.UI
         }
 
         /// <summary>
-        /// Handles give up button click - restarts to level 1.
+        /// Handles give up button click - resets to level 1 of the current stage.
         /// </summary>
         private void HandleGiveUpClicked()
         {
-            commandChannel?.RaiseLevelRequest(1);
+            commandChannel?.RaiseResetToStageStart();
             ShowFailButtons(false);
         }
     }

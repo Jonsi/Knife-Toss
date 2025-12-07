@@ -8,6 +8,7 @@ namespace Presentation.UI.ViewModels
 
     public readonly struct LevelHudViewModel
     {
+        public int StageIndex { get; }
         public int LevelIndex { get; }
         public string LevelLabel { get; }
         public string KnivesRemainingLabel { get; }
@@ -22,6 +23,7 @@ namespace Presentation.UI.ViewModels
         /// Performs the LevelHudViewModel operation.
         /// </summary>
         private LevelHudViewModel(
+            int stageIndex,
             int levelIndex,
             string levelLabel,
             string knivesRemainingLabel,
@@ -31,6 +33,7 @@ namespace Presentation.UI.ViewModels
             int fruitsHit,
             int totalFruitsHit)
         {
+            StageIndex = stageIndex;
             LevelIndex = levelIndex;
             LevelLabel = levelLabel;
             KnivesRemainingLabel = knivesRemainingLabel;
@@ -49,18 +52,19 @@ namespace Presentation.UI.ViewModels
             if (session?.Rules == null || session.Rules.KnifeCount <= 0)
             {
                 int totalFruits = playerDataService?.GetTotalFruitsHit() ?? 0;
-                return new LevelHudViewModel(0, string.Empty, string.Empty, string.Empty, 0, 0, 0, totalFruits);
+                return new LevelHudViewModel(0, 0, string.Empty, string.Empty, string.Empty, 0, 0, 0, totalFruits);
             }
 
+            int stageIndex = session.StageIndex;
             int levelIndex = session.LevelIndex;
             int total = UnityEngine.Mathf.Max(0, session.Rules.KnifeCount);
             int thrown = UnityEngine.Mathf.Clamp(session.KnivesThrown, 0, total);
             int remainingLabelValue = UnityEngine.Mathf.Max(0, session.Rules.KnifeCount - session.PlayerKnivesStuck);
-            string levelLabel = $"{levelIndex}";
-            string completeLabel = $"LEVEL {levelLabel}";
+            string levelLabel = $"{stageIndex}-{levelIndex}";
+            string completeLabel = $"STAGE {stageIndex} - LEVEL {levelIndex}";
             int fruitsHit = session.HitableObjectsHit;
             int totalFruitsHit = playerDataService?.GetTotalFruitsHit() ?? 0;
-            return new LevelHudViewModel(levelIndex, levelLabel, remainingLabelValue.ToString(), completeLabel, total, thrown, fruitsHit, totalFruitsHit);
+            return new LevelHudViewModel(stageIndex, levelIndex, levelLabel, remainingLabelValue.ToString(), completeLabel, total, thrown, fruitsHit, totalFruitsHit);
         }
     }
 }

@@ -141,7 +141,14 @@ namespace Presentation.UI
                 return;
             }
 
-            levelIconView.SetLevelNumber(viewModel.LevelIndex);
+            if (int.TryParse(viewModel.LevelLabel, out int levelNum))
+            {
+                levelIconView.SetLevelNumber(levelNum);
+            }
+            else
+            {
+                levelIconView.SetLevelNumber(viewModel.LevelIndex);
+            }
         }
 
     }
