@@ -15,7 +15,7 @@ MonoBehaviour:
   stages:
   - stageName: Campfire Warmup
     levels:
-    - knives: 5
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
@@ -27,10 +27,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 51.625275
+            speed: 67.87974
             behaviourType: 0
             pulsating:
-              amplitude: 12.906319
+              amplitude: 16.969934
               frequency: 0.820971
             flipping:
               flipInterval: 2.6
@@ -63,9 +63,9 @@ MonoBehaviour:
               curveLoopDuration: 2.4
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 0
+          knivesToBreak: 1
       totalFruitsHit: 0
-    - knives: 6
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
@@ -77,10 +77,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 52.698483
+            speed: 47.193024
             behaviourType: 0
             pulsating:
-              amplitude: 22.396856
+              amplitude: 20.057035
               frequency: 1.4240394
             flipping:
               flipInterval: 1.7249999
@@ -113,9 +113,9 @@ MonoBehaviour:
               curveLoopDuration: 1.6
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 0
+          knivesToBreak: 1
       totalFruitsHit: 0
-    - knives: 7
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
@@ -127,10 +127,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 89.36727
+            speed: 85.91358
             behaviourType: 0
             pulsating:
-              amplitude: 53.620365
+              amplitude: 51.548153
               frequency: 2
             flipping:
               flipInterval: 0.85
@@ -163,11 +163,11 @@ MonoBehaviour:
               curveLoopDuration: 0.8
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 0
+          knivesToBreak: 1
       totalFruitsHit: 0
   - stageName: Juggling School
     levels:
-    - knives: 7
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
@@ -175,14 +175,14 @@ MonoBehaviour:
           startingAngle: 0
           orbitDegreesPerSecond: 29.972456
           baseScale: 1.1276041
-          preStuckKnives: 1
-          preStuckKnifeSpacing: 360
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 111.10235
+            speed: 135.1891
             behaviourType: 0
             pulsating:
-              amplitude: 27.775587
+              amplitude: 33.797276
               frequency: 0.820971
             flipping:
               flipInterval: 2.6
@@ -225,10 +225,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -108.89922
+            speed: -103.75853
             behaviourType: 0
             pulsating:
-              amplitude: 27.224806
+              amplitude: 25.939632
               frequency: 0.8462367
             flipping:
               flipInterval: 2.6
@@ -261,9 +261,9 @@ MonoBehaviour:
               curveLoopDuration: 2.4
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 1
+          knivesToBreak: 2
       totalFruitsHit: 0
-    - knives: 8
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
@@ -275,10 +275,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 180
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 85.4906
+            speed: 63.340923
             behaviourType: 1
             pulsating:
-              amplitude: 36.333508
+              amplitude: 26.919893
               frequency: 1.4240394
             flipping:
               flipInterval: 1.7249999
@@ -317,14 +317,14 @@ MonoBehaviour:
           startingAngle: 180
           orbitDegreesPerSecond: -29.767832
           baseScale: 1.0115036
-          preStuckKnives: 2
-          preStuckKnifeSpacing: 180
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -91.028854
+            speed: -78.320435
             behaviourType: 0
             pulsating:
-              amplitude: 38.687263
+              amplitude: 33.286186
               frequency: 1.449305
             flipping:
               flipInterval: 1.7249999
@@ -357,9 +357,9 @@ MonoBehaviour:
               curveLoopDuration: 1.6
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 2
+          knivesToBreak: 3
       totalFruitsHit: 0
-    - knives: 9
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
@@ -371,10 +371,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 120
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 128.39046
+            speed: 95.926445
             behaviourType: 1
             pulsating:
-              amplitude: 77.03428
+              amplitude: 57.55587
               frequency: 2
             flipping:
               flipInterval: 0.85
@@ -413,14 +413,14 @@ MonoBehaviour:
           startingAngle: 180
           orbitDegreesPerSecond: -29.71945
           baseScale: 0.89065754
-          preStuckKnives: 0
-          preStuckKnifeSpacing: 45
+          preStuckKnives: 3
+          preStuckKnifeSpacing: 120
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -144.77612
+            speed: -131.6012
             behaviourType: 0
             pulsating:
-              amplitude: 86.86568
+              amplitude: 78.960724
               frequency: 2
             flipping:
               flipInterval: 0.85
@@ -453,11 +453,11 @@ MonoBehaviour:
               curveLoopDuration: 0.8
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 2
+          knivesToBreak: 4
       totalFruitsHit: 0
   - stageName: Orbit Rodeo
     levels:
-    - knives: 8
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
@@ -469,10 +469,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 176.12755
+            speed: 113.857346
             behaviourType: 0
             pulsating:
-              amplitude: 44.031887
+              amplitude: 28.464336
               frequency: 0.820971
             flipping:
               flipInterval: 2.6
@@ -515,10 +515,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -172.32822
+            speed: -164.69128
             behaviourType: 0
             pulsating:
-              amplitude: 43.082054
+              amplitude: 41.17282
               frequency: 0.8462367
             flipping:
               flipInterval: 2.6
@@ -551,9 +551,9 @@ MonoBehaviour:
               curveLoopDuration: 2.4
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 2
+          knivesToBreak: 4
       totalFruitsHit: 0
-    - knives: 9
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
@@ -565,10 +565,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 127.86922
+            speed: 126.75121
             behaviourType: 0
             pulsating:
-              amplitude: 46.88538
+              amplitude: 46.475445
               frequency: 1.2169024
             flipping:
               flipInterval: 2.0166667
@@ -615,10 +615,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -85.685295
+            speed: -107.28773
             behaviourType: 0
             pulsating:
-              amplitude: 31.417942
+              amplitude: 39.338833
               frequency: 1.2421681
             flipping:
               flipInterval: 2.0166667
@@ -655,9 +655,9 @@ MonoBehaviour:
             angularSpacing: 180
             orientOutwards: 1
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 3
+          knivesToBreak: 5
       totalFruitsHit: 0
-    - knives: 10
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
@@ -665,14 +665,14 @@ MonoBehaviour:
           startingAngle: 0
           orbitDegreesPerSecond: 45.02614
           baseScale: 0.89055276
-          preStuckKnives: 0
-          preStuckKnifeSpacing: 45
+          preStuckKnives: 2
+          preStuckKnifeSpacing: 180
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 119.65052
+            speed: 161.30681
             behaviourType: 3
             pulsating:
-              amplitude: 57.831085
+              amplitude: 77.96496
               frequency: 1.6647109
             flipping:
               flipInterval: 1.4333333
@@ -709,20 +709,20 @@ MonoBehaviour:
             angularSpacing: 120
             orientOutwards: 1
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 2
+          knivesToBreak: 3
         - prefab: {fileID: 0}
           orbitRadius: 2.5165129
           startingAngle: 120
           orbitDegreesPerSecond: -44.901794
-          baseScale: 0.86418146
-          preStuckKnives: 2
-          preStuckKnifeSpacing: 180
+          baseScale: 0.89255035
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -92.00366
+            speed: -85.419334
             behaviourType: 2
             pulsating:
-              amplitude: 44.468437
+              amplitude: 41.286015
               frequency: 1.6899766
             flipping:
               flipInterval: 1.4333333
@@ -753,13 +753,9 @@ MonoBehaviour:
                 m_PostInfinity: 2
                 m_RotationOrder: 4
               curveLoopDuration: 1.3333334
-          hitableObjects:
-          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
-            count: 3
-            angularSpacing: 120
-            orientOutwards: 1
+          hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 2
+          knivesToBreak: 4
         - prefab: {fileID: 0}
           orbitRadius: 2.214735
           startingAngle: 240
@@ -769,10 +765,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 81.58748
+            speed: 84.3301
             behaviourType: 1
             pulsating:
-              amplitude: 39.43395
+              amplitude: 40.759552
               frequency: 1.6765379
             flipping:
               flipInterval: 1.4333333
@@ -805,9 +801,9 @@ MonoBehaviour:
               curveLoopDuration: 1.3333334
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 3
+          knivesToBreak: 5
       totalFruitsHit: 0
-    - knives: 11
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
@@ -819,10 +815,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 103.9347
+            speed: 123.904495
             behaviourType: 3
             pulsating:
-              amplitude: 62.36082
+              amplitude: 74.3427
               frequency: 2
             flipping:
               flipInterval: 0.85
@@ -865,14 +861,14 @@ MonoBehaviour:
           startingAngle: 120
           orbitDegreesPerSecond: -45.017555
           baseScale: 0.7784332
-          preStuckKnives: 3
-          preStuckKnifeSpacing: 120
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -202.0487
+            speed: -124.94869
             behaviourType: 2
             pulsating:
-              amplitude: 121.229225
+              amplitude: 74.969215
               frequency: 2
             flipping:
               flipInterval: 0.85
@@ -909,20 +905,20 @@ MonoBehaviour:
             angularSpacing: 120
             orientOutwards: 1
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 4
+          knivesToBreak: 5
         - prefab: {fileID: 0}
           orbitRadius: 2.881746
           startingAngle: 240
           orbitDegreesPerSecond: 44.931923
-          baseScale: 0.79443705
-          preStuckKnives: 3
-          preStuckKnifeSpacing: 120
+          baseScale: 0.765179
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 191.71059
+            speed: 123.8081
             behaviourType: 1
             pulsating:
-              amplitude: 115.02636
+              amplitude: 74.28486
               frequency: 2
             flipping:
               flipInterval: 0.85
@@ -953,13 +949,17 @@ MonoBehaviour:
                 m_PostInfinity: 2
                 m_RotationOrder: 4
               curveLoopDuration: 0.8
-          hitableObjects: []
+          hitableObjects:
+          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
+            count: 3
+            angularSpacing: 120
+            orientOutwards: 1
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 4
+          knivesToBreak: 5
       totalFruitsHit: 0
   - stageName: Chaos Carnival
     levels:
-    - knives: 10
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
@@ -971,10 +971,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 163.10571
+            speed: 210.37856
             behaviourType: 0
             pulsating:
-              amplitude: 40.77643
+              amplitude: 52.59464
               frequency: 0.820971
             flipping:
               flipInterval: 2.6
@@ -1017,10 +1017,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -163.68452
+            speed: -180.22794
             behaviourType: 0
             pulsating:
-              amplitude: 40.92113
+              amplitude: 45.056984
               frequency: 0.8462367
             flipping:
               flipInterval: 2.6
@@ -1053,7 +1053,7 @@ MonoBehaviour:
               curveLoopDuration: 2.4
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 3
+          knivesToBreak: 4
         - prefab: {fileID: 0}
           orbitRadius: 1.4182541
           startingAngle: 240
@@ -1063,10 +1063,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 204.39162
+            speed: 139.07039
             behaviourType: 0
             pulsating:
-              amplitude: 51.097904
+              amplitude: 34.767597
               frequency: 0.83279806
             flipping:
               flipInterval: 2.6
@@ -1099,9 +1099,9 @@ MonoBehaviour:
               curveLoopDuration: 2.4
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 3
+          knivesToBreak: 5
       totalFruitsHit: 0
-    - knives: 11
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
@@ -1113,10 +1113,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 133.89626
+            speed: 139.9178
             behaviourType: 0
             pulsating:
-              amplitude: 49.095295
+              amplitude: 51.303196
               frequency: 1.2169024
             flipping:
               flipInterval: 2.0166667
@@ -1163,10 +1163,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -106.90934
+            speed: -207.71805
             behaviourType: 0
             pulsating:
-              amplitude: 39.200092
+              amplitude: 76.163284
               frequency: 1.2421681
             flipping:
               flipInterval: 2.0166667
@@ -1199,7 +1199,7 @@ MonoBehaviour:
               curveLoopDuration: 1.8666667
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 4
+          knivesToBreak: 5
         - prefab: {fileID: 0}
           orbitRadius: 1.8329893
           startingAngle: 240
@@ -1209,10 +1209,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 210.24323
+            speed: 191.5719
             behaviourType: 0
             pulsating:
-              amplitude: 77.08919
+              amplitude: 70.243034
               frequency: 1.2287294
             flipping:
               flipInterval: 2.0166667
@@ -1245,9 +1245,9 @@ MonoBehaviour:
               curveLoopDuration: 1.8666667
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 4
+          knivesToBreak: 6
       totalFruitsHit: 0
-    - knives: 12
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
@@ -1259,10 +1259,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 172.27922
+            speed: 125.45497
             behaviourType: 0
             pulsating:
-              amplitude: 83.268295
+              amplitude: 60.63657
               frequency: 1.6647109
             flipping:
               flipInterval: 1.4333333
@@ -1299,20 +1299,20 @@ MonoBehaviour:
             angularSpacing: 120
             orientOutwards: 1
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 4
+          knivesToBreak: 5
         - prefab: {fileID: 0}
           orbitRadius: 2.5165129
           startingAngle: 90
           orbitDegreesPerSecond: -60.196026
           baseScale: 0.8491231
-          preStuckKnives: 2
-          preStuckKnifeSpacing: 180
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -233.1931
+            speed: -119.06443
             behaviourType: 1
             pulsating:
-              amplitude: 112.71
+              amplitude: 57.54781
               frequency: 1.6899766
             flipping:
               flipInterval: 1.4333333
@@ -1345,7 +1345,7 @@ MonoBehaviour:
               curveLoopDuration: 1.3333334
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 4
+          knivesToBreak: 6
         - prefab: {fileID: 0}
           orbitRadius: 2.214735
           startingAngle: 180
@@ -1355,10 +1355,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 180
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 137.81444
+            speed: 215.5217
             behaviourType: 2
             pulsating:
-              amplitude: 66.61031
+              amplitude: 104.16882
               frequency: 1.6765379
             flipping:
               flipInterval: 1.4333333
@@ -1395,7 +1395,7 @@ MonoBehaviour:
             angularSpacing: 120
             orientOutwards: 1
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 4
+          knivesToBreak: 6
         - prefab: {fileID: 0}
           orbitRadius: 2.1752286
           startingAngle: 270
@@ -1405,10 +1405,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -174.30304
+            speed: -210.76126
             behaviourType: 3
             pulsating:
-              amplitude: 84.246475
+              amplitude: 101.86794
               frequency: 1.646655
             flipping:
               flipInterval: 1.4333333
@@ -1445,9 +1445,9 @@ MonoBehaviour:
             angularSpacing: 120
             orientOutwards: 1
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 4
+          knivesToBreak: 6
       totalFruitsHit: 0
-    - knives: 13
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
@@ -1459,10 +1459,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 200.31966
+            speed: 177.2073
             behaviourType: 0
             pulsating:
-              amplitude: 120.191795
+              amplitude: 106.32439
               frequency: 2
             flipping:
               flipInterval: 0.85
@@ -1505,10 +1505,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 120
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -187.37059
+            speed: -181.96341
             behaviourType: 1
             pulsating:
-              amplitude: 112.422356
+              amplitude: 109.17805
               frequency: 2
             flipping:
               flipInterval: 0.85
@@ -1545,7 +1545,7 @@ MonoBehaviour:
             angularSpacing: 120
             orientOutwards: 1
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 5
+          knivesToBreak: 6
         - prefab: {fileID: 0}
           orbitRadius: 2.881746
           startingAngle: 180
@@ -1555,10 +1555,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 120
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 164.15228
+            speed: 170.23059
             behaviourType: 2
             pulsating:
-              amplitude: 98.49137
+              amplitude: 102.13836
               frequency: 2
             flipping:
               flipInterval: 0.85
@@ -1595,7 +1595,7 @@ MonoBehaviour:
             angularSpacing: 120
             orientOutwards: 1
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 5
+          knivesToBreak: 6
         - prefab: {fileID: 0}
           orbitRadius: 3.150608
           startingAngle: 270
@@ -1605,10 +1605,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 120
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -208.37257
+            speed: -140.2408
             behaviourType: 3
             pulsating:
-              amplitude: 125.02355
+              amplitude: 84.144485
               frequency: 2
             flipping:
               flipInterval: 0.85
@@ -1645,26 +1645,26 @@ MonoBehaviour:
             angularSpacing: 120
             orientOutwards: 1
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 5
+          knivesToBreak: 6
       totalFruitsHit: 0
   - stageName: Finale Frenzy
     levels:
-    - knives: 12
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
           orbitRadius: 1.1
           startingAngle: 0
           orbitDegreesPerSecond: 75.148285
-          baseScale: 0.95769083
+          baseScale: 0.9823589
           preStuckKnives: 1
           preStuckKnifeSpacing: 360
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 175.97417
+            speed: 227.03598
             behaviourType: 0
             pulsating:
-              amplitude: 43.99354
+              amplitude: 56.758995
               frequency: 0.820971
             flipping:
               flipInterval: 2.6
@@ -1695,11 +1695,7 @@ MonoBehaviour:
                 m_PostInfinity: 2
                 m_RotationOrder: 4
               curveLoopDuration: 2.4
-          hitableObjects:
-          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
-            count: 1
-            angularSpacing: 360
-            orientOutwards: 1
+          hitableObjects: []
           hitableObjectSpacingOffset: 0
           knivesToBreak: 4
         - prefab: {fileID: 0}
@@ -1711,10 +1707,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -144.31062
+            speed: -198.1412
             behaviourType: 0
             pulsating:
-              amplitude: 36.077656
+              amplitude: 49.5353
               frequency: 0.8462367
             flipping:
               flipInterval: 2.6
@@ -1747,20 +1743,20 @@ MonoBehaviour:
               curveLoopDuration: 2.4
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 4
+          knivesToBreak: 6
         - prefab: {fileID: 0}
           orbitRadius: 1.4182541
           startingAngle: 240
           orbitDegreesPerSecond: 75.11329
           baseScale: 1.0242444
-          preStuckKnives: 1
-          preStuckKnifeSpacing: 360
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 197.16518
+            speed: 233.8435
             behaviourType: 0
             pulsating:
-              amplitude: 49.291294
+              amplitude: 58.460876
               frequency: 0.83279806
             flipping:
               flipInterval: 2.6
@@ -1793,24 +1789,24 @@ MonoBehaviour:
               curveLoopDuration: 2.4
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 4
+          knivesToBreak: 7
       totalFruitsHit: 0
-    - knives: 13
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
           orbitRadius: 2.103109
           startingAngle: 0
           orbitDegreesPerSecond: 75.02614
-          baseScale: 0.9180062
-          preStuckKnives: 2
-          preStuckKnifeSpacing: 180
+          baseScale: 0.9367774
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 232.88287
+            speed: 140.20984
             behaviourType: 0
             pulsating:
-              amplitude: 85.39039
+              amplitude: 51.410275
               frequency: 1.2169024
             flipping:
               flipInterval: 2.0166667
@@ -1841,11 +1837,7 @@ MonoBehaviour:
                 m_PostInfinity: 2
                 m_RotationOrder: 4
               curveLoopDuration: 1.8666667
-          hitableObjects:
-          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
-            count: 2
-            angularSpacing: 180
-            orientOutwards: 1
+          hitableObjects: []
           hitableObjectSpacingOffset: 0
           knivesToBreak: 4
         - prefab: {fileID: 0}
@@ -1857,10 +1849,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -244.52457
+            speed: -153.79466
             behaviourType: 0
             pulsating:
-              amplitude: 89.65901
+              amplitude: 56.391376
               frequency: 1.2421681
             flipping:
               flipInterval: 2.0166667
@@ -1893,7 +1885,7 @@ MonoBehaviour:
               curveLoopDuration: 1.8666667
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 5
+          knivesToBreak: 7
         - prefab: {fileID: 0}
           orbitRadius: 1.8329893
           startingAngle: 240
@@ -1903,10 +1895,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 128.81267
+            speed: 154.88892
             behaviourType: 0
             pulsating:
-              amplitude: 47.23131
+              amplitude: 56.792603
               frequency: 1.2287294
             flipping:
               flipInterval: 2.0166667
@@ -1939,9 +1931,9 @@ MonoBehaviour:
               curveLoopDuration: 1.8666667
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 5
+          knivesToBreak: 7
       totalFruitsHit: 0
-    - knives: 14
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
@@ -1949,14 +1941,14 @@ MonoBehaviour:
           startingAngle: 0
           orbitDegreesPerSecond: 74.926445
           baseScale: 0.89418167
-          preStuckKnives: 2
-          preStuckKnifeSpacing: 180
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 185.27568
+            speed: 196.87433
             behaviourType: 3
             pulsating:
-              amplitude: 89.54991
+              amplitude: 95.15593
               frequency: 1.6647109
             flipping:
               flipInterval: 1.4333333
@@ -1989,20 +1981,20 @@ MonoBehaviour:
               curveLoopDuration: 1.3333334
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 5
+          knivesToBreak: 7
         - prefab: {fileID: 0}
           orbitRadius: 2.5165129
           startingAngle: 90
           orbitDegreesPerSecond: -74.84114
-          baseScale: 0.8898985
-          preStuckKnives: 0
-          preStuckKnifeSpacing: 45
+          baseScale: 0.9178226
+          preStuckKnives: 2
+          preStuckKnifeSpacing: 180
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -228.65947
+            speed: -136.52779
             behaviourType: 2
             pulsating:
-              amplitude: 110.518745
+              amplitude: 65.988434
               frequency: 1.6899766
             flipping:
               flipInterval: 1.4333333
@@ -2033,26 +2025,22 @@ MonoBehaviour:
                 m_PostInfinity: 2
                 m_RotationOrder: 4
               curveLoopDuration: 1.3333334
-          hitableObjects:
-          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
-            count: 3
-            angularSpacing: 120
-            orientOutwards: 1
+          hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 5
+          knivesToBreak: 7
         - prefab: {fileID: 0}
           orbitRadius: 2.214735
           startingAngle: 180
           orbitDegreesPerSecond: 75.06379
           baseScale: 0.94132346
-          preStuckKnives: 0
-          preStuckKnifeSpacing: 45
+          preStuckKnives: 2
+          preStuckKnifeSpacing: 180
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 156.5206
+            speed: 203.12767
             behaviourType: 1
             pulsating:
-              amplitude: 75.65163
+              amplitude: 98.178375
               frequency: 1.6765379
             flipping:
               flipInterval: 1.4333333
@@ -2085,20 +2073,20 @@ MonoBehaviour:
               curveLoopDuration: 1.3333334
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 4
+          knivesToBreak: 7
         - prefab: {fileID: 0}
           orbitRadius: 2.1752286
           startingAngle: 270
           orbitDegreesPerSecond: -74.918816
-          baseScale: 0.9293749
-          preStuckKnives: 2
-          preStuckKnifeSpacing: 180
+          baseScale: 0.9618345
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -146.24449
+            speed: -254.56505
             behaviourType: 0
             pulsating:
-              amplitude: 70.68484
+              amplitude: 123.03978
               frequency: 1.646655
             flipping:
               flipInterval: 1.4333333
@@ -2129,15 +2117,11 @@ MonoBehaviour:
                 m_PostInfinity: 2
                 m_RotationOrder: 4
               curveLoopDuration: 1.3333334
-          hitableObjects:
-          - config: {fileID: 11400000, guid: 5d86fbdfd7a14e74a984bc005b8dd232, type: 2}
-            count: 3
-            angularSpacing: 120
-            orientOutwards: 1
+          hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 5
+          knivesToBreak: 6
       totalFruitsHit: 0
-    - knives: 15
+    - knives: 0
       targetGroup:
         targets:
         - prefab: {fileID: 0}
@@ -2149,10 +2133,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 120
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 156.81564
+            speed: 213.32661
             behaviourType: 3
             pulsating:
-              amplitude: 94.089386
+              amplitude: 127.99597
               frequency: 2
             flipping:
               flipInterval: 0.85
@@ -2185,20 +2169,20 @@ MonoBehaviour:
               curveLoopDuration: 0.8
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 6
+          knivesToBreak: 7
         - prefab: {fileID: 0}
           orbitRadius: 2.9054852
           startingAngle: 90
           orbitDegreesPerSecond: -74.79195
           baseScale: 0.87286353
-          preStuckKnives: 3
-          preStuckKnifeSpacing: 120
+          preStuckKnives: 0
+          preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -244.55273
+            speed: -142.7051
             behaviourType: 2
             pulsating:
-              amplitude: 146.73164
+              amplitude: 85.62306
               frequency: 2
             flipping:
               flipInterval: 0.85
@@ -2231,7 +2215,7 @@ MonoBehaviour:
               curveLoopDuration: 0.8
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 6
+          knivesToBreak: 7
         - prefab: {fileID: 0}
           orbitRadius: 2.881746
           startingAngle: 180
@@ -2241,10 +2225,10 @@ MonoBehaviour:
           preStuckKnifeSpacing: 45
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: 192.071
+            speed: 267.2861
             behaviourType: 1
             pulsating:
-              amplitude: 115.24261
+              amplitude: 160.37167
               frequency: 2
             flipping:
               flipInterval: 0.85
@@ -2277,20 +2261,20 @@ MonoBehaviour:
               curveLoopDuration: 0.8
           hitableObjects: []
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 6
+          knivesToBreak: 7
         - prefab: {fileID: 0}
           orbitRadius: 3.150608
           startingAngle: 270
           orbitDegreesPerSecond: -74.92115
           baseScale: 0.86838573
-          preStuckKnives: 0
-          preStuckKnifeSpacing: 45
+          preStuckKnives: 3
+          preStuckKnifeSpacing: 120
           preStuckKnifeSpacingOffset: 0
           rotation:
-            speed: -166.55441
+            speed: -180.16476
             behaviourType: 0
             pulsating:
-              amplitude: 99.932655
+              amplitude: 108.09886
               frequency: 2
             flipping:
               flipInterval: 0.85
@@ -2327,5 +2311,5 @@ MonoBehaviour:
             angularSpacing: 120
             orientOutwards: 1
           hitableObjectSpacingOffset: 0
-          knivesToBreak: 6
+          knivesToBreak: 7
       totalFruitsHit: 0
