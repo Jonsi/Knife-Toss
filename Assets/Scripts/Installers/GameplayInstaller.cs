@@ -42,7 +42,6 @@ namespace Installers
 
         [Header("UI References")]
         [SerializeField] private LevelHudPresenter hudPresenter;
-        [SerializeField] private LevelsPopup levelsPopup;
         [SerializeField] private Presentation.UI.FailButtonsPresenter failButtonsPresenter;
 
         /// <summary>
@@ -59,10 +58,6 @@ namespace Installers
             builder.RegisterInstance(buttonClickEventChannel);
             builder.RegisterInstance(targetHitAnimationConfig);
             builder.RegisterComponent(hudPresenter);
-            if (levelsPopup != null)
-            {
-                builder.RegisterComponent(levelsPopup);
-            }
             if (failButtonsPresenter != null)
             {
                 builder.RegisterComponent(failButtonsPresenter);

@@ -14,7 +14,6 @@ namespace Presentation.UI
     {
         [Header("UI References")]
         [SerializeField] private LevelIconView levelIconView;
-        [SerializeField] private LevelsPopup levelsPopup;
         [SerializeField] private LevelCommandEventChannel commandChannel;
         [SerializeField] private Button muteButton;
         [SerializeField] private GameObject muteIcon;
@@ -27,15 +26,10 @@ namespace Presentation.UI
         private ILevelCommandInvoker commandInvoker;
         private ISettingsService _settingsService;
         private IPlayerDataService _playerDataService;
-        private Button levelIconButton;
 
-        /// <summary>
-        /// Performs the Awake operation.
-        /// </summary>
         private void Awake()
         {
             EnsureCommandInvoker();
-            BindLevelIconButton();
 
             if (muteButton != null)
             {
@@ -43,15 +37,8 @@ namespace Presentation.UI
             }
         }
 
-        /// <summary>
-        /// Performs the OnDestroy operation.
-        /// </summary>
         private void OnDestroy()
         {
-            if (levelIconButton != null)
-            {
-                levelIconButton.onClick.RemoveListener(HandleLevelIconClicked);
-            }
             if (muteButton != null)
             {
                 muteButton.onClick.RemoveListener(ToggleMute);
@@ -121,22 +108,6 @@ namespace Presentation.UI
         }
 
         /// <summary>
-        /// Subscribes to the HUD level icon button to open the popup.
-        /// </summary>
-        private void BindLevelIconButton()
-        {
-            if (levelIconButton == null && levelIconView != null)
-            {
-                levelIconButton = levelIconView.GetComponent<Button>() ?? levelIconView.GetComponentInChildren<Button>();
-            }
-
-            if (levelIconButton != null)
-            {
-                levelIconButton.onClick.AddListener(HandleLevelIconClicked);
-            }
-        }
-
-        /// <summary>
         /// Performs the ToggleMute operation.
         /// </summary>
         private void ToggleMute()
@@ -171,14 +142,6 @@ namespace Presentation.UI
             }
 
             levelIconView.SetLevelNumber(viewModel.LevelIndex);
-        }
-
-        /// <summary>
-        /// Handles clicks on the HUD level icon.
-        /// </summary>
-        private void HandleLevelIconClicked()
-        {
-            levelsPopup?.ShowPopup();
         }
 
     }
