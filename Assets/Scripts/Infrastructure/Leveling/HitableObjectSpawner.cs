@@ -11,16 +11,14 @@ namespace Infrastructure.Leveling
     public sealed class HitableObjectSpawner
     {
         private readonly ITargetScaleProvider targetProvider;
-        private readonly SoundSettings soundSettings;
         private readonly HitableObjectHitEventChannel hitEventChannel;
 
         /// <summary>
         /// Performs the HitableObjectSpawner operation.
         /// </summary>
-        public HitableObjectSpawner(ITargetScaleProvider targetProvider, SoundSettings soundSettings, HitableObjectHitEventChannel hitEventChannel)
+        public HitableObjectSpawner(ITargetScaleProvider targetProvider, HitableObjectHitEventChannel hitEventChannel)
         {
             this.targetProvider = targetProvider;
-            this.soundSettings = soundSettings;
             this.hitEventChannel = hitEventChannel;
         }
 
@@ -29,73 +27,72 @@ namespace Infrastructure.Leveling
         /// </summary>
         public void Spawn(LevelData levelData)
         {
-            if (levelData == null || levelData.targetGroup == null || targetProvider == null)
+            if (levelData?.targetGroup?.targets == null || targetProvider == null)
             {
                 return;
             }
 
             var targets = levelData.targetGroup.targets;
-            if (targets == null || targets.Count == 0 || targetProvider.AllTargets.Count == 0)
+            if (targets.Count == 0 || targetProvider.AllTargets.Count == 0)
             {
                 return;
             }
 
-            int count = Mathf.Min(targets.Count, targetProvider.AllTargets.Count);
-            for (int i = 0; i < count; i++)
+            int targetCount = Mathf.Min(targets.Count, targetProvider.AllTargets.Count);
+            for (int i = 0; i < targetCount; i++)
             {
                 SpawnForTarget(targets[i], targetProvider.AllTargets[i]);
             }
         }
 
-        /// <summary>
-        /// Performs the SpawnForTarget operation.
-        /// </summary>
         private void SpawnForTarget(TargetDefinition definition, Transform targetTransform)
         {
-            if (definition == null || targetTransform == null || definition.hitableObjects == null || definition.hitableObjects.Count == 0)
+            if (definition?.hitableObjects == null || targetTransform == null || definition.hitableObjects.Count == 0)
             {
                 return;
             }
 
-            CircleCollider2D targetCollider = targetTransform.GetComponent<CircleCollider2D>();
-            float uniformScale = Mathf.Max(targetTransform.lossyScale.x, targetTransform.lossyScale.y);
-            float targetRadius = targetCollider != null ? targetCollider.radius * uniformScale : 0.5f;
+            (Vector3 center, float radius) = TargetGeometry.GetCenterAndRadius(targetTransform);
 
-            for (int j = 0; j < definition.hitableObjects.Count; j++)
+            foreach (HitableObjectPlacement placement in definition.hitableObjects)
             {
-                HitableObjectPlacement hitable = definition.hitableObjects[j];
-                if (hitable == null || hitable.config == null || hitable.config.prefab == null || hitable.count <= 0)
+                if (placement == null || placement.config?.prefab == null || placement.count <= 0)
                 {
                     continue;
                 }
 
-                float spacing = Mathf.Approximately(hitable.angularSpacing, 0f)
-                    ? 360f / Mathf.Max(1, hitable.count)
-                    : hitable.angularSpacing;
+                float spacing = CalculateSpacing(placement);
+                float offset = definition.hitableObjectSpacingOffset;
 
-                float radius = targetRadius;
-                float startAngle = Random.Range(0f, 360f);
-
-                for (int k = 0; k < hitable.count; k++)
+                for (int i = 0; i < placement.count; i++)
                 {
-                    float angle = startAngle + k * spacing;
+                    float angleDegrees = offset + i * spacing;
+                    float angleRadians = angleDegrees * Mathf.Deg2Rad;
 
-                    float rad = angle * Mathf.Deg2Rad;
-                    Vector3 position = targetTransform.position + new Vector3(Mathf.Cos(rad), Mathf.Sin(rad), 0f) * radius;
-
-                    Quaternion rotation = hitable.orientOutwards
-                        ? Quaternion.Euler(0f, 0f, angle - 90f)
+                    Vector3 position = center + new Vector3(Mathf.Cos(angleRadians), Mathf.Sin(angleRadians), 0f) * radius;
+                    Quaternion rotation = placement.orientOutwards
+                        ? Quaternion.Euler(0f, 0f, angleDegrees - 90f)
                         : Quaternion.identity;
 
-                    GameObject instance = Object.Instantiate(hitable.config.prefab, position, rotation, targetTransform);
-                    instance.name = $"{hitable.config.prefab.name}_Hitable_{k + 1}";
+                    GameObject instance = Object.Instantiate(placement.config.prefab, position, rotation, targetTransform);
+                    instance.name = $"{placement.config.prefab.name}_Hitable_{i + 1}";
 
                     if (instance.TryGetComponent(out HitableObjectView view))
                     {
-                        view.Configure(hitable.config, hitEventChannel);
+                        view.Configure(placement.config, hitEventChannel);
                     }
                 }
             }
         }
+
+        private static float CalculateSpacing(HitableObjectPlacement placement)
+        {
+            if (Mathf.Approximately(placement.angularSpacing, 0f))
+            {
+                return 360f / Mathf.Max(1, placement.count);
+            }
+            return placement.angularSpacing;
+        }
     }
 }
+

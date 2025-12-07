@@ -28,12 +28,18 @@ namespace Core.Data
         [Tooltip("Angular spacing between pre-stuck knives (degrees).")]
         public float preStuckKnifeSpacing = 45f;
 
+        [Tooltip("Offset in degrees applied to all pre-stuck knife positions. Each knife's position will be: offset + (index * spacing).")]
+        public float preStuckKnifeSpacingOffset = 0f;
+
         [Tooltip("Rotation behaviour settings for this target.")]
         public TargetRotationConfig rotation = new TargetRotationConfig();
 
         [Header("Hitable Objects")]
         [Tooltip("Optional hitable objects placed around this target.")]
         public System.Collections.Generic.List<HitableObjectPlacement> hitableObjects = new System.Collections.Generic.List<HitableObjectPlacement>();
+
+        [Tooltip("Offset in degrees applied to all hitable object positions. Each object's position will be: offset + (index * spacing).")]
+        public float hitableObjectSpacingOffset = 0f;
 
         [Tooltip("Number of knives required to break this target. 0 hides the indicator.")]
         public int knivesToBreak = 0;

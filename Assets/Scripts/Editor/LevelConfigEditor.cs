@@ -226,12 +226,14 @@ namespace Editor
                 EditorGUILayout.LabelField("Pre-Stuck Knives", EditorStyles.boldLabel);
                 EditorGUILayout.PropertyField(targetProp.FindPropertyRelative(nameof(TargetDefinition.preStuckKnives)));
                 EditorGUILayout.PropertyField(targetProp.FindPropertyRelative(nameof(TargetDefinition.preStuckKnifeSpacing)));
+                EditorGUILayout.PropertyField(targetProp.FindPropertyRelative(nameof(TargetDefinition.preStuckKnifeSpacingOffset)));
 
                 EditorGUILayout.Space();
                 DrawRotationSection(targetProp.FindPropertyRelative(nameof(TargetDefinition.rotation)));
 
                 EditorGUILayout.Space();
                 DrawHitableSection(levelIndex, targetIndex, targetProp.FindPropertyRelative(nameof(TargetDefinition.hitableObjects)));
+                EditorGUILayout.PropertyField(targetProp.FindPropertyRelative(nameof(TargetDefinition.hitableObjectSpacingOffset)));
 
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(targetProp.FindPropertyRelative(nameof(TargetDefinition.knivesToBreak)));

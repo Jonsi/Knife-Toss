@@ -96,7 +96,6 @@ namespace Installers
                 .WithParameter("Knives");
             builder.Register<HitableObjectSpawner>(Lifetime.Singleton)
                 .WithParameter(resolver => resolver.Resolve<ITargetScaleProvider>())
-                .WithParameter(soundSettings)
                 .WithParameter(hitableHitEventChannel);
             builder.Register<PreStuckKnifeSpawner>(Lifetime.Singleton)
                 .WithParameter(resolver => resolver.Resolve<ITargetScaleProvider>())
