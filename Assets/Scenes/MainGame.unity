@@ -303,7 +303,6 @@ RectTransform:
   - {fileID: 2500000001}
   - {fileID: 321186378}
   - {fileID: 2033171433}
-  - {fileID: 1556291775}
   m_Father: {fileID: 762541981}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -438,6 +437,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1293027641}
+  - {fileID: 1556291775}
   m_Father: {fileID: 197163807}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1129,7 +1129,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: Retry
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1313,7 +1313,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 93fafd056afadd5439077347d4719510, type: 3}
+  m_Texture: {fileID: 2800000, guid: 50dc143a9afde614ba766440323cc9b9, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -1475,7 +1475,7 @@ GameObject:
   - component: {fileID: 1556291775}
   - component: {fileID: 1556291776}
   m_Layer: 5
-  m_Name: FailButtonsHolder
+  m_Name: FailPopup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1488,14 +1488,14 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1556291774}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2130866518}
   - {fileID: 1324129127}
-  m_Father: {fileID: 197163807}
+  m_Father: {fileID: 321186378}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
