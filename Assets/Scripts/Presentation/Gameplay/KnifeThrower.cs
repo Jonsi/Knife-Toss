@@ -26,17 +26,11 @@ namespace Presentation.Gameplay
 
         [Header("Magazine Settings")]
         [SerializeField] private int poolWarmupCount = 10;
-        [SerializeField] private int visibleQueueCount = 5;
-        [SerializeField] private float queueSpacing = 0.5f;
-        [SerializeField] private float slideAnimationDuration = 0.3f;
-        [SerializeField] private float queueScaleEnd = 0.5f;
-        [SerializeField] private float queueOpacityEnd = 0.3f;
 
-        [Header("Load Animation")]
-        [SerializeField] private float loadPullbackDistance = 0.15f;
-        [SerializeField] private float loadAnimationDuration = 0.12f;
+        [Header("Knife Load Animation")]
+        [SerializeField] private float loadBottomOffset = 0.5f;
+        [SerializeField] private float loadAnimationDuration = 0.3f;
         [SerializeField] private Ease loadAnimationEase = Ease.OutQuad;
-        [SerializeField] private float loadSoundVolume = 1f;
 
         [Header("Throw Animation")]
         [SerializeField] private float throwPushDistance = 0.25f;
@@ -50,12 +44,7 @@ namespace Presentation.Gameplay
         private int knivesThrown;
         private bool canThrow = true;
         private Transform knivesParent;
-        private Tween loadTween;
-        private GameObject loadingKnife;
-        private Vector3 loadingKnifeStartPosition;
-        private bool hasLoadingKnifeStart;
         private Sequence throwSequence;
-        private AudioSource loadAudioSource;
 
         private KnifePool knifePool;
         private KnifeMagazine magazine;
@@ -114,9 +103,6 @@ namespace Presentation.Gameplay
         public void KillAllKnifeTweens()
         {
             EnsureInitialized();
-            KillLoadTween();
-            ClearLoadAnimationState();
-            StopLoadSound();
             KillThrowSequence();
             KillTweensFromRegistry();
             magazine.KillTweens();
@@ -135,20 +121,15 @@ namespace Presentation.Gameplay
 
         private void OnThrowPressed(Vector2 screenPosition)
         {
-            PlayLoadAnimation();
         }
 
         private void OnThrowReleased(Vector2 screenPosition)
         {
-            StopLoadSound();
-
             if (!IsReadyToThrow())
             {
-                ResetLoadAnimation();
                 return;
             }
 
-            CompleteLoadAnimation();
             ThrowKnife(Vector2.up);
         }
 
@@ -173,22 +154,16 @@ namespace Presentation.Gameplay
         private void ThrowKnife(Vector2 direction)
         {
             EnsureInitialized();
-            KillLoadTween();
             KillThrowSequence();
-            StopLoadSound();
 
             if (!magazine.TryTakeNext(out GameObject knifeObject))
             {
-                ClearLoadAnimationState();
                 return;
             }
 
-            bool shouldKeepPosition = knifeObject == loadingKnife;
-            ClearLoadAnimationState();
-
             isKnifeInFlight = true;
 
-            PrepareKnifeForThrow(knifeObject, shouldKeepPosition);
+            PrepareKnifeForThrow(knifeObject);
             ActivateKnife(knifeObject);
 
             PlayThrowAnimation(knifeObject, () =>
@@ -208,50 +183,9 @@ namespace Presentation.Gameplay
 
             knivesThrown++;
             KnifeThrown?.Invoke();
-            magazine.SlideQueueForward();
+            magazine.LoadNextKnife();
         }
 
-        private void PlayLoadAnimation()
-        {
-            if (!IsReadyToThrow())
-            {
-                return;
-            }
-
-            GameObject knifeObject = ResolveQueuedKnifeHead();
-            if (knifeObject == null)
-            {
-                return;
-            }
-
-            loadingKnife = knifeObject;
-            hasLoadingKnifeStart = true;
-            loadingKnifeStartPosition = knifeObject.transform.position;
-
-            KillLoadTween();
-
-            Vector3 backDirection = launcherTransform != null ? -launcherTransform.up : Vector3.down;
-            Vector3 targetPosition = loadingKnifeStartPosition + backDirection * loadPullbackDistance;
-
-            loadTween = knifeObject.transform.DOMove(targetPosition, loadAnimationDuration)
-                .SetEase(loadAnimationEase);
-            PlayLoadSound();
-        }
-
-        private void ResetLoadAnimation()
-        {
-            if (loadingKnife == null || !hasLoadingKnifeStart)
-            {
-                KillLoadTween();
-                ClearLoadAnimationState();
-                return;
-            }
-
-            KillLoadTween();
-            loadTween = loadingKnife.transform.DOMove(loadingKnifeStartPosition, loadAnimationDuration)
-                .SetEase(loadAnimationEase);
-            ClearLoadAnimationState();
-        }
 
         private void PlayThrowAnimation(GameObject knifeObject, Action onComplete)
         {
@@ -280,22 +214,6 @@ namespace Presentation.Gameplay
             throwSequence.OnKill(() => throwSequence = null);
         }
 
-        private void CompleteLoadAnimation()
-        {
-            KillLoadTween(true);
-            ClearLoadAnimationState();
-        }
-
-        private void KillLoadTween(bool complete = false)
-        {
-            if (loadTween == null)
-            {
-                return;
-            }
-
-            loadTween.Kill(complete);
-            loadTween = null;
-        }
 
         private void KillThrowSequence()
         {
@@ -308,57 +226,9 @@ namespace Presentation.Gameplay
             throwSequence = null;
         }
 
-        private void ClearLoadAnimationState()
-        {
-            loadingKnife = null;
-            hasLoadingKnifeStart = false;
-            loadingKnifeStartPosition = Vector3.zero;
-        }
-
-        private GameObject ResolveQueuedKnifeHead()
-        {
-            IReadOnlyList<GameObject> queuedKnives = magazine?.QueuedKnives;
-            if (queuedKnives == null || queuedKnives.Count == 0)
-            {
-                return null;
-            }
-
-            return queuedKnives[0];
-        }
-
-        private void PlayLoadSound()
-        {
-            AudioClip clip = soundSettings != null ? soundSettings.KnifeLoadSound : null;
-            if (clip == null)
-            {
-                return;
-            }
-
-            if (loadAudioSource == null)
-            {
-                loadAudioSource = gameObject.AddComponent<AudioSource>();
-                loadAudioSource.playOnAwake = false;
-                loadAudioSource.loop = false;
-                loadAudioSource.spatialBlend = 0f;
-            }
-
-            loadAudioSource.clip = clip;
-            loadAudioSource.volume = Mathf.Max(0f, loadSoundVolume);
-            loadAudioSource.Stop();
-            loadAudioSource.Play();
-        }
-
         private void PlayThrowSound()
         {
             PlaySound(soundSettings != null ? soundSettings.KnifeThrowSound : null, throwSoundVolume);
-        }
-
-        private void StopLoadSound()
-        {
-            if (loadAudioSource != null && loadAudioSource.isPlaying)
-            {
-                loadAudioSource.Stop();
-            }
         }
 
         private void PlaySound(AudioClip clip, float volume)
@@ -375,7 +245,7 @@ namespace Presentation.Gameplay
         /// <summary>
         /// Performs the PrepareKnifeForThrow operation.
         /// </summary>
-        private void PrepareKnifeForThrow(GameObject knifeObject, bool keepPosition)
+        private void PrepareKnifeForThrow(GameObject knifeObject)
         {
             Transform parent = knivesParent != null ? knivesParent : null;
             Transform knifeTransform = knifeObject.transform;
@@ -383,12 +253,7 @@ namespace Presentation.Gameplay
             knifeTransform.SetParent(parent);
             if (launcherTransform != null)
             {
-                if (!keepPosition)
-                {
-                    knifeTransform.position = launcherTransform.position;
-                }
-
-                // Always point upwards
+                knifeTransform.position = launcherTransform.position;
                 knifeTransform.rotation = Quaternion.identity;
             }
             KnifeSetupUtility.ApplyVisuals(knifeObject, ResolveKnifeScale(), knifePool.PrefabOriginalColor);
@@ -545,11 +410,9 @@ namespace Presentation.Gameplay
                 knifePool,
                 transform,
                 launcherTransform,
-                visibleQueueCount,
-                queueSpacing,
-                slideAnimationDuration,
-                queueScaleEnd,
-                queueOpacityEnd);
+                loadBottomOffset,
+                loadAnimationDuration,
+                loadAnimationEase);
             UpdateMagazineScale();
         }
 
@@ -626,22 +489,5 @@ namespace Presentation.Gameplay
             public void SetMuted(bool isMuted) { }
         }
 
-        [System.Serializable]
-        public sealed class MagazineConfig
-        {
-            [SerializeField] private int poolWarmupCount = 10;
-            [SerializeField] private int visibleQueueCount = 5;
-            [SerializeField] private float queueSpacing = 0.5f;
-            [SerializeField] private float slideAnimationDuration = 0.3f;
-            [SerializeField] private float queueScaleEnd = 0.5f;
-            [SerializeField] private float queueOpacityEnd = 0.3f;
-
-            public int PoolWarmupCount => poolWarmupCount;
-            public int VisibleQueueCount => visibleQueueCount;
-            public float QueueSpacing => queueSpacing;
-            public float SlideAnimationDuration => slideAnimationDuration;
-            public float QueueScaleEnd => queueScaleEnd;
-            public float QueueOpacityEnd => queueOpacityEnd;
-        }
     }
 }

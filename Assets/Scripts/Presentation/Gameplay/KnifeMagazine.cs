@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using Presentation.Gameplay.Utilities;
+using Presentation.Gameplay.Views;
 using UnityEngine;
 
 namespace Presentation.Gameplay
@@ -10,13 +11,12 @@ namespace Presentation.Gameplay
         private readonly KnifePool pool;
         private readonly Transform queueParent;
         private readonly Transform launcher;
-        private readonly int visibleQueueCount;
-        private readonly float queueSpacing;
-        private readonly float slideAnimationDuration;
-        private readonly float queueScaleEnd;
-        private readonly float queueOpacityEnd;
+        private readonly float loadBottomOffset;
+        private readonly float loadAnimationDuration;
+        private readonly Ease loadAnimationEase;
 
-        private readonly List<GameObject> queue = new List<GameObject>();
+        private GameObject nextKnife;
+        private Tween loadTween;
 
         private int knivesRemaining;
         private float scaleMultiplier = 1f;
@@ -29,24 +29,20 @@ namespace Presentation.Gameplay
             KnifePool knifePool,
             Transform queueRoot,
             Transform launcherTransform,
-            int visibleCount,
-            float spacing,
-            float slideDuration,
-            float scaleEnd,
-            float opacityEnd)
+            float bottomOffset,
+            float loadDuration,
+            Ease loadEase)
         {
             pool = knifePool;
             queueParent = queueRoot;
             launcher = launcherTransform;
-            visibleQueueCount = Mathf.Max(1, visibleCount);
-            queueSpacing = spacing;
-            slideAnimationDuration = slideDuration;
-            queueScaleEnd = scaleEnd;
-            queueOpacityEnd = opacityEnd;
+            loadBottomOffset = bottomOffset;
+            loadAnimationDuration = loadDuration;
+            loadAnimationEase = loadEase;
         }
 
         public int KnivesRemaining => knivesRemaining;
-        public IReadOnlyList<GameObject> QueuedKnives => queue;
+        public IReadOnlyList<GameObject> QueuedKnives => nextKnife != null ? new List<GameObject> { nextKnife } : new List<GameObject>();
 
         /// <summary>
         /// Performs the Configure operation.
@@ -55,11 +51,11 @@ namespace Presentation.Gameplay
         {
             knivesRemaining = totalKnives;
 
-            pool.ReturnAll(queue);
-            ClearQueue();
+            KillLoadTween();
+            ReturnNextKnife();
             queueBaseRotation = launcher != null ? launcher.rotation : Quaternion.identity;
             WarmPool(totalKnives);
-            FillInitialQueue();
+            LoadNextKnife();
         }
 
         /// <summary>
@@ -69,25 +65,58 @@ namespace Presentation.Gameplay
         {
             knife = null;
 
-            if (knivesRemaining <= 0 || queue.Count == 0)
+            if (knivesRemaining <= 0 || nextKnife == null)
             {
                 return false;
             }
 
-            knife = queue[0];
-            queue.RemoveAt(0);
+            knife = nextKnife;
+            nextKnife = null;
             knivesRemaining--;
+            KillLoadTween();
             return knife != null;
         }
 
         /// <summary>
-        /// Performs the SlideQueueForward operation.
+        /// Performs the LoadNextKnife operation.
         /// </summary>
-        public void SlideQueueForward()
+        public void LoadNextKnife()
         {
-            AnimateQueue();
-            MaintainQueueSize();
-            UpdateQueueVisibility();
+            if (knivesRemaining <= 0 || nextKnife != null)
+            {
+                return;
+            }
+
+            GameObject knife = pool.GetOrCreate();
+            if (knife == null)
+            {
+                return;
+            }
+
+            nextKnife = knife;
+            Transform knifeTransform = knife.transform;
+            Vector3 launcherPosition = launcher != null ? launcher.position : queueParent.position;
+            Vector3 bottomPosition = launcherPosition + Vector3.down * loadBottomOffset;
+            
+            knifeTransform.position = bottomPosition;
+            knifeTransform.rotation = queueBaseRotation;
+            knifeTransform.SetParent(queueParent);
+
+            Vector3 targetScale = pool.PrefabOriginalScale * scaleMultiplier;
+            Color startColor = pool.PrefabOriginalColor * new Color(1f, 1f, 1f, 0f);
+            Color targetColor = pool.PrefabOriginalColor;
+
+            KnifeSetupUtility.ApplyVisuals(knife, targetScale, startColor);
+            KnifeSetupUtility.EnableColliders(knife, false);
+            knife.SetActive(true);
+
+            KillLoadTween();
+            loadTween = DOTween.Sequence()
+                .Append(knifeTransform.DOMove(launcherPosition, loadAnimationDuration).SetEase(loadAnimationEase))
+                .Join(GetColorTween(knife, startColor, targetColor, loadAnimationDuration))
+                .SetTarget(knife)
+                .SetAutoKill(true)
+                .OnKill(() => loadTween = null);
         }
 
         /// <summary>
@@ -95,8 +124,8 @@ namespace Presentation.Gameplay
         /// </summary>
         public void Reset()
         {
-            pool.ReturnAll(queue);
-            ClearQueue();
+            KillLoadTween();
+            ReturnNextKnife();
             knivesRemaining = 0;
         }
 
@@ -105,27 +134,11 @@ namespace Presentation.Gameplay
         /// </summary>
         public void KillTweens()
         {
-            TweenKiller.Kill(queue);
-        }
-
-        /// <summary>
-        /// Performs the AlignFirstKnife operation.
-        /// </summary>
-        public void AlignFirstKnife(Vector2 direction)
-        {
-            if (queue.Count == 0)
+            KillLoadTween();
+            if (nextKnife != null)
             {
-                return;
+                TweenKiller.Kill(nextKnife);
             }
-
-            GameObject knife = queue[0];
-            if (knife == null)
-            {
-                return;
-            }
-
-            Transform knifeTransform = knife.transform;
-            knifeTransform.up = direction;
         }
 
         /// <summary>
@@ -136,199 +149,54 @@ namespace Presentation.Gameplay
             scaleMultiplier = Mathf.Max(0.01f, multiplier);
         }
 
-        /// <summary>
-        /// Performs the WarmPool operation.
-        /// </summary>
         private void WarmPool(int totalKnives)
         {
             pool.Warmup(Mathf.Max(0, totalKnives));
         }
 
-        /// <summary>
-        /// Performs the FillInitialQueue operation.
-        /// </summary>
-        private void FillInitialQueue()
+        private void KillLoadTween()
         {
-            int targetCount = Mathf.Min(visibleQueueCount + 1, knivesRemaining);
-            for (int i = 0; i < targetCount; i++)
+            if (loadTween != null)
             {
-                AddKnifeToQueue();
+                loadTween.Kill();
+                loadTween = null;
             }
-
-            UpdateQueueVisibility();
         }
 
-        /// <summary>
-        /// Performs the AnimateQueue operation.
-        /// </summary>
-        private void AnimateQueue()
+        private void ReturnNextKnife()
         {
-            for (int i = 0; i < queue.Count; i++)
+            if (nextKnife != null)
             {
-                GameObject knife = queue[i];
-                if (knife == null)
+                pool.Return(nextKnife);
+                nextKnife = null;
+            }
+        }
+
+        private Tween GetColorTween(GameObject knife, Color startColor, Color targetColor, float duration)
+        {
+            KnifeView view = knife.GetComponent<KnifeView>();
+            if (view != null)
+            {
+                view.CacheIfNeeded();
+                if (view.Renderer != null)
                 {
-                    continue;
-                }
-
-                TweenKiller.Kill(knife);
-
-                Transform knifeTransform = knife.transform;
-                if (knifeTransform == null)
-                {
-                    continue;
-                }
-
-                SpriteRenderer renderer = knife.GetComponent<SpriteRenderer>();
-
-                Vector3 targetPosition = GetQueuePosition(i);
-                Vector3 targetScale = pool.PrefabOriginalScale * GetQueueScaleMultiplier(i) * ResolveScaleMultiplier();
-                Color targetColor = pool.PrefabOriginalColor * new Color(1f, 1f, 1f, GetQueueOpacityMultiplier(i));
-
-                knifeTransform.DOMove(targetPosition, slideAnimationDuration)
-                    .SetEase(Ease.OutQuad)
-                    .SetTarget(knifeTransform)
-                    .SetAutoKill(true);
-                
-                knifeTransform.DOScale(targetScale, slideAnimationDuration)
-                    .SetEase(Ease.OutQuad)
-                    .SetTarget(knifeTransform)
-                    .SetAutoKill(true);
-
-                if (renderer != null)
-                {
-                    renderer.DOColor(targetColor, slideAnimationDuration)
-                        .SetEase(Ease.OutQuad)
-                        .SetTarget(renderer)
-                        .SetAutoKill(true);
+                    view.Renderer.color = startColor;
+                    return view.Renderer.DOColor(targetColor, duration)
+                        .SetEase(loadAnimationEase)
+                        .SetTarget(view.Renderer);
                 }
             }
-        }
 
-        /// <summary>
-        /// Performs the MaintainQueueSize operation.
-        /// </summary>
-        private void MaintainQueueSize()
-        {
-            int targetCount = Mathf.Min(visibleQueueCount + 1, knivesRemaining);
-            while (queue.Count < targetCount)
+            SpriteRenderer renderer = knife.GetComponent<SpriteRenderer>();
+            if (renderer != null)
             {
-                AddKnifeToQueue();
-            }
-        }
-
-        /// <summary>
-        /// Performs the AddKnifeToQueue operation.
-        /// </summary>
-        private void AddKnifeToQueue()
-        {
-            GameObject knife = pool.GetOrCreate();
-            if (knife == null)
-            {
-                return;
+                renderer.color = startColor;
+                return renderer.DOColor(targetColor, duration)
+                    .SetEase(loadAnimationEase)
+                    .SetTarget(renderer);
             }
 
-            int index = queue.Count;
-
-            Transform knifeTransform = knife.transform;
-            knifeTransform.position = GetQueuePosition(index);
-            knifeTransform.rotation = queueBaseRotation;
-            Vector3 targetScale = pool.PrefabOriginalScale * GetQueueScaleMultiplier(index) * ResolveScaleMultiplier();
-            knifeTransform.SetParent(queueParent);
-
-            Color targetColor = ResolveQueueColor(index);
-            KnifeSetupUtility.ApplyVisuals(knife, targetScale, targetColor);
-            KnifeSetupUtility.EnableColliders(knife, false);
-            knife.SetActive(true);
-            queue.Add(knife);
-        }
-
-        /// <summary>
-        /// Performs the GetQueuePosition operation.
-        /// </summary>
-        private Vector3 GetQueuePosition(int queueIndex)
-        {
-            Vector3 origin = launcher != null ? launcher.position : queueParent.position;
-            float offsetX = -queueIndex * queueSpacing;
-            return origin + Vector3.right * offsetX;
-        }
-
-        /// <summary>
-        /// Performs the GetQueueScaleMultiplier operation.
-        /// </summary>
-        private float GetQueueScaleMultiplier(int queueIndex)
-        {
-            if (visibleQueueCount <= 1)
-            {
-                return 1f;
-            }
-
-            float t = Mathf.Clamp01((float)queueIndex / (visibleQueueCount - 1));
-            return Mathf.Lerp(1f, queueScaleEnd, t);
-        }
-
-        /// <summary>
-        /// Performs the GetQueueOpacityMultiplier operation.
-        /// </summary>
-        private float GetQueueOpacityMultiplier(int queueIndex)
-        {
-            if (queueIndex >= visibleQueueCount)
-            {
-                return 0f;
-            }
-
-            if (visibleQueueCount <= 1)
-            {
-                return 1f;
-            }
-
-            float t = Mathf.Clamp01((float)queueIndex / (visibleQueueCount - 1));
-            return Mathf.Lerp(1f, queueOpacityEnd, t);
-        }
-
-        /// <summary>
-        /// Performs the UpdateQueueVisibility operation.
-        /// </summary>
-        private void UpdateQueueVisibility()
-        {
-            for (int i = 0; i < queue.Count; i++)
-            {
-                GameObject knife = queue[i];
-                if (knife == null)
-                {
-                    continue;
-                }
-
-                Color targetColor = ResolveQueueColor(i);
-                KnifeSetupUtility.ApplyVisuals(knife, knife.transform.localScale, targetColor);
-
-                knife.SetActive(true);
-            }
-        }
-
-        /// <summary>
-        /// Performs the ClearQueue operation.
-        /// </summary>
-        private void ClearQueue()
-        {
-            queue.Clear();
-        }
-
-        /// <summary>
-        /// Performs the ResolveQueueColor operation.
-        /// </summary>
-        private Color ResolveQueueColor(int index)
-        {
-            float opacity = GetQueueOpacityMultiplier(index);
-            return pool.PrefabOriginalColor * new Color(1f, 1f, 1f, opacity);
-        }
-
-        /// <summary>
-        /// Performs the ResolveScaleMultiplier operation.
-        /// </summary>
-        private float ResolveScaleMultiplier()
-        {
-            return scaleMultiplier;
+            return null;
         }
     }
 }
