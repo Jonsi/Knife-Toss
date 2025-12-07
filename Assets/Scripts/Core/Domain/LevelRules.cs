@@ -4,9 +4,6 @@ using UnityEngine;
 
 namespace Core.Domain
 {
-
-
-
     public readonly struct LevelRules
     {
         public int KnifeCount { get; }

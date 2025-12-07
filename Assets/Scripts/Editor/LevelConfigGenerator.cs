@@ -112,12 +112,6 @@ namespace Editor
                 config.levels.Add(CreateLevel(i + 1));
             }
 
-            config.generateProceduralLevels = true;
-            config.proceduralBaseKnives = 12;
-            config.proceduralBaseRotationSpeed = 160f;
-            config.proceduralKnifeIncrease = 1.25f;
-            config.proceduralSpeedIncrease = 6f;
-
             if (createdAsset)
             {
                 AssetDatabase.CreateAsset(config, AssetPath);

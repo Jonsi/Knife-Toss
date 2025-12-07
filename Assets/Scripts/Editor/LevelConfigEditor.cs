@@ -14,7 +14,6 @@ namespace Editor
     {
         private ReorderableList levelList;
         private SerializedProperty levelsProp;
-        private SerializedProperty proceduralSettingsProp;
 
         private readonly Dictionary<int, ReorderableList> targetLists = new Dictionary<int, ReorderableList>();
         private readonly Dictionary<int, int> selectedTargetIndex = new Dictionary<int, int>();
@@ -26,7 +25,6 @@ namespace Editor
         private void OnEnable()
         {
             levelsProp = serializedObject.FindProperty(nameof(LevelConfig.levels));
-            proceduralSettingsProp = serializedObject.FindProperty(nameof(LevelConfig.generateProceduralLevels));
 
             levelList = new ReorderableList(serializedObject, levelsProp, true, true, true, true);
             levelList.drawHeaderCallback = rect => EditorGUI.LabelField(rect, "Levels");
@@ -40,7 +38,7 @@ namespace Editor
                 int newIndex = levelsProp.arraySize;
                 levelsProp.InsertArrayElementAtIndex(newIndex);
                 SerializedProperty element = levelsProp.GetArrayElementAtIndex(newIndex);
-                element.FindPropertyRelative(nameof(LevelData.knives)).intValue = 0; // Will be calculated from targets
+                element.FindPropertyRelative(nameof(LevelData.knives)).intValue = 0;
                 selectedLevel = newIndex;
             };
             levelList.drawElementCallback = DrawLevelElement;
@@ -51,8 +49,6 @@ namespace Editor
         {
             serializedObject.Update();
 
-            DrawProceduralSettings();
-            GUILayout.Space(4f);
             levelList.DoLayoutList();
 
             if (selectedLevel >= 0 && selectedLevel < levelsProp.arraySize)
@@ -72,22 +68,6 @@ namespace Editor
             serializedObject.ApplyModifiedProperties();
         }
 
-        private void DrawProceduralSettings()
-        {
-            using (new EditorGUILayout.VerticalScope("box"))
-            {
-                EditorGUILayout.LabelField("Procedural Settings", EditorStyles.boldLabel);
-                EditorGUILayout.PropertyField(proceduralSettingsProp, new GUIContent("Generate Procedural Levels"));
-                if (proceduralSettingsProp.boolValue)
-                {
-                    EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(LevelConfig.proceduralBaseKnives)));
-                    EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(LevelConfig.proceduralBaseRotationSpeed)));
-                    EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(LevelConfig.proceduralKnifeIncrease)));
-                    EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(LevelConfig.proceduralSpeedIncrease)));
-                }
-            }
-        }
-
         private void DrawLevelElement(Rect rect, int index, bool isActive, bool isFocused)
         {
             if (index < 0 || index >= levelsProp.arraySize)
@@ -100,7 +80,6 @@ namespace Editor
             SerializedProperty targetsProp = targetGroupProp?.FindPropertyRelative(nameof(TargetGroupConfig.targets));
             int targetCount = targetsProp != null ? targetsProp.arraySize : 0;
 
-            // Calculate knives from targets
             int calculatedKnives = 0;
             if (targetsProp != null)
             {
@@ -124,8 +103,7 @@ namespace Editor
             using (new EditorGUILayout.VerticalScope("box"))
             {
                 EditorGUILayout.LabelField($"Level {levelIndex + 1} Details", EditorStyles.boldLabel);
-                
-                // Calculate and display knives from targets
+
                 SerializedProperty targetGroup = levelProp.FindPropertyRelative(nameof(LevelData.targetGroup));
                 SerializedProperty targets = targetGroup?.FindPropertyRelative(nameof(TargetGroupConfig.targets));
                 int calculatedKnives = 0;
