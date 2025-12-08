@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Core.Data;
 using Infrastructure.Persistence;
 using UnityEditor;
@@ -12,11 +13,14 @@ namespace Editor
     public class PlayerDataEditorWindow : EditorWindow
     {
         private const string Title = "Player Data";
+        private const float AutoReloadInterval = 0.5f;
 
         private FilePlayerDataStore dataStore;
         private PlayerData workingCopy;
         private Vector2 scrollPosition;
         private readonly System.Collections.Generic.List<StarEntry> starEntries = new System.Collections.Generic.List<StarEntry>();
+        private DateTime lastFileWriteTime;
+        private double lastReloadTime;
 
         [MenuItem("Knife Toss/Player Data")]
         public static void ShowWindow()
@@ -27,7 +31,36 @@ namespace Editor
         private void OnEnable()
         {
             dataStore = new FilePlayerDataStore();
+            EditorApplication.update += OnUpdate;
             ReloadFromDisk();
+        }
+
+        private void OnDisable()
+        {
+            EditorApplication.update -= OnUpdate;
+        }
+
+        private void OnUpdate()
+        {
+            if (dataStore == null)
+            {
+                return;
+            }
+
+            string filePath = dataStore.FilePath;
+            if (File.Exists(filePath))
+            {
+                DateTime currentWriteTime = File.GetLastWriteTime(filePath);
+                if (currentWriteTime != lastFileWriteTime)
+                {
+                    double currentTime = EditorApplication.timeSinceStartup;
+                    if (currentTime - lastReloadTime > AutoReloadInterval)
+                    {
+                        ReloadFromDisk();
+                        lastReloadTime = currentTime;
+                    }
+                }
+            }
         }
 
         private void ReloadFromDisk()
@@ -37,7 +70,12 @@ namespace Editor
             EnsureDefaults();
             RebuildStarEntries();
             
-            Debug.Log($"Editor Reloaded: CurrentStage={workingCopy.progress.currentStageIndex}, HighestStage={workingCopy.progress.highestStageIndex}");
+            string filePath = dataStore.FilePath;
+            if (File.Exists(filePath))
+            {
+                lastFileWriteTime = File.GetLastWriteTime(filePath);
+            }
+            
             Repaint();
         }
 
@@ -76,29 +114,18 @@ namespace Editor
             EditorGUILayout.LabelField("Player Data (persistent)", EditorStyles.boldLabel);
             EditorGUILayout.HelpBox($"Save file: {dataStore.FilePath}", MessageType.None);
 
-            EditorGUI.BeginChangeCheck();
-
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             DrawPlayerDataFields();
             EditorGUILayout.EndScrollView();
 
             EditorGUILayout.Space();
             DrawActions();
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                EditorUtility.SetDirty(this);
-            }
         }
 
         private void DrawActions()
         {
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Reload"))
-            {
-                ReloadFromDisk();
-            }
-
+            
             if (GUILayout.Button("Save"))
             {
                 SaveToDisk();
@@ -112,6 +139,8 @@ namespace Editor
                 }
             }
             EditorGUILayout.EndHorizontal();
+            
+            EditorGUILayout.HelpBox("Data auto-reloads when the save file changes.", MessageType.Info);
         }
 
         private void SaveToDisk()
