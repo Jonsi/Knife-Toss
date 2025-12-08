@@ -43,7 +43,7 @@ namespace Installers
 
         [Header("UI References")]
         [SerializeField] private LevelHudPresenter hudPresenter;
-        [SerializeField] private Presentation.UI.FailButtonsPresenter failButtonsPresenter;
+        [SerializeField] private Presentation.UI.StageFailPopup stageFailPopup;
         [SerializeField] private UnityEngine.UI.RawImage backgroundImage;
 
         /// <summary>
@@ -60,9 +60,9 @@ namespace Installers
             builder.RegisterInstance(buttonClickEventChannel);
             builder.RegisterInstance(targetHitAnimationConfig);
             builder.RegisterComponent(hudPresenter);
-            if (failButtonsPresenter != null)
+            if (stageFailPopup != null)
             {
-                builder.RegisterComponent(failButtonsPresenter);
+                builder.RegisterComponent(stageFailPopup);
             }
             builder.Register<IAudioPlayer, AudioPlayer>(Lifetime.Singleton);
             builder.Register<ILevelCommandInvoker, LevelCommandChannelInvoker>(Lifetime.Singleton)

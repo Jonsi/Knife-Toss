@@ -1,6 +1,4 @@
 using Core.Abstractions;
-using Core.Events;
-using Infrastructure.Leveling;
 using Presentation.UI.ViewModels;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,23 +12,18 @@ namespace Presentation.UI
     {
         [Header("UI References")]
         [SerializeField] private LevelIconView levelIconView;
-        [SerializeField] private LevelCommandEventChannel commandChannel;
         [SerializeField] private Button muteButton;
         [SerializeField] private GameObject muteIcon;
         [SerializeField] private GameObject unmuteIcon;
-        [SerializeField] private ButtonClickEventChannel buttonClickEventChannel;
         [SerializeField] private KnifeMagazineDisplay magazineDisplay;
-        [SerializeField] private FailButtonsPresenter failButtonsPresenter;
+        [SerializeField] private StageFailPopup stageFailPopup;
         [SerializeField] private FruitCountDisplay fruitCountDisplay;
 
-        private ILevelCommandInvoker commandInvoker;
         private ISettingsService _settingsService;
         private IPlayerDataService _playerDataService;
 
         private void Awake()
         {
-            EnsureCommandInvoker();
-
             if (muteButton != null)
             {
                 muteButton.onClick.AddListener(ToggleMute);
@@ -60,14 +53,10 @@ namespace Presentation.UI
         /// </summary>
         public void ShowFail(bool show)
         {
-            if (failButtonsPresenter != null)
-            {
-                failButtonsPresenter.ShowFailButtons(show);
-            }
+            if (show)
+                stageFailPopup?.Show();
             else
-            {
-                Debug.LogWarning("[LevelHudPresenter] failButtonsPresenter is null, cannot show fail buttons");
-            }
+                stageFailPopup?.Hide();
         }
 
         /// <summary>
@@ -75,7 +64,7 @@ namespace Presentation.UI
         /// </summary>
         public void ResetState()
         {
-            ShowFail(false);
+            stageFailPopup?.Hide();
             magazineDisplay?.ResetDisplay();
         }
 
@@ -83,28 +72,11 @@ namespace Presentation.UI
         /// Performs the Construct operation.
         /// </summary>
         [VContainer.Inject]
-        public void Construct(ILevelCommandInvoker invoker, ISettingsService settingsService, IPlayerDataService playerDataService)
+        public void Construct(ISettingsService settingsService, IPlayerDataService playerDataService)
         {
-            commandInvoker = invoker;
             _settingsService = settingsService;
             _playerDataService = playerDataService;
             UpdateMuteButtonIcon();
-        }
-
-        /// <summary>
-        /// Performs the EnsureCommandInvoker operation.
-        /// </summary>
-        private void EnsureCommandInvoker()
-        {
-            if (commandInvoker != null)
-            {
-                return;
-            }
-
-            if (commandChannel != null)
-            {
-                commandInvoker = new LevelCommandChannelInvoker(commandChannel);
-            }
         }
 
         /// <summary>
