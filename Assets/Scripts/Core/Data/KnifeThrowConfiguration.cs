@@ -1,22 +1,25 @@
+using System;
+
 namespace Core.Data
 {
     /// <summary>
     /// Contains configuration data for knife throwing behavior.
     /// </summary>
-    public struct KnifeThrowConfiguration
+    [Serializable]
+    public class KnifeThrowConfiguration
     {
         /// <summary>
-        /// The speed at which knives are thrown.
+        /// Gets or sets the speed at which knives are thrown.
         /// </summary>
         public float ThrowSpeed;
         
         /// <summary>
-        /// X component of the spawn position offset relative to the thrower.
+        /// Gets or sets the X component of the spawn position offset relative to the thrower's position.
         /// </summary>
         public float SpawnPositionOffsetX;
         
         /// <summary>
-        /// Y component of the spawn position offset relative to the thrower.
+        /// Gets or sets the Y component of the spawn position offset relative to the thrower's position.
         /// </summary>
         public float SpawnPositionOffsetY;
     }

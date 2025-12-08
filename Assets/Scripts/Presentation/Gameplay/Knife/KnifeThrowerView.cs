@@ -1,7 +1,7 @@
 using Core.Abstractions;
 using Core.Data;
-using Infrastructure.Events;
 using UnityEngine;
+using VContainer;
 
 namespace Presentation.Gameplay.Knife
 {
@@ -13,16 +13,23 @@ namespace Presentation.Gameplay.Knife
     {
         [SerializeField] private KnifeView knifePrefab;
         [SerializeField] private Transform spawnPoint;
-        [SerializeField] private KnifeSpawnRequestEventChannel spawnRequestEventChannel;
+
+        private IEventChannel<KnifeSpawnRequestData> _spawnRequestEventChannel;
+
+        [Inject]
+        private void Construct(IEventChannel<KnifeSpawnRequestData> spawnRequestEventChannel)
+        {
+            _spawnRequestEventChannel = spawnRequestEventChannel;
+        }
 
         private void Start()
         {
-            spawnRequestEventChannel.Subscribe(HandleKnifeSpawnRequested);
+            _spawnRequestEventChannel.Subscribe(HandleKnifeSpawnRequested);
         }
 
         private void OnDestroy()
         {
-            spawnRequestEventChannel.Unsubscribe(HandleKnifeSpawnRequested);
+            _spawnRequestEventChannel.Unsubscribe(HandleKnifeSpawnRequested);
         }
 
         private void HandleKnifeSpawnRequested(KnifeSpawnRequestData spawnData)

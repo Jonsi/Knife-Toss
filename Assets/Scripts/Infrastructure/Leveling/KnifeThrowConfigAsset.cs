@@ -1,3 +1,4 @@
+using Core.Abstractions;
 using Core.Data;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ namespace Infrastructure.Leveling
     /// ScriptableObject asset containing configuration data for knife throwing behavior.
     /// </summary>
     [CreateAssetMenu(fileName = "KnifeThrowConfig", menuName = "Knife Toss/Gameplay/Knife Throw Config")]
-    public class KnifeThrowConfigAsset : ScriptableObject
+    public class KnifeThrowConfigAsset : ScriptableObject, IKnifeThrowConfigurationProvider
     {
         /// <summary>
         /// Gets the speed at which knives are thrown.
@@ -20,10 +21,10 @@ namespace Infrastructure.Leveling
         [field: SerializeField] public Vector2 SpawnPositionOffset { get; private set; } = Vector2.zero;
 
         /// <summary>
-        /// Converts this ScriptableObject configuration to a pure C# data structure.
+        /// Gets the knife throw configuration.
         /// </summary>
-        /// <returns>A KnifeThrowConfiguration struct containing the configuration values.</returns>
-        public KnifeThrowConfiguration ToConfiguration()
+        /// <returns>A KnifeThrowConfiguration object containing the configuration values.</returns>
+        public KnifeThrowConfiguration GetConfiguration()
         {
             return new KnifeThrowConfiguration
             {

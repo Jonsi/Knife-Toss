@@ -1,9 +1,6 @@
 using System;
 using Core.Abstractions;
 using Core.Data;
-using Infrastructure.Events;
-using Infrastructure.Leveling;
-using UnityEngine;
 
 namespace App.Services
 {
@@ -14,22 +11,22 @@ namespace App.Services
     public class ThrowService : IThrowService
     {
         private readonly IPlayerThrowInputListener _playerThrowInputListener;
-        private readonly KnifeThrowConfigAsset _knifeThrowConfig;
+        private readonly IKnifeThrowConfigurationProvider _knifeThrowConfigurationProvider;
         private readonly IEventChannel<KnifeSpawnRequestData> _spawnRequestEventChannel;
 
         /// <summary>
         /// Initializes a new instance of the ThrowService.
         /// </summary>
         /// <param name="playerThrowInputListener">The listener that provides player throw input events.</param>
-        /// <param name="knifeThrowConfig">The configuration asset containing knife throw parameters.</param>
+        /// <param name="knifeThrowConfigurationProvider">The configuration provider for knife throw parameters.</param>
         /// <param name="spawnRequestEventChannel">The event channel for raising knife spawn requests.</param>
         public ThrowService(
             IPlayerThrowInputListener playerThrowInputListener, 
-            KnifeThrowConfigAsset knifeThrowConfig,
+            IKnifeThrowConfigurationProvider knifeThrowConfigurationProvider,
             IEventChannel<KnifeSpawnRequestData> spawnRequestEventChannel)
         {
             _playerThrowInputListener = playerThrowInputListener;
-            _knifeThrowConfig = knifeThrowConfig;
+            _knifeThrowConfigurationProvider = knifeThrowConfigurationProvider;
             _spawnRequestEventChannel = spawnRequestEventChannel;
             
             _playerThrowInputListener.OnThrowRequested += HandleThrowRequested;
@@ -38,14 +35,12 @@ namespace App.Services
 
         private void HandleThrowRequested()
         {
-            Vector2 spawnPosition = _knifeThrowConfig.SpawnPositionOffset;
-            float throwSpeed = _knifeThrowConfig.ThrowSpeed;
-            
+            KnifeThrowConfiguration config = _knifeThrowConfigurationProvider.GetConfiguration();
             var spawnData = new KnifeSpawnRequestData
             {
-                SpawnOffsetX = spawnPosition.x,
-                SpawnOffsetY = spawnPosition.y,
-                ThrowSpeed = throwSpeed
+                SpawnOffsetX = config.SpawnPositionOffsetX,
+                SpawnOffsetY = config.SpawnPositionOffsetY,
+                ThrowSpeed = config.ThrowSpeed
             };
             
             _spawnRequestEventChannel.Raise(spawnData);
