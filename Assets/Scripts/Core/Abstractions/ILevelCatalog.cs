@@ -13,5 +13,6 @@ namespace Core.Abstractions
         int GetLevelCountInStage(int stageIndex);
         int GetStageCount();
         bool IsValidStageAndLevel(int stageIndex, int levelIndex);
+        StageLayoutSettings GetStageLayoutSettings(int stageIndex);
     }
 }

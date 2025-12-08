@@ -25,6 +25,22 @@ namespace Presentation.Gameplay
         public IReadOnlyList<Transform> AllTargets => targetTransforms;
 
         /// <summary>
+        /// Applies a sprite to all active targets.
+        /// </summary>
+        public void ApplySpriteToAllTargets(Sprite sprite)
+        {
+            if (sprite == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < entries.Count; i++)
+            {
+                entries[i].Target?.SetSprite(sprite);
+            }
+        }
+
+        /// <summary>
         /// Performs the Initialize operation.
         /// </summary>
         public void Initialize(GameObject defaultTargetPrefab, IObjectResolver resolver)

@@ -59,5 +59,13 @@ namespace Infrastructure.Leveling
         {
             return stagesConfig != null && stagesConfig.IsValidStageAndLevel(stageIndex, levelIndex);
         }
+
+        /// <summary>
+        /// Gets the layout settings for a specific stage.
+        /// </summary>
+        public StageLayoutSettings GetStageLayoutSettings(int stageIndex)
+        {
+            return stagesConfig != null ? stagesConfig.GetStageLayoutSettings(stageIndex) : null;
+        }
     }
 }

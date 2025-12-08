@@ -44,6 +44,7 @@ namespace Installers
         [Header("UI References")]
         [SerializeField] private LevelHudPresenter hudPresenter;
         [SerializeField] private Presentation.UI.FailButtonsPresenter failButtonsPresenter;
+        [SerializeField] private UnityEngine.UI.RawImage backgroundImage;
 
         /// <summary>
         /// Performs the Configure operation.
@@ -85,6 +86,9 @@ namespace Installers
 
             builder.Register<ITargetScaleProvider>(resolver => resolver.Resolve<GameplayObjectProvider>().GetTargetGroupManager(), Lifetime.Singleton);
 
+            builder.Register<StageLayoutApplier>(Lifetime.Singleton)
+                .WithParameter("background", backgroundImage);
+
             builder.Register<LevelSession>(Lifetime.Singleton);
             builder.Register<ILevelCatalog, StagesConfigCatalog>(Lifetime.Singleton);
             builder.Register<KnivesHierarchyManager>(Lifetime.Singleton)
@@ -98,6 +102,7 @@ namespace Installers
                 .WithParameter(knifePrefab);
             builder.Register<LevelSessionService>(Lifetime.Singleton)
                 .WithParameter(resolver => resolver.Resolve<GameplayObjectProvider>())
+                .WithParameter(resolver => resolver.Resolve<StageLayoutApplier>())
                 .WithParameter(startStageIndex)
                 .WithParameter(startLevelIndex)
                 .WithParameter(knifeImpactChannel)

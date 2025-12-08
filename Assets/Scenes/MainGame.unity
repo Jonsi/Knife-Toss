@@ -1535,6 +1535,7 @@ MonoBehaviour:
   hitableHitEventChannel: {fileID: 11400000, guid: 00a8d37ff348b46479a98b4c8f2896f0, type: 2}
   hudPresenter: {fileID: 197163808}
   failButtonsPresenter: {fileID: 1556291776}
+  backgroundImage: {fileID: 1498501748}
 --- !u!4 &1996917748
 Transform:
   m_ObjectHideFlags: 0

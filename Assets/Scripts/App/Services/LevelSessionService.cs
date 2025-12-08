@@ -22,6 +22,7 @@ namespace App.Services
         private readonly KnivesHierarchyManager hierarchyManager;
         private readonly PreStuckKnifeSpawner preStuckSpawner;
         private readonly HitableObjectSpawner hitableSpawner;
+        private readonly StageLayoutApplier layoutApplier;
         private readonly int startStageIndex;
         private readonly int startLevelIndex;
         private readonly KnifeImpactEventChannel impactEventChannel;
@@ -42,6 +43,7 @@ namespace App.Services
             KnivesHierarchyManager knivesHierarchy,
             PreStuckKnifeSpawner preStuckKnifeSpawner,
             HitableObjectSpawner hitableObjectSpawner,
+            StageLayoutApplier layoutApplier,
             int startingStageIndex,
             int startingLevelIndex,
             KnifeImpactEventChannel eventChannel,
@@ -55,6 +57,7 @@ namespace App.Services
             hierarchyManager = knivesHierarchy;
             preStuckSpawner = preStuckKnifeSpawner;
             hitableSpawner = hitableObjectSpawner;
+            this.layoutApplier = layoutApplier;
             startStageIndex = Mathf.Max(1, startingStageIndex);
             startLevelIndex = Mathf.Max(1, startingLevelIndex);
             impactEventChannel = eventChannel;
@@ -96,6 +99,7 @@ namespace App.Services
             Transform knivesParent = hierarchyManager.EnsureParent();
 
             ApplyRules(stageIndex, levelIndex);
+            ApplyStageLayout(stageIndex);
             ConfigureTarget(currentRules);
             ConfigureThrower(knivesParent, currentRules);
 
@@ -104,6 +108,12 @@ namespace App.Services
             int preStuckSpawned = preStuckSpawner.Spawn(currentLevelData);
             session.SeedPreStuckKnives(preStuckSpawned);
             targetHitTracker?.InitializeTargets(currentLevelData);
+            
+            if (layoutApplier != null)
+            {
+                layoutApplier.SetTargetGroupManager(gameplayObjectProvider.GetTargetGroupManager());
+                ApplyTargetTextures(stageIndex);
+            }
         }
 
         /// <summary>
@@ -350,6 +360,37 @@ namespace App.Services
             currentLevelData = catalog.GetLevelData(stageIndex, levelIndex);
             currentRules = catalog.GetRules(stageIndex, levelIndex);
             session.Begin(stageIndex, levelIndex, currentRules);
+        }
+
+        /// <summary>
+        /// Applies stage layout settings (background texture).
+        /// </summary>
+        private void ApplyStageLayout(int stageIndex)
+        {
+            if (layoutApplier == null)
+            {
+                return;
+            }
+
+            StageLayoutSettings settings = catalog.GetStageLayoutSettings(stageIndex);
+            layoutApplier.ApplyLayout(settings);
+        }
+
+        /// <summary>
+        /// Applies target textures to all spawned targets.
+        /// </summary>
+        private void ApplyTargetTextures(int stageIndex)
+        {
+            if (layoutApplier == null)
+            {
+                return;
+            }
+
+            StageLayoutSettings settings = catalog.GetStageLayoutSettings(stageIndex);
+            if (settings != null && settings.targetSprite != null)
+            {
+                layoutApplier.ApplyTargetTexture(settings.targetSprite);
+            }
         }
 
         /// <summary>

@@ -8,6 +8,9 @@ namespace Presentation.Gameplay
     /// </summary>
     public class RotatingTarget : MonoBehaviour
     {
+        [Header("Visual")]
+        [SerializeField] private SpriteRenderer spriteRenderer;
+
         [Header("Rotation Settings")]
         [SerializeField] private float rotationSpeed = 90f;
 
@@ -133,6 +136,17 @@ namespace Presentation.Gameplay
             directionChangeTimer = directionChangeInterval;
             isFrozen = false;
             rotationBehaviour?.Reset();
+        }
+
+        /// <summary>
+        /// Sets the sprite for this target's renderer.
+        /// </summary>
+        public void SetSprite(Sprite sprite)
+        {
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.sprite = sprite;
+            }
         }
     }
 }

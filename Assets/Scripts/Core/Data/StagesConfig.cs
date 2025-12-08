@@ -12,6 +12,9 @@ namespace Core.Data
         [Tooltip("Name of this stage (for display purposes).")]
         public string stageName = "Stage";
 
+        [Tooltip("Visual layout settings for this stage (background and target textures).")]
+        public StageLayoutSettings layoutSettings;
+
         [Tooltip("Ordered list of levels in this stage. Index 0 = Level 1, Index 1 = Level 2, etc.")]
         public List<LevelData> levels = new List<LevelData>();
     }
@@ -102,6 +105,19 @@ namespace Core.Data
             }
 
             return levelArrayIndex >= 0 && levelArrayIndex < stage.levels.Count;
+        }
+
+        /// <summary>
+        /// Gets the layout settings for a specific stage (1-based).
+        /// </summary>
+        public StageLayoutSettings GetStageLayoutSettings(int stageIndex)
+        {
+            int stageArrayIndex = stageIndex - 1;
+            if (stageArrayIndex >= 0 && stageArrayIndex < stages.Count)
+            {
+                return stages[stageArrayIndex]?.layoutSettings;
+            }
+            return null;
         }
     }
 }

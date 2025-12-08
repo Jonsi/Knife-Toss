@@ -98,6 +98,9 @@ namespace Editor
                 SerializedProperty stageNameProp = stageProp.FindPropertyRelative(nameof(StageData.stageName));
                 EditorGUILayout.PropertyField(stageNameProp);
 
+                SerializedProperty layoutSettingsProp = stageProp.FindPropertyRelative(nameof(StageData.layoutSettings));
+                EditorGUILayout.PropertyField(layoutSettingsProp);
+
                 SerializedProperty levelsProp = stageProp.FindPropertyRelative(nameof(StageData.levels));
                 if (levelsProp != null)
                 {

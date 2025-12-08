@@ -172,6 +172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eafe0f46c3ecca544ab0b57f0b9bea56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  spriteRenderer: {fileID: 729744686567893219}
   rotationSpeed: 90
   randomizeDirection: 1
   directionChangeInterval: 3
