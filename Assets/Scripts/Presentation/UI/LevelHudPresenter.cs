@@ -112,13 +112,7 @@ namespace Presentation.UI
             int currentStage = viewModel.StageIndex;
             int currentLevel = viewModel.LevelIndex;
             int levelsInStage = _levelCatalog.GetLevelCountInStage(currentStage);
-            
-            int? nextStage = null;
-            int nextStageIndex = currentStage + 1;
-            if (_levelCatalog.IsValidStageAndLevel(nextStageIndex, 1))
-            {
-                nextStage = nextStageIndex;
-            }
+            int? nextStage = _levelCatalog.IsValidStageAndLevel(currentStage + 1, 1) ? (int?)(currentStage + 1) : null;
 
             stageProgressBar.Initialize(currentStage, nextStage, currentLevel, levelsInStage);
         }

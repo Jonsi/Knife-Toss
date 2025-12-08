@@ -1,88 +1,79 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Presentation.UI
 {
     /// <summary>
-    /// Displays a horizontal chain showing current stage, level progress, and next stage.
-    /// Layout: [Current Stage] - [Connecting Line] - [Level Container with levels] - [Connecting Line] - [Last Stage]
+    /// Displays a progress bar showing level progress within a stage.
     /// </summary>
     public sealed class StageProgressBarView : MonoBehaviour
     {
-        [Header("Stage Circles")]
-        [SerializeField] private StageCircleView currentStageCircle;
-        [SerializeField] private StageCircleView lastStageCircle;
-
-        [Header("Level Container")]
-        [SerializeField] private RectTransform levelContainer;
+        [Header("Content Container")]
+        [SerializeField] private Transform contentContainer;
 
         [Header("Prefabs")]
-        [SerializeField] private LevelCircleView levelCirclePrefab;
+        [SerializeField] private ProgressBarSlot slotPrefab;
 
-        [Header("Connecting Line")]
-        [SerializeField] private Image connectingLine;
+        [Header("Stage Text")]
+        [SerializeField] private TextMeshProUGUI currentStageText;
+        [SerializeField] private TextMeshProUGUI nextStageText;
 
-        [Header("Visual Settings")]
-        [SerializeField] private float disabledStageAlpha = 0.3f;
+        [Header("Colors")]
+        [SerializeField] private Color completeColor = Color.green;
+        [SerializeField] private Color incompleteColor = Color.gray;
 
-        private readonly List<LevelCircleView> instantiatedLevels = new List<LevelCircleView>();
+        private readonly List<ProgressBarSlot> instantiatedSlots = new List<ProgressBarSlot>();
 
         /// <summary>
         /// Initializes the progress bar with stage and level data.
         /// </summary>
         public void Initialize(int currentStage, int? nextStage, int currentLevel, int levelsInStage)
         {
-            ClearLevels();
-            UpdateStageCircles(currentStage, nextStage);
-            CreateLevelCircles(currentLevel, levelsInStage);
+            SetStageTexts(currentStage, nextStage);
+            ClearSlots();
+            CreateSlots(currentLevel, levelsInStage);
         }
 
-        private void UpdateStageCircles(int currentStage, int? nextStage)
+        private void SetStageTexts(int currentStage, int? nextStage)
         {
-            if (currentStageCircle != null)
+            if (currentStageText != null)
             {
-                currentStageCircle.SetStage(currentStage);
+                currentStageText.text = currentStage.ToString();
             }
 
-            if (lastStageCircle != null)
+            if (nextStageText != null)
             {
-                if (nextStage.HasValue)
-                {
-                    lastStageCircle.SetStage(nextStage.Value);
-                }
-                else
-                {
-                    lastStageCircle.SetDisabled(disabledStageAlpha);
-                }
+                nextStageText.text = nextStage?.ToString() ?? string.Empty;
             }
         }
 
-        private void CreateLevelCircles(int currentLevel, int levelsInStage)
+        private void CreateSlots(int currentLevel, int levelsInStage)
         {
-            if (levelContainer == null || levelCirclePrefab == null)
+            if (contentContainer == null || slotPrefab == null)
             {
                 return;
             }
 
             for (int i = 1; i <= levelsInStage; i++)
             {
-                LevelCircleView levelCircle = Instantiate(levelCirclePrefab, levelContainer);
-                instantiatedLevels.Add(levelCircle);
-                levelCircle.SetFilled(i <= currentLevel);
+                ProgressBarSlot slot = Instantiate(slotPrefab, contentContainer);
+                instantiatedSlots.Add(slot);
+                bool isCompleted = i <= currentLevel;
+                slot.SetCompleted(isCompleted, completeColor, incompleteColor);
             }
         }
 
-        private void ClearLevels()
+        private void ClearSlots()
         {
-            foreach (LevelCircleView level in instantiatedLevels)
+            foreach (ProgressBarSlot slot in instantiatedSlots)
             {
-                if (level != null)
+                if (slot != null)
                 {
-                    Destroy(level.gameObject);
+                    Destroy(slot.gameObject);
                 }
             }
-            instantiatedLevels.Clear();
+            instantiatedSlots.Clear();
         }
     }
 }
