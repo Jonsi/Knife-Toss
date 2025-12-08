@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using DG.Tweening;
+using Presentation.Gameplay.Projectiles;
 using Presentation.Gameplay.Utilities;
 using Presentation.Gameplay.Views;
 using UnityEngine;
@@ -16,6 +17,7 @@ namespace Presentation.Gameplay
         private readonly Ease loadAnimationEase;
 
         private GameObject nextKnife;
+        private Knife nextKnifeComponent;
         private Tween loadTween;
 
         private int knivesRemaining;
@@ -72,9 +74,32 @@ namespace Presentation.Gameplay
 
             knife = nextKnife;
             nextKnife = null;
+            nextKnifeComponent = null;
             knivesRemaining--;
             KillLoadTween();
             return knife != null;
+        }
+
+        /// <summary>
+        /// Performs the TryTakeNext operation.
+        /// </summary>
+        public bool TryTakeNext(out GameObject knifeObject, out Knife knifeComponent)
+        {
+            knifeObject = null;
+            knifeComponent = null;
+
+            if (knivesRemaining <= 0 || nextKnife == null)
+            {
+                return false;
+            }
+
+            knifeObject = nextKnife;
+            knifeComponent = nextKnifeComponent;
+            nextKnife = null;
+            nextKnifeComponent = null;
+            knivesRemaining--;
+            KillLoadTween();
+            return knifeObject != null;
         }
 
         /// <summary>
@@ -94,6 +119,7 @@ namespace Presentation.Gameplay
             }
 
             nextKnife = knife;
+            nextKnifeComponent = knife.GetComponent<Knife>();
             Transform knifeTransform = knife.transform;
             Vector3 launcherPosition = launcher != null ? launcher.position : queueParent.position;
             Vector3 bottomPosition = launcherPosition + Vector3.down * loadBottomOffset;
@@ -169,6 +195,7 @@ namespace Presentation.Gameplay
             {
                 pool.Return(nextKnife);
                 nextKnife = null;
+                nextKnifeComponent = null;
             }
         }
 

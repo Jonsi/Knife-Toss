@@ -48,14 +48,11 @@ MonoBehaviour:
   knifePrefab: {fileID: 3126276711855495373, guid: 0f0aea32d6aea4a41ba6b968d5173811, type: 3}
   launcherTransform: {fileID: 3509053332355112065}
   throwInputSource: {fileID: 7941506103797331319}
-  throwSpeed: 30
+  throwSpeed: 50
   poolWarmupCount: 10
   loadBottomOffset: 0.5
   loadAnimationDuration: 0.12
   loadAnimationEase: 6
-  throwPushDistance: 0.25
-  throwAnimationDuration: 0.08
-  throwAnimationEase: 1
   throwSoundVolume: 1
 --- !u!114 &7941506103797331319
 MonoBehaviour:

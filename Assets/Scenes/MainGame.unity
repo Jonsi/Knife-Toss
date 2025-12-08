@@ -1757,7 +1757,7 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
-  stagesConfig: {fileID: 11400000, guid: 2d7e5bd66a450854782ba5b74abbf2f0, type: 2}
+  stagesConfig: {fileID: 11400000, guid: 060ade64dbaeb234f924eadcf96ec259, type: 2}
   knifeImpactChannel: {fileID: 11400000, guid: a78030c48769aec48b1aeb7cf48a28cb, type: 2}
   levelCommandEventChannel: {fileID: 11400000, guid: 76592a2f6c663224399fb72a23fe1509, type: 2}
   soundSettings: {fileID: 11400000, guid: 5def38df6d93db34286062cf0a77bf72, type: 2}

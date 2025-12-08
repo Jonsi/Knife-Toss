@@ -32,10 +32,7 @@ namespace Presentation.Gameplay
         [SerializeField] private float loadAnimationDuration = 0.3f;
         [SerializeField] private Ease loadAnimationEase = Ease.OutQuad;
 
-        [Header("Throw Animation")]
-        [SerializeField] private float throwPushDistance = 0.25f;
-        [SerializeField] private float throwAnimationDuration = 0.08f;
-        [SerializeField] private Ease throwAnimationEase = Ease.OutQuad;
+        [Header("Audio")]
         [SerializeField] private float throwSoundVolume = 1f;
 
         private IThrowInput throwInput;
@@ -44,7 +41,6 @@ namespace Presentation.Gameplay
         private int knivesThrown;
         private bool canThrow = true;
         private Transform knivesParent;
-        private Sequence throwSequence;
 
         private KnifePool knifePool;
         private KnifeMagazine magazine;
@@ -103,7 +99,6 @@ namespace Presentation.Gameplay
         public void KillAllKnifeTweens()
         {
             EnsureInitialized();
-            KillThrowSequence();
             KillTweensFromRegistry();
             magazine.KillTweens();
             knifePool.KillTweens();
@@ -154,9 +149,8 @@ namespace Presentation.Gameplay
         private void ThrowKnife(Vector2 direction)
         {
             EnsureInitialized();
-            KillThrowSequence();
 
-            if (!magazine.TryTakeNext(out GameObject knifeObject))
+            if (!magazine.TryTakeNext(out GameObject knifeObject, out Knife knife) || knifeObject == null || knife == null)
             {
                 return;
             }
@@ -165,65 +159,23 @@ namespace Presentation.Gameplay
 
             PrepareKnifeForThrow(knifeObject);
             ActivateKnife(knifeObject);
-
-            PlayThrowAnimation(knifeObject, () =>
-            {
-                LaunchKnife(knifeObject, direction);
-                PlayThrowSound();
-            });
+            LaunchKnife(knife, direction);
+            PlayThrowSound();
         }
 
-        private void LaunchKnife(GameObject knifeObject, Vector2 direction)
+        private void LaunchKnife(Knife knife, Vector2 direction)
         {
-            currentKnife = knifeObject != null ? knifeObject.GetComponent<Knife>() : null;
-            if (currentKnife != null)
+            if (knife == null)
             {
-                currentKnife.Initialize(this, throwSpeed, direction);
+                return;
             }
+
+            currentKnife = knife;
+            currentKnife.Initialize(this, throwSpeed, direction);
 
             knivesThrown++;
             KnifeThrown?.Invoke();
             magazine.LoadNextKnife();
-        }
-
-
-        private void PlayThrowAnimation(GameObject knifeObject, Action onComplete)
-        {
-            if (knifeObject == null)
-            {
-                onComplete?.Invoke();
-                return;
-            }
-
-            KillThrowSequence();
-
-            Vector3 forward = launcherTransform != null ? launcherTransform.up : Vector3.up;
-            Vector3 targetPosition = knifeObject.transform.position + forward * throwPushDistance;
-            float duration = Mathf.Max(0f, throwAnimationDuration);
-
-            if (duration <= Mathf.Epsilon)
-            {
-                knifeObject.transform.position = targetPosition;
-                onComplete?.Invoke();
-                return;
-            }
-
-            throwSequence = DOTween.Sequence().SetTarget(knifeObject);
-            throwSequence.Append(knifeObject.transform.DOMove(targetPosition, duration).SetEase(throwAnimationEase));
-            throwSequence.OnComplete(() => onComplete?.Invoke());
-            throwSequence.OnKill(() => throwSequence = null);
-        }
-
-
-        private void KillThrowSequence()
-        {
-            if (throwSequence == null)
-            {
-                return;
-            }
-
-            throwSequence.Kill();
-            throwSequence = null;
         }
 
         private void PlayThrowSound()
