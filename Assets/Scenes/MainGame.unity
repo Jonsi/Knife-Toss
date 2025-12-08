@@ -1521,13 +1521,14 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
-  levelConfig: {fileID: 11400000, guid: f2944c09993083044a615f91c79d25b9, type: 2}
+  stagesConfig: {fileID: 11400000, guid: 2d7e5bd66a450854782ba5b74abbf2f0, type: 2}
   knifeImpactChannel: {fileID: 11400000, guid: a78030c48769aec48b1aeb7cf48a28cb, type: 2}
   levelCommandEventChannel: {fileID: 11400000, guid: 76592a2f6c663224399fb72a23fe1509, type: 2}
   soundSettings: {fileID: 11400000, guid: 5def38df6d93db34286062cf0a77bf72, type: 2}
   buttonClickEventChannel: {fileID: 11400000, guid: 721085d1c0ff9a14b96a5baa901e0c64, type: 2}
   targetHitAnimationConfig: {fileID: 11400000, guid: 0335b67848f59b3419222f0a23873a96, type: 2}
-  startLevel: 1
+  startStageIndex: 1
+  startLevelIndex: 1
   targetPrefab: {fileID: 5427965671015069626, guid: 0e557c846743ed044bf689812c8bae87, type: 3}
   knifeThrowerPrefab: {fileID: 5629078851861483033, guid: beef113832fb38942ba436dfd0328ae2, type: 3}
   knifePrefab: {fileID: 3126276711855495373, guid: 0f0aea32d6aea4a41ba6b968d5173811, type: 3}

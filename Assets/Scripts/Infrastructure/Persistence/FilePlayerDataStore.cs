@@ -36,6 +36,22 @@ namespace Infrastructure.Persistence
                         PlayerData loaded = JsonUtility.FromJson<PlayerData>(json);
                         if (loaded != null)
                         {
+                            if (loaded.progress == null)
+                            {
+                                loaded.progress = new PlayerProgressData();
+                            }
+
+                            if (loaded.progress.highestStageIndex < 1)
+                            {
+                                loaded.progress.highestStageIndex = Mathf.Max(1, loaded.progress.currentStageIndex);
+                            }
+
+                            if (loaded.progress?.levelProgress != null)
+                            {
+                                loaded.progress.levelProgress.OnAfterDeserialize();
+                            }
+
+                            Debug.Log($"Loaded: CurrentStage={loaded.progress.currentStageIndex}, HighestStage={loaded.progress.highestStageIndex}");
                             return loaded;
                         }
                     }
@@ -58,13 +74,29 @@ namespace Infrastructure.Persistence
 
             try
             {
+                if (data.progress?.levelProgress != null)
+                {
+                    data.progress.levelProgress.OnBeforeSerialize();
+                }
+
                 string directory = Path.GetDirectoryName(filePath);
                 if (!string.IsNullOrEmpty(directory))
                 {
                     Directory.CreateDirectory(directory);
                 }
 
+                if (data.progress == null)
+                {
+                    data.progress = new PlayerProgressData();
+                }
+
+                if (data.progress.highestStageIndex < 1)
+                {
+                    data.progress.highestStageIndex = Mathf.Max(1, data.progress.currentStageIndex);
+                }
+
                 string json = JsonUtility.ToJson(data, true);
+                Debug.Log($"Saving JSON: CurrentStage={data.progress.currentStageIndex}, HighestStage={data.progress.highestStageIndex}");
                 File.WriteAllText(tempFilePath, json);
 
                 if (File.Exists(filePath))
@@ -75,6 +107,8 @@ namespace Infrastructure.Persistence
                 {
                     File.Move(tempFilePath, filePath);
                 }
+
+                Debug.Log($"Saved to: {filePath}");
             }
             catch (Exception e)
             {

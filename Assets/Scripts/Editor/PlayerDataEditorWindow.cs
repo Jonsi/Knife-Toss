@@ -1,5 +1,4 @@
 using System;
-using Core.Abstractions;
 using Core.Data;
 using Infrastructure.Persistence;
 using UnityEditor;
@@ -14,10 +13,8 @@ namespace Editor
     {
         private const string Title = "Player Data";
 
-        private IPlayerDataStore dataStore;
+        private FilePlayerDataStore dataStore;
         private PlayerData workingCopy;
-        private PlayerDataContainer container;
-        private SerializedObject serializedData;
         private Vector2 scrollPosition;
         private readonly System.Collections.Generic.List<StarEntry> starEntries = new System.Collections.Generic.List<StarEntry>();
 
@@ -33,51 +30,53 @@ namespace Editor
             ReloadFromDisk();
         }
 
-        private void OnDisable()
-        {
-            if (container != null)
-            {
-                DestroyImmediate(container);
-                container = null;
-            }
-        }
-
         private void ReloadFromDisk()
         {
-            workingCopy = Clone(dataStore.LoadOrCreate());
-            BuildSerializedObject();
+            PlayerData loaded = dataStore.LoadOrCreate();
+            workingCopy = DeepClone(loaded);
+            EnsureDefaults();
             RebuildStarEntries();
+            
+            Debug.Log($"Editor Reloaded: CurrentStage={workingCopy.progress.currentStageIndex}, HighestStage={workingCopy.progress.highestStageIndex}");
             Repaint();
         }
 
-        private void BuildSerializedObject()
+        private void EnsureDefaults()
         {
-            if (container != null)
+            if (workingCopy.settings == null)
             {
-                DestroyImmediate(container);
+                workingCopy.settings = new PlayerSettingsData();
             }
 
-            container = ScriptableObject.CreateInstance<PlayerDataContainer>();
-            container.hideFlags = HideFlags.HideAndDontSave;
-            container.data = workingCopy;
-            serializedData = new SerializedObject(container);
+            if (workingCopy.progress == null)
+            {
+                workingCopy.progress = new PlayerProgressData();
+            }
+
+            if (workingCopy.progress.levelProgress == null)
+            {
+                workingCopy.progress.levelProgress = new LevelProgressData();
+                workingCopy.progress.levelProgress.OnAfterDeserialize();
+            }
+
+            if (workingCopy.settings.audio == null)
+            {
+                workingCopy.settings.audio = new AudioSettingsData { isMuted = false };
+            }
         }
 
         private void OnGUI()
         {
-            if (serializedData == null)
+            if (workingCopy == null)
             {
                 ReloadFromDisk();
+                return;
             }
 
-            bool prevEnabled = GUI.enabled;
-            GUI.enabled = true;
-
-            serializedData.UpdateIfRequiredOrScript();
-
             EditorGUILayout.LabelField("Player Data (persistent)", EditorStyles.boldLabel);
-            string filePath = (dataStore as FilePlayerDataStore)?.FilePath ?? "<unknown>";
-            EditorGUILayout.HelpBox($"Save file: {filePath}", MessageType.None);
+            EditorGUILayout.HelpBox($"Save file: {dataStore.FilePath}", MessageType.None);
+
+            EditorGUI.BeginChangeCheck();
 
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             DrawPlayerDataFields();
@@ -86,7 +85,10 @@ namespace Editor
             EditorGUILayout.Space();
             DrawActions();
 
-            GUI.enabled = prevEnabled;
+            if (EditorGUI.EndChangeCheck())
+            {
+                EditorUtility.SetDirty(this);
+            }
         }
 
         private void DrawActions()
@@ -115,58 +117,95 @@ namespace Editor
         private void SaveToDisk()
         {
             PushStarEntriesIntoData();
+            EnsureLevelProgressSerialization();
+            
+            Debug.Log($"Saving: CurrentStage={workingCopy.progress.currentStageIndex}, HighestStage={workingCopy.progress.highestStageIndex}");
+            
             dataStore.Save(workingCopy);
 
             if (PlayerDataLocator.Runtime != null)
             {
-                PlayerDataLocator.Runtime.Replace(Clone(workingCopy));
+                PlayerDataLocator.Runtime.Replace(DeepClone(workingCopy));
+            }
+
+            Debug.Log("Player data saved successfully.");
+        }
+
+        private void EnsureLevelProgressSerialization()
+        {
+            if (workingCopy?.progress?.levelProgress != null)
+            {
+                workingCopy.progress.levelProgress.OnBeforeSerialize();
             }
         }
 
         private void ResetData()
         {
             workingCopy = PlayerData.CreateDefault();
-            BuildSerializedObject();
+            EnsureDefaults();
             RebuildStarEntries();
             SaveToDisk();
         }
 
-        private void DrawMigrationSection()
+        private static PlayerData DeepClone(PlayerData source)
         {
-        }
+            if (source == null)
+            {
+                return PlayerData.CreateDefault();
+            }
 
-        private static PlayerData Clone(PlayerData source)
-        {
-            string json = JsonUtility.ToJson(source ?? PlayerData.CreateDefault());
-            return JsonUtility.FromJson<PlayerData>(json);
+            string json = JsonUtility.ToJson(source);
+            PlayerData cloned = JsonUtility.FromJson<PlayerData>(json);
+            
+            if (cloned.progress?.levelProgress != null)
+            {
+                cloned.progress.levelProgress.OnAfterDeserialize();
+            }
+
+            return cloned;
         }
 
         private void DrawPlayerDataFields()
         {
-            if (workingCopy == null)
-            {
-                EditorGUILayout.HelpBox("PlayerData is null.", MessageType.Error);
-                return;
-            }
+            DrawSettings();
+            EditorGUILayout.Space(8f);
+            DrawProgress();
+        }
 
+        private void DrawSettings()
+        {
             EditorGUILayout.LabelField("Settings", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
-            if (workingCopy.settings != null)
+            var settings = workingCopy.settings;
+            if (settings != null)
             {
-                workingCopy.settings.audio.isMuted = EditorGUILayout.Toggle("Audio Muted", workingCopy.settings.audio.isMuted);
-                workingCopy.settings.language = EditorGUILayout.TextField("Language", workingCopy.settings.language);
-                workingCopy.settings.vibrationEnabled = EditorGUILayout.Toggle("Vibration Enabled", workingCopy.settings.vibrationEnabled);
+                settings.audio.isMuted = EditorGUILayout.Toggle("Audio Muted", settings.audio.isMuted);
+                settings.language = EditorGUILayout.TextField("Language", settings.language);
+                settings.vibrationEnabled = EditorGUILayout.Toggle("Vibration Enabled", settings.vibrationEnabled);
             }
             EditorGUI.indentLevel--;
+        }
 
-            EditorGUILayout.Space(8f);
+        private void DrawProgress()
+        {
             EditorGUILayout.LabelField("Progress", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
-            if (workingCopy.progress != null)
+            var progress = workingCopy.progress;
+            if (progress != null)
             {
-                workingCopy.progress.currentStageIndex = EditorGUILayout.IntField("Current Stage Index", workingCopy.progress.currentStageIndex);
-                workingCopy.progress.currentLevelIndex = EditorGUILayout.IntField("Current Level Index", workingCopy.progress.currentLevelIndex);
-                workingCopy.progress.totalFruitsHit = EditorGUILayout.IntField("Total Fruits Hit", workingCopy.progress.totalFruitsHit);
+                int newCurrentStage = EditorGUILayout.IntField("Current Stage Index", progress.currentStageIndex);
+                if (newCurrentStage != progress.currentStageIndex)
+                {
+                    progress.currentStageIndex = Mathf.Max(1, newCurrentStage);
+                }
+
+                int newHighestStage = EditorGUILayout.IntField("Highest Stage Index", progress.highestStageIndex);
+                if (newHighestStage != progress.highestStageIndex)
+                {
+                    progress.highestStageIndex = Mathf.Max(1, newHighestStage);
+                }
+
+                progress.totalFruitsHit = EditorGUILayout.IntField("Total Fruits Hit", progress.totalFruitsHit);
 
                 EditorGUILayout.Space(4f);
                 EditorGUILayout.LabelField("Level Progress (Stars per Level)", EditorStyles.boldLabel);
@@ -228,18 +267,11 @@ namespace Editor
             levelProgress.starsPerLevel.Clear();
             foreach (var entry in starEntries)
             {
-                if (entry.levelIndex < 1 || entry.stars < 0)
+                if (entry.levelIndex >= 1 && entry.stars >= 0)
                 {
-                    continue;
+                    levelProgress.starsPerLevel[entry.levelIndex] = entry.stars;
                 }
-                levelProgress.starsPerLevel[entry.levelIndex] = entry.stars;
             }
-        }
-
-        [Serializable]
-        private class PlayerDataContainer : ScriptableObject
-        {
-            public PlayerData data;
         }
 
         [Serializable]

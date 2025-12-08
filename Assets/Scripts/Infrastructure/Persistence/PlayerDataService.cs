@@ -52,38 +52,47 @@ namespace Infrastructure.Persistence
             Save();
         }
 
-        public (int stageIndex, int levelIndex) GetCurrentStageAndLevel(int fallbackStage, int fallbackLevel)
+        public int GetCurrentStage(int fallbackStage)
         {
-            int stage = Mathf.Max(1, Mathf.Max(fallbackStage, playerData.progress.currentStageIndex));
-            int level = Mathf.Max(1, Mathf.Max(fallbackLevel, playerData.progress.currentLevelIndex));
-            return (stage, level);
+            return Mathf.Max(1, Mathf.Max(fallbackStage, playerData.progress.currentStageIndex));
         }
 
-        public void SetCurrentStageAndLevel(int stageIndex, int levelIndex)
+        public void SetCurrentStage(int stageIndex)
         {
+            stageIndex = Mathf.Max(1, stageIndex);
+            var progress = playerData.progress;
             bool changed = false;
-            if (stageIndex > playerData.progress.currentStageIndex)
+
+            Debug.Log($"SetCurrentStage called with: {stageIndex}, Current: {progress.currentStageIndex}, Highest: {progress.highestStageIndex}");
+
+            if (stageIndex != progress.currentStageIndex)
             {
-                playerData.progress.currentStageIndex = stageIndex;
-                playerData.progress.currentLevelIndex = levelIndex;
+                progress.currentStageIndex = stageIndex;
                 changed = true;
+                Debug.Log($"Updated currentStageIndex to: {stageIndex}");
             }
-            else if (stageIndex == playerData.progress.currentStageIndex && levelIndex > playerData.progress.currentLevelIndex)
+
+            if (stageIndex > progress.highestStageIndex)
             {
-                playerData.progress.currentLevelIndex = levelIndex;
+                progress.highestStageIndex = stageIndex;
                 changed = true;
+                Debug.Log($"Updated highestStageIndex to: {stageIndex}");
             }
 
             if (changed)
             {
+                Debug.Log($"SetCurrentStage: Saving - Current={progress.currentStageIndex}, Highest={progress.highestStageIndex}");
                 Save();
+            }
+            else
+            {
+                Debug.Log($"SetCurrentStage: No changes, skipping save");
             }
         }
 
-        public void ResetToStageLevel(int stageIndex, int levelIndex)
+        public void ResetToStage(int stageIndex)
         {
             playerData.progress.currentStageIndex = Mathf.Max(1, stageIndex);
-            playerData.progress.currentLevelIndex = Mathf.Max(1, levelIndex);
             Save();
         }
 
@@ -111,6 +120,11 @@ namespace Infrastructure.Persistence
             if (playerData.progress == null)
             {
                 playerData.progress = new PlayerProgressData();
+            }
+
+            if (playerData.progress.highestStageIndex < 1)
+            {
+                playerData.progress.highestStageIndex = Mathf.Max(1, playerData.progress.currentStageIndex);
             }
 
             if (playerData.progress.levelProgress == null)

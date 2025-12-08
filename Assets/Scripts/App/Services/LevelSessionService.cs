@@ -82,8 +82,8 @@ namespace App.Services
         /// </summary>
         public UniTask StartInitialLevelAsync()
         {
-            (int stage, int level) = playerDataService.GetCurrentStageAndLevel(startStageIndex, startLevelIndex);
-            return StartLevelAsync(stage, level);
+            int stage = playerDataService.GetCurrentStage(startStageIndex);
+            return StartLevelAsync(stage, 1);
         }
 
         /// <summary>
@@ -132,10 +132,20 @@ namespace App.Services
                 int nextStage = currentStage + 1;
                 if (catalog.IsValidStageAndLevel(nextStage, 1))
                 {
+                    if (playerDataService != null)
+                    {
+                        playerDataService.SetCurrentStage(nextStage);
+                        Debug.Log($"Moving to next stage: {nextStage} (from stage {currentStage})");
+                    }
                     return StartLevelAsync(nextStage, 1);
                 }
                 else
                 {
+                    if (playerDataService != null)
+                    {
+                        playerDataService.SetCurrentStage(currentStage);
+                        Debug.Log($"Final stage reached: {currentStage}");
+                    }
                     return StartLevelAsync(currentStage, currentLevel);
                 }
             }
@@ -270,7 +280,39 @@ namespace App.Services
         /// </summary>
         private void SaveProgress()
         {
-            playerDataService?.SetCurrentStageAndLevel(session.StageIndex, session.LevelIndex);
+            int currentStage = session.StageIndex;
+            int currentLevel = session.LevelIndex;
+            int levelCountInStage = catalog.GetLevelCountInStage(currentStage);
+
+            if (playerDataService == null)
+            {
+                Debug.LogError("PlayerDataService is null! Cannot save progress.");
+                return;
+            }
+
+            Debug.Log($"SaveProgress called: Stage={currentStage}, Level={currentLevel}, LevelsInStage={levelCountInStage}");
+
+            if (currentLevel >= levelCountInStage)
+            {
+                int nextStage = currentStage + 1;
+                Debug.Log($"Last level of stage {currentStage} completed. Next stage would be {nextStage}");
+                
+                if (catalog.IsValidStageAndLevel(nextStage, 1))
+                {
+                    playerDataService.SetCurrentStage(nextStage);
+                    Debug.Log($"Stage {currentStage} completed! Saved next stage: {nextStage}");
+                }
+                else
+                {
+                    playerDataService.SetCurrentStage(currentStage);
+                    Debug.Log($"Stage {currentStage} completed! This is the final stage. Saved current stage.");
+                }
+            }
+            else
+            {
+                playerDataService.SetCurrentStage(currentStage);
+                Debug.Log($"Level {currentLevel} of stage {currentStage} completed. Saved current stage.");
+            }
         }
 
         /// <summary>
