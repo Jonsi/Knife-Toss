@@ -1,6 +1,6 @@
 # KNIFE TOSS — Development Plan
 
-**Version 1.0**  
+**Version 2.0**  
 **Last Updated: December 2024**  
 **Based on:** Architecture.md, GameDesignDocument.md
 
@@ -9,68 +9,82 @@
 ## Table of Contents
 
 1. [Plan Overview](#1-plan-overview)
-2. [Phase 0: Project Setup](#2-phase-0-project-setup)
-3. [Phase 1: Core Throw Loop](#3-phase-1-core-throw-loop)
-4. [Phase 2: Target System](#4-phase-2-target-system)
-5. [Phase 3: Collision & Win/Fail States](#5-phase-3-collision--winfail-states)
-6. [Phase 4: Level System](#6-phase-4-level-system)
-7. [Phase 5: Stage Progression](#7-phase-5-stage-progression)
-8. [Phase 6: Hitable Objects (Tomatoes)](#8-phase-6-hitable-objects-tomatoes)
-9. [Phase 7: Audio System](#9-phase-7-audio-system)
-10. [Phase 8: Visual Feedback & Polish](#10-phase-8-visual-feedback--polish)
-11. [Phase 9: UI System](#11-phase-9-ui-system)
-12. [Phase 10: Persistence & Save System](#12-phase-10-persistence--save-system)
-13. [Phase 11: Final Polish & Optimization](#13-phase-11-final-polish--optimization)
-14. [Phase Summary Table](#14-phase-summary-table)
+2. [Phase 0: Foundation](#2-phase-0-foundation)
+3. [Phase 1: Knife Flight](#3-phase-1-knife-flight)
+4. [Phase 2: Target & Sticking](#4-phase-2-target--sticking)
+5. [Phase 3: Game States](#5-phase-3-game-states)
+6. [Phase 4: Level Configuration](#6-phase-4-level-configuration)
+7. [Phase 5: Flow & Progression](#7-phase-5-flow--progression)
+8. [Phase 6: Collectibles](#8-phase-6-collectibles)
+9. [Phase 7: Feedback Systems](#9-phase-7-feedback-systems)
+10. [Phase 8: User Interface](#10-phase-8-user-interface)
+11. [Phase 9: Persistence](#11-phase-9-persistence)
+12. [Phase 10: Polish & Performance](#12-phase-10-polish--performance)
+13. [Milestones](#13-milestones)
 
 ---
 
 ## 1. Plan Overview
 
-### 1.1 Philosophy
+### 1.1 Guiding Principles
 
-Each phase follows the principle of **Vertical Slices** — delivering a playable, testable feature before moving to the next. This allows:
+This plan follows the **Layered Architecture** defined in Architecture.md:
 
-- Early detection of design issues
-- Continuous validation in Unity Play Mode
-- Incremental complexity building
-- Clear milestone tracking
+```
+┌─────────────────────────────────────────────────────────────┐
+│  PRESENTATION   │  MonoBehaviours, Views, Input Handlers   │
+├─────────────────────────────────────────────────────────────┤
+│  APPLICATION    │  Services, Coordinators, Use Cases        │
+├─────────────────────────────────────────────────────────────┤
+│  CORE           │  Interfaces, Domain Models, Events        │
+├─────────────────────────────────────────────────────────────┤
+│  INFRASTRUCTURE │  Implementations, Spawners, Persistence   │
+└─────────────────────────────────────────────────────────────┘
+```
 
-### 1.2 Phase Structure
+### 1.2 Layer Notation
 
-Each phase includes:
+| Symbol | Layer | Unity Dependencies |
+|--------|-------|-------------------|
+| 🟦 | Core | ❌ None — Pure C# |
+| 🟩 | Infrastructure | ✅ Yes |
+| 🟨 | Application | ✅ Yes |
+| 🟧 | Presentation | ✅ Yes |
 
-| Section | Description |
-|---------|-------------|
-| **Goal** | What this phase achieves |
-| **Prerequisites** | What must be completed before starting |
-| **Deliverables** | Concrete outputs (scripts, prefabs, configs) |
-| **Architecture Components** | Which layers/patterns are introduced |
-| **Test Criteria** | How to verify the phase is complete |
-| **Estimated Effort** | Relative complexity (S/M/L) |
+### 1.3 Pattern Application
 
-### 1.3 Layer Legend
+Each phase identifies which **Design Patterns** from Architecture.md are introduced:
 
-Throughout this document:
-- 🟦 **Core** — Pure C#, no Unity dependencies
-- 🟩 **Infrastructure** — Implementations, external systems
-- 🟨 **App** — Services, coordinators
-- 🟧 **Presentation** — MonoBehaviours, Unity components
+| Pattern | First Introduced |
+|---------|------------------|
+| ScriptableObject Configuration | Phase 0 |
+| MonoBehaviour Wrapper | Phase 1 |
+| State Pattern | Phase 1 |
+| Strategy Pattern | Phase 2 |
+| Observer Pattern (Event Channels) | Phase 3 |
+| Command Pattern | Phase 5 |
+| Object Pool Pattern | Phase 10 |
+| Factory Pattern | Phase 4 |
+| Composite Pattern | Phase 4 |
 
 ---
 
-## 2. Phase 0: Project Setup
+## 2. Phase 0: Foundation
 
 ### Goal
-Establish the foundational project structure, assembly definitions, and dependency injection framework.
+Establish project structure, assembly boundaries, and dependency injection framework.
 
-### Prerequisites
-- Unity 2022+ LTS installed
-- Required packages imported (VContainer, UniTask, DOTween, Input System, TextMesh Pro)
+### Why This Phase First
+Without proper foundations, technical debt accumulates immediately. This phase ensures all subsequent code follows architectural rules from day one.
+
+---
 
 ### Deliverables
 
-#### Folder Structure
+#### 2.1 Folder Structure Creation
+
+Create the following empty folders:
+
 ```
 Assets/Scripts/
 ├── Core/
@@ -79,786 +93,1015 @@ Assets/Scripts/
 │   ├── Domain/
 │   └── Events/
 ├── Infrastructure/
+│   ├── Audio/
+│   ├── Input/
+│   ├── Leveling/
+│   ├── Persistence/
+│   └── Pooling/
 ├── App/
 │   ├── Installers/
 │   └── Services/
 ├── Presentation/
 │   ├── Gameplay/
+│   │   ├── Knife/
+│   │   ├── Target/
+│   │   └── Hitables/
 │   ├── UI/
+│   │   ├── HUD/
+│   │   ├── Popups/
+│   │   └── Common/
 │   └── VFX/
 └── Editor/
+    ├── Tools/
+    └── Inspectors/
 ```
 
-#### Assembly Definitions
-| Assembly | File |
-|----------|------|
-| KnifeToss.Core | `Scripts/Core/KnifeToss.Core.asmdef` |
-| KnifeToss.Infrastructure | `Scripts/Infrastructure/KnifeToss.Infrastructure.asmdef` |
-| KnifeToss.App | `Scripts/App/KnifeToss.App.asmdef` |
-| KnifeToss.Presentation | `Scripts/Presentation/KnifeToss.Presentation.asmdef` |
-| KnifeToss.Editor | `Scripts/Editor/KnifeToss.Editor.asmdef` |
+#### 2.2 Assembly Definitions
 
-#### Core Files
-| File | Layer | Purpose |
-|------|-------|---------|
-| `GameplayInstaller` | 🟨 App | VContainer LifetimeScope, DI registration |
-| `GameBootstrapper` | 🟧 Presentation | Entry point, ensures installer runs |
+| Assembly | Location | References |
+|----------|----------|------------|
+| `KnifeToss.Core` | `Scripts/Core/` | None |
+| `KnifeToss.Infrastructure` | `Scripts/Infrastructure/` | Core |
+| `KnifeToss.App` | `Scripts/App/` | Core, Infrastructure |
+| `KnifeToss.Presentation` | `Scripts/Presentation/` | Core, App |
+| `KnifeToss.Editor` | `Scripts/Editor/` | All + Editor |
 
-#### Scene Setup
-- Main scene with GameplayInstaller attached to root GameObject
-- Camera configured for 2D portrait mode
-- Basic background placeholder
+#### 2.3 VContainer Setup
 
-### Architecture Components
-- VContainer LifetimeScope setup
-- Assembly definition boundaries
+| Component | Layer | Location | Purpose |
+|-----------|-------|----------|---------|
+| `GameplayInstaller` | 🟨 App | `App/Installers/` | LifetimeScope, registers all dependencies |
 
-### Test Criteria
-- [ ] Project compiles without errors
-- [ ] Play Mode enters without exceptions
-- [ ] VContainer installer initializes (log message)
-- [ ] Assembly boundaries prevent invalid references
+**Scene Setup:**
+- Create `GameplayInstaller` GameObject in scene
+- Attach VContainer LifetimeScope component
+- This becomes the composition root
 
-### Estimated Effort: **S (Small)**
+#### 2.4 Scene Configuration
+
+- Main scene with 2D camera (portrait orientation)
+- Basic background sprite placeholder
+- GameplayInstaller at scene root
 
 ---
 
-## 3. Phase 1: Core Throw Loop
+### Patterns Introduced
 
-### Goal
-Player can tap to throw a knife upward. The knife flies straight up and exits the screen.
+| Pattern | Application |
+|---------|-------------|
+| **ScriptableObject Configuration** | Prepare `Configurations/` folder structure |
 
-### Prerequisites
-- Phase 0 complete
-
-### Deliverables
-
-#### Scripts
-
-| File | Layer | Purpose |
-|------|-------|---------|
-| `IThrowInput` | 🟦 Core | Interface for throw input |
-| `ThrowInputHandler` | 🟧 Presentation | Unity Input System wrapper |
-| `KnifeView` | 🟧 Presentation | MonoBehaviour for knife visuals/physics |
-| `KnifeController` | 🟦 Core | Pure C# knife state and logic |
-| `KnifeConfig` | 🟦 Core | Data structure for knife settings |
-| `KnifeThrower` | 🟧 Presentation | Handles spawning and launching knives |
-
-#### Prefabs
-| Prefab | Contents |
-|--------|----------|
-| `Knife.prefab` | Sprite, Rigidbody2D, Collider2D, KnifeView |
-
-#### Configurations
-| Asset | Purpose |
-|-------|---------|
-| `KnifeConfig.asset` | Throw speed, spawn position |
-
-#### Input Actions
-- Configure Input System action for "Throw" (touch/click release)
-
-### Architecture Components
-- 🟦 **Core:** `IThrowInput` interface
-- 🟧 **Presentation:** Input handling, knife MonoBehaviour
-- **Pattern:** MonoBehaviour Wrapper (KnifeView wraps KnifeController)
+---
 
 ### Test Criteria
-- [ ] Tap/click anywhere on screen
-- [ ] Knife spawns at bottom of screen
-- [ ] Knife flies straight upward at constant speed
-- [ ] Knife exits top of screen
-- [ ] Multiple taps spawn multiple knives
+
+- [ ] All folders exist with correct hierarchy
+- [ ] Each assembly definition compiles independently
+- [ ] Core assembly has NO Unity references
+- [ ] Play Mode starts without exceptions
+- [ ] VContainer LifetimeScope initializes (verify in console)
+- [ ] Attempting to reference Presentation from Core fails compilation
+
+---
+
+## 3. Phase 1: Knife Flight
+
+### Goal
+Player taps, knife spawns and flies upward. Knife has clear state transitions.
+
+### Why This Order
+The knife is the player's primary interaction. Establishing the throw-flight loop early allows testing the core feel.
+
+---
+
+### Deliverables by Layer
+
+#### 3.1 Core Layer 🟦
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `KnifeState` | `Core/Domain/` | Enum: Loaded, InFlight, Stuck, Bounced, Pooled |
+| `KnifeData` | `Core/Data/` | Struct: speed, embed offset |
+| `IKnifeController` | `Core/Abstractions/` | Interface for knife logic |
+
+**KnifeState Enum:**
+```
+Loaded → InFlight → Stuck
+                  → Bounced → Pooled
+```
+
+#### 3.2 Infrastructure Layer 🟩
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `InputAdapter` | `Infrastructure/Input/` | Wraps Unity Input System, implements interface |
+
+#### 3.3 Application Layer 🟨
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `IThrowInputPort` | (interface in Core) | Port for input |
+| `ThrowService` | `App/Services/` | Coordinates throw action |
+
+**Registration in GameplayInstaller:**
+- Register `InputAdapter` as `IThrowInputPort`
+- Register `ThrowService`
+
+#### 3.4 Presentation Layer 🟧
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `KnifeView` | `Presentation/Gameplay/Knife/` | MonoBehaviour, visual representation |
+| `KnifeThrowerView` | `Presentation/Gameplay/Knife/` | Handles spawning, receives input |
+
+**MonoBehaviour Wrapper Pattern:**
+- `KnifeView` is thin — only Unity specifics (Rigidbody2D, SpriteRenderer)
+- Business logic (state transitions) delegated to services/pure C#
+
+#### 3.5 Configurations
+
+| Asset | Location | Purpose |
+|-------|----------|---------|
+| `KnifeConfig.asset` | `Configurations/Gameplay/` | Throw speed, spawn position offset |
+
+#### 3.6 Prefabs
+
+| Prefab | Contents |
+|--------|----------|
+| `Knife.prefab` | Sprite, Rigidbody2D, Collider2D (trigger), KnifeView |
+
+---
+
+### Patterns Applied
+
+| Pattern | Application |
+|---------|-------------|
+| **MonoBehaviour Wrapper** | KnifeView (presentation) separate from logic |
+| **State Pattern** | KnifeState enum with clear transitions |
+| **ScriptableObject Configuration** | KnifeConfig for throw parameters |
+
+---
+
+### Test Criteria
+
+- [ ] Tap/click screen → Knife spawns at launcher position
+- [ ] Knife flies straight up at configured speed
+- [ ] Knife state transitions: Loaded → InFlight
+- [ ] Speed is read from ScriptableObject (change value, see different speed)
+- [ ] Multiple rapid taps spawn multiple knives
 - [ ] No exceptions in console
 
-### Estimated Effort: **M (Medium)**
+---
+
+## 4. Phase 2: Target & Sticking
+
+### Goal
+Rotating target in scene. Knives stick to target surface and rotate with it.
+
+### Why This Order
+Target is the second core element. Sticking mechanic is fundamental to all gameplay.
 
 ---
 
-## 4. Phase 2: Target System
+### Deliverables by Layer
 
-### Goal
-A rotating target exists in the scene. Knives can stick into the target and rotate with it.
+#### 4.1 Core Layer 🟦
 
-### Prerequisites
-- Phase 1 complete
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `IRotationBehavior` | `Core/Abstractions/` | Strategy interface for rotation |
+| `ConstantRotationBehavior` | `Core/Domain/` | Fixed speed rotation logic |
+| `TargetData` | `Core/Data/` | Struct: radius, rotation config |
 
-### Deliverables
+**Strategy Pattern Interface:**
+```
+IRotationBehavior
+├── GetRotationDelta(deltaTime) → float
+└── (implementations are interchangeable)
+```
 
-#### Scripts
+#### 4.2 Infrastructure Layer 🟩
 
-| File | Layer | Purpose |
-|------|-------|---------|
-| `IRotationBehavior` | 🟦 Core | Interface for rotation strategies |
-| `ConstantRotation` | 🟦 Core | Simple constant speed rotation |
-| `TargetView` | 🟧 Presentation | MonoBehaviour for target |
-| `TargetController` | 🟦 Core | Rotation logic, knife tracking |
-| `TargetConfig` | 🟦 Core | Target settings data |
-| `TargetGeometry` | 🟦 Core | Utility for surface calculations |
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `TargetGeometry` | `Infrastructure/Leveling/` | Surface point calculation, stick positioning |
 
-#### Prefabs
+**Sticking Algorithm (pure math):**
+1. Get target circle center and radius
+2. Calculate direction from center to knife position
+3. Find surface point on perimeter
+4. Calculate knife rotation to face center
+5. Return position and rotation for sticking
+
+#### 4.3 Application Layer 🟨
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `TargetService` | `App/Services/` | Manages target state, tracks stuck knives |
+
+#### 4.4 Presentation Layer 🟧
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `TargetView` | `Presentation/Gameplay/Target/` | MonoBehaviour, applies rotation |
+| `RotatingTargetBehavior` | `Presentation/Gameplay/Target/` | Applies IRotationBehavior each frame |
+
+**Knife Sticking in Presentation:**
+- On collision detected, call Infrastructure for math
+- Parent knife transform to target
+- Set knife Rigidbody2D to Kinematic
+- Update KnifeState to Stuck
+
+#### 4.5 Configurations
+
+| Asset | Location | Purpose |
+|-------|----------|---------|
+| `TargetConfig.asset` | `Configurations/Gameplay/` | Default rotation speed, size |
+
+#### 4.6 Prefabs
+
 | Prefab | Contents |
 |--------|----------|
-| `Target.prefab` | Sprite, CircleCollider2D, TargetView |
-
-#### Configurations
-| Asset | Purpose |
-|-------|---------|
-| `TargetConfig.asset` | Rotation speed, size, position |
-
-### Architecture Components
-- 🟦 **Core:** Rotation behavior interface + implementation
-- **Pattern:** Strategy Pattern for rotation behaviors
-
-### Knife Sticking Logic
-1. Detect collision with target
-2. Calculate surface contact point
-3. Rotate knife to face target center
-4. Parent knife to target transform
-5. Disable knife physics
-
-### Test Criteria
-- [ ] Target rotates continuously in scene
-- [ ] Throw knife at target
-- [ ] Knife embeds at contact point
-- [ ] Knife rotates with target after sticking
-- [ ] Multiple knives can stick to target
-- [ ] Knives maintain their relative positions
-
-### Estimated Effort: **M (Medium)**
+| `Target.prefab` | Sprite, CircleCollider2D, TargetView, RotatingTargetBehavior |
 
 ---
 
-## 5. Phase 3: Collision & Win/Fail States
+### Patterns Applied
 
-### Goal
-Knife-to-knife collision causes failure. Sticking enough knives destroys the target (win).
-
-### Prerequisites
-- Phase 2 complete
-
-### Deliverables
-
-#### Scripts
-
-| File | Layer | Purpose |
-|------|-------|---------|
-| `LevelSession` | 🟦 Core | Current attempt state (knives thrown, stuck, failed) |
-| `LevelRules` | 🟦 Core | Level parameters (knife count, threshold) |
-| `KnifeCollisionHandler` | 🟧 Presentation | Detects knife-to-knife collision |
-| `TargetHitTracker` | 🟧 Presentation | Tracks hits, triggers destruction |
-| `ILevelSession` | 🟦 Core | Interface for session access |
-
-#### Events (ScriptableObject Channels)
-
-| Event Channel | Raised When |
-|---------------|-------------|
-| `KnifeImpactEventChannel` | Knife sticks or bounces |
-| `LevelStateEventChannel` | Win or fail triggered |
-
-### Architecture Components
-- 🟦 **Core:** Session state, rules, events
-- **Pattern:** Observer Pattern via event channels
-- **Pattern:** State tracking in LevelSession
-
-### Collision Detection Flow
-```
-Knife Collision
-    │
-    ├── Hit Target? → Stick → Increment hit count → Check threshold
-    │                                                    │
-    │                                         Threshold met? → WIN
-    │
-    └── Hit Knife? → FAIL → Raise failure event
-```
-
-### Test Criteria
-- [ ] Throw knife, hits target → sticks (success)
-- [ ] Throw knife, hits stuck knife → bounces off (fail state)
-- [ ] Console/debug shows "FAILED" on knife-to-knife hit
-- [ ] Stick required number of knives → target destroyed
-- [ ] Console/debug shows "WIN" when target destroyed
-- [ ] Session tracks: knives thrown, knives stuck, status
-
-### Estimated Effort: **M (Medium)**
+| Pattern | Application |
+|---------|-------------|
+| **Strategy Pattern** | IRotationBehavior with ConstantRotationBehavior |
+| **MonoBehaviour Wrapper** | TargetView thin, rotation logic in pure C# |
 
 ---
 
-## 6. Phase 4: Level System
-
-### Goal
-Levels are defined in ScriptableObjects. Game loads level configuration and sets up the scene accordingly.
-
-### Prerequisites
-- Phase 3 complete
-
-### Deliverables
-
-#### Scripts
-
-| File | Layer | Purpose |
-|------|-------|---------|
-| `LevelData` | 🟦 Core | Data structure for level definition |
-| `StageData` | 🟦 Core | Data structure for stage (collection of levels) |
-| `StagesConfig` | 🟦 Core | ScriptableObject holding all stages |
-| `ILevelCatalog` | 🟦 Core | Interface to access level definitions |
-| `StagesConfigCatalog` | 🟩 Infrastructure | Implementation of ILevelCatalog |
-| `LevelSessionService` | 🟨 App | Manages level lifecycle |
-| `LevelSpawner` | 🟩 Infrastructure | Instantiates level elements |
-
-#### Configurations
-| Asset | Purpose |
-|-------|---------|
-| `StagesConfig.asset` | Contains Stage 1 with 3-4 test levels |
-
-### Architecture Components
-- 🟦 **Core:** Level/Stage data structures
-- 🟩 **Infrastructure:** Level spawning
-- 🟨 **App:** Level lifecycle service
-- **Pattern:** Data-Driven Design via ScriptableObjects
-
-### Level Load Flow
-```
-LevelSessionService.StartLevel(stageIndex, levelIndex)
-    │
-    ├── Get LevelData from ILevelCatalog
-    ├── Parse into LevelRules
-    ├── Clear previous level objects
-    ├── Spawn target(s) via LevelSpawner
-    ├── Configure KnifeThrower with knife count
-    └── Initialize LevelSession
-```
-
 ### Test Criteria
-- [ ] Create 3 different levels in StagesConfig
-- [ ] Level 1: Slow rotation, 5 knives, threshold 5
-- [ ] Level 2: Faster rotation, 6 knives, threshold 6
-- [ ] Level 3: Different rotation speed, different count
-- [ ] Call `StartLevel(0, 0)` → Level 1 loads correctly
-- [ ] Call `StartLevel(0, 1)` → Level 2 loads with different settings
-- [ ] Target parameters match configuration
 
-### Estimated Effort: **M (Medium)**
+- [ ] Target appears in scene, rotates continuously
+- [ ] Rotation speed matches ScriptableObject value
+- [ ] Throw knife at target → Knife sticks at contact point
+- [ ] Stuck knife rotates with target (parented correctly)
+- [ ] Knife tip points toward target center
+- [ ] Multiple knives can stick at different positions
+- [ ] Change rotation speed in config → Target rotates faster/slower
 
 ---
 
-## 7. Phase 5: Stage Progression
+## 5. Phase 3: Game States
 
 ### Goal
-Completing a level advances to the next. Completing all levels in a stage advances to next stage. Failing shows retry option.
+Win when enough knives stick. Fail when knife hits knife. Clear state communication via events.
 
-### Prerequisites
-- Phase 4 complete
-
-### Deliverables
-
-#### Scripts
-
-| File | Layer | Purpose |
-|------|-------|---------|
-| `LevelFlowCoordinator` | 🟨 App | Orchestrates level transitions |
-| `LevelCommandEventChannel` | 🟦 Core | Event channel for retry/next/reset commands |
-| `SimpleFailUI` | 🟧 Presentation | Temporary UI for retry button |
-| `SimpleWinUI` | 🟧 Presentation | Temporary UI showing "Level Complete" |
-
-### Architecture Components
-- 🟨 **App:** Flow coordination
-- **Pattern:** Command Pattern for level commands
-- **Pattern:** Observer Pattern for state changes
-
-### Flow Logic
-```
-Level Complete
-    │
-    ├── More levels in stage? → Load next level
-    │
-    └── Last level in stage?
-            │
-            ├── More stages? → Load Stage N+1, Level 1
-            │
-            └── Last stage? → Show "Game Complete" (placeholder)
-
-Level Failed
-    │
-    └── Show Fail UI
-            │
-            ├── [Retry] → Reload current level
-            │
-            └── [Restart Stage] → Load Stage N, Level 1
-```
-
-### Test Criteria
-- [ ] Complete Level 1 → Automatically loads Level 2
-- [ ] Complete Level 2 → Automatically loads Level 3
-- [ ] Complete all levels in Stage 1 → Loads Stage 2 Level 1 (or shows complete)
-- [ ] Fail a level → Simple UI appears with Retry button
-- [ ] Click Retry → Same level reloads
-- [ ] Click Restart Stage → Stage resets to Level 1
-- [ ] Transitions happen without errors
-
-### Estimated Effort: **M (Medium)**
+### Why This Order
+Win/fail states complete the core loop. Event channels establish cross-system communication pattern.
 
 ---
 
-## 8. Phase 6: Hitable Objects (Tomatoes)
+### Deliverables by Layer
+
+#### 5.1 Core Layer 🟦
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `LevelState` | `Core/Domain/` | Enum: Loading, Playing, Completed, Failed |
+| `LevelSession` | `Core/Domain/` | Tracks current attempt state |
+| `LevelRules` | `Core/Domain/` | Parsed level parameters |
+| `KnifeImpactEvent` | `Core/Events/` | ScriptableObject event definition |
+| `LevelStateChangedEvent` | `Core/Events/` | ScriptableObject event definition |
+
+**LevelSession Responsibilities:**
+- Track knives thrown, knives stuck
+- Track win/fail state
+- Expose current LevelState
+- Raise events on state changes
+
+**Event Channel Pattern (ScriptableObject):**
+```
+KnifeImpactEvent : ScriptableObject
+├── OnKnifeStuck (Action<Vector3>)
+├── OnKnifeBounced (Action<Vector3>)
+└── Raise methods
+```
+
+#### 5.2 Infrastructure Layer 🟩
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `CollisionDetector` | `Infrastructure/Leveling/` | Determines collision type |
+
+**Collision Resolution:**
+1. Knife hits something
+2. CollisionDetector checks: Target? Knife? Hitable?
+3. Returns collision type enum
+4. Caller (service) handles accordingly
+
+#### 5.3 Application Layer 🟨
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `LevelSessionService` | `App/Services/` | Manages LevelSession lifecycle |
+| `CollisionService` | `App/Services/` | Orchestrates collision handling |
+
+**Collision Flow:**
+```
+KnifeView detects collision
+    → CollisionService.HandleCollision()
+        → CollisionDetector.GetCollisionType()
+        → If Target: stick knife, increment count, check win
+        → If Knife: bounce, trigger fail
+        → Raise appropriate event
+```
+
+#### 5.4 Presentation Layer 🟧
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `KnifeBounceHandler` | `Presentation/Gameplay/Knife/` | Animates bounce on fail |
+
+**Bounce Behavior:**
+- Unparent from target
+- Enable gravity
+- Apply rotation animation
+- Knife state → Bounced
+
+#### 5.5 Configurations (Event Channel Instances)
+
+| Asset | Location | Purpose |
+|-------|----------|---------|
+| `KnifeImpactEventChannel.asset` | `Configurations/Events/` | Instance of knife impact events |
+| `LevelStateEventChannel.asset` | `Configurations/Events/` | Instance of level state events |
+
+---
+
+### Patterns Applied
+
+| Pattern | Application |
+|---------|-------------|
+| **Observer Pattern** | ScriptableObject event channels |
+| **State Pattern** | LevelState enum, LevelSession tracks |
+
+---
+
+### Test Criteria
+
+- [ ] Knife sticks in target → KnifeStuck event raised (log in console)
+- [ ] Stick configured threshold → LevelCompleted event raised
+- [ ] Knife hits stuck knife → KnifeBounced event raised
+- [ ] Knife hits knife → LevelFailed event raised
+- [ ] Bounced knife falls with gravity and rotation
+- [ ] LevelSession correctly tracks: thrown count, stuck count, state
+- [ ] Game pauses on fail (Time.timeScale = 0)
+
+---
+
+## 6. Phase 4: Level Configuration
 
 ### Goal
-Tomatoes can be attached to targets. Hitting them awards fruit currency and destroys them.
+Levels defined in ScriptableObjects. System loads and configures scene based on level data.
 
-### Prerequisites
-- Phase 5 complete
+### Why This Order
+Data-driven levels enable content creation without code changes. Establishes factory and composition patterns.
 
-### Deliverables
+---
 
-#### Scripts
+### Deliverables by Layer
 
-| File | Layer | Purpose |
-|------|-------|---------|
-| `HitableObjectConfig` | 🟦 Core | Configuration for hitable types |
-| `HitableObjectView` | 🟧 Presentation | MonoBehaviour for tomato |
-| `HitableObjectSpawner` | 🟩 Infrastructure | Spawns hitables around target |
-| `HitableObjectHitEventChannel` | 🟦 Core | Event when hitable is hit |
-| `FruitTracker` | 🟦 Core | Tracks fruit count in session |
+#### 6.1 Core Layer 🟦
 
-#### Prefabs
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `LevelData` | `Core/Data/` | Single level definition |
+| `StageData` | `Core/Data/` | Collection of levels + theme |
+| `TargetDefinition` | `Core/Data/` | Per-target configuration |
+| `TargetGroupConfig` | `Core/Data/` | All targets in a level |
+| `ILevelCatalog` | `Core/Abstractions/` | Interface to access level data |
+
+**Data Structure:**
+```
+StageData
+├── stageName
+├── layoutSettings (visual theme)
+└── levels: List<LevelData>
+        └── LevelData
+            ├── knifeCount
+            └── targetGroup: TargetGroupConfig
+                    └── targets: List<TargetDefinition>
+                            ├── rotationType
+                            ├── rotationSpeed
+                            ├── knivesToBreak
+                            └── position, scale, etc.
+```
+
+#### 6.2 Infrastructure Layer 🟩
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `StagesConfigCatalog` | `Infrastructure/Leveling/` | Implements ILevelCatalog, reads ScriptableObject |
+| `TargetFactory` | `Infrastructure/Leveling/` | Creates configured target instances |
+| `LevelSpawner` | `Infrastructure/Leveling/` | Sets up scene for level |
+
+**Factory Pattern:**
+```
+TargetFactory
+├── Create(TargetDefinition) → GameObject
+├── Resolves rotation behavior based on type
+└── Applies all configuration
+```
+
+#### 6.3 Application Layer 🟨
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `LevelSetupService` | `App/Services/` | Orchestrates level loading |
+
+**Level Load Sequence:**
+1. Get LevelData from ILevelCatalog
+2. Parse into LevelRules
+3. Clear previous level (destroy targets, reset state)
+4. LevelSpawner creates targets via TargetFactory
+5. Configure knife thrower with knife count
+6. Initialize LevelSession
+7. Set LevelState to Playing
+
+#### 6.4 Configurations
+
+| Asset | Location | Purpose |
+|-------|----------|---------|
+| `StagesConfig.asset` | `Configurations/Gameplay/` | All stages and levels |
+
+**Create Test Content:**
+- Stage 1 with 3-4 levels
+- Varying: rotation speeds, knife counts, thresholds
+
+---
+
+### Patterns Applied
+
+| Pattern | Application |
+|---------|-------------|
+| **Factory Pattern** | TargetFactory creates configured targets |
+| **Composite Pattern** | TargetGroupConfig treats multiple targets as one |
+| **ScriptableObject Configuration** | StagesConfig holds all level data |
+
+---
+
+### Test Criteria
+
+- [ ] StagesConfig.asset contains multiple levels
+- [ ] Call LevelSetupService.LoadLevel(0, 0) → First level loads
+- [ ] Call LevelSetupService.LoadLevel(0, 1) → Second level loads (different settings)
+- [ ] Target rotation speed matches level configuration
+- [ ] Knife count matches level configuration
+- [ ] Threshold matches level configuration
+- [ ] Can win/fail with level-specific parameters
+
+---
+
+## 7. Phase 5: Flow & Progression
+
+### Goal
+Completing level advances to next. Completing stage advances to next stage. Fail shows options.
+
+### Why This Order
+Game flow ties together all previous systems. Introduces command pattern for player actions.
+
+---
+
+### Deliverables by Layer
+
+#### 7.1 Core Layer 🟦
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `ILevelCommand` | `Core/Abstractions/` | Command interface |
+| `RetryLevelCommand` | `Core/Domain/` | Reload current level |
+| `NextLevelCommand` | `Core/Domain/` | Advance to next level |
+| `RestartStageCommand` | `Core/Domain/` | Reset to stage start |
+| `LevelCommandEvent` | `Core/Events/` | ScriptableObject event for commands |
+
+**Command Pattern:**
+```
+ILevelCommand
+├── Execute()
+└── implementations: Retry, Next, RestartStage
+```
+
+#### 7.2 Application Layer 🟨
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `LevelFlowCoordinator` | `App/Services/` | Listens to events, executes flow |
+| `StageProgressTracker` | `App/Services/` | Tracks current stage/level indices |
+
+**Flow Coordinator Logic:**
+```
+On LevelCompleted:
+├── If more levels in stage → NextLevelCommand.Execute()
+├── If last level → Advance stage, load first level
+└── If last stage → Show completion (placeholder)
+
+On LevelFailed:
+└── Show fail UI (let player choose command)
+```
+
+#### 7.3 Presentation Layer 🟧
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `SimpleFailPopup` | `Presentation/UI/Popups/` | Temporary fail UI |
+
+**Fail Popup (temporary):**
+- Two buttons: Retry, Restart Stage
+- Each button raises appropriate command event
+- Popup shown when LevelFailed event received
+- Popup hidden when level loads
+
+#### 7.4 Configurations
+
+| Asset | Location | Purpose |
+|-------|----------|---------|
+| `LevelCommandEventChannel.asset` | `Configurations/Events/` | Command events |
+
+---
+
+### Patterns Applied
+
+| Pattern | Application |
+|---------|-------------|
+| **Command Pattern** | LevelCommands encapsulate navigation actions |
+| **Observer Pattern** | Flow coordinator listens to level events |
+
+---
+
+### Test Criteria
+
+- [ ] Complete level 1 → Automatically loads level 2
+- [ ] Complete all levels in stage → Loads next stage
+- [ ] Fail level → Popup appears with Retry/Restart
+- [ ] Click Retry → Same level reloads, popup hides
+- [ ] Click Restart Stage → Stage level 1 loads
+- [ ] Game unpauses after retry/restart
+- [ ] StageProgressTracker correctly reports current position
+
+---
+
+## 8. Phase 6: Collectibles
+
+### Goal
+Tomatoes attached to targets. Hitting them awards currency.
+
+### Why This Order
+Collectibles add depth without changing core mechanics. Uses established event pattern.
+
+---
+
+### Deliverables by Layer
+
+#### 8.1 Core Layer 🟦
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `HitableDefinition` | `Core/Data/` | Configuration for hitable placement |
+| `HitableObjectHitEvent` | `Core/Events/` | ScriptableObject event |
+| `IFruitTracker` | `Core/Abstractions/` | Interface for fruit counting |
+
+**Add to TargetDefinition:**
+- hitableObjects: List<HitableDefinition>
+
+#### 8.2 Infrastructure Layer 🟩
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `HitableSpawner` | `Infrastructure/Leveling/` | Positions hitables around target |
+
+**Spawn Positioning:**
+- Calculate surface position from angle
+- Parent to target transform
+- Optional: orient facing outward
+
+#### 8.3 Application Layer 🟨
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `FruitService` | `App/Services/` | Tracks fruit count, listens to events |
+
+#### 8.4 Presentation Layer 🟧
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `HitableView` | `Presentation/Gameplay/Hitables/` | MonoBehaviour for tomato |
+
+**Hit Behavior:**
+- Knife collision detected
+- Disable colliders (prevent double-hit)
+- Raise HitableObjectHitEvent
+- Destroy GameObject
+
+#### 8.5 Configurations
+
+| Asset | Location | Purpose |
+|-------|----------|---------|
+| `TomatoConfig.asset` | `Configurations/Gameplay/` | Tomato prefab, particle ref |
+| `HitableHitEventChannel.asset` | `Configurations/Events/` | Event instance |
+
+#### 8.6 Prefabs
+
 | Prefab | Contents |
 |--------|----------|
-| `Tomato.prefab` | Sprite, Collider2D, HitableObjectView |
+| `Tomato.prefab` | Sprite, Collider2D, HitableView |
 
-#### Level Data Extension
-- Add hitable object configuration to LevelData
-- Support: count, angular spacing, type reference
-
-### Architecture Components
-- 🟦 **Core:** Hitable config, events
-- 🟩 **Infrastructure:** Spawning logic
-- **Pattern:** Observer Pattern for hit events
+---
 
 ### Test Criteria
-- [ ] Configure level with 2 tomatoes on target
-- [ ] Tomatoes appear at configured positions
+
+- [ ] Level config includes 2 tomatoes on target
+- [ ] Tomatoes appear at configured angles
 - [ ] Tomatoes rotate with target
 - [ ] Knife hits tomato → Tomato destroyed
-- [ ] Fruit counter increments (debug log)
-- [ ] Knife continues to target (doesn't stop at tomato)
-- [ ] Hitting tomato does NOT count as knife stuck
-
-### Estimated Effort: **S (Small)**
-
----
-
-## 9. Phase 7: Audio System
-
-### Goal
-Sound effects play for all game actions. Background music loops.
-
-### Prerequisites
-- Phase 6 complete
-
-### Deliverables
-
-#### Scripts
-
-| File | Layer | Purpose |
-|------|-------|---------|
-| `IAudioPlayer` | 🟦 Core | Interface for SFX playback |
-| `IMusicPlayer` | 🟦 Core | Interface for music playback |
-| `AudioPlayer` | 🟩 Infrastructure | SFX implementation |
-| `MusicPlayer` | 🟩 Infrastructure | BGM implementation |
-| `SoundSettings` | 🟦 Core | ScriptableObject with audio clips |
-| `AudioService` | 🟨 App | Coordinates audio, listens to events |
-
-#### Configurations
-| Asset | Purpose |
-|-------|---------|
-| `SoundSettings.asset` | All audio clip references |
-
-### Sound Triggers
-
-| Event | Sound |
-|-------|-------|
-| Knife thrown | Whoosh/throw sound |
-| Knife sticks in target | Wood impact sound |
-| Knife hits knife | Metal clang sound |
-| Tomato hit | Splat sound |
-| Level complete | Win jingle |
-| Level fail | Fail sound |
-| Button click | Click sound |
-
-### Architecture Components
-- 🟦 **Core:** Audio interfaces
-- 🟩 **Infrastructure:** Audio implementations
-- 🟨 **App:** Audio service listening to events
-- **Pattern:** Observer Pattern (events trigger sounds)
-
-### Test Criteria
-- [ ] Throw knife → hear throw sound
-- [ ] Knife sticks → hear wood impact
-- [ ] Knife-to-knife → hear metal clang
-- [ ] Hit tomato → hear splat
-- [ ] Background music plays and loops
-- [ ] All sounds play without delay or stutter
-
-### Estimated Effort: **S (Small)**
+- [ ] HitableObjectHitEvent raised (log)
+- [ ] FruitService count increments
+- [ ] Knife continues to target (doesn't stop)
+- [ ] Tomato hit does NOT count toward target threshold
 
 ---
 
-## 10. Phase 8: Visual Feedback & Polish
+## 9. Phase 7: Feedback Systems
 
 ### Goal
-Add particle effects, animations, and screen feedback for satisfying gameplay feel.
+Audio and visual feedback for all game actions. Game feels responsive and satisfying.
 
-### Prerequisites
-- Phase 7 complete
+### Why This Order
+Feedback transforms mechanics into experience. Uses event listeners established earlier.
 
-### Deliverables
+---
 
-#### Scripts
+### Deliverables by Layer
 
-| File | Layer | Purpose |
-|------|-------|---------|
-| `TargetHitFeedback` | 🟧 Presentation | Shake and tint on hit |
-| `KnifeLoadAnimation` | 🟧 Presentation | Knife slide-up animation |
-| `KnifeBounceAnimation` | 🟧 Presentation | Falling knife on fail |
-| `ParticleSpawner` | 🟩 Infrastructure | Spawns VFX at positions |
-| `TargetHitAnimationConfig` | 🟦 Core | Shake/tint parameters |
-| `KnifeBounceOffAnimationConfig` | 🟦 Core | Bounce animation parameters |
+#### 9.1 Core Layer 🟦
 
-#### Prefabs
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `IAudioPlayer` | `Core/Abstractions/` | Interface for SFX |
+| `IMusicPlayer` | `Core/Abstractions/` | Interface for BGM |
+| `SoundType` | `Core/Data/` | Enum of all sound types |
+
+#### 9.2 Infrastructure Layer 🟩
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `AudioPlayer` | `Infrastructure/Audio/` | Implements IAudioPlayer |
+| `MusicPlayer` | `Infrastructure/Audio/` | Implements IMusicPlayer |
+| `ParticleSpawner` | `Infrastructure/Leveling/` | Spawns VFX at positions |
+
+**AudioPlayer:**
+- Uses single AudioSource
+- PlayOneShot for SFX
+- Reads clips from SoundSettings ScriptableObject
+
+#### 9.3 Application Layer 🟨
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `AudioFeedbackService` | `App/Services/` | Listens to events, plays sounds |
+| `VFXFeedbackService` | `App/Services/` | Listens to events, spawns particles |
+
+**Event → Sound Mapping:**
+```
+KnifeStuck → Wood impact sound
+KnifeBounced → Metal clang sound
+HitableHit → Splat sound
+LevelCompleted → Win jingle
+LevelFailed → Fail sound
+```
+
+#### 9.4 Presentation Layer 🟧
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `TargetHitFeedback` | `Presentation/Gameplay/Target/` | Shake + tint on hit |
+| `KnifeLoadAnimator` | `Presentation/Gameplay/Knife/` | Slide-up animation |
+| `KnifeBounceAnimator` | `Presentation/Gameplay/Knife/` | Fall + rotation animation |
+
+**DOTween Animations:**
+- Target shake: DOShakePosition
+- Target tint: DOColor sequence
+- Knife load: DOMove + DOFade
+- Knife bounce: DOMove (gravity) + DORotate
+
+#### 9.5 Configurations
+
+| Asset | Location | Purpose |
+|-------|----------|---------|
+| `SoundSettings.asset` | `Configurations/Audio/` | All audio clip references |
+| `TargetHitAnimationConfig.asset` | `Configurations/Animations/` | Shake/tint parameters |
+| `KnifeBounceConfig.asset` | `Configurations/Animations/` | Bounce parameters |
+
+#### 9.6 Prefabs
+
 | Prefab | Contents |
 |--------|----------|
-| `KnifeHitParticles.prefab` | Wood splinter particle system |
-| `TomatoParticles.prefab` | Juice splatter particle system |
-
-#### Configurations
-| Asset | Purpose |
-|-------|---------|
-| `TargetHitAnimationConfig.asset` | Shake duration, strength, tint color |
-| `KnifeBounceOffAnimationConfig.asset` | Gravity, rotation, timing |
-
-### Visual Effects List
-
-| Effect | Trigger | Description |
-|--------|---------|-------------|
-| Wood splinters | Knife sticks | Particles at impact point |
-| Target shake | Knife sticks | Brief shake animation |
-| Target tint | Knife sticks | Flash warm color |
-| Tomato splatter | Tomato hit | Juice particles |
-| Knife load | New knife ready | Slide up with fade-in |
-| Knife bounce | Hit another knife | Fall with tumble rotation |
-
-### Architecture Components
-- 🟧 **Presentation:** Animation controllers
-- 🟩 **Infrastructure:** Particle spawning
-- **Pattern:** ScriptableObject Configuration for all parameters
-
-### Test Criteria
-- [ ] Knife sticks → Wood particles spawn at contact
-- [ ] Knife sticks → Target shakes briefly
-- [ ] Knife sticks → Target flashes color, fades back
-- [ ] Tomato hit → Splatter particles spawn
-- [ ] New knife → Slides up from below, fades in
-- [ ] Knife collision → Knife falls with rotation
-- [ ] All animations configurable without code changes
-
-### Estimated Effort: **M (Medium)**
+| `WoodSplinterParticles.prefab` | Particle system for knife stick |
+| `TomatoSplatParticles.prefab` | Particle system for tomato hit |
 
 ---
 
-## 11. Phase 9: UI System
+### Test Criteria
+
+- [ ] Throw knife → Hear throw whoosh
+- [ ] Knife sticks → Hear wood thunk + see splinters
+- [ ] Knife sticks → Target shakes and flashes
+- [ ] Knife hits knife → Hear metal clang
+- [ ] Hit tomato → Hear splat + see juice particles
+- [ ] Background music plays and loops
+- [ ] New knife loads with slide-up animation
+- [ ] All parameters configurable via ScriptableObjects
+
+---
+
+## 10. Phase 8: User Interface
 
 ### Goal
-Complete HUD and popup UI for gameplay feedback and navigation.
+Complete HUD showing game state. Proper fail popup with navigation.
 
-### Prerequisites
-- Phase 8 complete
+### Why This Order
+UI visualizes all systems built so far. MVVM-lite pattern for data binding.
 
-### Deliverables
+---
 
-#### Scripts
+### Deliverables by Layer
 
-| File | Layer | Purpose |
-|------|-------|---------|
-| `StageProgressBarView` | 🟧 Presentation | Shows level progress in stage |
-| `KnifeMagazineDisplay` | 🟧 Presentation | Shows remaining knives |
-| `FruitCountDisplay` | 🟧 Presentation | Shows total fruits |
-| `MuteButton` | 🟧 Presentation | Toggles audio mute |
-| `StageFailPopup` | 🟧 Presentation | Fail screen with retry/restart |
-| `BasePopup` | 🟧 Presentation | Base class for popups |
-| `LevelHudViewModel` | 🟨 App | Provides data to HUD views |
-| `ButtonClickEventChannel` | 🟦 Core | Event for button click sounds |
+#### 10.1 Core Layer 🟦
 
-#### Prefabs
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `ILevelHudData` | `Core/Abstractions/` | Interface exposing HUD data |
+| `ButtonClickEvent` | `Core/Events/` | For UI sound feedback |
+
+#### 10.2 Application Layer 🟨
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `LevelHudViewModel` | `App/Services/` | Provides data to HUD views |
+| `SettingsService` | `App/Services/` | Manages mute state |
+
+**ViewModel Pattern:**
+```
+LevelHudViewModel implements ILevelHudData
+├── CurrentStage: int
+├── CurrentLevel: int
+├── TotalLevelsInStage: int
+├── KnivesRemaining: int
+├── TotalFruits: int
+└── IsMuted: bool
+```
+
+#### 10.3 Presentation Layer 🟧
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `StageProgressBarView` | `Presentation/UI/HUD/` | Level progress dots |
+| `KnifeMagazineView` | `Presentation/UI/HUD/` | Remaining knife icons |
+| `FruitCounterView` | `Presentation/UI/HUD/` | Total fruits display |
+| `StageLabelView` | `Presentation/UI/HUD/` | "STAGE 1" text |
+| `MuteButtonView` | `Presentation/UI/HUD/` | Toggle audio |
+| `StageFailPopupView` | `Presentation/UI/Popups/` | Retry/Restart buttons |
+| `BasePopupView` | `Presentation/UI/Common/` | Base class for popups |
+
+**UI Raycast Blocking:**
+- Before throw, check if pointer over UI
+- If UI element under pointer, suppress throw
+- Prevents accidental throws when clicking buttons
+
+#### 10.4 Prefabs
+
 | Prefab | Contents |
 |--------|----------|
 | `HUD.prefab` | Canvas with all HUD elements |
-| `StageFailPopup.prefab` | Fail popup UI |
-| `MagazineKnifeIcon.prefab` | Single knife icon for magazine |
-| `LevelIcon.prefab` | Progress bar level indicator |
-
-### UI Elements
-
-| Element | Location | Function |
-|---------|----------|----------|
-| Stage label | Top center | "STAGE 1" |
-| Mute button | Top left | Toggle audio |
-| Progress bar | Below top | Level dots with current highlighted |
-| Fruit counter | Below progress | "🍅 125" |
-| Knife magazine | Bottom | Horizontal knife icons |
-| Fail popup | Overlay | Continue / Restart buttons |
-
-### Architecture Components
-- 🟧 **Presentation:** UI views
-- 🟨 **App:** ViewModel for data binding
-- **Pattern:** MVVM-lite (ViewModel provides data, View displays)
-
-### Test Criteria
-- [ ] HUD shows current stage number
-- [ ] Progress bar shows correct level count
-- [ ] Current level highlighted in progress bar
-- [ ] Knife magazine shows correct count
-- [ ] Throwing knife reduces magazine display
-- [ ] Fruit counter updates when tomato hit
-- [ ] Mute button toggles audio on/off
-- [ ] Fail popup appears on failure
-- [ ] Continue button retries level
-- [ ] Restart button resets to stage start
-- [ ] UI doesn't block gameplay input (proper raycast handling)
-
-### Estimated Effort: **L (Large)**
+| `StageFailPopup.prefab` | Popup canvas overlay |
+| `KnifeIcon.prefab` | Single knife for magazine |
+| `LevelDot.prefab` | Progress indicator dot |
 
 ---
 
-## 12. Phase 10: Persistence & Save System
+### Test Criteria
+
+- [ ] HUD shows "STAGE X" correctly
+- [ ] Progress bar shows correct number of dots
+- [ ] Current level dot is highlighted
+- [ ] Knife magazine shows correct count
+- [ ] Each throw reduces visible knife icons
+- [ ] Fruit counter shows total, updates on collect
+- [ ] Mute button toggles audio on/off
+- [ ] Fail popup has working Retry button
+- [ ] Fail popup has working Restart Stage button
+- [ ] Tapping UI buttons doesn't throw knife
+
+---
+
+## 11. Phase 9: Persistence
 
 ### Goal
-Player progress persists between sessions. Settings (mute state) are saved.
+Progress saves between sessions. Settings persist.
 
-### Prerequisites
-- Phase 9 complete
+### Why This Order
+Persistence makes progression meaningful. Follows repository pattern.
 
-### Deliverables
+---
 
-#### Scripts
+### Deliverables by Layer
 
-| File | Layer | Purpose |
-|------|-------|---------|
-| `PlayerData` | 🟦 Core | Root save data structure |
-| `PlayerProgressData` | 🟦 Core | Stage/level progress |
-| `PlayerSettingsData` | 🟦 Core | Audio, vibration settings |
-| `IPlayerDataStore` | 🟦 Core | Interface for save/load |
-| `FilePlayerDataStore` | 🟩 Infrastructure | JSON file implementation |
-| `PlayerDataService` | 🟨 App | Manages player data lifecycle |
-| `ISettingsService` | 🟦 Core | Interface for settings |
-| `SettingsService` | 🟨 App | Settings management |
+#### 11.1 Core Layer 🟦
 
-### Data Structure
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `PlayerData` | `Core/Data/` | Root data structure |
+| `PlayerProgressData` | `Core/Data/` | Stage/level progress |
+| `PlayerSettingsData` | `Core/Data/` | Audio, vibration settings |
+| `IPlayerDataStore` | `Core/Abstractions/` | Interface for save/load |
+
+**Data Structure:**
 ```
 PlayerData
-├── PlayerProgressData
+├── progress: PlayerProgressData
 │   ├── currentStageIndex
 │   ├── highestStageIndex
-│   └── totalFruitsHit
-└── PlayerSettingsData
-    ├── isMuted
-    └── vibrationEnabled
+│   └── totalFruitsCollected
+└── settings: PlayerSettingsData
+    └── isMuted
 ```
 
-### Save/Load Flow
-```
-Game Start
-    │
-    └── PlayerDataService.Load()
-            │
-            ├── File exists? → Deserialize JSON
-            │
-            └── No file? → Create default data
+#### 11.2 Infrastructure Layer 🟩
 
-Save Triggers
-    │
-    ├── Level complete → Save progress
-    ├── Stage complete → Save progress
-    ├── Mute toggled → Save settings
-    └── Fruit collected → Save periodically
-```
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `FilePlayerDataStore` | `Infrastructure/Persistence/` | JSON file read/write |
 
-### Architecture Components
-- 🟦 **Core:** Data structures, interfaces
-- 🟩 **Infrastructure:** File system operations
-- 🟨 **App:** Data service coordination
-- **Pattern:** Repository Pattern for data access
+**File Operations:**
+- Path: Application.persistentDataPath + "/playerData.json"
+- Atomic write: temp file, then rename
+- Load with fallback to defaults
+- Handle corrupted file gracefully
 
-### Test Criteria
-- [ ] Complete a level → Progress saved to file
-- [ ] Close and reopen game → Resumes at saved level
-- [ ] Toggle mute → Setting persists after restart
-- [ ] Collect fruits → Total persists after restart
-- [ ] Delete save file → Game starts fresh with defaults
-- [ ] Save file is valid JSON (human-readable)
-- [ ] Corrupt save file → Game handles gracefully with defaults
+#### 11.3 Application Layer 🟨
 
-### Estimated Effort: **M (Medium)**
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `PlayerDataService` | `App/Services/` | Manages data lifecycle |
+
+**Save Triggers:**
+- Level completed
+- Stage completed
+- Settings changed
+- Fruit collected (debounced)
+
+**Load Trigger:**
+- Game start (in installer)
 
 ---
 
-## 13. Phase 11: Final Polish & Optimization
+### Test Criteria
+
+- [ ] Complete a level → Progress saved
+- [ ] Close and reopen game → Resumes at correct level
+- [ ] Toggle mute → Setting persists after restart
+- [ ] Collect fruits → Total persists after restart
+- [ ] Delete save file → Game starts fresh
+- [ ] Corrupt save file → Game handles gracefully, uses defaults
+- [ ] Save file is readable JSON
+
+---
+
+## 12. Phase 10: Polish & Performance
 
 ### Goal
-Object pooling, performance optimization, additional rotation behaviors, pre-stuck knives, and final quality pass.
+Object pooling, additional rotation behaviors, pre-stuck knives, multi-target levels.
 
-### Prerequisites
-- Phase 10 complete
+### Why This Phase Last
+Optimization and variety build on stable foundation. Pool pattern requires mature lifecycle.
 
-### Deliverables
+---
 
-#### Object Pooling
+### Deliverables by Layer
 
-| File | Layer | Purpose |
-|------|-------|---------|
-| `IObjectPool<T>` | 🟦 Core | Generic pool interface |
-| `KnifePool` | 🟩 Infrastructure | Knife-specific pooling |
-| `ParticlePool` | 🟩 Infrastructure | Particle effect pooling |
+#### 12.1 Core Layer 🟦
 
-#### Additional Rotation Behaviors
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `IPoolable` | `Core/Abstractions/` | Interface for pooled objects |
+| `PulsatingRotationBehavior` | `Core/Domain/` | Speed oscillates |
+| `FlippingRotationBehavior` | `Core/Domain/` | Direction reverses |
+| `CurveRotationBehavior` | `Core/Domain/` | Follows AnimationCurve |
 
-| Behavior | Description |
-|----------|-------------|
-| `PulsatingRotation` | Speed oscillates sinusoidally |
-| `FlippingRotation` | Randomly reverses direction |
-| `AccelerationCurveRotation` | Speed follows AnimationCurve |
+**Additional Rotation Strategies:**
+```
+IRotationBehavior
+├── ConstantRotationBehavior (Phase 2)
+├── PulsatingRotationBehavior (speed = base + sin(t) * amplitude)
+├── FlippingRotationBehavior (random direction changes)
+└── CurveRotationBehavior (speed follows curve)
+```
 
-#### Pre-Stuck Knives
+#### 12.2 Infrastructure Layer 🟩
 
-- Add pre-stuck knife configuration to LevelData
-- Spawn knives already embedded at level start
-- These create obstacles player must avoid
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `ObjectPool<T>` | `Infrastructure/Pooling/` | Generic pool implementation |
+| `KnifePool` | `Infrastructure/Pooling/` | Knife-specific pool |
+| `ParticlePool` | `Infrastructure/Pooling/` | Particle effect pool |
 
-#### Multi-Target Support
+**Pool Operations:**
+- Warmup(count): Pre-instantiate
+- Get(): Retrieve or create
+- Return(obj): Deactivate, re-pool
+- Reset state on return
 
-- Support multiple targets per level
-- Each target tracked independently
-- Level completes when ALL targets destroyed
+#### 12.3 Application Layer 🟨
 
-#### Performance Optimization
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| Update `ThrowService` | | Use pool instead of Instantiate |
+| Update `VFXFeedbackService` | | Use particle pool |
 
-| Area | Optimization |
-|------|--------------|
-| Knives | Object pooling instead of Instantiate/Destroy |
-| Particles | Pool particle systems |
-| Components | Cache GetComponent calls |
-| Tweens | Kill tweens on level transition |
-| UI | Pool magazine icons |
+**Pre-Stuck Knives:**
+- Add to TargetDefinition: preStuckKnives config
+- LevelSpawner creates knives already stuck at start
+- These are obstacles, not throwable
 
-### Architecture Components
-- **Pattern:** Object Pool Pattern
-- **Pattern:** Strategy Pattern (additional rotation behaviors)
+**Multi-Target Levels:**
+- TargetGroupConfig already supports list
+- Update LevelSession to track multiple targets
+- Win when ALL targets destroyed
+
+---
 
 ### Test Criteria
 
 #### Pooling
-- [ ] Throw many knives rapidly → No frame drops
-- [ ] Particle effects spawn without GC spikes
-- [ ] Profiler shows minimal allocations during gameplay
+- [ ] Rapid throwing shows no frame drops
+- [ ] Profiler shows minimal GC during gameplay
+- [ ] Knives correctly reset when returned to pool
 
 #### Rotation Behaviors
-- [ ] Level with PulsatingRotation → Speed visibly oscillates
-- [ ] Level with FlippingRotation → Direction randomly reverses
-- [ ] Level with AccelerationCurve → Speed follows curve pattern
+- [ ] Level with Pulsating → Speed visibly oscillates
+- [ ] Level with Flipping → Direction randomly reverses
+- [ ] Level with Curve → Speed follows pattern
 
 #### Pre-Stuck Knives
-- [ ] Level with 3 pre-stuck knives → They appear at start
-- [ ] Pre-stuck knives rotate with target
-- [ ] Throwing into pre-stuck knife → Fail
+- [ ] Level with pre-stuck knives → They appear at start
+- [ ] They rotate with target
+- [ ] Hitting them causes fail
 
 #### Multi-Target
 - [ ] Level with 2 targets → Both appear
-- [ ] Destroy first target → Second remains
-- [ ] Destroy both → Level complete
-
-#### Performance
-- [ ] 60 FPS maintained on target devices
-- [ ] No memory leaks over extended play
-- [ ] Clean level transitions (no orphaned objects)
-
-### Estimated Effort: **L (Large)**
+- [ ] Destroy one → Other remains
+- [ ] Destroy all → Level complete
 
 ---
 
-## 14. Phase Summary Table
-
-| Phase | Name | Deliverable | Effort | Cumulative |
-|-------|------|-------------|--------|------------|
-| 0 | Project Setup | Folder structure, DI framework | S | S |
-| 1 | Core Throw Loop | Tap → Knife flies up | M | M |
-| 2 | Target System | Rotating target, knife sticking | M | M+ |
-| 3 | Collision & Win/Fail | Fail on knife hit, win on threshold | M | L |
-| 4 | Level System | ScriptableObject levels, spawning | M | L |
-| 5 | Stage Progression | Auto-advance, retry, stage flow | M | L+ |
-| 6 | Hitable Objects | Tomatoes, fruit currency | S | L+ |
-| 7 | Audio System | SFX and music | S | XL |
-| 8 | Visual Feedback | Particles, animations, juice | M | XL |
-| 9 | UI System | HUD, popups, magazine display | L | XL+ |
-| 10 | Persistence | Save/load progress and settings | M | XL+ |
-| 11 | Final Polish | Pooling, optimization, extra features | L | XXL |
+## 13. Milestones
 
 ### Milestone Summary
 
-| Milestone | After Phase | State |
-|-----------|-------------|-------|
-| **Prototype** | Phase 3 | Core loop playable, win/fail works |
-| **Alpha** | Phase 6 | Full gameplay with levels and collectibles |
-| **Beta** | Phase 9 | Complete game with UI |
-| **Release Candidate** | Phase 11 | Polished, optimized, save system |
+| Milestone | After Phase | Playable State |
+|-----------|-------------|----------------|
+| **PROTOTYPE** | Phase 3 | Throw, stick, win, fail — core loop works |
+| **ALPHA** | Phase 6 | Levels, progression, collectibles |
+| **BETA** | Phase 8 | Complete game with UI |
+| **RELEASE CANDIDATE** | Phase 10 | Polished, optimized, persistent |
 
 ---
 
-## Appendix A: Testing Checklist Template
+### Definition of Done (Per Phase)
 
-Use this template for each phase's QA pass:
+A phase is **COMPLETE** when:
 
-```markdown
-## Phase [N] Testing Checklist
-
-### Functional Tests
-- [ ] Test case 1
-- [ ] Test case 2
-- [ ] ...
-
-### Edge Cases
-- [ ] Rapid input spam
-- [ ] Pause/resume during action
-- [ ] Background/foreground app switch
-
-### Performance
-- [ ] No frame drops
-- [ ] No GC spikes in Profiler
-- [ ] Memory stable over time
-
-### Error Handling
-- [ ] No exceptions in console
-- [ ] Graceful handling of invalid states
-
-### Regression
-- [ ] Previous phase features still work
-- [ ] No new bugs introduced
-```
-
----
-
-## Appendix B: Definition of Done
-
-A phase is considered **DONE** when:
-
-1. ✅ All deliverables implemented
-2. ✅ All test criteria pass
+1. ✅ All layer components implemented in correct locations
+2. ✅ Patterns applied as specified
 3. ✅ No compiler errors or warnings
-4. ✅ No exceptions in Play Mode
-5. ✅ Code follows Architecture.md guidelines
-6. ✅ Previous phases still function correctly
-7. ✅ Playable in Unity Editor
+4. ✅ No runtime exceptions
+5. ✅ All test criteria pass in Unity Play Mode
+6. ✅ Previous phases still function (regression check)
+7. ✅ Code follows naming conventions from Architecture.md
+8. ✅ No violations of "What to Avoid" from Architecture.md
+
+---
+
+### Quick Reference: Layer Placement
+
+| If creating... | Place in... |
+|----------------|-------------|
+| Interface | 🟦 Core/Abstractions/ |
+| Data struct/class | 🟦 Core/Data/ |
+| Pure C# logic | 🟦 Core/Domain/ |
+| ScriptableObject event definition | 🟦 Core/Events/ |
+| Unity system wrapper | 🟩 Infrastructure/ |
+| Spawner/Factory | 🟩 Infrastructure/Leveling/ |
+| File I/O | 🟩 Infrastructure/Persistence/ |
+| Service orchestrating features | 🟨 App/Services/ |
+| VContainer installer | 🟨 App/Installers/ |
+| MonoBehaviour | 🟧 Presentation/ |
+| UI component | 🟧 Presentation/UI/ |
 
 ---
 
 **END OF DOCUMENT**
-
-*This Development Plan provides a structured roadmap for building Knife Toss incrementally. Each phase results in a playable, testable state, allowing continuous validation and iteration.*
-
