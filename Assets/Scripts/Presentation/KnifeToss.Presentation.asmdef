@@ -1,0 +1,20 @@
+{
+    "name": "KnifeToss.Presentation",
+    "rootNamespace": "Presentation",
+    "references": [
+        "KnifeToss.Core",
+        "KnifeToss.App",
+        "VContainer",
+        "UniTask"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+

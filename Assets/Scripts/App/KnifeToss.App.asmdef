@@ -1,0 +1,19 @@
+{
+    "name": "KnifeToss.App",
+    "rootNamespace": "App",
+    "references": [
+        "KnifeToss.Core",
+        "KnifeToss.Infrastructure",
+        "VContainer"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+
