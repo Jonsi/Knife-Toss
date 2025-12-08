@@ -63,30 +63,21 @@ namespace Infrastructure.Persistence
             var progress = playerData.progress;
             bool changed = false;
 
-            Debug.Log($"SetCurrentStage called with: {stageIndex}, Current: {progress.currentStageIndex}, Highest: {progress.highestStageIndex}");
-
             if (stageIndex != progress.currentStageIndex)
             {
                 progress.currentStageIndex = stageIndex;
                 changed = true;
-                Debug.Log($"Updated currentStageIndex to: {stageIndex}");
             }
 
             if (stageIndex > progress.highestStageIndex)
             {
                 progress.highestStageIndex = stageIndex;
                 changed = true;
-                Debug.Log($"Updated highestStageIndex to: {stageIndex}");
             }
 
             if (changed)
             {
-                Debug.Log($"SetCurrentStage: Saving - Current={progress.currentStageIndex}, Highest={progress.highestStageIndex}");
                 Save();
-            }
-            else
-            {
-                Debug.Log($"SetCurrentStage: No changes, skipping save");
             }
         }
 

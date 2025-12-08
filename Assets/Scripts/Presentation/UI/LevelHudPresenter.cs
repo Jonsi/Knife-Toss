@@ -11,7 +11,7 @@ namespace Presentation.UI
     public class LevelHudPresenter : MonoBehaviour
     {
         [Header("UI References")]
-        [SerializeField] private LevelIconView levelIconView;
+        [SerializeField] private StageProgressBarView stageProgressBar;
         [SerializeField] private Button muteButton;
         [SerializeField] private GameObject muteIcon;
         [SerializeField] private GameObject unmuteIcon;
@@ -21,6 +21,7 @@ namespace Presentation.UI
 
         private ISettingsService _settingsService;
         private IPlayerDataService _playerDataService;
+        private ILevelCatalog _levelCatalog;
 
         private void Awake()
         {
@@ -39,17 +40,17 @@ namespace Presentation.UI
         }
 
         /// <summary>
-        /// Performs the Render operation.
+        /// Renders the HUD with the provided view model data.
         /// </summary>
         public void Render(LevelHudViewModel viewModel)
         {
-            RenderLevelIcon(viewModel);
+            RenderStageProgress(viewModel);
             magazineDisplay?.Render(viewModel.TotalKnives, viewModel.KnivesThrown);
             fruitCountDisplay?.Render(viewModel.TotalFruitsHit);
         }
 
         /// <summary>
-        /// Performs the ShowFail operation.
+        /// Shows or hides the stage fail popup.
         /// </summary>
         public void ShowFail(bool show)
         {
@@ -60,7 +61,7 @@ namespace Presentation.UI
         }
 
         /// <summary>
-        /// Performs the ResetState operation.
+        /// Resets the HUD to its initial state.
         /// </summary>
         public void ResetState()
         {
@@ -69,28 +70,23 @@ namespace Presentation.UI
         }
 
         /// <summary>
-        /// Performs the Construct operation.
+        /// Constructs the presenter with required services.
         /// </summary>
         [VContainer.Inject]
-        public void Construct(ISettingsService settingsService, IPlayerDataService playerDataService)
+        public void Construct(ISettingsService settingsService, IPlayerDataService playerDataService, ILevelCatalog levelCatalog)
         {
             _settingsService = settingsService;
             _playerDataService = playerDataService;
+            _levelCatalog = levelCatalog;
             UpdateMuteButtonIcon();
         }
 
-        /// <summary>
-        /// Performs the ToggleMute operation.
-        /// </summary>
         private void ToggleMute()
         {
             _settingsService.ToggleMute();
             UpdateMuteButtonIcon();
         }
 
-        /// <summary>
-        /// Performs the UpdateMuteButtonIcon operation.
-        /// </summary>
         private void UpdateMuteButtonIcon()
         {
             if (muteIcon == null || unmuteIcon == null)
@@ -98,30 +94,33 @@ namespace Presentation.UI
                 return;
             }
             
-            var isMuted = _settingsService.IsMuted();
+            bool isMuted = _settingsService.IsMuted();
             muteIcon.SetActive(isMuted);
             unmuteIcon.SetActive(!isMuted);
         }
 
         /// <summary>
-        /// Updates the level icon display based on the current view model.
+        /// Updates the stage progress bar display based on the current view model.
         /// </summary>
-        private void RenderLevelIcon(LevelHudViewModel viewModel)
+        private void RenderStageProgress(LevelHudViewModel viewModel)
         {
-            if (levelIconView == null)
+            if (stageProgressBar == null || _levelCatalog == null)
             {
                 return;
             }
 
-            if (int.TryParse(viewModel.LevelLabel, out int levelNum))
+            int currentStage = viewModel.StageIndex;
+            int currentLevel = viewModel.LevelIndex;
+            int levelsInStage = _levelCatalog.GetLevelCountInStage(currentStage);
+            
+            int? nextStage = null;
+            int nextStageIndex = currentStage + 1;
+            if (_levelCatalog.IsValidStageAndLevel(nextStageIndex, 1))
             {
-                levelIconView.SetLevelNumber(levelNum);
+                nextStage = nextStageIndex;
             }
-            else
-            {
-                levelIconView.SetLevelNumber(viewModel.LevelIndex);
-            }
-        }
 
+            stageProgressBar.Initialize(currentStage, nextStage, currentLevel, levelsInStage);
+        }
     }
 }

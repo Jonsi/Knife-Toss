@@ -145,7 +145,6 @@ namespace App.Services
                     if (playerDataService != null)
                     {
                         playerDataService.SetCurrentStage(nextStage);
-                        Debug.Log($"Moving to next stage: {nextStage} (from stage {currentStage})");
                     }
                     return StartLevelAsync(nextStage, 1);
                 }
@@ -154,7 +153,6 @@ namespace App.Services
                     if (playerDataService != null)
                     {
                         playerDataService.SetCurrentStage(currentStage);
-                        Debug.Log($"Final stage reached: {currentStage}");
                     }
                     return StartLevelAsync(currentStage, currentLevel);
                 }
@@ -300,28 +298,21 @@ namespace App.Services
                 return;
             }
 
-            Debug.Log($"SaveProgress called: Stage={currentStage}, Level={currentLevel}, LevelsInStage={levelCountInStage}");
-
             if (currentLevel >= levelCountInStage)
             {
                 int nextStage = currentStage + 1;
-                Debug.Log($"Last level of stage {currentStage} completed. Next stage would be {nextStage}");
-                
                 if (catalog.IsValidStageAndLevel(nextStage, 1))
                 {
                     playerDataService.SetCurrentStage(nextStage);
-                    Debug.Log($"Stage {currentStage} completed! Saved next stage: {nextStage}");
                 }
                 else
                 {
                     playerDataService.SetCurrentStage(currentStage);
-                    Debug.Log($"Stage {currentStage} completed! This is the final stage. Saved current stage.");
                 }
             }
             else
             {
                 playerDataService.SetCurrentStage(currentStage);
-                Debug.Log($"Level {currentLevel} of stage {currentStage} completed. Saved current stage.");
             }
         }
 

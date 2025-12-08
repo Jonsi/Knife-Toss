@@ -3,5 +3,7 @@ Go through the entire project and identify all code related to this feature. Bui
 - Dramatically simplify and deduplicate logic while preserving behavior.
 - Improve structure, naming, and overall readability and maintainability.
 - Remove inline comments and debug logs where they are not essential.
+- Remove old scripts and logic that was replaced( if exists)
+- Never use GetComponent or FindObject type of methods
 
 Do not delete XML <summary> blocks or other structured documentation comments.
