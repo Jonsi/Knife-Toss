@@ -151,7 +151,7 @@ namespace Presentation.Gameplay.Projectiles
                 return;
             }
 
-            if (collisionObject.CompareTag("Knife"))
+            if (IsKnifeCollision(collisionObject))
             {
                 HandleKnifeHitKnife(collisionTransform?.position ?? transform.position);
                 return;
@@ -392,6 +392,33 @@ namespace Presentation.Gameplay.Projectiles
         private bool CanResolveImpact()
         {
             return !isResolved && !isStuck && !isReturnedToPool;
+        }
+
+        private bool IsKnifeCollision(GameObject collisionObject)
+        {
+            if (collisionObject == null)
+            {
+                return false;
+            }
+
+            if (collisionObject.CompareTag("Knife"))
+            {
+                return true;
+            }
+
+            Knife otherKnife = collisionObject.GetComponent<Knife>();
+            if (otherKnife != null && otherKnife != this)
+            {
+                return true;
+            }
+
+            Knife parentKnife = collisionObject.GetComponentInParent<Knife>();
+            if (parentKnife != null && parentKnife != this)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private void ResolveAsStuck()
