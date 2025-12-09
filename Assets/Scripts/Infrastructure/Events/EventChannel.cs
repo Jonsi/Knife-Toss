@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using KnifeToss.Core.Abstractions;
+using KnifeToss.Core.Abstractions.Events;
 using UnityEngine;
 
 namespace Infrastructure.Events

@@ -1,10 +1,23 @@
-using App.Services;
+using App.Services.Collision;
+using App.Services.Flow;
+using App.Services.Session;
+using App.Services.Throwing;
 using Infrastructure.Events;
 using Infrastructure.Input;
 using Infrastructure.Leveling;
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Data;
-using KnifeToss.Core.Domain;
+using KnifeToss.Core.Abstractions.Collision;
+using KnifeToss.Core.Abstractions.Config;
+using KnifeToss.Core.Abstractions.Events;
+using KnifeToss.Core.Abstractions.Gameplay.Target;
+using KnifeToss.Core.Abstractions.Gameplay.Session;
+using KnifeToss.Core.Abstractions.Input;
+using KnifeToss.Core.Abstractions.Throwing;
+using KnifeToss.Core.Data.Collision;
+using KnifeToss.Core.Data.Knife;
+using KnifeToss.Core.Data.Level;
+using KnifeToss.Core.Data.Target;
+using KnifeToss.Core.Data.Throwing;
+using KnifeToss.Core.Domain.Target;
 using Presentation.Gameplay.Collision;
 using Presentation.Gameplay.Knife;
 using Presentation.Gameplay.Target;
@@ -23,18 +36,36 @@ namespace Bootstrapper
         [SerializeField] private KnifeThrowConfigAsset knifeThrowConfig;
         [SerializeField] private KnifeSpawnRequestEventChannel knifeSpawnRequestEventChannel;
         [SerializeField] private CollisionEventChannel collisionEventChannel;
+        [SerializeField] private KnifeImpactEventChannel knifeImpactEventChannel;
+        [SerializeField] private LevelStateChangedEventChannel levelStateChangedEventChannel;
         [SerializeField] private KnifeThrowerView knifeThrowerView;
         [SerializeField] private TargetConfigAsset targetConfig;
         [SerializeField] private TargetView targetView;
+        [SerializeField] private LevelRulesConfigAsset levelRulesConfig;
 
         /// <summary>
         /// Configures the dependency injection container with all services and components.
         /// </summary>
         protected override void Configure(IContainerBuilder builder)
         {
+            RegisterLevelSessionServices(builder);
+            RegisterGameFlow(builder);
             RegisterKnifeServices(builder);
             RegisterTargetServices(builder);
             RegisterCollisionServices(builder);
+        }
+
+        private void RegisterGameFlow(IContainerBuilder builder)
+        {
+            builder.RegisterEntryPoint<GameFlowController>(Lifetime.Singleton);
+        }
+
+        private void RegisterLevelSessionServices(IContainerBuilder builder)
+        {
+            builder.RegisterInstance(levelRulesConfig).As<IConfigurationProvider<LevelRules>>();
+            builder.RegisterInstance(knifeImpactEventChannel).As<IEventChannel<KnifeImpactEventData>>();
+            builder.RegisterInstance(levelStateChangedEventChannel).As<IEventChannel<LevelStateChangedEventData>>();
+            builder.Register<LevelSessionService>(Lifetime.Singleton).As<ILevelSessionService>();
         }
 
         private void RegisterKnifeServices(IContainerBuilder builder)
@@ -59,6 +90,7 @@ namespace Bootstrapper
             builder.RegisterInstance(collisionEventChannel).As<IEventChannel<CollisionData>>();
             builder.Register<CollisionRouter>(Lifetime.Singleton).As<ICollisionRouter>();
             builder.Register<KnifeHitTargetHandler>(Lifetime.Singleton);
+            builder.Register<KnifeHitKnifeHandler>(Lifetime.Singleton);
             builder.RegisterEntryPoint<CollisionProxy>(Lifetime.Singleton);
             builder.RegisterEntryPoint<CollisionHandlerRegistrar>(Lifetime.Singleton);
         }

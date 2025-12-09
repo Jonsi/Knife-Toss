@@ -32,6 +32,7 @@
 3. Add the `KnifeView` component
 4. **Important**: In the KnifeView component inspector, assign:
    - The SpriteRenderer component to the `_spriteRenderer` field
+   - The Collider2D component to the `_collider` field
 5. Save the prefab
 
 **Note**: 
@@ -107,4 +108,45 @@
 - Knife tip should point toward target center
 - Multiple knives can stick at different positions
 - Change rotation speed in TargetConfig → Target rotates faster/slower
+
+---
+
+# Phase 3 Setup Instructions
+
+## 1. Create Level Rules Config Asset
+1. In Unity, right-click in `Assets/Configurations/Gameplay/`
+2. Select: `Create > Knife Toss > Gameplay > Level Rules Config`
+3. Name it `LevelRulesConfig`
+4. Set defaults:
+   - Knife Count: 10
+   - Stick Threshold: 8
+
+## 2. Create Event Channel Assets
+1. In `Assets/Configurations/EventChannels/`, create:
+   - `KnifeImpactEventChannel` via `Create > Knife Toss > Events > Knife Impact Event Channel`
+   - `LevelStateChangedEventChannel` via `Create > Knife Toss > Events > Level State Changed Event Channel`
+
+## 3. Update GameInstaller
+1. Select the `GameplayInstaller` GameObject
+2. Assign in the inspector:
+   - `LevelRulesConfig` → `Level Rules Config`
+   - `KnifeImpactEventChannel` → `Knife Impact Event Channel`
+   - `LevelStateChangedEventChannel` → `Level State Changed Event Channel`
+   - Existing: `KnifeThrowConfig`, `KnifeSpawnRequestEventChannel`, `CollisionEventChannel`, `TargetConfig`, `TargetView`, `KnifeThrowerView`
+
+## 4. Validate Prefabs
+1. Knife prefab:
+   - Collider2D remains Trigger (for collision detection)
+   - KnifeView component present
+   - Collider2D assigned to KnifeView `_collider` field
+2. Target prefab:
+   - CircleCollider2D assigned to TargetView `_collider` field
+
+## 5. Test Phase 3
+- Enter Play Mode
+- Throw knives until stick threshold reached → LevelCompleted event should raise
+- Throw at a stuck knife → Knife bounces/falls and LevelFailed event raises (no `Time.timeScale` pause)
+- Throw all knives without reaching threshold → LevelFailed event raises due to exhausted knives
+- Observe knife impact and level state events firing (use console logs/listeners)
+- Throws are ignored when no knives remain (per LevelRulesConfig)
 

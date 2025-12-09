@@ -363,16 +363,23 @@ Win/fail states complete the core loop. Event channels establish cross-system co
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `LevelState` | `Core/Domain/` | Enum: Loading, Playing, Completed, Failed |
-| `LevelSession` | `Core/Domain/` | Tracks current attempt state |
-| `LevelRules` | `Core/Domain/` | Parsed level parameters |
-| `KnifeImpactEvent` | `Core/Events/` | ScriptableObject event definition |
-| `LevelStateChangedEvent` | `Core/Events/` | ScriptableObject event definition |
+| `StateMachine` | `Core/Domain/` | Abstract state machine manager |
+| `GameStateMachine` | `Core/Domain/` | Composes level states (loading/playing/completed/failed) |
+| `LevelStateBase` | `Core/Domain/` | Base class for level states |
+| `LevelLoadingState` | `Core/Domain/` | Pre-play state |
+| `LevelPlayingState` | `Core/Domain/` | Active play state |
+| `LevelCompletedState` | `Core/Domain/` | Win state |
+| `LevelFailedState` | `Core/Domain/` | Fail state |
+| `LevelRules` | `Core/Domain/` | Knife count + stick threshold |
+| `LevelSession` | `Core/Domain/` | Tracks throws, sticks, transitions via state machine |
+| `KnifeImpactType` | `Core/Domain/` | Stuck vs Bounced |
+| `KnifeImpactEventData` | `Core/Data/` | Impact payload (type + point) |
+| `LevelStateChangedEventData` | `Core/Data/` | Previous/new state ids (string) |
 
 **LevelSession Responsibilities:**
 - Track knives thrown, knives stuck
-- Track win/fail state
-- Expose current LevelState
+- Track win/fail state via state classes (no enums)
+- Expose current state id (string)
 - Raise events on state changes
 
 **Event Channel Pattern (ScriptableObject):**
@@ -387,49 +394,43 @@ KnifeImpactEvent : ScriptableObject
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `CollisionDetector` | `Infrastructure/Leveling/` | Determines collision type |
-
-**Collision Resolution:**
-1. Knife hits something
-2. CollisionDetector checks: Target? Knife? Hitable?
-3. Returns collision type enum
-4. Caller (service) handles accordingly
+| `KnifeImpactEventChannel` | `Infrastructure/Events/` | Raises impact payloads |
+| `LevelStateChangedEventChannel` | `Infrastructure/Events/` | Raises state changes |
+| `LevelRulesConfigAsset` | `Infrastructure/Leveling/` | Provides LevelRules (knife count, stick threshold) |
 
 #### 5.3 Application Layer 🟨
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `LevelSessionService` | `App/Services/` | Manages LevelSession lifecycle |
-| `CollisionService` | `App/Services/` | Orchestrates collision handling |
+| `LevelSessionService` | `App/Services/` | Manages LevelSession lifecycle, raises events |
+| `GameFlowController` | `App/Services/` | Starts level session (future: stage/level control) |
+| `ThrowService` update | `App/Services/` | Blocks throws when session disallows, registers throws |
 
 **Collision Flow:**
 ```
 KnifeView detects collision
-    → CollisionService.HandleCollision()
-        → CollisionDetector.GetCollisionType()
-        → If Target: stick knife, increment count, check win
-        → If Knife: bounce, trigger fail
-        → Raise appropriate event
+    → CollisionRouter → Handler
+        → If Target: stop, stick, increment count, check win via LevelSessionService
+        → If Knife: bounce, trigger fail via LevelSessionService, pause Time.timeScale
+        → Events raised from LevelSessionService
 ```
 
 #### 5.4 Presentation Layer 🟧
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `KnifeBounceHandler` | `Presentation/Gameplay/Knife/` | Animates bounce on fail |
-
-**Bounce Behavior:**
-- Unparent from target
-- Enable gravity
-- Apply rotation animation
-- Knife state → Bounced
+| `KnifeHitTargetHandler` | `Presentation/Gameplay/Collision/` | Uses LevelSessionService for stick tracking |
+| `KnifeHitKnifeHandler` | `Presentation/Gameplay/Collision/` | Uses LevelSessionService for bounce/fail + pause |
+| `KnifeView` bounce state | `Presentation/Gameplay/Knife/States/` | Falls/rotates on fail, collider disabled |
+| `KnifeStateMachine` | `Core/Domain/` | Composes knife states; managed outside view |
 
 #### 5.5 Configurations (Event Channel Instances)
 
 | Asset | Location | Purpose |
 |-------|----------|---------|
-| `KnifeImpactEventChannel.asset` | `Configurations/Events/` | Instance of knife impact events |
-| `LevelStateEventChannel.asset` | `Configurations/Events/` | Instance of level state events |
+| `KnifeImpactEventChannel.asset` | `Configurations/EventChannels/` | Instance of knife impact events |
+| `LevelStateChangedEventChannel.asset` | `Configurations/EventChannels/` | Instance of level state events |
+| `LevelRulesConfig.asset` | `Configurations/Gameplay/` | Knife count + stick threshold |
 
 ---
 
@@ -438,7 +439,7 @@ KnifeView detects collision
 | Pattern | Application |
 |---------|-------------|
 | **Observer Pattern** | ScriptableObject event channels |
-| **State Pattern** | LevelState enum, LevelSession tracks |
+| **State Pattern** | State classes + generic state machine (level, knife) |
 
 ---
 
@@ -450,6 +451,7 @@ KnifeView detects collision
 - [ ] Knife hits knife → LevelFailed event raised
 - [ ] Bounced knife falls with gravity and rotation
 - [ ] LevelSession correctly tracks: thrown count, stuck count, state
+- [ ] Throws are blocked when no knives remain
 - [ ] Game pauses on fail (Time.timeScale = 0)
 
 ---

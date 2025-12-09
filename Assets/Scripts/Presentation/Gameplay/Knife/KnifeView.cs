@@ -1,7 +1,12 @@
 using System;
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Data;
-using Presentation.Gameplay.Knife.States;
+using KnifeToss.Core.Abstractions.Collision;
+using KnifeToss.Core.Abstractions.Events;
+using KnifeToss.Core.Abstractions.State;
+using KnifeToss.Core.Abstractions.Gameplay.Knife;
+using KnifeToss.Core.Data.Collision;
+using KnifeToss.Core.Data.Target;
+using KnifeToss.Core.Domain.Knife;
+using KnifeToss.Core.Domain.Knife.States;
 using UnityEngine;
 using VContainer;
 
@@ -12,19 +17,15 @@ namespace Presentation.Gameplay.Knife
     /// Uses a state machine to manage knife behavior.
     /// Implements IHitable to participate in the collision system.
     /// </summary>
-    public class KnifeView : MonoBehaviour, IHitable
+    public class KnifeView : MonoBehaviour, IKnifeViewContext
     {
         private static readonly Type CachedType = typeof(KnifeView);
 
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [SerializeField] private StickPositionData _stickPositionData;
+        [SerializeField] private Collider2D _collider;
         
-        private IKnifeState _currentState;
-        private KnifeLoadedState _loadedState;
-        private KnifeInFlightState _inFlightState;
-        private KnifeStuckState _stuckState;
-        private KnifeBouncedState _bouncedState;
-        private KnifePooledState _pooledState;
+        private KnifeStateMachine _stateMachine;
 
         private IEventChannel<CollisionData> _collisionChannel;
 
@@ -36,17 +37,22 @@ namespace Presentation.Gameplay.Knife
         /// <summary>
         /// Gets the current state of the knife.
         /// </summary>
-        public IKnifeState CurrentState => _currentState;
+        public IState CurrentState => _stateMachine?.Current;
 
         /// <summary>
         /// Gets whether the knife is currently in flight.
         /// </summary>
-        public bool IsInFlight => _currentState == _inFlightState;
+        public bool IsInFlight => _stateMachine?.IsInFlight ?? false;
 
         /// <summary>
         /// Gets the stick position data for where the knife should stick.
         /// </summary>
         public StickPositionData StickPositionData => _stickPositionData;
+
+        /// <summary>
+        /// Exposes transform for state consumption.
+        /// </summary>
+        public Transform Transform => transform;
 
         [Inject]
         private void Construct(IEventChannel<CollisionData> collisionChannel)
@@ -56,13 +62,12 @@ namespace Presentation.Gameplay.Knife
 
         private void Awake()
         {
-            InitializeStates();
-            TransitionToState(_loadedState);
+            InitializeStateMachine();
         }
 
         private void Update()
         {
-            _currentState?.Update(Time.deltaTime);
+            _stateMachine?.Update(Time.deltaTime);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -71,12 +76,12 @@ namespace Presentation.Gameplay.Knife
             if (!IsInFlight || collisionChannel == null)
                 return;
 
-            if (!other.TryGetComponent(out IHitable otherHitable) || otherHitable == null)
+            if (other is not IHitable hitable)
                 return;
 
             // Calculate impact point as the closest point on the other collider
             Vector2 impactPoint = other.ClosestPoint(transform.position);
-            collisionChannel.Raise(new CollisionData(this, otherHitable, impactPoint));
+            collisionChannel.Raise(new CollisionData(this, hitable, impactPoint));
         }
 
         /// <summary>
@@ -86,8 +91,8 @@ namespace Presentation.Gameplay.Knife
         /// <param name="speed">The speed at which to launch the knife.</param>
         public void Launch(Vector2 direction, float speed)
         {
-            TransitionToState(_inFlightState);
-            _inFlightState.Launch(direction, speed);
+            _stateMachine.InFlight.Launch(direction, speed);
+            _stateMachine.SetState(_stateMachine.InFlight);
         }
 
         /// <summary>
@@ -96,7 +101,7 @@ namespace Presentation.Gameplay.Knife
         /// </summary>
         public void StopMovement()
         {
-            TransitionToState(_stuckState);
+            _stateMachine.SetState(_stateMachine.Stuck);
         }
 
         /// <summary>
@@ -113,7 +118,8 @@ namespace Presentation.Gameplay.Knife
         /// </summary>
         public void Bounce()
         {
-            TransitionToState(_bouncedState);
+            _stateMachine.Bounced.ConfigureBounce(new Vector2(0f, 6f), 360f);
+            _stateMachine.SetState(_stateMachine.Bounced);
         }
 
         /// <summary>
@@ -121,7 +127,7 @@ namespace Presentation.Gameplay.Knife
         /// </summary>
         public void ResetKnife()
         {
-            TransitionToState(_loadedState);
+            _stateMachine.SetState(_stateMachine.Loaded);
         }
 
         /// <summary>
@@ -129,26 +135,28 @@ namespace Presentation.Gameplay.Knife
         /// </summary>
         public void ReturnToPool()
         {
-            TransitionToState(_pooledState);
+            _stateMachine.SetState(_stateMachine.Pooled);
         }
 
-        private void InitializeStates()
+        public void SetActive(bool isActive)
         {
-            if (_loadedState != null)
-                return;
-
-            _loadedState = new KnifeLoadedState(this);
-            _inFlightState = new KnifeInFlightState(this);
-            _stuckState = new KnifeStuckState(this);
-            _bouncedState = new KnifeBouncedState(this);
-            _pooledState = new KnifePooledState(this);
+            gameObject.SetActive(isActive);
         }
 
-        private void TransitionToState(IKnifeState newState)
+        private void InitializeStateMachine()
         {
-            _currentState?.Exit();
-            _currentState = newState;
-            _currentState?.Enter();
+            _stateMachine = new KnifeStateMachine(
+                new KnifeLoadedState(this),
+                new KnifeInFlightState(this),
+                new KnifeStuckState(this),
+                new KnifeBouncedState(this),
+                new KnifePooledState(this));
+        }
+        
+        public void SetColliderEnabled(bool enabled)
+        {
+            if (_collider != null)
+                _collider.enabled = enabled;
         }
 
     }

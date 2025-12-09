@@ -1,6 +1,8 @@
 using System;
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Data;
+using KnifeToss.Core.Abstractions.Collision;
+using KnifeToss.Core.Abstractions.Config;
+using KnifeToss.Core.Abstractions.Gameplay.Target;
+using KnifeToss.Core.Data.Target;
 using Presentation.Gameplay.Knife;
 using UnityEngine;
 using VContainer;

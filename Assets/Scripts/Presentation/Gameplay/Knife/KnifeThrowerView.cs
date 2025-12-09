@@ -1,5 +1,6 @@
-using KnifeToss.Core.Abstractions;
-using KnifeToss.Core.Data;
+using KnifeToss.Core.Abstractions.Events;
+using KnifeToss.Core.Abstractions.Throwing;
+using KnifeToss.Core.Data.Knife;
 using UnityEngine;
 using VContainer;
 

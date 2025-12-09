@@ -1,4 +1,4 @@
-using KnifeToss.Core.Data;
+using KnifeToss.Core.Data.Collision;
 using UnityEngine;
 
 namespace Infrastructure.Events
