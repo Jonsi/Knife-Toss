@@ -14,7 +14,7 @@ namespace KnifeToss.Core.Domain.Knife.States
         {
             Speed = 0f;
             Velocity = Vector2.zero;
-            KnifeView.SetColliderEnabled(true);
+            KnifeView.SetColliderEnabled(false);
             KnifeView.SetActive(true);
         }
     }

@@ -14,7 +14,7 @@ namespace KnifeToss.Core.Domain.Knife.States
         {
             Speed = 0f;
             Velocity = Vector2.zero;
-            KnifeView.SetColliderEnabled(false);
+            KnifeView.SetColliderEnabled(true);
         }
 
         public override void Update(float deltaTime)

@@ -75,8 +75,10 @@ namespace Presentation.Gameplay.Knife
             var collisionChannel = _collisionChannel;
             if (!IsInFlight || collisionChannel == null)
                 return;
-
-            if (other is not IHitable hitable)
+            
+            Logger
+            var hitable = other.GetComponent<IHitable>();
+            if (hitable == null)
                 return;
 
             // Calculate impact point as the closest point on the other collider
