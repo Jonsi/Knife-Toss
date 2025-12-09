@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Core.Data
 {
@@ -14,14 +15,8 @@ namespace Core.Data
         public float ThrowSpeed;
         
         /// <summary>
-        /// Gets or sets the X component of the spawn position offset relative to the thrower's position.
+        /// Gets or sets the spawn position offset relative to the thrower's position.
         /// </summary>
-        public float SpawnPositionOffsetX;
-        
-        /// <summary>
-        /// Gets or sets the Y component of the spawn position offset relative to the thrower's position.
-        /// </summary>
-        public float SpawnPositionOffsetY;
+        public Vector2 SpawnPositionOffset;
     }
 }
-

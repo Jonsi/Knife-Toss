@@ -1,9 +1,10 @@
 using Core.Abstractions;
-using Presentation.Gameplay.Knife.States;
+using Core.Data;
+using Presentation.Presentation.Gameplay.Knife.States;
 using UnityEngine;
 using VContainer;
 
-namespace Presentation.Gameplay.Knife
+namespace Presentation.Presentation.Gameplay.Knife
 {
     /// <summary>
     /// MonoBehaviour wrapper for the knife visual representation.
@@ -20,6 +21,8 @@ namespace Presentation.Gameplay.Knife
         private readonly KnifeBouncedState _bouncedState;
         private readonly KnifePooledState _pooledState;
 
+        private ITargetService _targetService;
+
         /// <summary>
         /// Gets the current state of the knife.
         /// </summary>
@@ -34,6 +37,12 @@ namespace Presentation.Gameplay.Knife
             _pooledState = new KnifePooledState(this);
         }
 
+        [Inject]
+        private void Construct(ITargetService targetService)
+        {
+            _targetService = targetService;
+        }
+
         private void Awake()
         {
             TransitionToState(_loadedState);
@@ -42,6 +51,33 @@ namespace Presentation.Gameplay.Knife
         private void Update()
         {
             _currentState?.Update(Time.deltaTime);
+        }
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (_currentState != _inFlightState)
+                return;
+
+            var collisionTarget = other.GetComponentInParent<ICollisionTarget>();
+            if (collisionTarget != null)
+            {
+                HandleTargetCollision(collisionTarget);
+            }
+        }
+
+        private void HandleTargetCollision(ICollisionTarget target)
+        {
+            if (_targetService == null)
+                return;
+
+            Vector2 knifePosition = transform.position;
+            StickPositionData stickData = _targetService.GetStickPosition(knifePosition, target.Center, target.Radius);
+
+            transform.SetParent(target.Transform);
+            transform.localPosition = new Vector3(stickData.Position.x, stickData.Position.y, 0f);
+            transform.localRotation = Quaternion.Euler(0f, 0f, stickData.RotationAngle);
+
+            Stick();
         }
 
         /// <summary>
@@ -95,4 +131,3 @@ namespace Presentation.Gameplay.Knife
         }
     }
 }
-

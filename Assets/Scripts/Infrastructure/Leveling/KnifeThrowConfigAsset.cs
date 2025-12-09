@@ -8,7 +8,7 @@ namespace Infrastructure.Leveling
     /// ScriptableObject asset containing configuration data for knife throwing behavior.
     /// </summary>
     [CreateAssetMenu(fileName = "KnifeThrowConfig", menuName = "Knife Toss/Gameplay/Knife Throw Config")]
-    public class KnifeThrowConfigAsset : ScriptableObject, IKnifeThrowConfigurationProvider
+    public class KnifeThrowConfigAsset : ScriptableObject, IConfigurationProvider<KnifeThrowConfiguration>
     {
         /// <summary>
         /// Gets the speed at which knives are thrown.
@@ -29,8 +29,7 @@ namespace Infrastructure.Leveling
             return new KnifeThrowConfiguration
             {
                 ThrowSpeed = ThrowSpeed,
-                SpawnPositionOffsetX = SpawnPositionOffset.x,
-                SpawnPositionOffsetY = SpawnPositionOffset.y
+                SpawnPositionOffset = SpawnPositionOffset
             };
         }
     }

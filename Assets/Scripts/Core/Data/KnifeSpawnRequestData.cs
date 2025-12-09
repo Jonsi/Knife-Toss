@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Core.Data
 {
     /// <summary>
@@ -5,8 +7,7 @@ namespace Core.Data
     /// </summary>
     public struct KnifeSpawnRequestData
     {
-        public float SpawnOffsetX;
-        public float SpawnOffsetY;
+        public Vector2 SpawnOffset;
         public float ThrowSpeed;
     }
 }

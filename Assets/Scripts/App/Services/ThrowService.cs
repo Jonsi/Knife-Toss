@@ -12,7 +12,7 @@ namespace App.Services
     public class ThrowService : IThrowService, IStartable
     {
         private readonly IPlayerThrowInputListener _playerThrowInputListener;
-        private readonly IKnifeThrowConfigurationProvider _knifeThrowConfigurationProvider;
+        private readonly IConfigurationProvider<KnifeThrowConfiguration> _knifeThrowConfigurationProvider;
         private readonly IEventChannel<KnifeSpawnRequestData> _spawnRequestEventChannel;
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace App.Services
         /// <param name="spawnRequestEventChannel">The event channel for raising knife spawn requests.</param>
         public ThrowService(
             IPlayerThrowInputListener playerThrowInputListener, 
-            IKnifeThrowConfigurationProvider knifeThrowConfigurationProvider,
+            IConfigurationProvider<KnifeThrowConfiguration> knifeThrowConfigurationProvider,
             IEventChannel<KnifeSpawnRequestData> spawnRequestEventChannel)
         {
             _playerThrowInputListener = playerThrowInputListener;
@@ -46,8 +46,7 @@ namespace App.Services
             KnifeThrowConfiguration config = _knifeThrowConfigurationProvider.GetConfiguration();
             var spawnData = new KnifeSpawnRequestData
             {
-                SpawnOffsetX = config.SpawnPositionOffsetX,
-                SpawnOffsetY = config.SpawnPositionOffsetY,
+                SpawnOffset = config.SpawnPositionOffset,
                 ThrowSpeed = config.ThrowSpeed
             };
             
