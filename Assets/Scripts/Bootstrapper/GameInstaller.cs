@@ -9,30 +9,29 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace App.Installers
+namespace Bootstrapper
 {
     /// <summary>
-    /// VContainer LifetimeScope that configures dependency injection for gameplay systems.
-    /// Registers all gameplay services and their dependencies.
+    /// Main composition root that configures dependency injection for all game systems.
+    /// This installer can reference all layers as it's specifically for DI configuration.
     /// </summary>
-    public class GameplayInstaller : LifetimeScope
+    public class GameInstaller : LifetimeScope
     {
         [SerializeField] private KnifeThrowConfigAsset knifeThrowConfig;
         [SerializeField] private KnifeSpawnRequestEventChannel knifeSpawnRequestEventChannel;
+        [SerializeField] private KnifeThrowerView knifeThrowerView;
 
         /// <summary>
-        /// Configures the dependency injection container with all gameplay services.
+        /// Configures the dependency injection container with all services and components.
         /// </summary>
         /// <param name="builder">The container builder used to register dependencies.</param>
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterInstance(knifeThrowConfig).As<IKnifeThrowConfigurationProvider>();
             builder.RegisterInstance(knifeSpawnRequestEventChannel).As<IEventChannel<KnifeSpawnRequestData>>();
-
             builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
-            builder.Register<ThrowService>(Lifetime.Singleton).As<IThrowService>();
-            
-            builder.RegisterComponentInHierarchy<KnifeThrowerView>();
+            builder.RegisterEntryPoint<ThrowService>(Lifetime.Singleton).As<IThrowService>();
+            builder.RegisterComponent(knifeThrowerView).As<IKnifeThrowerView>();
         }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using Core.Abstractions;
 using Core.Data;
+using VContainer.Unity;
 
 namespace App.Services
 {
@@ -8,7 +9,7 @@ namespace App.Services
     /// Service that coordinates knife throwing actions based on player input.
     /// Handles the flow from input events to knife spawning via event channels.
     /// </summary>
-    public class ThrowService : IThrowService
+    public class ThrowService : IThrowService, IStartable
     {
         private readonly IPlayerThrowInputListener _playerThrowInputListener;
         private readonly IKnifeThrowConfigurationProvider _knifeThrowConfigurationProvider;
@@ -28,7 +29,14 @@ namespace App.Services
             _playerThrowInputListener = playerThrowInputListener;
             _knifeThrowConfigurationProvider = knifeThrowConfigurationProvider;
             _spawnRequestEventChannel = spawnRequestEventChannel;
-            
+        }
+
+        /// <summary>
+        /// Called automatically by VContainer when the LifetimeScope starts.
+        /// Initializes the input listener and subscribes to throw events.
+        /// </summary>
+        public void Start()
+        {
             _playerThrowInputListener.OnThrowRequested += HandleThrowRequested;
             _playerThrowInputListener.Initialize();
         }

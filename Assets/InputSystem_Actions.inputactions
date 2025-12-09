@@ -36,8 +36,8 @@
                 {
                     "name": "Throw",
                     "type": "Button",
-                    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-                    "expectedControlType": "Button",
+                    "id": "9f8e7d6c-5b4a-3928-1716-151413121110",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "Press",
                     "initialStateCheck": false
@@ -331,7 +331,7 @@
                 },
                 {
                     "name": "",
-                    "id": "throw-touch-001",
+                    "id": "f8e7d6c5-b4a3-2918-1706-050403020100",
                     "path": "<Touchscreen>/primaryTouch/press",
                     "interactions": "",
                     "processors": "",
@@ -342,7 +342,7 @@
                 },
                 {
                     "name": "",
-                    "id": "throw-mouse-001",
+                    "id": "1a2b3c4d-5e6f-7890-abcd-ef1234567890",
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",

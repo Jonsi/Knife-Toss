@@ -9,7 +9,7 @@ namespace Presentation.Gameplay.Knife
     /// MonoBehaviour responsible for spawning knife instances when throw input is received.
     /// Listens to spawn request events and creates knife instances.
     /// </summary>
-    public class KnifeThrowerView : MonoBehaviour
+    public class KnifeThrowerView : MonoBehaviour, IKnifeThrowerView
     {
         [SerializeField] private KnifeView knifePrefab;
         [SerializeField] private Transform spawnPoint;
@@ -20,20 +20,38 @@ namespace Presentation.Gameplay.Knife
         private void Construct(IEventChannel<KnifeSpawnRequestData> spawnRequestEventChannel)
         {
             _spawnRequestEventChannel = spawnRequestEventChannel;
+            SubscribeToEvents();
         }
 
         private void Start()
         {
-            _spawnRequestEventChannel.Subscribe(HandleKnifeSpawnRequested);
+            if (_spawnRequestEventChannel != null)
+            {
+                SubscribeToEvents();
+            }
+        }
+
+        private void SubscribeToEvents()
+        {
+            if (_spawnRequestEventChannel != null)
+            {
+                _spawnRequestEventChannel.Subscribe(HandleKnifeSpawnRequested);
+            }
         }
 
         private void OnDestroy()
         {
-            _spawnRequestEventChannel.Unsubscribe(HandleKnifeSpawnRequested);
+            if (_spawnRequestEventChannel != null)
+            {
+                _spawnRequestEventChannel.Unsubscribe(HandleKnifeSpawnRequested);
+            }
         }
 
         private void HandleKnifeSpawnRequested(KnifeSpawnRequestData spawnData)
         {
+            if (knifePrefab == null)
+                return;
+
             Transform spawnTransform = spawnPoint ?? transform;
             Vector3 spawnPosition = spawnTransform.position + new Vector3(spawnData.SpawnOffsetX, spawnData.SpawnOffsetY, 0f);
             KnifeView knifeView = Instantiate(knifePrefab, spawnPosition, Quaternion.identity);

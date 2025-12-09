@@ -8,7 +8,7 @@ Go through the entire project and identify all code related to this feature. Bui
 - Refactor code to be more modular, scalable, and readable with best practices
 - Focus on SOLID and DRY
 - Improve structure, naming, and overall readability and maintainability.
-- Remove inline comments and debug logs where they are not essential.
+- Never add inline comments and debug logs
 - Remove old scripts and logic that was replaced (if exists)
 - Never use GetComponent or FindObject type of methods
 - If changes inside unity are required, write instructions

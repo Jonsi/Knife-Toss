@@ -1,0 +1,21 @@
+{
+    "name": "KnifeToss.Bootstrapper",
+    "rootNamespace": "Bootstrapper",
+    "references": [
+        "KnifeToss.Core",
+        "KnifeToss.Infrastructure",
+        "KnifeToss.App",
+        "KnifeToss.Presentation",
+        "VContainer"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+
