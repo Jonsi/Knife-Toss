@@ -1,10 +1,10 @@
 using App.Services;
-using Core.Abstractions;
-using Core.Data;
-using Core.Domain;
 using Infrastructure.Events;
 using Infrastructure.Input;
 using Infrastructure.Leveling;
+using KnifeToss.Core.Abstractions;
+using KnifeToss.Core.Data;
+using KnifeToss.Core.Domain;
 using Presentation.Gameplay.Collision;
 using Presentation.Gameplay.Knife;
 using Presentation.Gameplay.Target;

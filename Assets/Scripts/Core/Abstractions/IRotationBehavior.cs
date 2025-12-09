@@ -1,4 +1,4 @@
-namespace Core.Abstractions
+namespace KnifeToss.Core.Abstractions
 {
     /// <summary>
     /// Strategy interface for target rotation behaviors.

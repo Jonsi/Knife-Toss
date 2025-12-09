@@ -1,6 +1,6 @@
 {
     "name": "KnifeToss.Infrastructure",
-    "rootNamespace": "Infrastructure",
+    "rootNamespace": "KnifeToss",
     "references": [
         "KnifeToss.Core",
         "Unity.InputSystem",

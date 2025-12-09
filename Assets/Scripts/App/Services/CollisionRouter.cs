@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Core.Abstractions;
-using Core.Data;
-using Core.Domain;
+using KnifeToss.Core.Abstractions;
+using KnifeToss.Core.Data;
+using KnifeToss.Core.Domain;
 
 namespace App.Services
 {

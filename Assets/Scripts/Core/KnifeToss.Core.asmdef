@@ -1,6 +1,6 @@
 {
     "name": "KnifeToss.Core",
-    "rootNamespace": "Core",
+    "rootNamespace": "KnifeToss",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

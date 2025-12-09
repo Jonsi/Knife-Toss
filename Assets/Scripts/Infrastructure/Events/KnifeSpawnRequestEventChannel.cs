@@ -1,4 +1,4 @@
-using Core.Data;
+using KnifeToss.Core.Data;
 using UnityEngine;
 
 namespace Infrastructure.Events

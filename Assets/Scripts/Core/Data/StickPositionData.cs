@@ -1,6 +1,6 @@
 using System;
 
-namespace Core.Data
+namespace KnifeToss.Core.Data
 {
     /// <summary>
     /// Contains position and rotation configuration for a knife sticking to a target.

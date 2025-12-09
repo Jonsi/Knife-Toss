@@ -1,6 +1,6 @@
 {
     "name": "KnifeToss.Bootstrapper",
-    "rootNamespace": "Bootstrapper",
+    "rootNamespace": "KnifeToss",
     "references": [
         "KnifeToss.Core",
         "KnifeToss.Infrastructure",

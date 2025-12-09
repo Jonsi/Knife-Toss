@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
-using Core.Abstractions;
 using Infrastructure.Input;
+using KnifeToss.Core.Abstractions;
 using UnityEngine.InputSystem;
 
 namespace Infrastructure.Input

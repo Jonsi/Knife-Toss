@@ -1,4 +1,4 @@
-namespace Core.Abstractions
+namespace KnifeToss.Core.Abstractions
 {
     /// <summary>
     /// Generic interface for providers of configuration data.

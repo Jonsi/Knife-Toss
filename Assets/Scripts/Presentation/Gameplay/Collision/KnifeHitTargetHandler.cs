@@ -1,6 +1,5 @@
-using Core.Abstractions;
-using Core.Data;
-using Core.Domain;
+using KnifeToss.Core.Data;
+using KnifeToss.Core.Domain;
 using Presentation.Gameplay.Knife;
 using Presentation.Gameplay.Target;
 

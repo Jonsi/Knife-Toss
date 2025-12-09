@@ -1,6 +1,6 @@
 {
     "name": "KnifeToss.Presentation",
-    "rootNamespace": "Presentation",
+    "rootNamespace": "KnifeToss",
     "references": [
         "KnifeToss.Core",
         "KnifeToss.App",

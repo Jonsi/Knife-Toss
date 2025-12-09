@@ -1,5 +1,5 @@
-using Core.Abstractions;
-using Core.Data;
+using KnifeToss.Core.Abstractions;
+using KnifeToss.Core.Data;
 using UnityEngine;
 
 namespace Infrastructure.Leveling

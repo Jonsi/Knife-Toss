@@ -1,4 +1,4 @@
-namespace Core.Abstractions
+namespace KnifeToss.Core.Abstractions
 {
     /// <summary>
     /// Base interface for knife behavior states in the state machine.

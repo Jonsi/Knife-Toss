@@ -1,4 +1,4 @@
-namespace Core.Abstractions
+namespace KnifeToss.Core.Abstractions
 {
     /// <summary>
     /// Interface for target view presentation components.

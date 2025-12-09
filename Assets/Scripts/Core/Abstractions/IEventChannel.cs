@@ -1,6 +1,6 @@
 using System;
 
-namespace Core.Abstractions
+namespace KnifeToss.Core.Abstractions
 {
     /// <summary>
     /// Interface for event channels that enable decoupled communication between systems.

@@ -1,5 +1,5 @@
 using App.Services;
-using Core.Abstractions;
+using KnifeToss.Core.Abstractions;
 using VContainer.Unity;
 
 namespace Presentation.Gameplay.Collision

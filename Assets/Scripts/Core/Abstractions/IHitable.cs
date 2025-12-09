@@ -1,6 +1,6 @@
 using System;
 
-namespace Core.Abstractions
+namespace KnifeToss.Core.Abstractions
 {
     /// <summary>
     /// Marker interface for objects that can participate in collision detection.

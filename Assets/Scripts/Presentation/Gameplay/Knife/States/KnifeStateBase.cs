@@ -1,4 +1,4 @@
-using Core.Abstractions;
+using KnifeToss.Core.Abstractions;
 using UnityEngine;
 
 namespace Presentation.Gameplay.Knife.States

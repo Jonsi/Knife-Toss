@@ -1,4 +1,4 @@
-namespace Core.Abstractions
+namespace KnifeToss.Core.Abstractions
 {
     /// <summary>
     /// Interface for controlling knife behavior and state transitions.

@@ -1,6 +1,6 @@
-using Core.Abstractions;
+using KnifeToss.Core.Abstractions;
 
-namespace Core.Domain
+namespace KnifeToss.Core.Domain
 {
     /// <summary>
     /// Constant speed rotation behavior implementation.

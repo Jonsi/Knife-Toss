@@ -1,6 +1,6 @@
-using Core.Data;
+using KnifeToss.Core.Data;
 
-namespace Core.Abstractions
+namespace KnifeToss.Core.Abstractions
 {
     /// <summary>
     /// Interface for handling collisions between two IHitable objects.

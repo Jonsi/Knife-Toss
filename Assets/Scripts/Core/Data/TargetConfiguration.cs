@@ -1,6 +1,6 @@
 using System;
 
-namespace Core.Data
+namespace KnifeToss.Core.Data
 {
     /// <summary>
     /// Contains configuration data for target behavior.

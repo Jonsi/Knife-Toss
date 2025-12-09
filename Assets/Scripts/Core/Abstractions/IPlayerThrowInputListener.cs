@@ -1,6 +1,6 @@
 using System;
 
-namespace Core.Abstractions
+namespace KnifeToss.Core.Abstractions
 {
     /// <summary>
     /// Interface for listening to player throw input actions and notifying subscribers when a throw is requested.

@@ -1,6 +1,6 @@
-using Core.Data;
+using KnifeToss.Core.Data;
 
-namespace Core.Abstractions
+namespace KnifeToss.Core.Abstractions
 {
     /// <summary>
     /// Interface for the view component responsible for spawning knife instances.

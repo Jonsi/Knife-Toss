@@ -1,7 +1,7 @@
-using Core.Data;
-using Core.Domain;
+using KnifeToss.Core.Data;
+using KnifeToss.Core.Domain;
 
-namespace Core.Abstractions
+namespace KnifeToss.Core.Abstractions
 {
     /// <summary>
     /// Interface for routing collision events to appropriate handlers.

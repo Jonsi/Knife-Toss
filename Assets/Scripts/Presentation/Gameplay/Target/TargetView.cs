@@ -1,6 +1,6 @@
 using System;
-using Core.Abstractions;
-using Core.Data;
+using KnifeToss.Core.Abstractions;
+using KnifeToss.Core.Data;
 using Presentation.Gameplay.Knife;
 using UnityEngine;
 using VContainer;

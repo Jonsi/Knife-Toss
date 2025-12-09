@@ -1,7 +1,7 @@
-using Core.Abstractions;
+using KnifeToss.Core.Abstractions;
 using UnityEngine;
 
-namespace Core.Data
+namespace KnifeToss.Core.Data
 {
     /// <summary>
     /// Immutable data structure containing collision information.

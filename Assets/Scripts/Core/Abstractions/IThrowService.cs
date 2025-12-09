@@ -1,6 +1,6 @@
 using System;
 
-namespace Core.Abstractions
+namespace KnifeToss.Core.Abstractions
 {
     /// <summary>
     /// Interface for the service that coordinates knife throwing actions based on player input.

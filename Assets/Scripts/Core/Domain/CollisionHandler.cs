@@ -1,7 +1,7 @@
-using Core.Abstractions;
-using Core.Data;
+using KnifeToss.Core.Abstractions;
+using KnifeToss.Core.Data;
 
-namespace Core.Domain
+namespace KnifeToss.Core.Domain
 {
     /// <summary>
     /// Generic base class for type-safe collision handling.
