@@ -5,6 +5,8 @@ using App.Services.Throwing;
 using Infrastructure.Events;
 using Infrastructure.Input;
 using Infrastructure.Leveling;
+using Infrastructure.Logging;
+using Infrastructure.Settings;
 using KnifeToss.Core.Abstractions.Collision;
 using KnifeToss.Core.Abstractions.Config;
 using KnifeToss.Core.Abstractions.Events;
@@ -18,9 +20,9 @@ using KnifeToss.Core.Data.Level;
 using KnifeToss.Core.Data.Target;
 using KnifeToss.Core.Data.Throwing;
 using KnifeToss.Core.Domain.Target;
-using Presentation.Gameplay.Collision;
-using Presentation.Gameplay.Knife;
-using Presentation.Gameplay.Target;
+using KnifeToss.Presentation.Gameplay.Collision;
+using KnifeToss.Presentation.Gameplay.Knife;
+using KnifeToss.Presentation.Gameplay.Target;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -33,6 +35,7 @@ namespace Bootstrapper
     /// </summary>
     public class GameInstaller : LifetimeScope
     {
+        [SerializeField] private GameSettings gameSettings;
         [SerializeField] private KnifeThrowConfigAsset knifeThrowConfig;
         [SerializeField] private KnifeSpawnRequestEventChannel knifeSpawnRequestEventChannel;
         [SerializeField] private CollisionEventChannel collisionEventChannel;
@@ -48,6 +51,7 @@ namespace Bootstrapper
         /// </summary>
         protected override void Configure(IContainerBuilder builder)
         {
+            GameSettingsAccess.Initialize(gameSettings);
             RegisterLevelSessionServices(builder);
             RegisterGameFlow(builder);
             RegisterKnifeServices(builder);
@@ -57,6 +61,7 @@ namespace Bootstrapper
 
         private void RegisterGameFlow(IContainerBuilder builder)
         {
+            builder.RegisterInstance(CreateLogger()).As<ILogger>();
             builder.RegisterEntryPoint<GameFlowController>(Lifetime.Singleton);
         }
 
@@ -100,6 +105,16 @@ namespace Bootstrapper
             TargetConfiguration config = targetConfig.GetConfiguration();
             IRotationBehavior rotationBehavior = new ConstantRotationBehavior(config.RotationSpeed);
             builder.RegisterInstance(rotationBehavior).As<IRotationBehavior>();
+        }
+
+        private ILogger CreateLogger()
+        {
+#if TEST_ENV
+            ILogHandler handler = new TestEnvLogHandler(Debug.unityLogger.logHandler, () => GameSettingsAccess.IsTestLoggingEnabled, includeStackTrace: false);
+            return new Logger(handler) { logEnabled = true };
+#else
+            return Debug.unityLogger;
+#endif
         }
     }
 }
