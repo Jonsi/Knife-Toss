@@ -4,7 +4,7 @@ using KnifeToss.Core.Data.Knife;
 using UnityEngine;
 using VContainer;
 
-namespace Presentation.Gameplay.Knife
+namespace KnifeToss.Presentation.Gameplay.Knife
 {
     /// <summary>
     /// MonoBehaviour responsible for spawning knife instances when throw input is received.
@@ -12,19 +12,19 @@ namespace Presentation.Gameplay.Knife
     /// </summary>
     public class KnifeThrowerView : MonoBehaviour, IKnifeThrowerView
     {
-        [SerializeField] private KnifeView knifePrefab;
-        [SerializeField] private Transform spawnPoint;
+        [SerializeField] private KnifeView _KnifePrefab;
+        [SerializeField] private Transform _SpawnPoint;
 
-        private IEventChannel<KnifeSpawnRequestData> _spawnRequestEventChannel;
-        private IObjectResolver _resolver;
+        private IEventChannel<KnifeSpawnRequestData> _SpawnRequestEventChannel;
+        private IObjectResolver _Resolver;
 
         [Inject]
         private void Construct(
             IEventChannel<KnifeSpawnRequestData> spawnRequestEventChannel, 
             IObjectResolver resolver)
         {
-            _spawnRequestEventChannel = spawnRequestEventChannel;
-            _resolver = resolver;
+            _SpawnRequestEventChannel = spawnRequestEventChannel;
+            _Resolver = resolver;
         }
 
         private void OnEnable()
@@ -39,30 +39,30 @@ namespace Presentation.Gameplay.Knife
 
         private void SubscribeToEvents()
         {
-            if (_spawnRequestEventChannel != null)
+            if (_SpawnRequestEventChannel != null)
             {
-                _spawnRequestEventChannel.Subscribe(SpawnKnife);
+                _SpawnRequestEventChannel.Subscribe(SpawnKnife);
             }
         }
 
         private void UnsubscribeFromEvents()
         {
-            if (_spawnRequestEventChannel != null)
+            if (_SpawnRequestEventChannel != null)
             {
-                _spawnRequestEventChannel.Unsubscribe(SpawnKnife);
+                _SpawnRequestEventChannel.Unsubscribe(SpawnKnife);
             }
         }
 
         public void SpawnKnife(KnifeSpawnRequestData spawnData)
         {
-            if (knifePrefab == null)
+            if (_KnifePrefab == null)
                 return;
 
-            Transform spawnTransform = spawnPoint != null ? spawnPoint : transform;
+            Transform spawnTransform = _SpawnPoint != null ? _SpawnPoint : transform;
             Vector3 spawnPosition = spawnTransform.position + new Vector3(spawnData.SpawnOffset.x, spawnData.SpawnOffset.y, 0f);
-            KnifeView knifeView = Instantiate(knifePrefab, spawnPosition, Quaternion.identity);
+            KnifeView knifeView = Instantiate(_KnifePrefab, spawnPosition, Quaternion.identity);
             
-            _resolver?.Inject(knifeView);
+            _Resolver?.Inject(knifeView);
             knifeView.Launch(Vector2.up, spawnData.ThrowSpeed);
         }
     }
