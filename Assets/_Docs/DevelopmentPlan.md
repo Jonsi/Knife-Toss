@@ -2,7 +2,7 @@
 
 **Version 2.0**  
 **Last Updated: December 2024**  
-**Based on:** Architecture.md, GameDesignDocument.md
+**Based on:**  GameDesignDocument.md
 
 ---
 
