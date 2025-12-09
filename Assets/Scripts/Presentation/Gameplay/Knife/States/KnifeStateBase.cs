@@ -1,7 +1,7 @@
 using Core.Abstractions;
 using UnityEngine;
 
-namespace Presentation.Presentation.Gameplay.Knife.States
+namespace Presentation.Gameplay.Knife.States
 {
     /// <summary>
     /// Base state for knife behavior that tracks velocity and updates position.

@@ -3,7 +3,7 @@ using Core.Data;
 using UnityEngine;
 using VContainer;
 
-namespace Presentation.Presentation.Gameplay.Knife
+namespace Presentation.Gameplay.Knife
 {
     /// <summary>
     /// MonoBehaviour responsible for spawning knife instances when throw input is received.
@@ -40,7 +40,7 @@ namespace Presentation.Presentation.Gameplay.Knife
         {
             if (_spawnRequestEventChannel != null)
             {
-                _spawnRequestEventChannel.Subscribe(HandleKnifeSpawnRequested);
+                _spawnRequestEventChannel.Subscribe(SpawnKnife);
             }
         }
 
@@ -48,11 +48,11 @@ namespace Presentation.Presentation.Gameplay.Knife
         {
             if (_spawnRequestEventChannel != null)
             {
-                _spawnRequestEventChannel.Unsubscribe(HandleKnifeSpawnRequested);
+                _spawnRequestEventChannel.Unsubscribe(SpawnKnife);
             }
         }
 
-        private void HandleKnifeSpawnRequested(KnifeSpawnRequestData spawnData)
+        public void SpawnKnife(KnifeSpawnRequestData spawnData)
         {
             if (knifePrefab == null)
                 return;

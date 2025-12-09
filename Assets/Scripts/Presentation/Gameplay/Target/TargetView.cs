@@ -1,11 +1,11 @@
 using System;
 using Core.Abstractions;
 using Core.Data;
-using Presentation.Presentation.Gameplay.Knife;
+using Presentation.Gameplay.Knife;
 using UnityEngine;
 using VContainer;
 
-namespace Presentation.Presentation.Gameplay.Target
+namespace Presentation.Gameplay.Target
 {
     /// <summary>
     /// MonoBehaviour wrapper for the target visual representation.
@@ -14,6 +14,7 @@ namespace Presentation.Presentation.Gameplay.Target
     public class TargetView : MonoBehaviour, ITargetView, IHitable
     {
         private static readonly Type CachedType = typeof(TargetView);
+        private const float KnifeRotationFacingCenter = 90f;
 
         [SerializeField] private CircleCollider2D _collider;
 
@@ -86,36 +87,51 @@ namespace Presentation.Presentation.Gameplay.Target
             if (knife == null)
                 return;
 
-            // 1. Parent first to handle relative transforms correctly
-            knife.transform.SetParent(Transform);
+            AttachKnife(knife);
+            ApplyStickTransform(knife, impactPoint);
+        }
 
-            // 2. Convert impact point to local space
-            Vector2 localPoint = transform.InverseTransformPoint(impactPoint);
-            
-            // 3. Calculate angle from center to impact point
-            float angleDegrees = Mathf.Atan2(localPoint.y, localPoint.x) * Mathf.Rad2Deg;
+        private void AttachKnife(KnifeView knife) => knife.transform.SetParent(Transform);
 
-            // 4. Get knife config
+        private void ApplyStickTransform(KnifeView knife, Vector2 impactPoint)
+        {
+            Vector2 localPoint = TransformImpactToLocal(impactPoint);
+            float angleDegrees = CalculateImpactAngle(localPoint);
             StickPositionData stickData = knife.StickPositionData;
+            Vector2 finalPosition = CalculateStickPosition(stickData.Offset, angleDegrees);
+            float finalRotation = CalculateStickRotation(angleDegrees, stickData.RotationOffset);
 
-            // 5. Calculate position with offset (radius + penetration/offset)
-            float localRadius = _collider != null ? _collider.radius : 1f;
-            float finalRadius = localRadius + stickData.Offset;
+            knife.transform.localPosition = finalPosition;
+            knife.transform.localRotation = Quaternion.Euler(0f, 0f, finalRotation);
+        }
 
+        private Vector2 TransformImpactToLocal(Vector2 impactPoint) => transform.InverseTransformPoint(impactPoint);
+
+        private static float CalculateImpactAngle(Vector2 localPoint) => Mathf.Atan2(localPoint.y, localPoint.x) * Mathf.Rad2Deg;
+
+        private Vector2 CalculateStickPosition(float offset, float angleDegrees)
+        {
+            float finalRadius = CalculateStickRadius(offset);
             float angleRadians = angleDegrees * Mathf.Deg2Rad;
-            Vector2 finalPosition = new Vector2(
+
+            return new Vector2(
                 Mathf.Cos(angleRadians) * finalRadius,
                 Mathf.Sin(angleRadians) * finalRadius
             );
+        }
 
-            // 6. Apply Position
-            knife.transform.localPosition = finalPosition;
+        private float CalculateStickRadius(float offset)
+        {
+            if (_collider == null)
+                return 1f + offset;
 
-            // 7. Apply Rotation
-            // Angle + 180 makes it point TO center.
-            // RotationOffset adds random variation or adjustment.
-            float finalRotation = angleDegrees + 90 + stickData.RotationOffset;
-            knife.transform.localRotation = Quaternion.Euler(0f, 0f, finalRotation);
+            float scaledRadius = _collider.radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y);
+            return scaledRadius + offset;
+        }
+
+        private static float CalculateStickRotation(float angleDegrees, float rotationOffset)
+        {
+            return angleDegrees + KnifeRotationFacingCenter + rotationOffset;
         }
     }
 }

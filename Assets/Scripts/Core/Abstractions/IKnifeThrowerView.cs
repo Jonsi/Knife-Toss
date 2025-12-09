@@ -1,3 +1,5 @@
+using Core.Data;
+
 namespace Core.Abstractions
 {
     /// <summary>
@@ -5,6 +7,11 @@ namespace Core.Abstractions
     /// </summary>
     public interface IKnifeThrowerView
     {
+        /// <summary>
+        /// Spawns and launches a knife based on the provided spawn request data.
+        /// </summary>
+        /// <param name="spawnData">Configuration for spawn offset and throw speed.</param>
+        void SpawnKnife(KnifeSpawnRequestData spawnData);
     }
 }
 

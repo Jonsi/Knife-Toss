@@ -2,7 +2,7 @@ using App.Services;
 using Core.Abstractions;
 using VContainer.Unity;
 
-namespace Presentation.Presentation.Gameplay.Collision
+namespace Presentation.Gameplay.Collision
 {
     /// <summary>
     /// Registers all collision handlers with the collision router on startup.

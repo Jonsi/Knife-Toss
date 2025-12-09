@@ -14,6 +14,7 @@ namespace App.Services
         private readonly IPlayerThrowInputListener _playerThrowInputListener;
         private readonly IConfigurationProvider<KnifeThrowConfiguration> _knifeThrowConfigurationProvider;
         private readonly IEventChannel<KnifeSpawnRequestData> _spawnRequestEventChannel;
+        private bool _isRunning;
 
         /// <summary>
         /// Initializes a new instance of the ThrowService.
@@ -37,8 +38,12 @@ namespace App.Services
         /// </summary>
         public void Start()
         {
+            if (_isRunning)
+                return;
+
             _playerThrowInputListener.OnThrowRequested += HandleThrowRequested;
             _playerThrowInputListener.Initialize();
+            _isRunning = true;
         }
 
         private void HandleThrowRequested()
@@ -58,7 +63,20 @@ namespace App.Services
         /// </summary>
         public void Dispose()
         {
+            Stop();
+        }
+
+        /// <summary>
+        /// Stops listening for throw input and cleans up resources.
+        /// </summary>
+        public void Stop()
+        {
+            if (!_isRunning)
+                return;
+
             _playerThrowInputListener.OnThrowRequested -= HandleThrowRequested;
+            _playerThrowInputListener.Dispose();
+            _isRunning = false;
         }
     }
 }

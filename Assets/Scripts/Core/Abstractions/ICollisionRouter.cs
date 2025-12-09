@@ -1,4 +1,5 @@
 using Core.Data;
+using Core.Domain;
 
 namespace Core.Abstractions
 {

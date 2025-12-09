@@ -1,6 +1,7 @@
+using Core.Abstractions;
 using Core.Data;
 
-namespace Core.Abstractions
+namespace Core.Domain
 {
     /// <summary>
     /// Generic base class for type-safe collision handling.

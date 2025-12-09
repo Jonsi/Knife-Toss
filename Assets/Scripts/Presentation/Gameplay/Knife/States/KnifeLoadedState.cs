@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Presentation.Presentation.Gameplay.Knife.States
+namespace Presentation.Gameplay.Knife.States
 {
     /// <summary>
     /// State when knife is loaded and ready to be thrown.

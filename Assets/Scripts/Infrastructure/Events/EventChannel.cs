@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Core.Abstractions;
 using UnityEngine;
 
-namespace Infrastructure.Infrastructure.Events
+namespace Infrastructure.Events
 {
     /// <summary>
     /// Very simple event channel where subscribers are stored by owner (handler.Target).
@@ -43,4 +43,3 @@ namespace Infrastructure.Infrastructure.Events
         public void UnsubscribeAll() => _subscriptions.Clear();
     }
 }
-

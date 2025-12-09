@@ -4,7 +4,7 @@ using Core.Abstractions;
 using Infrastructure.Input;
 using UnityEngine.InputSystem;
 
-namespace Infrastructure.Infrastructure.Input
+namespace Infrastructure.Input
 {
     /// <summary>
     /// Adapts Unity Input System input to the game's player throw input listener interface.

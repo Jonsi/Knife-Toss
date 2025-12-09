@@ -1,9 +1,10 @@
 using Core.Abstractions;
 using Core.Data;
-using Presentation.Presentation.Gameplay.Knife;
-using Presentation.Presentation.Gameplay.Target;
+using Core.Domain;
+using Presentation.Gameplay.Knife;
+using Presentation.Gameplay.Target;
 
-namespace Presentation.Presentation.Gameplay.Collision
+namespace Presentation.Gameplay.Collision
 {
     /// <summary>
     /// Handles collisions between knives and targets.

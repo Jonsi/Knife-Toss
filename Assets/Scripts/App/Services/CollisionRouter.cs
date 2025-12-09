@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Core.Abstractions;
 using Core.Data;
+using Core.Domain;
 
 namespace App.Services
 {

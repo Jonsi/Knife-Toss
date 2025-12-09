@@ -1,7 +1,7 @@
 using Core.Data;
 using UnityEngine;
 
-namespace Infrastructure.Infrastructure.Events
+namespace Infrastructure.Events
 {
     /// <summary>
     /// Event channel for knife spawn requests.

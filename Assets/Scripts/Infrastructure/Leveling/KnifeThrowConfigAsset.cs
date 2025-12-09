@@ -2,7 +2,7 @@ using Core.Abstractions;
 using Core.Data;
 using UnityEngine;
 
-namespace Infrastructure.Infrastructure.Leveling
+namespace Infrastructure.Leveling
 {
     /// <summary>
     /// ScriptableObject asset containing configuration data for knife throwing behavior.
