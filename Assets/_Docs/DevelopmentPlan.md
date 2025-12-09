@@ -459,10 +459,10 @@ KnifeView detects collision
 ## 6. Phase 4: Level Configuration
 
 ### Goal
-Levels defined in ScriptableObjects. System loads and configures scene based on level data.
+Levels are defined in ScriptableObjects and loaded through a factory-driven pipeline that configures targets, rules, and knife counts per level.
 
 ### Why This Order
-Data-driven levels enable content creation without code changes. Establishes factory and composition patterns.
+Data-driven levels unlock content creation without code changes and introduce Factory/Composite patterns used by later phases.
 
 ---
 
@@ -472,68 +472,43 @@ Data-driven levels enable content creation without code changes. Establishes fac
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `LevelData` | `Core/Data/` | Single level definition |
-| `StageData` | `Core/Data/` | Collection of levels + theme |
-| `TargetDefinition` | `Core/Data/` | Per-target configuration |
-| `TargetGroupConfig` | `Core/Data/` | All targets in a level |
-| `ILevelCatalog` | `Core/Abstractions/` | Interface to access level data |
-
-**Data Structure:**
-```
-StageData
-├── stageName
-├── layoutSettings (visual theme)
-└── levels: List<LevelData>
-        └── LevelData
-            ├── knifeCount
-            └── targetGroup: TargetGroupConfig
-                    └── targets: List<TargetDefinition>
-                            ├── rotationType
-                            ├── rotationSpeed
-                            ├── knivesToBreak
-                            └── position, scale, etc.
-```
+| `LevelData` | `Core/Data/` | Single level definition (knife count, stick threshold, target group) |
+| `StageData` | `Core/Data/` | Collection of levels plus presentation theme hooks |
+| `TargetDefinition` | `Core/Data/` | Per-target configuration (position, scale, rotation behavior type/speed, knivesToBreak) |
+| `TargetGroupConfig` | `Core/Data/` | Composite of all targets in a level |
+| `ILevelCatalog` | `Core/Abstractions/` | Interface exposing StageData/LevelData retrieval |
 
 #### 6.2 Infrastructure Layer 🟩
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `StagesConfigCatalog` | `Infrastructure/Leveling/` | Implements ILevelCatalog, reads ScriptableObject |
-| `TargetFactory` | `Infrastructure/Leveling/` | Creates configured target instances |
-| `LevelSpawner` | `Infrastructure/Leveling/` | Sets up scene for level |
-
-**Factory Pattern:**
-```
-TargetFactory
-├── Create(TargetDefinition) → GameObject
-├── Resolves rotation behavior based on type
-└── Applies all configuration
-```
+| `StagesConfigCatalog` | `Infrastructure/Leveling/` | Implements `ILevelCatalog`, reads `StagesConfig.asset`, caches StageData |
+| `TargetFactory` | `Infrastructure/Leveling/` | Builds targets from `TargetDefinition`, resolves rotation strategy, applies transforms |
+| `LevelSpawner` | `Infrastructure/Leveling/` | Clears prior level, spawns targets via factory under a level root |
 
 #### 6.3 Application Layer 🟨
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `LevelSetupService` | `App/Services/` | Orchestrates level loading |
+| `LevelSetupService` | `App/Services/` | Orchestrates level load using `ILevelCatalog`, `LevelSpawner`, `LevelSessionService`, and throw/target configuration |
 
 **Level Load Sequence:**
-1. Get LevelData from ILevelCatalog
-2. Parse into LevelRules
-3. Clear previous level (destroy targets, reset state)
-4. LevelSpawner creates targets via TargetFactory
-5. Configure knife thrower with knife count
-6. Initialize LevelSession
-7. Set LevelState to Playing
+1. Resolve `LevelData` from catalog (stage index, level index).
+2. Derive `LevelRules` (knife count, stick threshold) and configure thrower.
+3. Clear current level objects via `LevelSpawner`.
+4. Spawn targets through `TargetFactory` into level root; apply rotation strategies.
+5. Initialize `LevelSession` with rules and target group data.
+6. Transition to Playing state.
 
 #### 6.4 Configurations
 
 | Asset | Location | Purpose |
 |-------|----------|---------|
-| `StagesConfig.asset` | `Configurations/Gameplay/` | All stages and levels |
+| `StagesConfig.asset` | `Configurations/Gameplay/` | ScriptableObject containing stages/levels/targets data |
 
 **Create Test Content:**
-- Stage 1 with 3-4 levels
-- Varying: rotation speeds, knife counts, thresholds
+- Stage 1 with 3–4 levels that vary rotation speed/type, knife count, and stick threshold.
+- At least one level with multiple targets to exercise composite spawning.
 
 ---
 
@@ -541,21 +516,20 @@ TargetFactory
 
 | Pattern | Application |
 |---------|-------------|
-| **Factory Pattern** | TargetFactory creates configured targets |
-| **Composite Pattern** | TargetGroupConfig treats multiple targets as one |
-| **ScriptableObject Configuration** | StagesConfig holds all level data |
+| **Factory Pattern** | `TargetFactory` constructs targets from `TargetDefinition` |
+| **Composite Pattern** | `TargetGroupConfig` aggregates multiple targets per level |
+| **ScriptableObject Configuration** | `StagesConfig.asset` drives catalog data |
 
 ---
 
 ### Test Criteria
 
-- [ ] StagesConfig.asset contains multiple levels
-- [ ] Call LevelSetupService.LoadLevel(0, 0) → First level loads
-- [ ] Call LevelSetupService.LoadLevel(0, 1) → Second level loads (different settings)
-- [ ] Target rotation speed matches level configuration
-- [ ] Knife count matches level configuration
-- [ ] Threshold matches level configuration
-- [ ] Can win/fail with level-specific parameters
+- [ ] `StagesConfig.asset` defines multiple stages/levels with varying parameters.
+- [ ] `LevelSetupService.LoadLevel(0, 0)` loads the first level with correct target layout.
+- [ ] Loading a different level changes rotation speed/type and target placement accordingly.
+- [ ] Knife count and stick threshold follow the selected `LevelData`.
+- [ ] Multiple targets spawn under the level root and rotate per definition.
+- [ ] Win/fail logic respects per-level rules without regressions to earlier phases.
 
 ---
 
