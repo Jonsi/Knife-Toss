@@ -1,10 +1,10 @@
 using System;
 using System.Threading;
 using Core.Abstractions;
-using UnityEngine;
+using Infrastructure.Input;
 using UnityEngine.InputSystem;
 
-namespace Infrastructure.Input
+namespace Infrastructure.Infrastructure.Input
 {
     /// <summary>
     /// Adapts Unity Input System input to the game's player throw input listener interface.

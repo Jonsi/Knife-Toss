@@ -2,7 +2,7 @@ using Core.Abstractions;
 using Core.Data;
 using UnityEngine;
 
-namespace Infrastructure.Leveling
+namespace Infrastructure.Infrastructure.Leveling
 {
     /// <summary>
     /// Implementation of target geometry calculations.

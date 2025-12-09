@@ -1,43 +1,46 @@
 using System;
+using System.Collections.Generic;
 using Core.Abstractions;
 using UnityEngine;
 
-namespace Infrastructure.Events
+namespace Infrastructure.Infrastructure.Events
 {
     /// <summary>
-    /// Generic event channel using ScriptableObject pattern for decoupled communication.
+    /// Very simple event channel where subscribers are stored by owner (handler.Target).
+    /// No duplicate handlers per owner. Raise invokes all registered callbacks.
     /// </summary>
-    /// <typeparam name="TData">The type of data passed with the event.</typeparam>
-    public abstract class EventChannel<TData> : ScriptableObject, IEventChannel<TData>
+    public abstract class EventChannel<T> : ScriptableObject, IEventChannel<T>
     {
-        private event Action<TData> OnEventRaised;
+        // Owner -> handler
+        private readonly Dictionary<object, Action<T>> _subscriptions = new();
 
-        /// <summary>
-        /// Raises the event with the specified data.
-        /// </summary>
-        /// <param name="data">The data to pass with the event.</param>
-        public void Raise(TData data)
+        public void Raise(T data)
         {
-            OnEventRaised?.Invoke(data);
+            foreach (var callback in _subscriptions.Values)
+                callback?.Invoke(data);
         }
 
-        /// <summary>
-        /// Subscribes to the event.
-        /// </summary>
-        /// <param name="handler">The event handler to subscribe.</param>
-        public void Subscribe(Action<TData> handler)
+        public void Subscribe(Action<T> handler)
         {
-            OnEventRaised += handler;
+            if (handler == null) return;
+            var owner = handler.Target;
+            _subscriptions[owner] = handler;
         }
 
-        /// <summary>
-        /// Unsubscribes from the event.
-        /// </summary>
-        /// <param name="handler">The event handler to unsubscribe.</param>
-        public void Unsubscribe(Action<TData> handler)
+        public void Unsubscribe(Action<T> handler)
         {
-            OnEventRaised -= handler;
+            if (handler == null) return;
+            var owner = handler.Target;
+            _subscriptions.Remove(owner);
         }
+
+        public void UnsubscribeOwner(object owner)
+        {
+            if (owner == null) return;
+            _subscriptions.Remove(owner);
+        }
+
+        public void UnsubscribeAll() => _subscriptions.Clear();
     }
 }
 

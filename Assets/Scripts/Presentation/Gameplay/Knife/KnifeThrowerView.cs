@@ -16,7 +16,6 @@ namespace Presentation.Presentation.Gameplay.Knife
 
         private IEventChannel<KnifeSpawnRequestData> _spawnRequestEventChannel;
         private IObjectResolver _resolver;
-        private bool _isSubscribed;
 
         [Inject]
         private void Construct(IEventChannel<KnifeSpawnRequestData> spawnRequestEventChannel, IObjectResolver resolver)
@@ -37,20 +36,18 @@ namespace Presentation.Presentation.Gameplay.Knife
 
         private void SubscribeToEvents()
         {
-            if (_isSubscribed || _spawnRequestEventChannel == null)
-                return;
-
-            _spawnRequestEventChannel.Subscribe(HandleKnifeSpawnRequested);
-            _isSubscribed = true;
+            if (_spawnRequestEventChannel != null)
+            {
+                _spawnRequestEventChannel.Subscribe(HandleKnifeSpawnRequested);
+            }
         }
 
         private void UnsubscribeFromEvents()
         {
-            if (!_isSubscribed || _spawnRequestEventChannel == null)
-                return;
-
-            _spawnRequestEventChannel.Unsubscribe(HandleKnifeSpawnRequested);
-            _isSubscribed = false;
+            if (_spawnRequestEventChannel != null)
+            {
+                _spawnRequestEventChannel.Unsubscribe(HandleKnifeSpawnRequested);
+            }
         }
 
         private void HandleKnifeSpawnRequested(KnifeSpawnRequestData spawnData)
