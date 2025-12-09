@@ -13,7 +13,7 @@ Go through the entire project and identify all code related to this feature. Bui
 - Never use GetComponent or FindObject type of methods
 - If changes inside unity are required, write instructions
 
-Do not delete XML <summary> blocks or other structured documentation comments.
+**CRITICAL: NEVER delete XML `<summary>` blocks or other structured documentation comments. Always preserve existing summaries and add summaries to new public members.**
 
 ---
 

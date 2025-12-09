@@ -18,6 +18,11 @@ namespace Core.Data
         /// The rotation angle in degrees (knife pointing toward target center).
         /// </summary>
         public float RotationAngle;
+
+        public StickPositionData(Vector2 position, float rotationAngle)
+        {
+            Position = position;
+            RotationAngle = rotationAngle;
+        }
     }
 }
-

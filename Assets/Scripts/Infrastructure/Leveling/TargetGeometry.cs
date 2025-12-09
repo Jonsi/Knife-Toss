@@ -27,22 +27,14 @@ namespace Infrastructure.Infrastructure.Leveling
 
             if (distance < 0.0001f)
             {
-                return new StickPositionData
-                {
-                    Position = new Vector2(targetRadius, 0f),
-                    RotationAngle = 0f
-                };
+                return new StickPositionData(new Vector2(targetRadius, 0f), 0f);
             }
 
             Vector2 normalized = delta.normalized;
             Vector2 surfacePosition = normalized * targetRadius;
             float angleDegrees = Mathf.Atan2(normalized.y, normalized.x) * Mathf.Rad2Deg;
 
-            return new StickPositionData
-            {
-                Position = surfacePosition,
-                RotationAngle = angleDegrees
-            };
+            return new StickPositionData(surfacePosition, angleDegrees);
         }
     }
 }

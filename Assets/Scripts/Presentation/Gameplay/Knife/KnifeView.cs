@@ -1,3 +1,4 @@
+using System;
 using Core.Abstractions;
 using Core.Data;
 using Presentation.Presentation.Gameplay.Knife.States;
@@ -8,10 +9,13 @@ namespace Presentation.Presentation.Gameplay.Knife
 {
     /// <summary>
     /// MonoBehaviour wrapper for the knife visual representation.
-    /// Uses a state machine to manage knife behavior without polling.
+    /// Uses a state machine to manage knife behavior.
+    /// Implements IHitable to participate in the collision system.
     /// </summary>
-    public class KnifeView : MonoBehaviour
+    public class KnifeView : MonoBehaviour, IHitable
     {
+        private static readonly Type CachedType = typeof(KnifeView);
+
         [SerializeField] private SpriteRenderer _spriteRenderer;
         
         private IKnifeState _currentState;
@@ -21,12 +25,22 @@ namespace Presentation.Presentation.Gameplay.Knife
         private readonly KnifeBouncedState _bouncedState;
         private readonly KnifePooledState _pooledState;
 
-        private ITargetService _targetService;
+        private IEventChannel<CollisionData> _collisionChannel;
+
+        /// <summary>
+        /// Gets the cached type for efficient collision routing.
+        /// </summary>
+        public Type HitableType => CachedType;
 
         /// <summary>
         /// Gets the current state of the knife.
         /// </summary>
         public IKnifeState CurrentState => _currentState;
+
+        /// <summary>
+        /// Gets whether the knife is currently in flight.
+        /// </summary>
+        public bool IsInFlight => _currentState == _inFlightState;
 
         public KnifeView()
         {
@@ -38,9 +52,9 @@ namespace Presentation.Presentation.Gameplay.Knife
         }
 
         [Inject]
-        private void Construct(ITargetService targetService)
+        private void Construct(IEventChannel<CollisionData> collisionChannel)
         {
-            _targetService = targetService;
+            _collisionChannel = collisionChannel;
         }
 
         private void Awake()
@@ -55,29 +69,14 @@ namespace Presentation.Presentation.Gameplay.Knife
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (_currentState != _inFlightState)
+            if (!IsInFlight || _collisionChannel == null)
                 return;
 
-            var collisionTarget = other.GetComponentInParent<ICollisionTarget>();
-            if (collisionTarget != null)
-            {
-                HandleTargetCollision(collisionTarget);
-            }
-        }
-
-        private void HandleTargetCollision(ICollisionTarget target)
-        {
-            if (_targetService == null)
+            var otherHitable = other.GetComponent<IHitable>();
+            if (otherHitable == null)
                 return;
 
-            Vector2 knifePosition = transform.position;
-            StickPositionData stickData = _targetService.GetStickPosition(knifePosition, target.Center, target.Radius);
-
-            transform.SetParent(target.Transform);
-            transform.localPosition = new Vector3(stickData.Position.x, stickData.Position.y, 0f);
-            transform.localRotation = Quaternion.Euler(0f, 0f, stickData.RotationAngle);
-
-            Stick();
+            _collisionChannel.Raise(new CollisionData(this, otherHitable));
         }
 
         /// <summary>

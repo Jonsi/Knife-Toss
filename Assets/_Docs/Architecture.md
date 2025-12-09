@@ -293,12 +293,27 @@ Assets/
 
 | Folder | Rule |
 |--------|------|
-| `Core/` | **NO Unity dependencies** — pure C# only |
+| `Core/` | **No Unity lifecycle dependencies** — Unity math types allowed (Vector2, Vector3, Quaternion, etc.) |
 | `App/` | Orchestration and service registration |
 | `Infrastructure/` | External system integrations |
 | `Presentation/` | All MonoBehaviours live here |
 | `Configurations/` | Only ScriptableObject assets |
 | `Editor/` | Editor scripts with `#if UNITY_EDITOR` or in Editor folder |
+
+### 3.2 Core Layer Unity Types Policy
+
+The Core layer allows **Unity math and data types** for practicality:
+
+| Allowed in Core | NOT Allowed in Core |
+|-----------------|---------------------|
+| `Vector2`, `Vector3`, `Vector4` | `MonoBehaviour` |
+| `Quaternion` | `GameObject` |
+| `Color`, `Color32` | `Transform` |
+| `Mathf` utilities | `Component` |
+| `AnimationCurve` | Unity lifecycle methods |
+| `LayerMask` | `ScriptableObject` |
+
+**Rationale:** Unity math types are value types with no lifecycle dependencies. Avoiding them creates unnecessary complexity (splitting Vector2 into separate X/Y parameters) without architectural benefit.
 
 ---
 
@@ -322,7 +337,7 @@ KnifeToss.Editor.asmdef (Editor only)
 
 | Assembly | References | Purpose |
 |----------|------------|---------|
-| `KnifeToss.Core` | None (pure C#) | Domain models, interfaces |
+| `KnifeToss.Core` | UnityEngine (math types only) | Domain models, interfaces |
 | `KnifeToss.Infrastructure` | Core | Implementations |
 | `KnifeToss.App` | Core, Infrastructure | Services, DI |
 | `KnifeToss.Presentation` | Core, App | MonoBehaviours |
@@ -551,7 +566,7 @@ ScriptableObject Event Channel
 | **Presentation** | MonoBehaviours, Views, Input | App, Core |
 | **App** | Services, Coordinators, Installers | Infrastructure, Core |
 | **Infrastructure** | Persistence, Audio, Spawners | Core |
-| **Core** | Interfaces, Domain, Events | Nothing |
+| **Core** | Interfaces, Domain, Events | UnityEngine (math types only) |
 
 ### When to Use What
 

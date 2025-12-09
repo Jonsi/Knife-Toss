@@ -6,6 +6,7 @@ using Infrastructure.Infrastructure.Events;
 using Infrastructure.Infrastructure.Input;
 using Infrastructure.Infrastructure.Leveling;
 using Infrastructure.Input;
+using Presentation.Presentation.Gameplay.Collision;
 using Presentation.Presentation.Gameplay.Knife;
 using Presentation.Presentation.Gameplay.Target;
 using UnityEngine;
@@ -22,6 +23,7 @@ namespace Bootstrapper
     {
         [SerializeField] private KnifeThrowConfigAsset knifeThrowConfig;
         [SerializeField] private KnifeSpawnRequestEventChannel knifeSpawnRequestEventChannel;
+        [SerializeField] private CollisionEventChannel collisionEventChannel;
         [SerializeField] private KnifeThrowerView knifeThrowerView;
         [SerializeField] private TargetConfigAsset targetConfig;
         [SerializeField] private TargetView targetView;
@@ -29,11 +31,11 @@ namespace Bootstrapper
         /// <summary>
         /// Configures the dependency injection container with all services and components.
         /// </summary>
-        /// <param name="builder">The container builder used to register dependencies.</param>
         protected override void Configure(IContainerBuilder builder)
         {
             RegisterKnifeServices(builder);
             RegisterTargetServices(builder);
+            RegisterCollisionServices(builder);
         }
 
         private void RegisterKnifeServices(IContainerBuilder builder)
@@ -50,9 +52,18 @@ namespace Bootstrapper
             builder.RegisterInstance(targetConfig).As<IConfigurationProvider<TargetConfiguration>>();
             builder.Register<TargetGeometry>(Lifetime.Singleton).As<ITargetGeometry>();
             builder.Register<TargetService>(Lifetime.Singleton).As<ITargetService>();
-            builder.RegisterComponent(targetView).As<ITargetView>().As<ICollisionTarget>();
+            builder.RegisterComponent(targetView).As<ITargetView>().As<IHitable>();
             
             RegisterRotationBehavior(builder);
+        }
+
+        private void RegisterCollisionServices(IContainerBuilder builder)
+        {
+            builder.RegisterInstance(collisionEventChannel).As<IEventChannel<CollisionData>>();
+            builder.Register<CollisionRouter>(Lifetime.Singleton).As<ICollisionRouter>();
+            builder.Register<KnifeHitTargetHandler>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<CollisionProxy>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<CollisionHandlerRegistrar>(Lifetime.Singleton);
         }
 
         private void RegisterRotationBehavior(IContainerBuilder builder)

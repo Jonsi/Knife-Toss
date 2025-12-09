@@ -18,7 +18,9 @@ namespace Presentation.Presentation.Gameplay.Knife
         private IObjectResolver _resolver;
 
         [Inject]
-        private void Construct(IEventChannel<KnifeSpawnRequestData> spawnRequestEventChannel, IObjectResolver resolver)
+        private void Construct(
+            IEventChannel<KnifeSpawnRequestData> spawnRequestEventChannel, 
+            IObjectResolver resolver)
         {
             _spawnRequestEventChannel = spawnRequestEventChannel;
             _resolver = resolver;
@@ -60,7 +62,6 @@ namespace Presentation.Presentation.Gameplay.Knife
             KnifeView knifeView = Instantiate(knifePrefab, spawnPosition, Quaternion.identity);
             
             _resolver?.Inject(knifeView);
-            
             knifeView.Launch(Vector2.up, spawnData.ThrowSpeed);
         }
     }
