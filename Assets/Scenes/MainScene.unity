@@ -371,6 +371,7 @@ MonoBehaviour:
   autoInjectGameObjects: []
   knifeThrowConfig: {fileID: 11400000, guid: 5255f097d202e7341b60016482ff9511, type: 2}
   knifeSpawnRequestEventChannel: {fileID: 11400000, guid: fbdb1286b0eeecf4887e9d55512a8e49, type: 2}
+  collisionEventChannel: {fileID: 11400000, guid: 550df89ae380ec743af103ed588ae1b1, type: 2}
   knifeThrowerView: {fileID: 497239670}
   targetConfig: {fileID: 11400000, guid: 37dadb527d5270f408efc7fcac1a8748, type: 2}
   targetView: {fileID: 1989335674}

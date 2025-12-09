@@ -17,6 +17,7 @@ namespace Presentation.Presentation.Gameplay.Knife
         private static readonly Type CachedType = typeof(KnifeView);
 
         [SerializeField] private SpriteRenderer _spriteRenderer;
+        [SerializeField] private StickPositionData _stickPositionData;
         
         private IKnifeState _currentState;
         private readonly KnifeLoadedState _loadedState;
@@ -41,6 +42,11 @@ namespace Presentation.Presentation.Gameplay.Knife
         /// Gets whether the knife is currently in flight.
         /// </summary>
         public bool IsInFlight => _currentState == _inFlightState;
+
+        /// <summary>
+        /// Gets the stick position data for where the knife should stick.
+        /// </summary>
+        public StickPositionData StickPositionData => _stickPositionData;
 
         public KnifeView()
         {
@@ -76,7 +82,9 @@ namespace Presentation.Presentation.Gameplay.Knife
             if (otherHitable == null)
                 return;
 
-            _collisionChannel.Raise(new CollisionData(this, otherHitable));
+            // Calculate impact point as the closest point on the other collider
+            Vector2 impactPoint = other.ClosestPoint(transform.position);
+            _collisionChannel.Raise(new CollisionData(this, otherHitable, impactPoint));
         }
 
         /// <summary>
@@ -91,11 +99,21 @@ namespace Presentation.Presentation.Gameplay.Knife
         }
 
         /// <summary>
-        /// Transitions the knife to the stuck state.
+        /// Stops the knife's movement and transitions to the stuck state.
+        /// The target will handle positioning the knife.
         /// </summary>
-        public void Stick()
+        public void StopMovement()
         {
             TransitionToState(_stuckState);
+        }
+
+        /// <summary>
+        /// Sets the stick position data for where the knife should stick.
+        /// </summary>
+        /// <param name="stickPositionData">The position and rotation data relative to target center.</param>
+        public void SetStickPositionData(StickPositionData stickPositionData)
+        {
+            _stickPositionData = stickPositionData;
         }
 
         /// <summary>

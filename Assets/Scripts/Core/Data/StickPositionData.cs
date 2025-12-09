@@ -1,28 +1,27 @@
 using System;
-using UnityEngine;
 
 namespace Core.Data
 {
     /// <summary>
-    /// Contains position and rotation data for a knife sticking to a target.
+    /// Contains position and rotation configuration for a knife sticking to a target.
     /// </summary>
     [Serializable]
     public struct StickPositionData
     {
         /// <summary>
-        /// The position relative to target center.
+        /// The radial distance offset from the surface (e.g. penetration depth).
         /// </summary>
-        public Vector2 Position;
+        public float Offset;
 
         /// <summary>
-        /// The rotation angle in degrees (knife pointing toward target center).
+        /// The rotation offset in degrees applied to the base rotation (which points toward target center).
         /// </summary>
-        public float RotationAngle;
+        public float RotationOffset;
 
-        public StickPositionData(Vector2 position, float rotationAngle)
+        public StickPositionData(float offset, float rotationOffset)
         {
-            Position = position;
-            RotationAngle = rotationAngle;
+            Offset = offset;
+            RotationOffset = rotationOffset;
         }
     }
 }

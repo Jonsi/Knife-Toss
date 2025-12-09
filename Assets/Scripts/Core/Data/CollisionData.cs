@@ -1,4 +1,5 @@
 using Core.Abstractions;
+using UnityEngine;
 
 namespace Core.Data
 {
@@ -17,10 +18,16 @@ namespace Core.Data
         /// </summary>
         public readonly IHitable Target;
 
-        public CollisionData(IHitable source, IHitable target)
+        /// <summary>
+        /// The world position where the impact occurred.
+        /// </summary>
+        public readonly Vector2 ImpactPoint;
+
+        public CollisionData(IHitable source, IHitable target, Vector2 impactPoint)
         {
             Source = source;
             Target = target;
+            ImpactPoint = impactPoint;
         }
     }
 }

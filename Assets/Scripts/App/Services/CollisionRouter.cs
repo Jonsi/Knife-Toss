@@ -41,14 +41,15 @@ namespace App.Services
             var key = (sourceType, targetType);
             if (_handlers.TryGetValue(key, out var handler))
             {
-                handler.Handle(data.Source, data.Target);
+                handler.Handle(data);
                 return;
             }
 
             var reversedKey = (targetType, sourceType);
             if (_handlers.TryGetValue(reversedKey, out var reversedHandler))
             {
-                reversedHandler.Handle(data.Target, data.Source);
+                var reversedData = new CollisionData(data.Target, data.Source, data.ImpactPoint);
+                reversedHandler.Handle(reversedData);
             }
         }
     }

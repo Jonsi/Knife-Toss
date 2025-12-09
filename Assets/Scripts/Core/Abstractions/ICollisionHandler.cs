@@ -1,3 +1,5 @@
+using Core.Data;
+
 namespace Core.Abstractions
 {
     /// <summary>
@@ -8,9 +10,8 @@ namespace Core.Abstractions
         /// <summary>
         /// Handles a collision between source and target.
         /// </summary>
-        /// <param name="source">The object that initiated the collision.</param>
-        /// <param name="target">The object that was hit.</param>
-        void Handle(IHitable source, IHitable target);
+        /// <param name="data">The collision data containing source, target, and impact point.</param>
+        void Handle(CollisionData data);
     }
 }
 

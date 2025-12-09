@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7405131393712163813}
   m_Layer: 0
-  m_Name: SnapPosition
+  m_Name: StickPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -40,10 +40,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6845354428870092820}
+  - component: {fileID: 4654195710904408416}
   - component: {fileID: 5543959450069452106}
   - component: {fileID: 359776916962366960}
   - component: {fileID: 7574083789125918831}
-  - component: {fileID: 4654195710904408416}
   m_Layer: 0
   m_Name: Knife
   m_TagString: Knife
@@ -67,6 +67,22 @@ Transform:
   - {fileID: 7405131393712163813}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4654195710904408416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4613744281827678251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6308553862f98a84ea983118e41c399d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KnifeToss.Presentation::Presentation.Gameplay.Knife.KnifeView
+  _spriteRenderer: {fileID: 5543959450069452106}
+  _stickPositionData:
+    Offset: 0
+    RotationOffset: 0
 --- !u!212 &5543959450069452106
 SpriteRenderer:
   serializedVersion: 2
@@ -199,16 +215,3 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &4654195710904408416
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4613744281827678251}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6308553862f98a84ea983118e41c399d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: KnifeToss.Presentation::Presentation.Gameplay.Knife.KnifeView
-  _spriteRenderer: {fileID: 5543959450069452106}

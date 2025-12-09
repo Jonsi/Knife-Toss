@@ -1,3 +1,5 @@
+using Core.Data;
+
 namespace Core.Abstractions
 {
     /// <summary>
@@ -10,9 +12,9 @@ namespace Core.Abstractions
         where THit : class, IHitable
         where THitBy : class, IHitable
     {
-        public void Handle(IHitable source, IHitable target)
+        public void Handle(CollisionData data)
         {
-            HandleCollision((THit)source, (THitBy)target);
+            HandleCollision((THit)data.Source, (THitBy)data.Target, data);
         }
 
         /// <summary>
@@ -20,7 +22,8 @@ namespace Core.Abstractions
         /// </summary>
         /// <param name="source">The strongly-typed source object.</param>
         /// <param name="target">The strongly-typed target object.</param>
-        protected abstract void HandleCollision(THit source, THitBy target);
+        /// <param name="data">The collision data containing impact point and other information.</param>
+        protected abstract void HandleCollision(THit source, THitBy target, CollisionData data);
     }
 }
 

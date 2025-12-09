@@ -50,8 +50,6 @@ namespace Bootstrapper
         private void RegisterTargetServices(IContainerBuilder builder)
         {
             builder.RegisterInstance(targetConfig).As<IConfigurationProvider<TargetConfiguration>>();
-            builder.Register<TargetGeometry>(Lifetime.Singleton).As<ITargetGeometry>();
-            builder.Register<TargetService>(Lifetime.Singleton).As<ITargetService>();
             builder.RegisterComponent(targetView).As<ITargetView>().As<IHitable>();
             
             RegisterRotationBehavior(builder);
