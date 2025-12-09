@@ -70,6 +70,7 @@ namespace Bootstrapper
             builder.RegisterInstance(levelRulesConfig).As<IConfigurationProvider<LevelRules>>();
             builder.RegisterInstance(knifeImpactEventChannel).As<IEventChannel<KnifeImpactEventData>>();
             builder.RegisterInstance(levelStateChangedEventChannel).As<IEventChannel<LevelStateChangedEventData>>();
+            builder.Register<LevelSessionLogger>(Lifetime.Singleton);
             builder.Register<LevelSessionService>(Lifetime.Singleton).As<ILevelSessionService>();
         }
 

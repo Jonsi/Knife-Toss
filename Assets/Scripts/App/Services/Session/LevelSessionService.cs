@@ -16,6 +16,7 @@ namespace App.Services.Session
         private readonly IConfigurationProvider<LevelRules> _rulesProvider;
         private readonly IEventChannel<LevelStateChangedEventData> _stateChangedChannel;
         private readonly IEventChannel<KnifeImpactEventData> _impactChannel;
+        private readonly LevelSessionLogger _sessionLogger;
 
         private LevelSession _session;
 
@@ -27,11 +28,13 @@ namespace App.Services.Session
         public LevelSessionService(
             IConfigurationProvider<LevelRules> rulesProvider,
             IEventChannel<LevelStateChangedEventData> stateChangedChannel,
-            IEventChannel<KnifeImpactEventData> impactChannel)
+            IEventChannel<KnifeImpactEventData> impactChannel,
+            LevelSessionLogger sessionLogger)
         {
             _rulesProvider = rulesProvider ?? throw new ArgumentNullException(nameof(rulesProvider));
             _stateChangedChannel = stateChangedChannel ?? throw new ArgumentNullException(nameof(stateChangedChannel));
             _impactChannel = impactChannel ?? throw new ArgumentNullException(nameof(impactChannel));
+            _sessionLogger = sessionLogger ?? throw new ArgumentNullException(nameof(sessionLogger));
         }
 
         public void StartSession()
@@ -93,6 +96,7 @@ namespace App.Services.Session
                 return;
 
             _stateChangedChannel.Raise(new LevelStateChangedEventData(previous, current));
+            _sessionLogger.LogState(current);
         }
     }
 }

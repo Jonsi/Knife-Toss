@@ -148,8 +148,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c956e03517c35f14393504e4588f98cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: KnifeToss.Presentation::Presentation.Gameplay.Knife.KnifeThrowerView
-  knifePrefab: {fileID: 4654195710904408416, guid: d9ae20e742e0c9b4294c6c2a0ecd0920, type: 3}
-  spawnPoint: {fileID: 497239671}
+  _KnifePrefab: {fileID: 4654195710904408416, guid: d9ae20e742e0c9b4294c6c2a0ecd0920, type: 3}
+  _SpawnPoint: {fileID: 497239671}
 --- !u!4 &497239671
 Transform:
   m_ObjectHideFlags: 0
@@ -369,6 +369,7 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
+  gameSettings: {fileID: 11400000, guid: 067b2b4cb241a1c47942f156372a8db5, type: 2}
   knifeThrowConfig: {fileID: 11400000, guid: 5255f097d202e7341b60016482ff9511, type: 2}
   knifeSpawnRequestEventChannel: {fileID: 11400000, guid: fbdb1286b0eeecf4887e9d55512a8e49, type: 2}
   collisionEventChannel: {fileID: 11400000, guid: 550df89ae380ec743af103ed588ae1b1, type: 2}
