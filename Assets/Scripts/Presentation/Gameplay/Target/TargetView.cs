@@ -3,11 +3,11 @@ using KnifeToss.Core.Abstractions.Collision;
 using KnifeToss.Core.Abstractions.Config;
 using KnifeToss.Core.Abstractions.Gameplay.Target;
 using KnifeToss.Core.Data.Target;
-using Presentation.Gameplay.Knife;
+using KnifeToss.Presentation.Gameplay.Knife;
 using UnityEngine;
 using VContainer;
 
-namespace Presentation.Gameplay.Target
+namespace KnifeToss.Presentation.Gameplay.Target
 {
     /// <summary>
     /// MonoBehaviour wrapper for the target visual representation.
@@ -16,13 +16,13 @@ namespace Presentation.Gameplay.Target
     public class TargetView : MonoBehaviour, ITargetView, IHitable
     {
         private static readonly Type CachedType = typeof(TargetView);
-        private const float KnifeRotationFacingCenter = 90f;
+        private const float KNIFE_ROTATION_FACING_CENTER = 90f;
 
-        [SerializeField] private CircleCollider2D _collider;
+        [SerializeField] private CircleCollider2D _Collider;
 
-        private IRotationBehavior _rotationBehavior;
-        private IConfigurationProvider<TargetConfiguration> _configurationProvider;
-        private float _currentRotation;
+        private IRotationBehavior _RotationBehavior;
+        private IConfigurationProvider<TargetConfiguration> _ConfigurationProvider;
+        private float _CurrentRotation;
 
         /// <summary>
         /// Gets the cached type for efficient collision routing.
@@ -32,7 +32,7 @@ namespace Presentation.Gameplay.Target
         /// <summary>
         /// Gets the current rotation angle of the target in degrees.
         /// </summary>
-        public float Rotation => _currentRotation;
+        public float Rotation => _CurrentRotation;
 
         /// <summary>
         /// Gets the radius of the target.
@@ -41,11 +41,11 @@ namespace Presentation.Gameplay.Target
         {
             get
             {
-                if (_collider != null)
+                if (_Collider != null)
                 {
-                    return _collider.radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y);
+                    return _Collider.radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y);
                 }
-                return _configurationProvider?.GetConfiguration().Radius ?? 1f;
+                return _ConfigurationProvider?.GetConfiguration().Radius ?? 1f;
             }
         }
 
@@ -64,19 +64,19 @@ namespace Presentation.Gameplay.Target
             IConfigurationProvider<TargetConfiguration> configurationProvider,
             IRotationBehavior rotationBehavior)
         {
-            _configurationProvider = configurationProvider;
-            _rotationBehavior = rotationBehavior;
+            _ConfigurationProvider = configurationProvider;
+            _RotationBehavior = rotationBehavior;
         }
 
         private void Update()
         {
-            if (_rotationBehavior == null)
+            if (_RotationBehavior == null)
                 return;
 
-            float rotationDelta = _rotationBehavior.GetRotationDelta(Time.deltaTime);
-            _currentRotation += rotationDelta;
-            _currentRotation %= 360f;
-            transform.rotation = Quaternion.Euler(0f, 0f, _currentRotation);
+            float rotationDelta = _RotationBehavior.GetRotationDelta(Time.deltaTime);
+            _CurrentRotation += rotationDelta;
+            _CurrentRotation %= 360f;
+            transform.rotation = Quaternion.Euler(0f, 0f, _CurrentRotation);
         }
 
         /// <summary>
@@ -124,16 +124,16 @@ namespace Presentation.Gameplay.Target
 
         private float CalculateStickRadius(float offset)
         {
-            if (_collider == null)
+            if (_Collider == null)
                 return 1f + offset;
 
-            float scaledRadius = _collider.radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y);
+            float scaledRadius = _Collider.radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y);
             return scaledRadius + offset;
         }
 
         private static float CalculateStickRotation(float angleDegrees, float rotationOffset)
         {
-            return angleDegrees + KnifeRotationFacingCenter + rotationOffset;
+            return angleDegrees + KNIFE_ROTATION_FACING_CENTER + rotationOffset;
         }
     }
 }

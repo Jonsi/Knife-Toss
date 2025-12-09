@@ -1,10 +1,10 @@
 using KnifeToss.Core.Abstractions.Gameplay.Session;
 using KnifeToss.Core.Data.Collision;
 using KnifeToss.Core.Domain.Collision;
-using Presentation.Gameplay.Knife;
-using Presentation.Gameplay.Target;
+using KnifeToss.Presentation.Gameplay.Knife;
+using KnifeToss.Presentation.Gameplay.Target;
 
-namespace Presentation.Gameplay.Collision
+namespace KnifeToss.Presentation.Gameplay.Collision
 {
     /// <summary>
     /// Handles collisions between knives and targets.
@@ -12,21 +12,21 @@ namespace Presentation.Gameplay.Collision
     /// </summary>
     public class KnifeHitTargetHandler : CollisionHandler<KnifeView, TargetView>
     {
-        private readonly ILevelSessionService _sessionService;
+        private readonly ILevelSessionService _SessionService;
 
         public KnifeHitTargetHandler(ILevelSessionService sessionService)
         {
-            _sessionService = sessionService;
+            _SessionService = sessionService;
         }
 
         protected override void HandleCollision(KnifeView knife, TargetView target, CollisionData data)
         {
-            if (knife == null || target == null || !_sessionService.IsPlaying)
+            if (knife == null || target == null || !_SessionService.IsPlaying)
                 return;
 
             knife.StopMovement();
             target.Stick(knife, data.ImpactPoint);
-            _sessionService.RegisterStick(data.ImpactPoint);
+            _SessionService.RegisterStick(data.ImpactPoint);
         }
     }
 }
