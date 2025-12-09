@@ -411,7 +411,7 @@ ScriptableObject Event Channel
 | Practice | Description |
 |----------|-------------|
 | **One class per file** | File name matches class name exactly |
-| **Namespace matches folder** | `Scripts/Core/Domain` → `namespace Core.Domain` |
+| **Namespace matches folder** | `Scripts/Core/Domain` → `namespace KnifeToss.Core.Domain` |
 | **Interfaces in Abstractions** | All interfaces live in `Core/Abstractions/` |
 | **Keep MonoBehaviours thin** | Delegate logic to pure C# classes |
 
@@ -537,6 +537,7 @@ ScriptableObject Event Channel
 |------|------------|---------|
 | Classes | PascalCase | `KnifeController` |
 | Interfaces | I + PascalCase | `IAudioPlayer` |
+| Namespaces | RootNamespace.Layer.Folder | `KnifeToss.Core.Abstractions` |
 | Methods | PascalCase | `ThrowKnife()` |
 | Properties | PascalCase | `KnivesRemaining` |
 | Private fields | _camelCase | `_currentKnife` |
