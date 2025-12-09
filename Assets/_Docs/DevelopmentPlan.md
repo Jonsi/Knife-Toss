@@ -46,7 +46,7 @@ This plan follows the **Layered Architecture** defined in Architecture.md:
 
 | Symbol | Layer | Unity Dependencies |
 |--------|-------|-------------------|
-| 🟦 | Core | ❌ None — Pure C# |
+| 🟦 | Core | ✅ Yes |
 | 🟩 | Infrastructure | ✅ Yes |
 | 🟨 | Application | ✅ Yes |
 | 🟧 | Presentation | ✅ Yes |
@@ -157,7 +157,6 @@ Assets/Scripts/
 
 - [ ] All folders exist with correct hierarchy
 - [ ] Each assembly definition compiles independently
-- [ ] Core assembly has NO Unity references
 - [ ] Play Mode starts without exceptions
 - [ ] VContainer LifetimeScope initializes (verify in console)
 - [ ] Attempting to reference Presentation from Core fails compilation
@@ -490,14 +489,15 @@ Data-driven levels unlock content creation without code changes and introduce Fa
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `LevelSetupService` | `App/Services/` | Orchestrates level load using `ILevelCatalog`, `LevelSpawner`, `LevelSessionService`, and throw/target configuration |
+| `RuntimeLevelRulesProvider` | `App/Services/Session/` | Mutable rules provider set per level before starting the session |
+| `LevelSetupService` | `App/Services/` | Orchestrates level load using `ILevelCatalog`, `LevelSpawner`, `LevelSessionService`, and runtime rules provider |
 
 **Level Load Sequence:**
 1. Resolve `LevelData` from catalog (stage index, level index).
-2. Derive `LevelRules` (knife count, stick threshold) and configure thrower.
+2. Derive `LevelRules` (knife count, stick threshold) and set runtime rules provider.
 3. Clear current level objects via `LevelSpawner`.
 4. Spawn targets through `TargetFactory` into level root; apply rotation strategies.
-5. Initialize `LevelSession` with rules and target group data.
+5. Start `LevelSession` with configured rules.
 6. Transition to Playing state.
 
 #### 6.4 Configurations
@@ -505,6 +505,10 @@ Data-driven levels unlock content creation without code changes and introduce Fa
 | Asset | Location | Purpose |
 |-------|----------|---------|
 | `StagesConfig.asset` | `Configurations/Gameplay/` | ScriptableObject containing stages/levels/targets data |
+
+**Scene Wiring:**
+- Assign `TargetView` prefab reference for spawning targets.
+- Assign a `LevelRoot` transform for spawned targets to parent under.
 
 **Create Test Content:**
 - Stage 1 with 3–4 levels that vary rotation speed/type, knife count, and stick threshold.
