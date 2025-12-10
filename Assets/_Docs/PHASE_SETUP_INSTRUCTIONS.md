@@ -1,152 +1,42 @@
-# Phase 1 Setup Instructions
-
-## 1. Create KnifeThrowConfigAsset ScriptableObject Asset
-
-1. In Unity, right-click in `Assets/Configurations/Gameplay/` folder
-2. Select: `Create > Knife Toss > Gameplay > Knife Throw Config`
-3. Name it `KnifeThrowConfig`
-4. Set default values:
-   - Throw Speed: 10
-   - Spawn Position Offset: (0, 0)
-
-## 2. Setup GameplayInstaller in Scene
-
-1. In the scene, create an empty GameObject named `GameplayInstaller`
-2. Add the `GameplayInstaller` component to it
-3. Assign the `KnifeThrowConfig` asset to the `Knife Throw Config` field in the inspector
-4. The VContainer LifetimeScope component will be automatically added
-
-## 3. Setup KnifeThrowerView
-
-1. Find or create the GameObject that will spawn knives (e.g., existing KnifeThrower prefab)
-2. Add the `KnifeThrowerView` component
-3. **Important**: Assign the `KnifeView` component (from the Knife prefab) directly to the `Knife Prefab` field (not the GameObject, but the KnifeView component)
-4. Assign the spawn position Transform to `Spawn Point` (or leave null to use the GameObject's position)
-
-## 4. Configure Knife Prefab
-
-1. Open `Assets/Prefabs/Knife.prefab`
-2. Ensure it has:
-   - SpriteRenderer component
-   - Collider2D component (set as Trigger) - for collision detection only
-3. Add the `KnifeView` component
-4. **Important**: In the KnifeView component inspector, assign:
-   - The SpriteRenderer component to the `_spriteRenderer` field
-   - The Collider2D component to the `_collider` field
-5. Save the prefab
-
-**Note**: 
-- The Knife prefab must have KnifeView as the root component (not a child GameObject) for direct prefab reference.
-- Movement is handled via transform, not physics (no Rigidbody2D needed).
-
-## 5. Regenerate Input Actions C# Class
-
-1. Select `Assets/InputSystem_Actions.inputactions` in the Project window
-2. In the Inspector, click `Generate C# Class`
-3. This will create the InputSystem_Actions.cs file needed by InputAdapter
-
-## 6. Test
-
-- Enter Play Mode
-- Tap/Click the screen or press the Throw action
-- A knife should spawn and fly upward
-- Check console for any errors
 
 ---
 
-# Phase 2 Setup Instructions
+# Phase 4 Setup Instructions
 
-## 1. Create TargetConfigAsset ScriptableObject Asset
-
-1. In Unity, right-click in `Assets/Configurations/Gameplay/` folder
-2. Select: `Create > Knife Toss > Gameplay > Target Config`
-3. Name it `TargetConfig`
-4. Set default values:
-   - Rotation Speed: 50
-   - Radius: 1.0
-
-## 2. Setup Target Prefab
-
-1. Open `Assets/Prefabs/Target.prefab`
-2. Ensure it has:
-   - SpriteRenderer component
-   - CircleCollider2D component (set as Trigger) - for collision detection
-3. Add the `TargetView` component
-4. **Important**: In the TargetView component inspector, assign:
-   - The CircleCollider2D component to the `_collider` field
-5. Save the prefab
-
-## 3. Setup Target in Scene
-
-1. In the scene, find or create the Target GameObject
-2. Add the `TargetView` component if not already present
-3. Assign the CircleCollider2D to the `_collider` field in TargetView
-
-## 4. Update GameInstaller
-
-1. Select the GameObject with `GameInstaller` component in the scene
-2. In the Inspector, assign:
-   - The `TargetConfig` asset to the `Target Config` field
-   - The Target GameObject (with TargetView component) to the `Target View` field
-3. The VContainer LifetimeScope will automatically inject dependencies
-
-## 5. Configure Knife Prefab for Collision
-
-1. Open `Assets/Prefabs/Knife.prefab`
-2. Ensure the Collider2D component is:
-   - Set as Trigger
-   - Properly sized to detect collisions with target
-3. Save the prefab
-
-## 6. Test Phase 2
-
-- Enter Play Mode
-- Target should rotate continuously at configured speed
-- Throw a knife at the target
-- Knife should stick to the target surface at the collision point
-- Stuck knife should rotate with the target (parented correctly)
-- Knife tip should point toward target center
-- Multiple knives can stick at different positions
-- Change rotation speed in TargetConfig → Target rotates faster/slower
-
----
-
-# Phase 3 Setup Instructions
-
-## 1. Create Level Rules Config Asset
+## 1. Create StagesConfig Asset
 1. In Unity, right-click in `Assets/Configurations/Gameplay/`
-2. Select: `Create > Knife Toss > Gameplay > Level Rules Config`
-3. Name it `LevelRulesConfig`
-4. Set defaults:
-   - Knife Count: 10
-   - Stick Threshold: 8
+2. Select: `Create > Knife Toss > Gameplay > Stages Config`
+3. Name it `StagesConfig`
+4. Configure the asset:
+   - Add a Stage (click +)
+   - Add a Level to the stage
+   - Set `Knife Count` (e.g., 10)
+   - Add a Target to the level
+   - Configure Target properties (Prefab Override, Orbit Radius, etc.)
 
-## 2. Create Event Channel Assets
-1. In `Assets/Configurations/EventChannels/`, create:
-   - `KnifeImpactEventChannel` via `Create > Knife Toss > Events > Knife Impact Event Channel`
-   - `LevelStateChangedEventChannel` via `Create > Knife Toss > Events > Level State Changed Event Channel`
+## 2. Setup Level Root
+1. In the scene, create an empty GameObject named `LevelRoot`
+2. Reset its Transform (Position: 0, 0, 0)
+3. This object will parent all spawned targets
 
 ## 3. Update GameInstaller
-1. Select the `GameplayInstaller` GameObject
-2. Assign in the inspector:
-   - `LevelRulesConfig` → `Level Rules Config`
-   - `KnifeImpactEventChannel` → `Knife Impact Event Channel`
-   - `LevelStateChangedEventChannel` → `Level State Changed Event Channel`
-   - Existing: `KnifeThrowConfig`, `KnifeSpawnRequestEventChannel`, `CollisionEventChannel`, `TargetConfig`, `TargetView`, `KnifeThrowerView`
+1. Select the `GameplayInstaller` GameObject in the scene
+2. In the Inspector, assign:
+   - `StagesConfig` asset → `Stages Config` field
+   - `LevelRoot` GameObject → `Level Root` field
+   - `Target` prefab (from Project window) → `Default Target Prefab` field
+3. **Important**: The old `Target Config`, `Target View`, and `Level Rules Config` fields have been removed. If you see "Missing Script" references or old serialized data, you can safely ignore or reset the component.
 
-## 4. Validate Prefabs
-1. Knife prefab:
-   - Collider2D remains Trigger (for collision detection)
-   - KnifeView component present
-   - Collider2D assigned to KnifeView `_collider` field
-2. Target prefab:
-   - CircleCollider2D assigned to TargetView `_collider` field
+## 4. Cleanup Scene and Assets
+1. Delete the old `TargetView` GameObject from the scene (targets are now spawned dynamically)
+2. Delete the old config assets if they exist:
+   - `Assets/Configurations/Gameplay/TargetConfig.asset`
+   - `Assets/Configurations/Gameplay/LevelRulesConfig.asset`
 
-## 5. Test Phase 3
+## 5. Test Phase 4
 - Enter Play Mode
-- Throw knives until stick threshold reached → LevelCompleted event should raise
-- Throw at a stuck knife → Knife bounces/falls and LevelFailed event raises (no `Time.timeScale` pause)
-- Throw all knives without reaching threshold → LevelFailed event raises due to exhausted knives
-- Observe knife impact and level state events firing (use console logs/listeners)
-- Throws are ignored when no knives remain (per LevelRulesConfig)
-
+- The game should load the first level of the first stage defined in `StagesConfig`
+- Target(s) should spawn at configured positions
+- Hitting a target tracks hits
+- Destroying all targets (hits >= KnivesToBreak) should trigger Level Completion
+- Running out of knives triggers Level Failed

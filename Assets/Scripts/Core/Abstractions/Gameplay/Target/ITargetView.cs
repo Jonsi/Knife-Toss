@@ -1,3 +1,5 @@
+using System;
+
 namespace KnifeToss.Core.Abstractions.Gameplay.Target
 {
     /// <summary>
@@ -14,6 +16,10 @@ namespace KnifeToss.Core.Abstractions.Gameplay.Target
         /// Gets the radius of the target.
         /// </summary>
         float Radius { get; }
+
+        /// <summary>
+        /// Event raised when the target is destroyed.
+        /// </summary>
+        event Action<ITargetView> OnDestroyed;
     }
 }
-

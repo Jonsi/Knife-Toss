@@ -60,6 +60,8 @@ namespace KnifeToss.Core.Domain.Level
         public void RegisterStick()
         {
             KnivesStuck++;
+            // We now rely on external completion (via ForceComplete) OR threshold.
+            // Keeping threshold check for safety/single-target backward compatibility.
             if (KnivesStuck >= _rules.StickThreshold)
             {
                 _stateMachine.SetState(_stateMachine.Completed);
@@ -72,10 +74,17 @@ namespace KnifeToss.Core.Domain.Level
             }
         }
 
+        public void ForceComplete()
+        {
+             if (IsPlaying)
+             {
+                 _stateMachine.SetState(_stateMachine.Completed);
+             }
+        }
+
         public void RegisterBounceFail()
         {
             _stateMachine.SetState(_stateMachine.Failed);
         }
     }
 }
-
