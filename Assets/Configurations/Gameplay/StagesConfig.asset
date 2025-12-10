@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b90c1110ba01dd4ba62fe9e726cf031, type: 3}
   m_Name: StagesConfig
   m_EditorClassIdentifier: KnifeToss.Infrastructure::Infrastructure.Leveling.StagesConfigAsset
+  <DefaultTargetPrefab>k__BackingField: {fileID: 1336281483645859630, guid: 0e557c846743ed044bf689812c8bae87, type: 3}
   <Stages>k__BackingField:
   - <StageName>k__BackingField: Stage 1
     <LayoutSettings>k__BackingField:

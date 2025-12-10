@@ -1,8 +1,8 @@
 using System.Collections.Generic;
+using Game.Entities.Target.Factories;
+using Game.Entities.Target.Interfaces;
 using Game.Level.Data;
 using Game.Level.Interfaces;
-using Game.Target.Factories;
-using Game.Target.Interfaces;
 using UnityEngine;
 
 namespace Game.Level.Spawning

@@ -1,6 +1,6 @@
 using Common.Events;
 using Common.Patterns.State;
-using Game.Knife.Data;
+using Game.Entities.Knife.Data;
 using Game.Level.Data;
 using VContainer.Unity;
 

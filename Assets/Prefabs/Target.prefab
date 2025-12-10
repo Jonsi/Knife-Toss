@@ -173,4 +173,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1b8094e2e5fb0443933f7f7b50627e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  _collider: {fileID: 170391262003376939}
+  _Collider: {fileID: 170391262003376939}

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Common.Events;
-using Game.Knife.Data;
-using Game.Target.Interfaces;
+using Game.Entities.Knife.Data;
+using Game.Entities.Target.Interfaces;
 
 namespace Game.Level.States
 {

@@ -1,29 +1,25 @@
+using Common.Collision.Data;
+using Common.Collision.Events;
+using Common.Collision.Interfaces;
+using Common.Collision.Logic;
 using Common.Config;
 using Common.Events;
-using Game.Collision.Data;
-using Game.Collision.Events;
-using Game.Collision.Interfaces;
-using Game.Collision.Logic;
-using Game.Collision.Logic.Handlers;
-using Game.Collision.Services;
-using Game.Knife.Data;
-using Game.Knife.Events;
-using Game.Knife.Views;
+using Game.CollisionHandlers;
+using Game.Entities.Knife.Data;
+using Game.Entities.Knife.Events;
+using Game.Entities.Knife.Views;
+using Game.Entities.Target.Factories;
+using Game.Input;
+using Game.KnifeThrower.Configs;
+using Game.KnifeThrower.Interfaces;
+using Game.KnifeThrower.Services;
 using Game.Level.Catalogs;
 using Game.Level.Data;
 using Game.Level.Events;
 using Game.Level.Interfaces;
 using Game.Level.Spawning;
 using Game.Level.States;
-using Game.Systems.Flow;
-using Game.Systems.Input;
-using Game.Systems.Settings;
-using Game.Target.Factories;
-using Game.Target.Presentation;
-using Game.Throwing.Configs;
-using Game.Throwing.Data;
-using Game.Throwing.Interfaces;
-using Game.Throwing.Services;
+using Game.Settings;
 using Game.UI.Popups;
 using UnityEngine;
 using VContainer;
@@ -50,14 +46,10 @@ namespace Game.Installers
         [SerializeField] private KnifeThrowerView _KnifeThrowerView;
         [SerializeField] private Transform _LevelRoot;
         [SerializeField] private StageFailPopup _StageFailPopup;
-        
-        [Header("Prefabs")]
-        [SerializeField] private TargetView _DefaultTargetPrefab;
 
         protected override void Configure(IContainerBuilder builder)
         {
-            GameSettingsAccess.Initialize(_GameSettings);
-            
+            builder.RegisterInstance(_GameSettings);
             RegisterInfrastructure(builder);
             RegisterGameCore(builder);
             RegisterKnifeServices(builder);
@@ -72,7 +64,7 @@ namespace Game.Installers
             builder.Register<RotationBehaviorFactory>(Lifetime.Singleton);
             
             builder.Register<TargetFactory>(Lifetime.Singleton)
-                .WithParameter(_DefaultTargetPrefab);
+                .WithParameter(_StagesConfig.DefaultTargetPrefab);
             
             builder.Register<LevelSpawner>(Lifetime.Singleton)
                 .WithParameter(_LevelRoot)
@@ -89,7 +81,7 @@ namespace Game.Installers
             builder.Register<StageData>(Lifetime.Singleton);
             builder.Register<StageStateMachine>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
 
-            builder.RegisterEntryPoint<GameFlowController>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<GameFlowController>();
 
             if (_StageFailPopup != null)
             {
@@ -102,24 +94,24 @@ namespace Game.Installers
             builder.RegisterInstance(_KnifeThrowConfig).As<IConfigurationProvider<KnifeThrowConfiguration>>();
             builder.RegisterInstance(_KnifeSpawnRequestEventChannel).As<IEventChannel<KnifeSpawnRequestData>>();
             builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
-            builder.RegisterEntryPoint<ThrowService>(Lifetime.Singleton).As<IThrowService>();
+            builder.RegisterEntryPoint<ThrowService>().As<IThrowService>();
             builder.RegisterComponent(_KnifeThrowerView).As<IKnifeThrowerView>();
         }
 
         private void RegisterCollisionServices(IContainerBuilder builder)
         {
             builder.RegisterInstance(_CollisionEventChannel).As<IEventChannel<CollisionData>>();
-            builder.RegisterEntryPoint<CollisionHandlerHandlerRouter>(Lifetime.Singleton).As<ICollisionHandlerRouter>();
+            builder.RegisterEntryPoint<CollisionHandlerHandlerRouter>().As<ICollisionHandlerRouter>();
             builder.Register<KnifeHitTargetHandler>(Lifetime.Singleton);
             builder.Register<KnifeHitKnifeHandler>(Lifetime.Singleton);
-            builder.RegisterEntryPoint<CollisionHandlerRegistrar>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<CollisionHandlerRegistrar>();
         }
 
         private ILogger CreateLogger()
         {
 #if TEST_ENV
-            ILogHandler handler = new TestEnvLogHandler(Debug.unityLogger.logHandler, () => GameSettingsAccess.IsTestLoggingEnabled, includeStackTrace: false);
-            return new Logger(handler) { logEnabled = true };
+            ILogHandler handlerBase = new TestEnvLogHandler(Debug.unityLogger.logHandler, () => GameSettingsAccess.IsTestLoggingEnabled, includeStackTrace: false);
+            return new Logger(handlerBase) { logEnabled = true };
 #else
             return Debug.unityLogger;
 #endif

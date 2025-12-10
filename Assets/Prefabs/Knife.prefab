@@ -79,11 +79,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6308553862f98a84ea983118e41c399d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: KnifeToss.Presentation::Presentation.Gameplay.Knife.KnifeView
-  _spriteRenderer: {fileID: 5543959450069452106}
-  _stickPositionData:
+  _SpriteRenderer: {fileID: 5543959450069452106}
+  _StickPositionData:
     Offset: 0
     RotationOffset: 0
-  _collider: {fileID: 359776916962366960}
+  _Collider: {fileID: 359776916962366960}
 --- !u!212 &5543959450069452106
 SpriteRenderer:
   serializedVersion: 2

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using Game.Entities.Target.Interfaces;
 using Game.Level.Data;
-using Game.Target.Interfaces;
 
 namespace Game.Level.Interfaces
 {
