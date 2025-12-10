@@ -1,5 +1,6 @@
 using App.Services.Leveling;
 using App.Services.Collision;
+using App.Services.Commands;
 using App.Services.Flow;
 using App.Services.Session;
 using App.Services.Throwing;
@@ -12,18 +13,22 @@ using Infrastructure.Settings;
 using KnifeToss.Core.Abstractions.Collision;
 using KnifeToss.Core.Abstractions.Config;
 using KnifeToss.Core.Abstractions.Events;
+using KnifeToss.Core.Abstractions.Flow;
 using KnifeToss.Core.Abstractions.Gameplay;
 using KnifeToss.Core.Abstractions.Gameplay.Session;
 using KnifeToss.Core.Abstractions.Input;
+using KnifeToss.Core.Abstractions.Leveling;
 using KnifeToss.Core.Abstractions.Throwing;
 using KnifeToss.Core.Data.Collision;
+using KnifeToss.Core.Data.Commands;
 using KnifeToss.Core.Data.Knife;
 using KnifeToss.Core.Data.Level;
 using KnifeToss.Core.Data.Throwing;
 using KnifeToss.Presentation.Gameplay.Collision;
 using KnifeToss.Presentation.Gameplay.Knife;
 using KnifeToss.Presentation.Gameplay.Target;
-using KnifeToss.Presentation.Gameplay.Leveling; // New location for LevelSpawner/TargetFactory
+using KnifeToss.Presentation.Gameplay.Leveling;
+using KnifeToss.Presentation.UI.Popups;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -45,10 +50,12 @@ namespace Bootstrapper
         [SerializeField] private CollisionEventChannel collisionEventChannel;
         [SerializeField] private KnifeImpactEventChannel knifeImpactEventChannel;
         [SerializeField] private LevelStateChangedEventChannel levelStateChangedEventChannel;
+        [SerializeField] private CommandEventChannel commandEventChannel;
         
         [Header("Scene References")]
         [SerializeField] private KnifeThrowerView knifeThrowerView;
         [SerializeField] private Transform levelRoot;
+        [SerializeField] private StageFailPopup stageFailPopup;
         
         [Header("Prefabs")]
         [SerializeField] private TargetView defaultTargetPrefab;
@@ -88,8 +95,22 @@ namespace Bootstrapper
         private void RegisterGameFlow(IContainerBuilder builder)
         {
             builder.RegisterInstance(CreateLogger()).As<ILogger>();
-            builder.Register<LevelSetupService>(Lifetime.Singleton);
+            builder.RegisterInstance(commandEventChannel).As<IEventChannel<CommandEventData>>();
+            
+            builder.Register<StageProgressTracker>(Lifetime.Singleton)
+                .As<IStageProgressTracker>()
+                .As<IStageNavigator>();
+            
+            builder.Register<LevelSetupService>(Lifetime.Singleton).As<ILevelSetupService>().AsSelf();
+            
+            builder.RegisterEntryPoint<CommandDispatcher>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<LevelFlowCoordinator>(Lifetime.Singleton);
             builder.RegisterEntryPoint<GameFlowController>(Lifetime.Singleton);
+
+            if (stageFailPopup != null)
+            {
+                builder.RegisterComponent(stageFailPopup);
+            }
         }
 
         private void RegisterLevelSessionServices(IContainerBuilder builder)

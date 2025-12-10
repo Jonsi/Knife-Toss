@@ -12,7 +12,7 @@ namespace App.Services.Collision
     /// </summary>
     public class CollisionRouter : ICollisionRouter
     {
-        private readonly Dictionary<(Type, Type), ICollisionHandler> _handlers = new();
+        private readonly Dictionary<(Type, Type), ICollisionHandler> _Handlers = new();
 
         /// <summary>
         /// Registers a collision handler for a specific pair of types.
@@ -24,7 +24,7 @@ namespace App.Services.Collision
             where THit : class, IHitable
             where THitBy : class, IHitable
         {
-            _handlers[(typeof(THit), typeof(THitBy))] = handler;
+            _Handlers[(typeof(THit), typeof(THitBy))] = handler;
         }
 
         /// <summary>
@@ -40,14 +40,14 @@ namespace App.Services.Collision
             var targetType = data.Target.HitableType;
 
             var key = (sourceType, targetType);
-            if (_handlers.TryGetValue(key, out var handler))
+            if (_Handlers.TryGetValue(key, out var handler))
             {
                 handler.Handle(data);
                 return;
             }
 
             var reversedKey = (targetType, sourceType);
-            if (_handlers.TryGetValue(reversedKey, out var reversedHandler))
+            if (_Handlers.TryGetValue(reversedKey, out var reversedHandler))
             {
                 var reversedData = new CollisionData(data.Target, data.Source, data.ImpactPoint);
                 reversedHandler.Handle(reversedData);

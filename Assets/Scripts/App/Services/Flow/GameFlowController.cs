@@ -9,17 +9,17 @@ namespace App.Services.Flow
     /// </summary>
     public class GameFlowController : IStartable
     {
-        private readonly LevelSetupService _levelSetupService;
+        private readonly LevelSetupService _LevelSetupService;
 
         public GameFlowController(LevelSetupService levelSetupService)
         {
-            _levelSetupService = levelSetupService;
+            _LevelSetupService = levelSetupService;
         }
 
         public void Start()
         {
             // Load the first level of the first stage.
-            _levelSetupService.LoadLevel(0, 0);
+            _LevelSetupService.LoadLevel(0, 0);
         }
     }
 }

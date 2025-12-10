@@ -5,6 +5,7 @@ using App.Services.Target;
 using Infrastructure.Leveling;
 using KnifeToss.Core.Abstractions.Gameplay;
 using KnifeToss.Core.Abstractions.Gameplay.Session;
+using KnifeToss.Core.Abstractions.Leveling;
 using KnifeToss.Core.Data.Level;
 using UnityEngine;
 
@@ -13,29 +14,29 @@ namespace App.Services.Leveling
     /// <summary>
     /// Orchestrates the loading and setup of a level, including spawning targets and setting rules.
     /// </summary>
-    public class LevelSetupService
+    public class LevelSetupService : ILevelSetupService
     {
-        private readonly StagesConfigCatalog _levelCatalog;
-        private readonly ILevelSpawner _levelSpawner;
-        private readonly RuntimeLevelRulesProvider _rulesProvider;
-        private readonly ILevelSessionService _sessionService;
-        private readonly TargetTrackingService _targetTrackingService;
-        private readonly LevelSessionLogger _sessionLogger;
+        private readonly ILevelCatalog _LevelCatalog;
+        private readonly ILevelSpawner _LevelSpawner;
+        private readonly RuntimeLevelRulesProvider _RulesProvider;
+        private readonly ILevelSessionService _SessionService;
+        private readonly TargetTrackingService _TargetTrackingService;
+        private readonly LevelSessionLogger _SessionLogger;
 
         public LevelSetupService(
-            StagesConfigCatalog levelCatalog,
+            ILevelCatalog levelCatalog,
             ILevelSpawner levelSpawner,
             RuntimeLevelRulesProvider rulesProvider,
             ILevelSessionService sessionService,
             TargetTrackingService targetTrackingService,
             LevelSessionLogger sessionLogger)
         {
-            _levelCatalog = levelCatalog;
-            _levelSpawner = levelSpawner;
-            _rulesProvider = rulesProvider;
-            _sessionService = sessionService;
-            _targetTrackingService = targetTrackingService;
-            _sessionLogger = sessionLogger;
+            _LevelCatalog = levelCatalog;
+            _LevelSpawner = levelSpawner;
+            _RulesProvider = rulesProvider;
+            _SessionService = sessionService;
+            _TargetTrackingService = targetTrackingService;
+            _SessionLogger = sessionLogger;
         }
 
         /// <summary>
@@ -45,30 +46,18 @@ namespace App.Services.Leveling
         /// <param name="levelIndex">The index of the level.</param>
         public void LoadLevel(int stageIndex, int levelIndex)
         {
-            LevelConfig config = _levelCatalog.GetLevelConfig(stageIndex, levelIndex);
-            if (config == null)
-            {
-                Debug.LogError($"Failed to load level {stageIndex}-{levelIndex}");
-                return;
-            }
-
-            if (levelIndex == 0)
-            {
-                _sessionLogger.LogStageStarted(stageIndex);
-            }
-
+            LevelConfig config = _LevelCatalog.GetLevelConfig(stageIndex, levelIndex);
             int totalKnivesToBreak = config.Targets.Sum(t => t.KnivesToBreak);
-            
             // Determine knife count: prefer pre-calculated value from config, fallback to runtime calculation
             int knifeCount = config.KnifeCount > 0 ? config.KnifeCount : totalKnivesToBreak + config.ExtraKnives;
 
             LevelRules rules = new LevelRules(knifeCount, totalKnivesToBreak);
-            _rulesProvider.SetRules(rules);
+            _RulesProvider.SetRules(rules);
 
-            var targets = _levelSpawner.SpawnLevel(config);
-            _targetTrackingService.RegisterTargets(targets);
+            var targets = _LevelSpawner.SpawnLevel(config);
+            _TargetTrackingService.RegisterTargets(targets);
 
-            _sessionService.StartSession(stageIndex, levelIndex);
+            _SessionService.StartSession(stageIndex, levelIndex);
         }
     }
 }

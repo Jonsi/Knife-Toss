@@ -15,20 +15,20 @@ namespace App.Services.Session
     /// </summary>
     public class LevelSessionService : ILevelSessionService
     {
-        private readonly IConfigurationProvider<LevelRules> _rulesProvider;
-        private readonly IEventChannel<LevelStateChangedEventData> _stateChangedChannel;
-        private readonly IEventChannel<KnifeImpactEventData> _impactChannel;
-        private readonly LevelSessionLogger _sessionLogger;
-        private readonly TargetTrackingService _targetTrackingService;
+        private readonly IConfigurationProvider<LevelRules> _RulesProvider;
+        private readonly IEventChannel<LevelStateChangedEventData> _StateChangedChannel;
+        private readonly IEventChannel<KnifeImpactEventData> _ImpactChannel;
+        private readonly LevelSessionLogger _SessionLogger;
+        private readonly TargetTrackingService _TargetTrackingService;
 
-        private LevelSession _session;
-        private int _currentStageIndex;
-        private int _currentLevelIndex;
+        private LevelSession _Session;
+        private int _CurrentStageIndex;
+        private int _CurrentLevelIndex;
 
-        public bool IsPlaying => _session?.IsPlaying ?? false;
-        public int KnivesThrown => _session?.KnivesThrown ?? 0;
-        public int KnivesStuck => _session?.KnivesStuck ?? 0;
-        public int KnivesRemaining => _session == null ? 0 : _session.KnifeCount - _session.KnivesThrown;
+        public bool IsPlaying => _Session?.IsPlaying ?? false;
+        public int KnivesThrown => _Session?.KnivesThrown ?? 0;
+        public int KnivesStuck => _Session?.KnivesStuck ?? 0;
+        public int KnivesRemaining => _Session == null ? 0 : _Session.KnifeCount - _Session.KnivesThrown;
 
         public LevelSessionService(
             IConfigurationProvider<LevelRules> rulesProvider,
@@ -37,80 +37,80 @@ namespace App.Services.Session
             LevelSessionLogger sessionLogger,
             TargetTrackingService targetTrackingService)
         {
-            _rulesProvider = rulesProvider ?? throw new ArgumentNullException(nameof(rulesProvider));
-            _stateChangedChannel = stateChangedChannel ?? throw new ArgumentNullException(nameof(stateChangedChannel));
-            _impactChannel = impactChannel ?? throw new ArgumentNullException(nameof(impactChannel));
-            _sessionLogger = sessionLogger ?? throw new ArgumentNullException(nameof(sessionLogger));
-            _targetTrackingService = targetTrackingService ?? throw new ArgumentNullException(nameof(targetTrackingService));
+            _RulesProvider = rulesProvider ?? throw new ArgumentNullException(nameof(rulesProvider));
+            _StateChangedChannel = stateChangedChannel ?? throw new ArgumentNullException(nameof(stateChangedChannel));
+            _ImpactChannel = impactChannel ?? throw new ArgumentNullException(nameof(impactChannel));
+            _SessionLogger = sessionLogger ?? throw new ArgumentNullException(nameof(sessionLogger));
+            _TargetTrackingService = targetTrackingService ?? throw new ArgumentNullException(nameof(targetTrackingService));
 
-            _targetTrackingService.OnAllTargetsDestroyed += HandleAllTargetsDestroyed;
+            _TargetTrackingService.OnAllTargetsDestroyed += HandleAllTargetsDestroyed;
         }
 
         private void HandleAllTargetsDestroyed()
         {
-            if (_session == null || !_session.IsPlaying)
+            if (_Session == null || !_Session.IsPlaying)
                 return;
 
-            string previous = _session.CurrentStateName;
-            _session.ForceComplete();
-            string current = _session.CurrentStateName;
+            string previous = _Session.CurrentStateName;
+            _Session.ForceComplete();
+            string current = _Session.CurrentStateName;
 
             RaiseStateChanged(previous, current);
         }
 
         public void StartSession(int stageIndex, int levelIndex)
         {
-            _currentStageIndex = stageIndex;
-            _currentLevelIndex = levelIndex;
+            _CurrentStageIndex = stageIndex;
+            _CurrentLevelIndex = levelIndex;
 
-            LevelRules rules = _rulesProvider.GetConfiguration();
-            string previous = _session?.CurrentStateName ?? string.Empty;
+            LevelRules rules = _RulesProvider.GetConfiguration();
+            string previous = _Session?.CurrentStateName ?? string.Empty;
 
-            if (_session == null)
+            if (_Session == null)
             {
-                _session = new LevelSession(rules);
+                _Session = new LevelSession(rules);
             }
             else
             {
-                _session.Reset(rules);
+                _Session.Reset(rules);
             }
 
-            _session.Start();
-            RaiseStateChanged(previous, _session.CurrentStateName);
+            _Session.Start();
+            RaiseStateChanged(previous, _Session.CurrentStateName);
         }
 
         public bool TryRegisterThrow()
         {
-            if (_session == null || !_session.CanThrow())
+            if (_Session == null || !_Session.CanThrow())
                 return false;
 
-            _session.RegisterThrow();
+            _Session.RegisterThrow();
             return true;
         }
 
         public void RegisterStick(Vector2 impactPoint)
         {
-            if (_session == null || !_session.IsPlaying)
+            if (_Session == null || !_Session.IsPlaying)
                 return;
 
-            string previous = _session.CurrentStateName;
-            _session.RegisterStick();
-            string current = _session.CurrentStateName;
+            string previous = _Session.CurrentStateName;
+            _Session.RegisterStick();
+            string current = _Session.CurrentStateName;
 
-            _impactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Stuck, impactPoint));
+            _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Stuck, impactPoint));
             RaiseStateChanged(previous, current);
         }
 
         public void RegisterBounce(Vector2 impactPoint)
         {
-            if (_session == null || !_session.IsPlaying)
+            if (_Session == null || !_Session.IsPlaying)
                 return;
 
-            string previous = _session.CurrentStateName;
-            _session.RegisterBounceFail();
-            string current = _session.CurrentStateName;
+            string previous = _Session.CurrentStateName;
+            _Session.RegisterBounceFail();
+            string current = _Session.CurrentStateName;
 
-            _impactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Bounced, impactPoint));
+            _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Bounced, impactPoint));
             RaiseStateChanged(previous, current);
         }
 
@@ -119,8 +119,8 @@ namespace App.Services.Session
             if (previous == current)
                 return;
 
-            _stateChangedChannel.Raise(new LevelStateChangedEventData(previous, current));
-            _sessionLogger.LogState(current, _currentStageIndex, _currentLevelIndex);
+            _StateChangedChannel.Raise(new LevelStateChangedEventData(previous, current));
+            _SessionLogger.LogState(current, _CurrentStageIndex, _CurrentLevelIndex);
         }
     }
 }

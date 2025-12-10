@@ -16,11 +16,11 @@ namespace App.Services.Throwing
     /// </summary>
     public class ThrowService : IThrowService, IStartable
     {
-        private readonly IPlayerThrowInputListener _playerThrowInputListener;
-        private readonly IConfigurationProvider<KnifeThrowConfiguration> _knifeThrowConfigurationProvider;
-        private readonly IEventChannel<KnifeSpawnRequestData> _spawnRequestEventChannel;
-        private readonly ILevelSessionService _levelSessionService;
-        private bool _isRunning;
+        private readonly IPlayerThrowInputListener _PlayerThrowInputListener;
+        private readonly IConfigurationProvider<KnifeThrowConfiguration> _KnifeThrowConfigurationProvider;
+        private readonly IEventChannel<KnifeSpawnRequestData> _SpawnRequestEventChannel;
+        private readonly ILevelSessionService _LevelSessionService;
+        private bool _IsRunning;
 
         /// <summary>
         /// Initializes a new instance of the ThrowService.
@@ -34,10 +34,10 @@ namespace App.Services.Throwing
             IEventChannel<KnifeSpawnRequestData> spawnRequestEventChannel,
             ILevelSessionService levelSessionService)
         {
-            _playerThrowInputListener = playerThrowInputListener;
-            _knifeThrowConfigurationProvider = knifeThrowConfigurationProvider;
-            _spawnRequestEventChannel = spawnRequestEventChannel;
-            _levelSessionService = levelSessionService;
+            _PlayerThrowInputListener = playerThrowInputListener;
+            _KnifeThrowConfigurationProvider = knifeThrowConfigurationProvider;
+            _SpawnRequestEventChannel = spawnRequestEventChannel;
+            _LevelSessionService = levelSessionService;
         }
 
         /// <summary>
@@ -46,27 +46,27 @@ namespace App.Services.Throwing
         /// </summary>
         public void Start()
         {
-            if (_isRunning)
+            if (_IsRunning)
                 return;
 
-            _playerThrowInputListener.OnThrowRequested += HandleThrowRequested;
-            _playerThrowInputListener.Initialize();
-            _isRunning = true;
+            _PlayerThrowInputListener.OnThrowRequested += HandleThrowRequested;
+            _PlayerThrowInputListener.Initialize();
+            _IsRunning = true;
         }
 
         private void HandleThrowRequested()
         {
-            if (!_levelSessionService.TryRegisterThrow())
+            if (!_LevelSessionService.TryRegisterThrow())
                 return;
 
-            KnifeThrowConfiguration config = _knifeThrowConfigurationProvider.GetConfiguration();
+            KnifeThrowConfiguration config = _KnifeThrowConfigurationProvider.GetConfiguration();
             var spawnData = new KnifeSpawnRequestData
             {
                 SpawnOffset = config.SpawnPositionOffset,
                 ThrowSpeed = config.ThrowSpeed
             };
             
-            _spawnRequestEventChannel.Raise(spawnData);
+            _SpawnRequestEventChannel.Raise(spawnData);
         }
 
         /// <summary>
@@ -82,12 +82,12 @@ namespace App.Services.Throwing
         /// </summary>
         public void Stop()
         {
-            if (!_isRunning)
+            if (!_IsRunning)
                 return;
 
-            _playerThrowInputListener.OnThrowRequested -= HandleThrowRequested;
-            _playerThrowInputListener.Dispose();
-            _isRunning = false;
+            _PlayerThrowInputListener.OnThrowRequested -= HandleThrowRequested;
+            _PlayerThrowInputListener.Dispose();
+            _IsRunning = false;
         }
     }
 }

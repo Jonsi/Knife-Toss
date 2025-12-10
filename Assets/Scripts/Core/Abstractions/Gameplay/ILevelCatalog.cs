@@ -16,5 +16,13 @@ namespace KnifeToss.Core.Abstractions.Gameplay
         /// <param name="stageIndex">The index of the stage.</param>
         /// <returns>The number of levels.</returns>
         int GetLevelCount(int stageIndex);
+
+        /// <summary>
+        /// Retrieves the configuration for a specific level.
+        /// </summary>
+        /// <param name="stageIndex">The index of the stage.</param>
+        /// <param name="levelIndex">The index of the level within the stage.</param>
+        /// <returns>The level configuration.</returns>
+        Data.Level.LevelConfig GetLevelConfig(int stageIndex, int levelIndex);
     }
 }

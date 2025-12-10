@@ -9,7 +9,7 @@ namespace App.Services.Target
     /// </summary>
     public class TargetTrackingService
     {
-        private readonly List<ITargetView> _activeTargets = new();
+        private readonly List<ITargetView> _ActiveTargets = new();
         
         /// <summary>
         /// Event raised when all registered targets have been destroyed.
@@ -22,10 +22,10 @@ namespace App.Services.Target
         /// <param name="targets">The collection of targets to monitor.</param>
         public void RegisterTargets(IEnumerable<ITargetView> targets)
         {
-            _activeTargets.Clear();
-            _activeTargets.AddRange(targets);
+            _ActiveTargets.Clear();
+            _ActiveTargets.AddRange(targets);
 
-            foreach (var target in _activeTargets)
+            foreach (var target in _ActiveTargets)
             {
                 target.OnDestroyed += HandleTargetDestroyed;
             }
@@ -34,9 +34,9 @@ namespace App.Services.Target
         private void HandleTargetDestroyed(ITargetView destroyedTarget)
         {
             destroyedTarget.OnDestroyed -= HandleTargetDestroyed;
-            _activeTargets.Remove(destroyedTarget);
+            _ActiveTargets.Remove(destroyedTarget);
 
-            if (_activeTargets.Count == 0)
+            if (_ActiveTargets.Count == 0)
             {
                 OnAllTargetsDestroyed?.Invoke();
             }
@@ -46,6 +46,6 @@ namespace App.Services.Target
         /// Checks if all registered targets are destroyed.
         /// </summary>
         /// <returns>True if no targets remain active.</returns>
-        public bool AreAllTargetsDestroyed() => _activeTargets.Count == 0;
+        public bool AreAllTargetsDestroyed() => _ActiveTargets.Count == 0;
     }
 }

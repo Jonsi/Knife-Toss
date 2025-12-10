@@ -36,9 +36,9 @@ MonoBehaviour:
         <BaseScale>k__BackingField: 1
         <OrbitRadius>k__BackingField: 0.8
         <StartingAngle>k__BackingField: 0
-        <OrbitSpeed>k__BackingField: 25
+        <OrbitSpeed>k__BackingField: 101.9
         <KnivesToBreak>k__BackingField: 6
-        <RotationSpeed>k__BackingField: 55
+        <RotationSpeed>k__BackingField: 165.8
         <RotationDirection>k__BackingField: -1
     - <KnifeCount>k__BackingField: 12
       <ExtraKnives>k__BackingField: 3

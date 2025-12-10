@@ -12,30 +12,30 @@ namespace App.Services.Collision
     /// </summary>
     public class CollisionProxy : IStartable, IDisposable
     {
-        private readonly IEventChannel<CollisionData> _collisionChannel;
-        private readonly ICollisionRouter _router;
+        private readonly IEventChannel<CollisionData> _CollisionChannel;
+        private readonly ICollisionRouter _Router;
 
         public CollisionProxy(
             IEventChannel<CollisionData> collisionChannel,
             ICollisionRouter router)
         {
-            _collisionChannel = collisionChannel;
-            _router = router;
+            _CollisionChannel = collisionChannel;
+            _Router = router;
         }
 
         public void Start()
         {
-            _collisionChannel.Subscribe(OnCollision);
+            _CollisionChannel.Subscribe(OnCollision);
         }
 
         public void Dispose()
         {
-            _collisionChannel.Unsubscribe(OnCollision);
+            _CollisionChannel.Unsubscribe(OnCollision);
         }
 
         private void OnCollision(CollisionData data)
         {
-            _router.Route(data);
+            _Router.Route(data);
         }
     }
 }

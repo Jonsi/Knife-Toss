@@ -9,7 +9,7 @@ namespace App.Services.Session
     /// </summary>
     public class RuntimeLevelRulesProvider : IConfigurationProvider<LevelRules>
     {
-        private LevelRules _currentRules;
+        private LevelRules _CurrentRules;
 
         /// <summary>
         /// Updates the current level rules.
@@ -17,7 +17,7 @@ namespace App.Services.Session
         /// <param name="rules">The new rules to apply.</param>
         public void SetRules(LevelRules rules)
         {
-            _currentRules = rules;
+            _CurrentRules = rules;
         }
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace App.Services.Session
         /// <returns>The current LevelRules.</returns>
         public LevelRules GetConfiguration()
         {
-            return _currentRules ?? new LevelRules(10, 5);
+            return _CurrentRules ?? new LevelRules(10, 5);
         }
     }
 }
