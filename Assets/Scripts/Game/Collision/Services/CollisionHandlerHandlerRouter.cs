@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using KnifeToss.Common.Events;
 using KnifeToss.Game.Collision.Data;
 using KnifeToss.Game.Collision.Interfaces;
 using KnifeToss.Game.Collision.Logic;
+using VContainer.Unity;
 
 namespace KnifeToss.Game.Collision.Services
 {
@@ -10,9 +12,35 @@ namespace KnifeToss.Game.Collision.Services
     /// Routes collision events to appropriate handlers based on the types involved.
     /// Supports bidirectional collision detection (source-target or target-source).
     /// </summary>
-    public class CollisionHandlerHandlerRouter : ICollisionHandlerRouter
+    public class CollisionHandlerHandlerRouter : ICollisionHandlerRouter, IStartable, IDisposable
     {
+        private readonly IEventChannel<CollisionData> _CollisionChannel;
         private readonly Dictionary<(Type, Type), ICollisionHandler> _Handlers = new();
+
+        /// <summary>
+        /// Initializes a new instance of the router with required dependencies.
+        /// </summary>
+        /// <param name="collisionChannel">Event channel that emits collision events.</param>
+        public CollisionHandlerHandlerRouter(IEventChannel<CollisionData> collisionChannel)
+        {
+            _CollisionChannel = collisionChannel;
+        }
+
+        /// <summary>
+        /// Begins listening for collision events.
+        /// </summary>
+        public void Start()
+        {
+            _CollisionChannel.Subscribe(OnCollision);
+        }
+
+        /// <summary>
+        /// Stops listening for collision events and releases subscriptions.
+        /// </summary>
+        public void Dispose()
+        {
+            _CollisionChannel.Unsubscribe(OnCollision);
+        }
 
         /// <summary>
         /// Registers a collision handler for a specific pair of types.
@@ -27,11 +55,7 @@ namespace KnifeToss.Game.Collision.Services
             _Handlers[(typeof(THit), typeof(THitBy))] = handler;
         }
 
-        /// <summary>
-        /// Routes a collision to the appropriate handler based on the cached types.
-        /// </summary>
-        /// <param name="data">The collision data containing source and target.</param>
-        public void Route(CollisionData data)
+        private void Route(CollisionData data)
         {
             if (data.source == null || data.target == null)
                 return;
@@ -47,11 +71,17 @@ namespace KnifeToss.Game.Collision.Services
             }
 
             var reversedKey = (targetType, sourceType);
-            if (_Handlers.TryGetValue(reversedKey, out var reversedHandler))
+            if (!_Handlers.TryGetValue(reversedKey, out var reversedHandler))
             {
-                var reversedData = new CollisionData(data.target, data.source, data.impactPoint);
-                reversedHandler.Handle(reversedData);
+                return;
             }
+            var reversedData = new CollisionData(data.target, data.source, data.impactPoint);
+            reversedHandler.Handle(reversedData);
+        }
+
+        private void OnCollision(CollisionData data)
+        {
+            Route(data);
         }
     }
 }

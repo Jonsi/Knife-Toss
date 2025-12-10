@@ -109,10 +109,9 @@ namespace KnifeToss.Game.Installers
         private void RegisterCollisionServices(IContainerBuilder builder)
         {
             builder.RegisterInstance(_CollisionEventChannel).As<IEventChannel<CollisionData>>();
-            builder.Register<CollisionHandlerHandlerRouter>(Lifetime.Singleton).As<ICollisionHandlerRouter>();
+            builder.RegisterEntryPoint<CollisionHandlerHandlerRouter>(Lifetime.Singleton).As<ICollisionHandlerRouter>();
             builder.Register<KnifeHitTargetHandler>(Lifetime.Singleton);
             builder.Register<KnifeHitKnifeHandler>(Lifetime.Singleton);
-            builder.RegisterEntryPoint<CollisionChannelListener>(Lifetime.Singleton);
             builder.RegisterEntryPoint<CollisionHandlerRegistrar>(Lifetime.Singleton);
         }
 

@@ -17,12 +17,6 @@ namespace KnifeToss.Game.Collision.Interfaces
         void Register<THit, THitBy>(CollisionHandler<THit, THitBy> handler)
             where THit : class, IHitable
             where THitBy : class, IHitable;
-
-        /// <summary>
-        /// Routes a collision to the appropriate handler based on the types involved.
-        /// </summary>
-        /// <param name="data">The collision data containing source and target.</param>
-        void Route(CollisionData data);
     }
 }
 
