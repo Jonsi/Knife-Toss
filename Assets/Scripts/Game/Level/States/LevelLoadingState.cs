@@ -23,7 +23,7 @@ namespace Game.Level.States
             var spawnedTargets = Context.LevelSpawner.SpawnLevel(config);
             Context.ActiveTargets.AddRange(spawnedTargets);
 
-            machine.SetState(machine.playing);
+            Machine.SetState(Machine.Playing);
         }
     }
 }

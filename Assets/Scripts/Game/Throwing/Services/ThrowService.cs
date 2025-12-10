@@ -57,8 +57,8 @@ namespace Game.Throwing.Services
             var config = _KnifeThrowConfigurationProvider.GetConfiguration();
             var spawnData = new KnifeSpawnRequestData
             {
-                spawnOffset = config.spawnPositionOffset,
-                throwSpeed = config.throwSpeed
+                SpawnOffset = config.SpawnPositionOffset,
+                ThrowSpeed = config.ThrowSpeed
             };
             
             _SpawnRequestEventChannel.Raise(spawnData);

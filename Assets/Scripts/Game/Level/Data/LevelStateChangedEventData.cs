@@ -5,13 +5,13 @@ namespace Game.Level.Data
     /// </summary>
     public struct LevelStateChangedEventData
     {
-        public string previousState;
-        public string currentState;
+        public string PreviousState;
+        public string CurrentState;
 
         public LevelStateChangedEventData(string previous, string current)
         {
-            previousState = previous;
-            currentState = current;
+            PreviousState = previous;
+            CurrentState = current;
         }
     }
 }

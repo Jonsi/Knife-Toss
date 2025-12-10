@@ -11,17 +11,17 @@ namespace Game.Target.Data
         /// <summary>
         /// The radial distance offset from the surface (e.g. penetration depth).
         /// </summary>
-        public float offset;
+        public float Offset;
 
         /// <summary>
         /// The rotation offset in degrees applied to the base rotation (which points toward target center).
         /// </summary>
-        public float rotationOffset;
+        public float RotationOffset;
 
         public StickPositionData(float offset, float rotationOffset)
         {
-            this.offset = offset;
-            this.rotationOffset = rotationOffset;
+            this.Offset = offset;
+            this.RotationOffset = rotationOffset;
         }
     }
 }

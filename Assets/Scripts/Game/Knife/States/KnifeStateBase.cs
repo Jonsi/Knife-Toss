@@ -9,22 +9,22 @@ namespace Game.Knife.States
     /// </summary>
     public abstract class KnifeStateBase : IState
     {
-        protected readonly IKnifeViewContext knifeView;
-        protected Vector2 velocity;
-        protected float speed;
+        protected readonly IKnifeViewContext KnifeView;
+        protected Vector2 Velocity;
+        protected float Speed;
 
         protected KnifeStateBase(IKnifeViewContext knifeView)
         {
-            this.knifeView = knifeView;
+            this.KnifeView = knifeView;
         }
 
         public virtual void Enter() { }
         
         public virtual void Update(float deltaTime)
         {
-            if (speed > 0f)
+            if (Speed > 0f)
             {
-                knifeView.Transform.position += (Vector3)(velocity * deltaTime);
+                KnifeView.Transform.position += (Vector3)(Velocity * deltaTime);
             }
         }
         
@@ -32,8 +32,8 @@ namespace Game.Knife.States
 
         protected void SetMovement(Vector2 direction, float speed)
         {
-            this.speed = speed;
-            velocity = direction.normalized * speed;
+            this.Speed = speed;
+            Velocity = direction.normalized * speed;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Game.Knife.States
         {
             base.Enter();
             // Ensure collider is active while in flight
-            knifeView.SetColliderEnabled(true);
+            KnifeView.SetColliderEnabled(true);
         }
     }
 }

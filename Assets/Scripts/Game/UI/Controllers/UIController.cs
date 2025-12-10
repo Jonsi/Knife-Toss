@@ -28,12 +28,12 @@ namespace Game.UI.Controllers
 
         private void OnLevelStateChanged(LevelStateChangedEventData data)
         {
-            if (data.currentState == nameof(LevelFailedState))
+            if (data.CurrentState == nameof(LevelFailedState))
             {
                 if (_StageFailPopup != null)
                     _StageFailPopup.Show();
             }
-            else if (data.currentState == nameof(LevelPlayingState) || data.currentState == nameof(LevelLoadingState))
+            else if (data.CurrentState == nameof(LevelPlayingState) || data.CurrentState == nameof(LevelLoadingState))
             {
                 if (_StageFailPopup != null)
                     _StageFailPopup.Hide();

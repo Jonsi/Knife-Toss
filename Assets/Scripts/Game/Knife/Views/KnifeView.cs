@@ -85,8 +85,8 @@ namespace Game.Knife.Views
         /// <param name="speed">The speed at which to launch the knife.</param>
         public void Launch(Vector2 direction, float speed)
         {
-            _StateMachine.inFlight.Launch(direction, speed);
-            _StateMachine.SetState(_StateMachine.inFlight);
+            _StateMachine.InFlight.Launch(direction, speed);
+            _StateMachine.SetState(_StateMachine.InFlight);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Game.Knife.Views
         /// </summary>
         public void StopMovement()
         {
-            _StateMachine.SetState(_StateMachine.stuck);
+            _StateMachine.SetState(_StateMachine.Stuck);
         }
 
         /// <summary>
@@ -103,8 +103,8 @@ namespace Game.Knife.Views
         /// </summary>
         public void Bounce()
         {
-            _StateMachine.bounced.ConfigureBounce(new Vector2(0f, 6f), 360f);
-            _StateMachine.SetState(_StateMachine.bounced);
+            _StateMachine.Bounced.ConfigureBounce(new Vector2(0f, 6f), 360f);
+            _StateMachine.SetState(_StateMachine.Bounced);
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Game.Knife.Views
         /// </summary>
         public void ResetKnife()
         {
-            _StateMachine.SetState(_StateMachine.loaded);
+            _StateMachine.SetState(_StateMachine.Loaded);
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace Game.Knife.Views
         /// </summary>
         public void ReturnToPool()
         {
-            _StateMachine.SetState(_StateMachine.pooled);
+            _StateMachine.SetState(_StateMachine.Pooled);
         }
 
         public void SetActive(bool isActive)

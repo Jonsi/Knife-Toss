@@ -55,7 +55,7 @@ namespace Game.Level.States
 
         private void OnKnifeSpawned(KnifeSpawnRequestData data)
         {
-            if (machine.Current != this)
+            if (Machine.Current != this)
                 return;
 
             Context.KnivesThrown++;
@@ -63,16 +63,16 @@ namespace Game.Level.States
 
         private void OnKnifeImpact(KnifeImpactEventData data)
         {
-            if (machine.Current != this)
+            if (Machine.Current != this)
                 return;
 
-            if (data.impactType == KnifeImpactType.Bounced)
+            if (data.ImpactType == KnifeImpactType.Bounced)
             {
-                machine.SetState(machine.failed);
+                Machine.SetState(Machine.Failed);
                 return;
             }
 
-            if (data.impactType == KnifeImpactType.Stuck)
+            if (data.ImpactType == KnifeImpactType.Stuck)
             {
                 Context.KnivesStuck++;
                 CheckCompletion();
@@ -89,13 +89,13 @@ namespace Game.Level.States
         {
             if (Context.AreAllTargetsDestroyed)
             {
-                machine.SetState(machine.completed);
+                Machine.SetState(Machine.Completed);
                 return;
             }
 
             if (!Context.HasKnivesRemaining)
             {
-                machine.SetState(machine.failed);
+                Machine.SetState(Machine.Failed);
             }
         }
     }

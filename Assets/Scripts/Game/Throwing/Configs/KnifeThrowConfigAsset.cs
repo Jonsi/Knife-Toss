@@ -28,8 +28,8 @@ namespace Game.Throwing.Configs
         {
             return new KnifeThrowConfiguration
             {
-                throwSpeed = ThrowSpeed,
-                spawnPositionOffset = SpawnPositionOffset
+                ThrowSpeed = ThrowSpeed,
+                SpawnPositionOffset = SpawnPositionOffset
             };
         }
     }

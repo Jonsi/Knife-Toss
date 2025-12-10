@@ -27,13 +27,13 @@ namespace Game.Collision.Logic.Handlers
             if (!_StageData.IsThrowingActive)
                 return;
 
-            if (data.source is not KnifeView knife || data.target is not TargetView target)
+            if (data.Source is not KnifeView knife || data.Target is not TargetView target)
                 return;
 
             knife.StopMovement();
-            target.Stick(knife, data.impactPoint);
+            target.Stick(knife, data.ImpactPoint);
             
-            _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Stuck, data.impactPoint));
+            _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Stuck, data.ImpactPoint));
         }
     }
 }

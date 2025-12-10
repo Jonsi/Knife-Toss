@@ -23,16 +23,16 @@ namespace Game.Knife.States
         public override void Enter()
         {
             base.Enter();
-            knifeView.Transform.SetParent(null);
-            knifeView.SetColliderEnabled(false);
-            velocity = _InitialVelocity;
+            KnifeView.Transform.SetParent(null);
+            KnifeView.SetColliderEnabled(false);
+            Velocity = _InitialVelocity;
         }
 
         public override void Update(float deltaTime)
         {
-            velocity += new Vector2(0f, GRAVITY * deltaTime);
-            knifeView.Transform.position += (Vector3)(velocity * deltaTime);
-            knifeView.Transform.Rotate(0f, 0f, _AngularVelocity * deltaTime);
+            Velocity += new Vector2(0f, GRAVITY * deltaTime);
+            KnifeView.Transform.position += (Vector3)(Velocity * deltaTime);
+            KnifeView.Transform.Rotate(0f, 0f, _AngularVelocity * deltaTime);
         }
     }
 }

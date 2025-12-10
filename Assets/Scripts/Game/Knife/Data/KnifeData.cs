@@ -11,12 +11,12 @@ namespace Game.Knife.Data
         /// <summary>
         /// The speed at which the knife travels.
         /// </summary>
-        public float speed;
+        public float Speed;
         
         /// <summary>
         /// The offset distance for the sticking point when the knife embeds into a surface.
         /// </summary>
-        public float stickingOffset;
+        public float StickingOffset;
     }
 }
 

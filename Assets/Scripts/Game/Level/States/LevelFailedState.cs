@@ -10,13 +10,13 @@ namespace Game.Level.States
 
         public void RetryLevel()
         {
-            machine.SetState(machine.loading);
+            Machine.SetState(Machine.Loading);
         }
 
         public void RestartStage()
         {
             Context.CurrentLevelIndex = 0;
-            machine.SetState(machine.loading);
+            Machine.SetState(Machine.Loading);
         }
     }
 }

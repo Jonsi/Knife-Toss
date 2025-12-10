@@ -36,7 +36,7 @@ namespace Game.UI.Popups
         {
             if (_StateMachine != null)
             {
-                _StateMachine.failed.RetryLevel();
+                _StateMachine.Failed.RetryLevel();
             }
         }
 
@@ -44,7 +44,7 @@ namespace Game.UI.Popups
         {
             if (_StateMachine != null)
             {
-                _StateMachine.failed.RestartStage();
+                _StateMachine.Failed.RestartStage();
             }
         }
     }

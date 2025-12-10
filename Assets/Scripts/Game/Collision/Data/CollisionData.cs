@@ -11,23 +11,23 @@ namespace Game.Collision.Data
         /// <summary>
         /// The object that initiated the collision (e.g., the knife).
         /// </summary>
-        public readonly IHitable source;
+        public readonly IHitable Source;
 
         /// <summary>
         /// The object that was hit (e.g., the target).
         /// </summary>
-        public readonly IHitable target;
+        public readonly IHitable Target;
 
         /// <summary>
         /// The world position where the impact occurred.
         /// </summary>
-        public readonly Vector2 impactPoint;
+        public readonly Vector2 ImpactPoint;
 
         public CollisionData(IHitable source, IHitable target, Vector2 impactPoint)
         {
-            this.source = source;
-            this.target = target;
-            this.impactPoint = impactPoint;
+            this.Source = source;
+            this.Target = target;
+            this.ImpactPoint = impactPoint;
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Game.Level.States
                 }
             }
 
-            machine.SetState(machine.loading);
+            Machine.SetState(Machine.Loading);
         }
     }
 }

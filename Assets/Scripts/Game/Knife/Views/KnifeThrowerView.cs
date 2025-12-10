@@ -59,11 +59,11 @@ namespace Game.Knife.Views
                 return;
 
             Transform spawnTransform = _SpawnPoint != null ? _SpawnPoint : transform;
-            Vector3 spawnPosition = spawnTransform.position + new Vector3(spawnData.spawnOffset.x, spawnData.spawnOffset.y, 0f);
+            Vector3 spawnPosition = spawnTransform.position + new Vector3(spawnData.SpawnOffset.x, spawnData.SpawnOffset.y, 0f);
             KnifeView knifeView = Instantiate(_KnifePrefab, spawnPosition, Quaternion.identity);
             
             _Resolver?.Inject(knifeView);
-            knifeView.Launch(Vector2.up, spawnData.throwSpeed);
+            knifeView.Launch(Vector2.up, spawnData.ThrowSpeed);
         }
     }
 }

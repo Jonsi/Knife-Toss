@@ -9,12 +9,12 @@ namespace Game.Level.States
     /// </summary>
     public abstract class LevelStateBase : IState
     {
-        protected readonly StageStateMachine machine;
-        protected StageData Context => machine.Context;
+        protected readonly StageStateMachine Machine;
+        protected StageData Context => Machine.Context;
 
         protected LevelStateBase(StageStateMachine machine)
         {
-            this.machine = machine;
+            this.Machine = machine;
         }
 
         public virtual void Enter() { }

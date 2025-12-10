@@ -12,10 +12,10 @@ namespace Game.Knife.States
 
         public override void Enter()
         {
-            speed = 0f;
-            velocity = Vector2.zero;
-            knifeView.SetColliderEnabled(false);
-            knifeView.SetActive(true);
+            Speed = 0f;
+            Velocity = Vector2.zero;
+            KnifeView.SetColliderEnabled(false);
+            KnifeView.SetActive(true);
         }
     }
 }

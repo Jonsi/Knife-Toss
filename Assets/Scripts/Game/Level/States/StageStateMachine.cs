@@ -14,10 +14,10 @@ namespace Game.Level.States
     {
         public StageData Context { get; }
 
-        public readonly LevelLoadingState loading;
-        public readonly LevelPlayingState playing;
-        public readonly LevelCompletedState completed;
-        public readonly LevelFailedState failed;
+        public readonly LevelLoadingState Loading;
+        public readonly LevelPlayingState Playing;
+        public readonly LevelCompletedState Completed;
+        public readonly LevelFailedState Failed;
 
         private readonly IEventChannel<LevelStateChangedEventData> _StateChangedChannel;
 
@@ -30,10 +30,10 @@ namespace Game.Level.States
             _StateChangedChannel = stateChangedChannel;
             Context = context;
 
-            loading = new LevelLoadingState(this);
-            playing = new LevelPlayingState(this, impactChannel, spawnRequestChannel);
-            completed = new LevelCompletedState(this);
-            failed = new LevelFailedState(this);
+            Loading = new LevelLoadingState(this);
+            Playing = new LevelPlayingState(this, impactChannel, spawnRequestChannel);
+            Completed = new LevelCompletedState(this);
+            Failed = new LevelFailedState(this);
         }
 
         public void StartStage(int stageIndex)
@@ -41,7 +41,7 @@ namespace Game.Level.States
             Context.CurrentStageIndex = stageIndex;
             Context.CurrentLevelIndex = 0;
             
-            SetState(loading);
+            SetState(Loading);
         }
 
         public new void SetState(IState newState)

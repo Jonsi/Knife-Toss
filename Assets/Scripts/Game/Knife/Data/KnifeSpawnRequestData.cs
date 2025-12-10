@@ -7,8 +7,8 @@ namespace Game.Knife.Data
     /// </summary>
     public struct KnifeSpawnRequestData
     {
-        public Vector2 spawnOffset;
-        public float throwSpeed;
+        public Vector2 SpawnOffset;
+        public float ThrowSpeed;
     }
 }
 

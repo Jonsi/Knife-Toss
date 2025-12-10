@@ -57,11 +57,11 @@ namespace Game.Collision.Services
 
         private void Route(CollisionData data)
         {
-            if (data.source == null || data.target == null)
+            if (data.Source == null || data.Target == null)
                 return;
 
-            var sourceType = data.source.HitableType;
-            var targetType = data.target.HitableType;
+            var sourceType = data.Source.HitableType;
+            var targetType = data.Target.HitableType;
 
             var key = (sourceType, targetType);
             if (_Handlers.TryGetValue(key, out var handler))
@@ -75,7 +75,7 @@ namespace Game.Collision.Services
             {
                 return;
             }
-            var reversedData = new CollisionData(data.target, data.source, data.impactPoint);
+            var reversedData = new CollisionData(data.Target, data.Source, data.ImpactPoint);
             reversedHandler.Handle(reversedData);
         }
 
