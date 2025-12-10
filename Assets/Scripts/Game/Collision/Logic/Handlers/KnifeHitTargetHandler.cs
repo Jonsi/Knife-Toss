@@ -13,27 +13,27 @@ namespace KnifeToss.Game.Collision.Logic.Handlers
     /// </summary>
     public class KnifeHitTargetHandler : CollisionHandler<KnifeView, TargetView>
     {
-        private readonly StageData _stageData;
-        private readonly IEventChannel<KnifeImpactEventData> _impactChannel;
+        private readonly StageData _StageData;
+        private readonly IEventChannel<KnifeImpactEventData> _ImpactChannel;
 
         public KnifeHitTargetHandler(StageData stageData, IEventChannel<KnifeImpactEventData> impactChannel)
         {
-            _stageData = stageData;
-            _impactChannel = impactChannel;
+            _StageData = stageData;
+            _ImpactChannel = impactChannel;
         }
 
         protected override void HandleCollision(CollisionData data)
         {
-            if (!_stageData.IsThrowingActive)
+            if (!_StageData.IsThrowingActive)
                 return;
 
-            if (data.Source is not KnifeView knife || data.Target is not TargetView target)
+            if (data.source is not KnifeView knife || data.target is not TargetView target)
                 return;
 
             knife.StopMovement();
-            target.Stick(knife, data.ImpactPoint);
+            target.Stick(knife, data.impactPoint);
             
-            _impactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Stuck, data.ImpactPoint));
+            _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Stuck, data.impactPoint));
         }
     }
 }

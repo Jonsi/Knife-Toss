@@ -14,11 +14,11 @@ namespace KnifeToss.Game.Throwing.Services
     /// </summary>
     public class ThrowService : IThrowService, IStartable
     {
-        private readonly IPlayerThrowInputListener _playerThrowInputListener;
-        private readonly IConfigurationProvider<KnifeThrowConfiguration> _knifeThrowConfigurationProvider;
-        private readonly IEventChannel<KnifeSpawnRequestData> _spawnRequestEventChannel;
-        private readonly StageData _stageData;
-        private bool _isRunning;
+        private readonly IPlayerThrowInputListener _PlayerThrowInputListener;
+        private readonly IConfigurationProvider<KnifeThrowConfiguration> _KnifeThrowConfigurationProvider;
+        private readonly IEventChannel<KnifeSpawnRequestData> _SpawnRequestEventChannel;
+        private readonly StageData _StageData;
+        private bool _IsRunning;
 
         /// <summary>
         /// Initializes a new instance of the ThrowService.
@@ -29,10 +29,10 @@ namespace KnifeToss.Game.Throwing.Services
             IEventChannel<KnifeSpawnRequestData> spawnRequestEventChannel,
             StageData stageData)
         {
-            _playerThrowInputListener = playerThrowInputListener;
-            _knifeThrowConfigurationProvider = knifeThrowConfigurationProvider;
-            _spawnRequestEventChannel = spawnRequestEventChannel;
-            _stageData = stageData;
+            _PlayerThrowInputListener = playerThrowInputListener;
+            _KnifeThrowConfigurationProvider = knifeThrowConfigurationProvider;
+            _SpawnRequestEventChannel = spawnRequestEventChannel;
+            _StageData = stageData;
         }
 
         /// <summary>
@@ -41,27 +41,27 @@ namespace KnifeToss.Game.Throwing.Services
         /// </summary>
         public void Start()
         {
-            if (_isRunning)
+            if (_IsRunning)
                 return;
 
-            _playerThrowInputListener.OnThrowRequested += HandleThrowRequested;
-            _playerThrowInputListener.Initialize();
-            _isRunning = true;
+            _PlayerThrowInputListener.OnThrowRequested += HandleThrowRequested;
+            _PlayerThrowInputListener.Initialize();
+            _IsRunning = true;
         }
 
         private void HandleThrowRequested()
         {
-            if (!_stageData.IsThrowingActive || !_stageData.HasKnivesRemaining)
+            if (!_StageData.IsThrowingActive || !_StageData.HasKnivesRemaining)
                 return;
 
-            var config = _knifeThrowConfigurationProvider.GetConfiguration();
+            var config = _KnifeThrowConfigurationProvider.GetConfiguration();
             var spawnData = new KnifeSpawnRequestData
             {
-                SpawnOffset = config.SpawnPositionOffset,
-                ThrowSpeed = config.ThrowSpeed
+                spawnOffset = config.spawnPositionOffset,
+                throwSpeed = config.throwSpeed
             };
             
-            _spawnRequestEventChannel.Raise(spawnData);
+            _SpawnRequestEventChannel.Raise(spawnData);
         }
 
         /// <summary>
@@ -77,12 +77,12 @@ namespace KnifeToss.Game.Throwing.Services
         /// </summary>
         public void Stop()
         {
-            if (!_isRunning)
+            if (!_IsRunning)
                 return;
 
-            _playerThrowInputListener.OnThrowRequested -= HandleThrowRequested;
-            _playerThrowInputListener.Dispose();
-            _isRunning = false;
+            _PlayerThrowInputListener.OnThrowRequested -= HandleThrowRequested;
+            _PlayerThrowInputListener.Dispose();
+            _IsRunning = false;
         }
     }
 }

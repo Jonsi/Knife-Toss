@@ -14,12 +14,12 @@ namespace KnifeToss.Game.Level.States
     {
         public StageData Context { get; }
 
-        public readonly LevelLoadingState Loading;
-        public readonly LevelPlayingState Playing;
-        public readonly LevelCompletedState Completed;
-        public readonly LevelFailedState Failed;
+        public readonly LevelLoadingState loading;
+        public readonly LevelPlayingState playing;
+        public readonly LevelCompletedState completed;
+        public readonly LevelFailedState failed;
 
-        private readonly IEventChannel<LevelStateChangedEventData> _stateChangedChannel;
+        private readonly IEventChannel<LevelStateChangedEventData> _StateChangedChannel;
 
         public StageStateMachine(
             StageData context,
@@ -27,13 +27,13 @@ namespace KnifeToss.Game.Level.States
             IEventChannel<KnifeImpactEventData> impactChannel,
             IEventChannel<KnifeSpawnRequestData> spawnRequestChannel)
         {
-            _stateChangedChannel = stateChangedChannel;
+            _StateChangedChannel = stateChangedChannel;
             Context = context;
 
-            Loading = new LevelLoadingState(this);
-            Playing = new LevelPlayingState(this, impactChannel, spawnRequestChannel);
-            Completed = new LevelCompletedState(this);
-            Failed = new LevelFailedState(this);
+            loading = new LevelLoadingState(this);
+            playing = new LevelPlayingState(this, impactChannel, spawnRequestChannel);
+            completed = new LevelCompletedState(this);
+            failed = new LevelFailedState(this);
         }
 
         public void StartStage(int stageIndex)
@@ -41,7 +41,7 @@ namespace KnifeToss.Game.Level.States
             Context.CurrentStageIndex = stageIndex;
             Context.CurrentLevelIndex = 0;
             
-            SetState(Loading);
+            SetState(loading);
         }
 
         public new void SetState(IState newState)
@@ -52,7 +52,7 @@ namespace KnifeToss.Game.Level.States
 
             if (previousStateName != currentStateName)
             {
-                _stateChangedChannel.Raise(new LevelStateChangedEventData(previousStateName, currentStateName));
+                _StateChangedChannel.Raise(new LevelStateChangedEventData(previousStateName, currentStateName));
             }
         }
 

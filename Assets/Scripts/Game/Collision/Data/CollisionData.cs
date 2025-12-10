@@ -1,7 +1,7 @@
-using KnifeToss.Collision.Interfaces;
+using KnifeToss.Game.Collision.Interfaces;
 using UnityEngine;
 
-namespace KnifeToss.Collision.Data
+namespace KnifeToss.Game.Collision.Data
 {
     /// <summary>
     /// Immutable data structure containing collision information.
@@ -11,23 +11,23 @@ namespace KnifeToss.Collision.Data
         /// <summary>
         /// The object that initiated the collision (e.g., the knife).
         /// </summary>
-        public readonly IHitable Source;
+        public readonly IHitable source;
 
         /// <summary>
         /// The object that was hit (e.g., the target).
         /// </summary>
-        public readonly IHitable Target;
+        public readonly IHitable target;
 
         /// <summary>
         /// The world position where the impact occurred.
         /// </summary>
-        public readonly Vector2 ImpactPoint;
+        public readonly Vector2 impactPoint;
 
         public CollisionData(IHitable source, IHitable target, Vector2 impactPoint)
         {
-            Source = source;
-            Target = target;
-            ImpactPoint = impactPoint;
+            this.source = source;
+            this.target = target;
+            this.impactPoint = impactPoint;
         }
     }
 }

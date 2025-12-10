@@ -30,7 +30,7 @@ namespace KnifeToss.Game.Level.States
                 }
             }
 
-            Machine.SetState(Machine.Loading);
+            machine.SetState(machine.loading);
         }
     }
 }

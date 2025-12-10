@@ -9,34 +9,34 @@ namespace KnifeToss.Game.UI.Controllers
     public class UIController : MonoBehaviour
     {
         [Header("Popups")]
-        [SerializeField] private StageFailPopup _stageFailPopup;
+        [SerializeField] private StageFailPopup _StageFailPopup;
 
         [Header("Channels")]
-        [SerializeField] private LevelStateChangedEventChannel _stateChangedChannel;
+        [SerializeField] private LevelStateChangedEventChannel _StateChangedChannel;
 
         private void OnEnable()
         {
-            if (_stateChangedChannel != null)
-                _stateChangedChannel.Subscribe(OnLevelStateChanged);
+            if (_StateChangedChannel != null)
+                _StateChangedChannel.Subscribe(OnLevelStateChanged);
         }
 
         private void OnDisable()
         {
-            if (_stateChangedChannel != null)
-                _stateChangedChannel.Unsubscribe(OnLevelStateChanged);
+            if (_StateChangedChannel != null)
+                _StateChangedChannel.Unsubscribe(OnLevelStateChanged);
         }
 
         private void OnLevelStateChanged(LevelStateChangedEventData data)
         {
-            if (data.CurrentState == nameof(LevelFailedState))
+            if (data.currentState == nameof(LevelFailedState))
             {
-                if (_stageFailPopup != null)
-                    _stageFailPopup.Show();
+                if (_StageFailPopup != null)
+                    _StageFailPopup.Show();
             }
-            else if (data.CurrentState == nameof(LevelPlayingState) || data.CurrentState == nameof(LevelLoadingState))
+            else if (data.currentState == nameof(LevelPlayingState) || data.currentState == nameof(LevelLoadingState))
             {
-                if (_stageFailPopup != null)
-                    _stageFailPopup.Hide();
+                if (_StageFailPopup != null)
+                    _StageFailPopup.Hide();
             }
         }
     }

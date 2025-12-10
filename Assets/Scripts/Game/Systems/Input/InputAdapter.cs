@@ -12,9 +12,9 @@ namespace KnifeToss.Game.Systems.Input
     /// </summary>
     public class InputAdapter : IPlayerThrowInputListener, IDisposable
     {
-        private InputSystem_Actions _inputActions;
-        private bool _isInitialized;
-        private CancellationTokenSource _cancellationTokenSource;
+        private InputSystem_Actions _InputActions;
+        private bool _IsInitialized;
+        private CancellationTokenSource _CancellationTokenSource;
 
         /// <summary>
         /// Event raised when the player requests a knife throw.
@@ -26,14 +26,14 @@ namespace KnifeToss.Game.Systems.Input
         /// </summary>
         public void Initialize()
         {
-            if (_isInitialized)
+            if (_IsInitialized)
                 return;
 
-            _inputActions = new InputSystem_Actions();
-            _inputActions.Player.Throw.performed += OnThrowPerformed;
-            _inputActions.Player.Throw.Enable();
-            _cancellationTokenSource = new CancellationTokenSource();
-            _isInitialized = true;
+            _InputActions = new InputSystem_Actions();
+            _InputActions.Player.Throw.performed += OnThrowPerformed;
+            _InputActions.Player.Throw.Enable();
+            _CancellationTokenSource = new CancellationTokenSource();
+            _IsInitialized = true;
         }
 
         /// <summary>
@@ -41,22 +41,22 @@ namespace KnifeToss.Game.Systems.Input
         /// </summary>
         public void Dispose()
         {
-            if (!_isInitialized)
+            if (!_IsInitialized)
                 return;
 
-            _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource?.Dispose();
-            _cancellationTokenSource = null;
+            _CancellationTokenSource?.Cancel();
+            _CancellationTokenSource?.Dispose();
+            _CancellationTokenSource = null;
 
-            if (_inputActions != null)
+            if (_InputActions != null)
             {
-                _inputActions.Player.Throw.performed -= OnThrowPerformed;
-                _inputActions.Player.Throw.Disable();
-                _inputActions.Dispose();
-                _inputActions = null;
+                _InputActions.Player.Throw.performed -= OnThrowPerformed;
+                _InputActions.Player.Throw.Disable();
+                _InputActions.Dispose();
+                _InputActions = null;
             }
 
-            _isInitialized = false;
+            _IsInitialized = false;
         }
 
         private void OnThrowPerformed(InputAction.CallbackContext context)

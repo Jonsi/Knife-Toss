@@ -128,8 +128,8 @@ namespace KnifeToss.Game.Target.Presentation
             Vector2 localPoint = TransformImpactToLocal(impactPoint);
             float angleDegrees = CalculateImpactAngle(localPoint);
             StickPositionData stickData = knife.StickPositionData;
-            Vector2 finalPosition = CalculateStickPosition(stickData.Offset, angleDegrees);
-            float finalRotation = CalculateStickRotation(angleDegrees, stickData.RotationOffset);
+            Vector2 finalPosition = CalculateStickPosition(stickData.offset, angleDegrees);
+            float finalRotation = CalculateStickRotation(angleDegrees, stickData.rotationOffset);
 
             knife.transform.localPosition = finalPosition;
             knife.transform.localRotation = Quaternion.Euler(0f, 0f, finalRotation);

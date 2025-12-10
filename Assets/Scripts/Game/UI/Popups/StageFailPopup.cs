@@ -9,8 +9,8 @@ namespace KnifeToss.Game.UI.Popups
     public class StageFailPopup : BasePopup
     {
         [Header("UI References")]
-        [SerializeField] private Button _retryButton;
-        [SerializeField] private Button _restartStageButton;
+        [SerializeField] private Button _RetryButton;
+        [SerializeField] private Button _RestartStageButton;
 
         private StageStateMachine _StateMachine;
 
@@ -22,21 +22,21 @@ namespace KnifeToss.Game.UI.Popups
 
         private void OnEnable()
         {
-            _retryButton.onClick.AddListener(OnRetryClicked);
-            _restartStageButton.onClick.AddListener(OnRestartStageClicked);
+            _RetryButton.onClick.AddListener(OnRetryClicked);
+            _RestartStageButton.onClick.AddListener(OnRestartStageClicked);
         }
 
         private void OnDisable()
         {
-            _retryButton.onClick.RemoveListener(OnRetryClicked);
-            _restartStageButton.onClick.RemoveListener(OnRestartStageClicked);
+            _RetryButton.onClick.RemoveListener(OnRetryClicked);
+            _RestartStageButton.onClick.RemoveListener(OnRestartStageClicked);
         }
 
         private void OnRetryClicked()
         {
             if (_StateMachine != null)
             {
-                _StateMachine.Failed.RetryLevel();
+                _StateMachine.failed.RetryLevel();
             }
         }
 
@@ -44,7 +44,7 @@ namespace KnifeToss.Game.UI.Popups
         {
             if (_StateMachine != null)
             {
-                _StateMachine.Failed.RestartStage();
+                _StateMachine.failed.RestartStage();
             }
         }
     }

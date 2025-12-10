@@ -12,9 +12,9 @@ namespace KnifeToss.Game.Level.States
     /// </summary>
     public class LevelPlayingState : LevelStateBase 
     {
-        private readonly IEventChannel<KnifeImpactEventData> _impactChannel;
-        private readonly IEventChannel<KnifeSpawnRequestData> _spawnChannel;
-        private readonly List<ITargetView> _subscribedTargets = new List<ITargetView>();
+        private readonly IEventChannel<KnifeImpactEventData> _ImpactChannel;
+        private readonly IEventChannel<KnifeSpawnRequestData> _SpawnChannel;
+        private readonly List<ITargetView> _SubscribedTargets = new List<ITargetView>();
 
         public LevelPlayingState(
             StageStateMachine machine,
@@ -22,21 +22,21 @@ namespace KnifeToss.Game.Level.States
             IEventChannel<KnifeSpawnRequestData> spawnChannel)
             : base(machine)
         {
-            _impactChannel = impactChannel;
-            _spawnChannel = spawnChannel;
+            _ImpactChannel = impactChannel;
+            _SpawnChannel = spawnChannel;
 
-            _impactChannel.Subscribe(OnKnifeImpact);
-            _spawnChannel.Subscribe(OnKnifeSpawned);
+            _ImpactChannel.Subscribe(OnKnifeImpact);
+            _SpawnChannel.Subscribe(OnKnifeSpawned);
         }
 
         public override void Enter()
         {
             Context.IsThrowingActive = true;
 
-            _subscribedTargets.Clear();
-            _subscribedTargets.AddRange(Context.ActiveTargets);
+            _SubscribedTargets.Clear();
+            _SubscribedTargets.AddRange(Context.ActiveTargets);
             
-            foreach (var target in _subscribedTargets)
+            foreach (var target in _SubscribedTargets)
             {
                 target.OnDestroyed += HandleTargetDestroyed;
             }
@@ -46,16 +46,16 @@ namespace KnifeToss.Game.Level.States
         {
             Context.IsThrowingActive = false;
 
-            foreach (var target in _subscribedTargets)
+            foreach (var target in _SubscribedTargets)
             {
                 target.OnDestroyed -= HandleTargetDestroyed;
             }
-            _subscribedTargets.Clear();
+            _SubscribedTargets.Clear();
         }
 
         private void OnKnifeSpawned(KnifeSpawnRequestData data)
         {
-            if (Machine.Current != this)
+            if (machine.Current != this)
                 return;
 
             Context.KnivesThrown++;
@@ -63,16 +63,16 @@ namespace KnifeToss.Game.Level.States
 
         private void OnKnifeImpact(KnifeImpactEventData data)
         {
-            if (Machine.Current != this)
+            if (machine.Current != this)
                 return;
 
-            if (data.ImpactType == KnifeImpactType.Bounced)
+            if (data.impactType == KnifeImpactType.Bounced)
             {
-                Machine.SetState(Machine.Failed);
+                machine.SetState(machine.failed);
                 return;
             }
 
-            if (data.ImpactType == KnifeImpactType.Stuck)
+            if (data.impactType == KnifeImpactType.Stuck)
             {
                 Context.KnivesStuck++;
                 CheckCompletion();
@@ -89,13 +89,13 @@ namespace KnifeToss.Game.Level.States
         {
             if (Context.AreAllTargetsDestroyed)
             {
-                Machine.SetState(Machine.Completed);
+                machine.SetState(machine.completed);
                 return;
             }
 
             if (!Context.HasKnivesRemaining)
             {
-                Machine.SetState(Machine.Failed);
+                machine.SetState(machine.failed);
             }
         }
     }

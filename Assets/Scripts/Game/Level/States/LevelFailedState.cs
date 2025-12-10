@@ -10,13 +10,13 @@ namespace KnifeToss.Game.Level.States
 
         public void RetryLevel()
         {
-            Machine.SetState(Machine.Loading);
+            machine.SetState(machine.loading);
         }
 
         public void RestartStage()
         {
             Context.CurrentLevelIndex = 0;
-            Machine.SetState(Machine.Loading);
+            machine.SetState(machine.loading);
         }
     }
 }

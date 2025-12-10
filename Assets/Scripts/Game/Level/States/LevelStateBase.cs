@@ -1,7 +1,7 @@
 using KnifeToss.Common.State;
-using KnifeToss.Level.Data;
+using KnifeToss.Game.Level.Data;
 
-namespace KnifeToss.Level.States
+namespace KnifeToss.Game.Level.States
 {
     /// <summary>
     /// Base class for level state implementations.
@@ -9,12 +9,12 @@ namespace KnifeToss.Level.States
     /// </summary>
     public abstract class LevelStateBase : IState
     {
-        protected readonly StageStateMachine Machine;
-        protected StageData Context => Machine.Context;
+        protected readonly StageStateMachine machine;
+        protected StageData Context => machine.Context;
 
         protected LevelStateBase(StageStateMachine machine)
         {
-            Machine = machine;
+            this.machine = machine;
         }
 
         public virtual void Enter() { }

@@ -36,27 +36,27 @@ namespace KnifeToss.Game.Installers
     /// </summary>
     public class GameInstaller : LifetimeScope
     {
-        [SerializeField] private GameSettings gameSettings;
-        [SerializeField] private KnifeThrowConfigAsset knifeThrowConfig;
-        [SerializeField] private StagesConfigAsset stagesConfig;
+        [SerializeField] private GameSettings _GameSettings;
+        [SerializeField] private KnifeThrowConfigAsset _KnifeThrowConfig;
+        [SerializeField] private StagesConfigAsset _StagesConfig;
         
         [Header("Event Channels")]
-        [SerializeField] private KnifeSpawnRequestEventChannel knifeSpawnRequestEventChannel;
-        [SerializeField] private CollisionEventChannel collisionEventChannel;
-        [SerializeField] private KnifeImpactEventChannel knifeImpactEventChannel;
-        [SerializeField] private LevelStateChangedEventChannel levelStateChangedEventChannel;
+        [SerializeField] private KnifeSpawnRequestEventChannel _KnifeSpawnRequestEventChannel;
+        [SerializeField] private CollisionEventChannel _CollisionEventChannel;
+        [SerializeField] private KnifeImpactEventChannel _KnifeImpactEventChannel;
+        [SerializeField] private LevelStateChangedEventChannel _LevelStateChangedEventChannel;
         
         [Header("Scene References")]
-        [SerializeField] private KnifeThrowerView knifeThrowerView;
-        [SerializeField] private Transform levelRoot;
-        [SerializeField] private StageFailPopup stageFailPopup;
+        [SerializeField] private KnifeThrowerView _KnifeThrowerView;
+        [SerializeField] private Transform _LevelRoot;
+        [SerializeField] private StageFailPopup _StageFailPopup;
         
         [Header("Prefabs")]
-        [SerializeField] private TargetView defaultTargetPrefab;
+        [SerializeField] private TargetView _DefaultTargetPrefab;
 
         protected override void Configure(IContainerBuilder builder)
         {
-            GameSettingsAccess.Initialize(gameSettings);
+            GameSettingsAccess.Initialize(_GameSettings);
             
             RegisterInfrastructure(builder);
             RegisterGameCore(builder);
@@ -66,16 +66,16 @@ namespace KnifeToss.Game.Installers
 
         private void RegisterInfrastructure(IContainerBuilder builder)
         {
-            builder.RegisterInstance(stagesConfig);
+            builder.RegisterInstance(_StagesConfig);
             builder.Register<StagesConfigCatalog>(Lifetime.Singleton).As<ILevelCatalog>().AsSelf();
             
             builder.Register<RotationBehaviorFactory>(Lifetime.Singleton);
             
             builder.Register<TargetFactory>(Lifetime.Singleton)
-                .WithParameter(defaultTargetPrefab);
+                .WithParameter(_DefaultTargetPrefab);
             
             builder.Register<LevelSpawner>(Lifetime.Singleton)
-                .WithParameter(levelRoot)
+                .WithParameter(_LevelRoot)
                 .As<ILevelSpawner>();
         }
 
@@ -83,36 +83,36 @@ namespace KnifeToss.Game.Installers
         {
             builder.RegisterInstance(CreateLogger()).As<ILogger>();
 
-            builder.RegisterInstance(levelStateChangedEventChannel).As<IEventChannel<LevelStateChangedEventData>>();
-            builder.RegisterInstance(knifeImpactEventChannel).As<IEventChannel<KnifeImpactEventData>>();
+            builder.RegisterInstance(_LevelStateChangedEventChannel).As<IEventChannel<LevelStateChangedEventData>>();
+            builder.RegisterInstance(_KnifeImpactEventChannel).As<IEventChannel<KnifeImpactEventData>>();
 
             builder.Register<StageData>(Lifetime.Singleton);
             builder.Register<StageStateMachine>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
 
             builder.RegisterEntryPoint<GameFlowController>(Lifetime.Singleton);
 
-            if (stageFailPopup != null)
+            if (_StageFailPopup != null)
             {
-                builder.RegisterComponent(stageFailPopup);
+                builder.RegisterComponent(_StageFailPopup);
             }
         }
 
         private void RegisterKnifeServices(IContainerBuilder builder)
         {
-            builder.RegisterInstance(knifeThrowConfig).As<IConfigurationProvider<KnifeThrowConfiguration>>();
-            builder.RegisterInstance(knifeSpawnRequestEventChannel).As<IEventChannel<KnifeSpawnRequestData>>();
+            builder.RegisterInstance(_KnifeThrowConfig).As<IConfigurationProvider<KnifeThrowConfiguration>>();
+            builder.RegisterInstance(_KnifeSpawnRequestEventChannel).As<IEventChannel<KnifeSpawnRequestData>>();
             builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
             builder.RegisterEntryPoint<ThrowService>(Lifetime.Singleton).As<IThrowService>();
-            builder.RegisterComponent(knifeThrowerView).As<IKnifeThrowerView>();
+            builder.RegisterComponent(_KnifeThrowerView).As<IKnifeThrowerView>();
         }
 
         private void RegisterCollisionServices(IContainerBuilder builder)
         {
-            builder.RegisterInstance(collisionEventChannel).As<IEventChannel<CollisionData>>();
-            builder.Register<CollisionRouter>(Lifetime.Singleton).As<ICollisionRouter>();
+            builder.RegisterInstance(_CollisionEventChannel).As<IEventChannel<CollisionData>>();
+            builder.Register<CollisionHandlerHandlerRouter>(Lifetime.Singleton).As<ICollisionHandlerRouter>();
             builder.Register<KnifeHitTargetHandler>(Lifetime.Singleton);
             builder.Register<KnifeHitKnifeHandler>(Lifetime.Singleton);
-            builder.RegisterEntryPoint<CollisionProxy>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<CollisionChannelListener>(Lifetime.Singleton);
             builder.RegisterEntryPoint<CollisionHandlerRegistrar>(Lifetime.Singleton);
         }
 

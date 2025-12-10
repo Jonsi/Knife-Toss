@@ -23,7 +23,7 @@ namespace KnifeToss.Game.Level.States
             var spawnedTargets = Context.LevelSpawner.SpawnLevel(config);
             Context.ActiveTargets.AddRange(spawnedTargets);
 
-            Machine.SetState(Machine.Playing);
+            machine.SetState(machine.playing);
         }
     }
 }

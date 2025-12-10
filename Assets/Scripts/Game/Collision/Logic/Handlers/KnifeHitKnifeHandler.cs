@@ -11,21 +11,21 @@ namespace KnifeToss.Game.Collision.Logic.Handlers
     /// </summary>
     public class KnifeHitKnifeHandler : CollisionHandler<KnifeView, KnifeView>
     {
-        private readonly StageData _stageData;
-        private readonly IEventChannel<KnifeImpactEventData> _impactChannel;
+        private readonly StageData _StageData;
+        private readonly IEventChannel<KnifeImpactEventData> _ImpactChannel;
 
         public KnifeHitKnifeHandler(StageData stageData, IEventChannel<KnifeImpactEventData> impactChannel)
         {
-            _stageData = stageData;
-            _impactChannel = impactChannel;
+            _StageData = stageData;
+            _ImpactChannel = impactChannel;
         }
 
         protected override void HandleCollision(CollisionData data)
         {
-            if (!_stageData.IsThrowingActive)
+            if (!_StageData.IsThrowingActive)
                 return;
 
-            if (data.Source is not KnifeView knife || data.Target is not KnifeView otherKnife)
+            if (data.source is not KnifeView knife || data.target is not KnifeView otherKnife)
                 return;
 
             if (!knife.IsInFlight)
@@ -33,7 +33,7 @@ namespace KnifeToss.Game.Collision.Logic.Handlers
 
             knife.Bounce();
             
-            _impactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Bounced, data.ImpactPoint));
+            _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Bounced, data.impactPoint));
         }
     }
 }

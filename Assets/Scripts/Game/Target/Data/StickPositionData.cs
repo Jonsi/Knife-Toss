@@ -11,17 +11,17 @@ namespace KnifeToss.Game.Target.Data
         /// <summary>
         /// The radial distance offset from the surface (e.g. penetration depth).
         /// </summary>
-        public float Offset;
+        public float offset;
 
         /// <summary>
         /// The rotation offset in degrees applied to the base rotation (which points toward target center).
         /// </summary>
-        public float RotationOffset;
+        public float rotationOffset;
 
         public StickPositionData(float offset, float rotationOffset)
         {
-            Offset = offset;
-            RotationOffset = rotationOffset;
+            this.offset = offset;
+            this.rotationOffset = rotationOffset;
         }
     }
 }

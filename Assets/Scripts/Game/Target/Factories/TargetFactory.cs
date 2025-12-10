@@ -11,18 +11,18 @@ namespace KnifeToss.Game.Target.Factories
     /// </summary>
     public class TargetFactory
     {
-        private readonly IObjectResolver _objectResolver;
-        private readonly RotationBehaviorFactory _rotationBehaviorFactory;
-        private readonly TargetView _defaultPrefab;
+        private readonly IObjectResolver _ObjectResolver;
+        private readonly RotationBehaviorFactory _RotationBehaviorFactory;
+        private readonly TargetView _DefaultPrefab;
 
         public TargetFactory(
             IObjectResolver objectResolver,
             RotationBehaviorFactory rotationBehaviorFactory,
             TargetView defaultPrefab)
         {
-            _objectResolver = objectResolver;
-            _rotationBehaviorFactory = rotationBehaviorFactory;
-            _defaultPrefab = defaultPrefab;
+            _ObjectResolver = objectResolver;
+            _RotationBehaviorFactory = rotationBehaviorFactory;
+            _DefaultPrefab = defaultPrefab;
         }
 
         /// <summary>
@@ -35,13 +35,13 @@ namespace KnifeToss.Game.Target.Factories
         {
             TargetView prefab = config.PrefabOverride != null 
                 ? config.PrefabOverride.GetComponent<TargetView>() 
-                : _defaultPrefab;
+                : _DefaultPrefab;
 
             if (prefab == null)
             {
-                if (_defaultPrefab == null)
+                if (_DefaultPrefab == null)
                     throw new InvalidOperationException("No target prefab available for creation.");
-                prefab = _defaultPrefab;
+                prefab = _DefaultPrefab;
             }
 
             Vector3 position = CalculateOrbitPosition(config.OrbitRadius, config.StartingAngle);
@@ -50,12 +50,12 @@ namespace KnifeToss.Game.Target.Factories
             
             instance.transform.localScale = Vector3.one * config.BaseScale;
 
-            var rotationBehavior = _rotationBehaviorFactory.Create(config);
+            var rotationBehavior = _RotationBehaviorFactory.Create(config);
             instance.SetRotationBehavior(rotationBehavior);
 
             instance.Initialize(config);
             
-            _objectResolver.Inject(instance);
+            _ObjectResolver.Inject(instance);
 
             return instance;
         }

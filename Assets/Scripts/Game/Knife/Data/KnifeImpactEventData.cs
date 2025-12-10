@@ -7,13 +7,13 @@ namespace KnifeToss.Game.Knife.Data
     /// </summary>
     public struct KnifeImpactEventData
     {
-        public KnifeImpactType ImpactType;
-        public Vector2 ImpactPoint;
+        public KnifeImpactType impactType;
+        public Vector2 impactPoint;
 
         public KnifeImpactEventData(KnifeImpactType impactType, Vector2 impactPoint)
         {
-            ImpactType = impactType;
-            ImpactPoint = impactPoint;
+            this.impactType = impactType;
+            this.impactPoint = impactPoint;
         }
     }
 }

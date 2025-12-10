@@ -8,7 +8,7 @@ namespace KnifeToss.Game.Target.Logic
     /// </summary>
     public class ConstantRotationBehavior : IRotationBehavior
     {
-        private readonly float _speed;
+        private readonly float _Speed;
 
         /// <summary>
         /// Initializes a new instance of ConstantRotationBehavior with the specified rotation speed.
@@ -16,7 +16,7 @@ namespace KnifeToss.Game.Target.Logic
         /// <param name="speed">The rotation speed in degrees per second.</param>
         public ConstantRotationBehavior(float speed)
         {
-            _speed = speed;
+            _Speed = speed;
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace KnifeToss.Game.Target.Logic
         /// <returns>The rotation delta in degrees.</returns>
         public float GetRotationDelta(float deltaTime)
         {
-            return _speed * deltaTime;
+            return _Speed * deltaTime;
         }
     }
 }

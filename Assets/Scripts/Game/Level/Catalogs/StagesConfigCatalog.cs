@@ -8,7 +8,7 @@ namespace KnifeToss.Game.Level.Catalogs
     /// </summary>
     public class StagesConfigCatalog : ILevelCatalog
     {
-        private readonly StagesConfigAsset _configAsset;
+        private readonly StagesConfigAsset _ConfigAsset;
 
         /// <summary>
         /// Initializes a new instance of the StagesConfigCatalog class.
@@ -16,13 +16,13 @@ namespace KnifeToss.Game.Level.Catalogs
         /// <param name="configAsset">The StagesConfigAsset containing the game stages data.</param>
         public StagesConfigCatalog(StagesConfigAsset configAsset)
         {
-            _configAsset = configAsset;
+            _ConfigAsset = configAsset;
         }
 
         /// <summary>
         /// Gets the total number of stages available in the configuration.
         /// </summary>
-        public int StageCount => _configAsset.Stages.Count;
+        public int StageCount => _ConfigAsset.Stages.Count;
 
         /// <summary>
         /// Gets the number of levels for a specific stage.
@@ -31,9 +31,9 @@ namespace KnifeToss.Game.Level.Catalogs
         /// <returns>The number of levels in the specified stage, or 0 if the stage index is invalid.</returns>
         public int GetLevelCount(int stageIndex)
         {
-            if (stageIndex < 0 || stageIndex >= _configAsset.Stages.Count)
+            if (stageIndex < 0 || stageIndex >= _ConfigAsset.Stages.Count)
                 return 0;
-            return _configAsset.Stages[stageIndex].Levels.Count;
+            return _ConfigAsset.Stages[stageIndex].Levels.Count;
         }
 
         /// <summary>
@@ -44,10 +44,10 @@ namespace KnifeToss.Game.Level.Catalogs
         /// <returns>The level configuration, or null if not found.</returns>
         public LevelConfig GetLevelConfig(int stageIndex, int levelIndex)
         {
-            if (stageIndex < 0 || stageIndex >= _configAsset.Stages.Count)
+            if (stageIndex < 0 || stageIndex >= _ConfigAsset.Stages.Count)
                 return null;
             
-            var levels = _configAsset.Stages[stageIndex].Levels;
+            var levels = _ConfigAsset.Stages[stageIndex].Levels;
             if (levelIndex < 0 || levelIndex >= levels.Count)
                 return null;
 

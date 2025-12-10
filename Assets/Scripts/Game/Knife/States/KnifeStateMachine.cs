@@ -7,24 +7,24 @@ namespace KnifeToss.Game.Knife.States
     /// </summary>
     public class KnifeStateMachine : StateMachine
     {
-        public readonly KnifeLoadedState Loaded;
-        public readonly KnifeInFlightState InFlight;
-        public readonly KnifeStuckState Stuck;
-        public readonly KnifeBouncedState Bounced;
-        public readonly KnifePooledState Pooled;
+        public readonly KnifeLoadedState loaded;
+        public readonly KnifeInFlightState inFlight;
+        public readonly KnifeStuckState stuck;
+        public readonly KnifeBouncedState bounced;
+        public readonly KnifePooledState pooled;
 
         public KnifeStateMachine(KnifeLoadedState loaded, KnifeInFlightState inFlight, KnifeStuckState stuck, KnifeBouncedState bounced, KnifePooledState pooled)
         {
-            Loaded = loaded;
-            InFlight = inFlight;
-            Stuck = stuck;
-            Bounced = bounced;
-            Pooled = pooled;
+            this.loaded = loaded;
+            this.inFlight = inFlight;
+            this.stuck = stuck;
+            this.bounced = bounced;
+            this.pooled = pooled;
 
-            SetState(Loaded);
+            SetState(this.loaded);
         }
 
-        public bool IsInFlight => ReferenceEquals(CurrentState, InFlight);
+        public bool IsInFlight => ReferenceEquals(CurrentState, inFlight);
     }
 }
 

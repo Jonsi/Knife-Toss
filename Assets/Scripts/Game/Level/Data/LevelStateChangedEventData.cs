@@ -5,13 +5,13 @@ namespace KnifeToss.Game.Level.Data
     /// </summary>
     public struct LevelStateChangedEventData
     {
-        public string PreviousState;
-        public string CurrentState;
+        public string previousState;
+        public string currentState;
 
         public LevelStateChangedEventData(string previous, string current)
         {
-            PreviousState = previous;
-            CurrentState = current;
+            previousState = previous;
+            currentState = current;
         }
     }
 }

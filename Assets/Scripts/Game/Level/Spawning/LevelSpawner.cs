@@ -12,13 +12,13 @@ namespace KnifeToss.Game.Level.Spawning
     /// </summary>
     public class LevelSpawner : ILevelSpawner
     {
-        private readonly TargetFactory _targetFactory;
-        private readonly Transform _levelRoot;
+        private readonly TargetFactory _TargetFactory;
+        private readonly Transform _LevelRoot;
 
         public LevelSpawner(TargetFactory targetFactory, Transform levelRoot)
         {
-            _targetFactory = targetFactory;
-            _levelRoot = levelRoot;
+            _TargetFactory = targetFactory;
+            _LevelRoot = levelRoot;
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace KnifeToss.Game.Level.Spawning
         /// </summary>
         public void ClearLevel()
         {
-            foreach (Transform child in _levelRoot)
+            foreach (Transform child in _LevelRoot)
             {
                 UnityEngine.Object.Destroy(child.gameObject);
             }
@@ -44,7 +44,7 @@ namespace KnifeToss.Game.Level.Spawning
             var spawnedTargets = new List<ITargetView>();
             foreach (var targetConfig in config.Targets)
             {
-                var target = _targetFactory.Create(targetConfig, _levelRoot);
+                var target = _TargetFactory.Create(targetConfig, _LevelRoot);
                 spawnedTargets.Add(target);
             }
 

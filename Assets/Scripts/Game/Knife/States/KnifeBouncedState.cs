@@ -8,31 +8,31 @@ namespace KnifeToss.Game.Knife.States
     /// </summary>
     public class KnifeBouncedState : KnifeStateBase
     {
-        private const float Gravity = -20f;
-        private float _angularVelocity;
-        private Vector2 _initialVelocity = new Vector2(0f, 6f);
+        private const float GRAVITY = -20f;
+        private float _AngularVelocity;
+        private Vector2 _InitialVelocity = new Vector2(0f, 6f);
 
         public KnifeBouncedState(IKnifeViewContext knifeView) : base(knifeView) { }
 
         public void ConfigureBounce(Vector2 initialVelocity, float angularVelocity)
         {
-            _initialVelocity = initialVelocity;
-            _angularVelocity = angularVelocity;
+            _InitialVelocity = initialVelocity;
+            _AngularVelocity = angularVelocity;
         }
 
         public override void Enter()
         {
             base.Enter();
-            KnifeView.Transform.SetParent(null);
-            KnifeView.SetColliderEnabled(false);
-            Velocity = _initialVelocity;
+            knifeView.Transform.SetParent(null);
+            knifeView.SetColliderEnabled(false);
+            velocity = _InitialVelocity;
         }
 
         public override void Update(float deltaTime)
         {
-            Velocity += new Vector2(0f, Gravity * deltaTime);
-            KnifeView.Transform.position += (Vector3)(Velocity * deltaTime);
-            KnifeView.Transform.Rotate(0f, 0f, _angularVelocity * deltaTime);
+            velocity += new Vector2(0f, GRAVITY * deltaTime);
+            knifeView.Transform.position += (Vector3)(velocity * deltaTime);
+            knifeView.Transform.Rotate(0f, 0f, _AngularVelocity * deltaTime);
         }
     }
 }

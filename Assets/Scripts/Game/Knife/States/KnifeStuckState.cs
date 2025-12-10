@@ -12,9 +12,9 @@ namespace KnifeToss.Game.Knife.States
 
         public override void Enter()
         {
-            Speed = 0f;
-            Velocity = Vector2.zero;
-            KnifeView.SetColliderEnabled(true);
+            speed = 0f;
+            velocity = Vector2.zero;
+            knifeView.SetColliderEnabled(true);
         }
 
         public override void Update(float deltaTime)

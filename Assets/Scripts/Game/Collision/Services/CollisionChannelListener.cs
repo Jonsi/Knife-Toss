@@ -12,14 +12,14 @@ namespace KnifeToss.Game.Collision.Services
     public class CollisionChannelListener : IStartable, IDisposable
     {
         private readonly IEventChannel<CollisionData> _CollisionChannel;
-        private readonly ICollisionRouter _Router;
+        private readonly ICollisionHandlerRouter _HandlerRouter;
 
         public CollisionChannelListener(
             IEventChannel<CollisionData> collisionChannel,
-            ICollisionRouter router)
+            ICollisionHandlerRouter handlerRouter)
         {
             _CollisionChannel = collisionChannel;
-            _Router = router;
+            _HandlerRouter = handlerRouter;
         }
 
         public void Start()
@@ -34,7 +34,7 @@ namespace KnifeToss.Game.Collision.Services
 
         private void OnCollision(CollisionData data)
         {
-            _Router.Route(data);
+            _HandlerRouter.Route(data);
         }
     }
 }

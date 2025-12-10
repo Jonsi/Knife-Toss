@@ -6,7 +6,7 @@ namespace KnifeToss.Game.Collision.Interfaces
     /// <summary>
     /// Interface for routing collision events to appropriate handlers.
     /// </summary>
-    public interface ICollisionRouter
+    public interface ICollisionHandlerRouter
     {
         /// <summary>
         /// Registers a collision handler for a specific pair of types.
