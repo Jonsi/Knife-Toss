@@ -1,4 +1,5 @@
 using System;
+using App.Services.Target;
 using KnifeToss.Core.Abstractions.Config;
 using KnifeToss.Core.Abstractions.Events;
 using KnifeToss.Core.Abstractions.Gameplay.Session;
@@ -6,6 +7,7 @@ using KnifeToss.Core.Data.Knife;
 using KnifeToss.Core.Data.Level;
 using KnifeToss.Core.Domain.Level;
 using UnityEngine;
+
 namespace App.Services.Session
 {
     /// <summary>
@@ -17,6 +19,7 @@ namespace App.Services.Session
         private readonly IEventChannel<LevelStateChangedEventData> _stateChangedChannel;
         private readonly IEventChannel<KnifeImpactEventData> _impactChannel;
         private readonly LevelSessionLogger _sessionLogger;
+        private readonly TargetTrackingService _targetTrackingService;
 
         private LevelSession _session;
 
@@ -29,12 +32,28 @@ namespace App.Services.Session
             IConfigurationProvider<LevelRules> rulesProvider,
             IEventChannel<LevelStateChangedEventData> stateChangedChannel,
             IEventChannel<KnifeImpactEventData> impactChannel,
-            LevelSessionLogger sessionLogger)
+            LevelSessionLogger sessionLogger,
+            TargetTrackingService targetTrackingService)
         {
             _rulesProvider = rulesProvider ?? throw new ArgumentNullException(nameof(rulesProvider));
             _stateChangedChannel = stateChangedChannel ?? throw new ArgumentNullException(nameof(stateChangedChannel));
             _impactChannel = impactChannel ?? throw new ArgumentNullException(nameof(impactChannel));
             _sessionLogger = sessionLogger ?? throw new ArgumentNullException(nameof(sessionLogger));
+            _targetTrackingService = targetTrackingService ?? throw new ArgumentNullException(nameof(targetTrackingService));
+
+            _targetTrackingService.OnAllTargetsDestroyed += HandleAllTargetsDestroyed;
+        }
+
+        private void HandleAllTargetsDestroyed()
+        {
+            if (_session == null || !_session.IsPlaying)
+                return;
+
+            string previous = _session.CurrentStateName;
+            _session.ForceComplete();
+            string current = _session.CurrentStateName;
+
+            RaiseStateChanged(previous, current);
         }
 
         public void StartSession()
@@ -100,4 +119,3 @@ namespace App.Services.Session
         }
     }
 }
-

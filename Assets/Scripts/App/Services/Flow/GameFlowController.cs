@@ -1,4 +1,4 @@
-using KnifeToss.Core.Abstractions.Gameplay.Session;
+using App.Services.Leveling;
 using VContainer.Unity;
 
 namespace App.Services.Flow
@@ -9,18 +9,17 @@ namespace App.Services.Flow
     /// </summary>
     public class GameFlowController : IStartable
     {
-        private readonly ILevelSessionService _levelSessionService;
+        private readonly LevelSetupService _levelSetupService;
 
-        public GameFlowController(ILevelSessionService levelSessionService)
+        public GameFlowController(LevelSetupService levelSetupService)
         {
-            _levelSessionService = levelSessionService;
+            _levelSetupService = levelSetupService;
         }
 
         public void Start()
         {
-            // Kick off the initial session. Future: orchestrate stage/level selection.
-            _levelSessionService.StartSession();
+            // Load the first level of the first stage.
+            _levelSetupService.LoadLevel(0, 0);
         }
     }
 }
-

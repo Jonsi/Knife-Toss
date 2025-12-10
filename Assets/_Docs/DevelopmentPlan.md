@@ -1,6 +1,6 @@
 # KNIFE TOSS — Development Plan
 
-**Version 2.1**  
+**Version 2.2**  
 **Last Updated: December 2024**  
 **Based on:** GameDesignDocument.md
 
@@ -13,7 +13,7 @@
 3. [Phase 1: Knife Flight](#3-phase-1-knife-flight) ✅ COMPLETE
 4. [Phase 2: Target & Sticking](#4-phase-2-target--sticking) ✅ COMPLETE
 5. [Phase 3: Game States](#5-phase-3-game-states) ✅ COMPLETE
-6. [Phase 4: Level Configuration](#6-phase-4-level-configuration)
+6. [Phase 4: Level Configuration](#6-phase-4-level-configuration) ✅ COMPLETE
 7. [Phase 5: Flow & Progression](#7-phase-5-flow--progression)
 8. [Phase 6: Collectibles](#8-phase-6-collectibles)
 9. [Phase 7: Feedback Systems](#9-phase-7-feedback-systems)
@@ -62,8 +62,8 @@ This plan follows the **Layered Architecture** already established in the codeba
 | Observer Pattern (Event Channels) | ✅ Implemented |
 | Command Pattern | Pending (Phase 5) |
 | Object Pool Pattern | Pending (Phase 10) |
-| Factory Pattern | Pending (Phase 4) |
-| Composite Pattern | Pending (Phase 4) |
+| Factory Pattern | ✅ Implemented (Phase 4) |
+| Composite Pattern | ✅ Implemented (Phase 4) |
 
 ### 1.4 Current Implementation Status
 
@@ -76,6 +76,7 @@ This plan follows the **Layered Architecture** already established in the codeba
 - Level session tracking (LevelSession, LevelSessionService)
 - Event channels (ScriptableObject-based decoupled events)
 - Game state machine (Loading, Playing, Completed, Failed)
+- Level configuration system (StagesConfig, LevelSetupService, Dynamic Spawning)
 
 ---
 
@@ -252,17 +253,11 @@ Collision detected → CollisionEventChannel.Raise()
 
 ---
 
-## 6. Phase 4: Level Configuration
+## 6. Phase 4: Level Configuration ✅ COMPLETE
 
 ### Goal
 
-Data-driven level definitions via ScriptableObjects. Levels define target layouts, rotation behaviors, knife counts, and pre-stuck knives.
-
-### Why This Order
-
-Foundation phases are complete. Level configuration enables content creation without code changes and establishes the data structures for progression.
-
----
+Data-driven level definitions via ScriptableObjects. Levels define target layouts, rotation behaviors, knife counts, and multiple targets.
 
 ### Deliverables by Layer
 
@@ -270,93 +265,69 @@ Foundation phases are complete. Level configuration enables content creation wit
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `LevelData` | `Core/Data/Level/` | Single level definition (target group, knife count override) |
-| `StageData` | `Core/Data/Level/` | Collection of levels plus visual theme reference |
-| `TargetDefinition` | `Core/Data/Target/` | Per-target config (position, scale, rotation type/speed, knivesToBreak, pre-stuck knives, hitables) |
-| `TargetGroupConfig` | `Core/Data/Target/` | Composite list of TargetDefinition |
-| `RotationConfig` | `Core/Data/Target/` | Rotation behavior parameters (type, speed, amplitude, frequency, etc.) |
-| `PreStuckKnifeConfig` | `Core/Data/Knife/` | Count, spacing, offset for pre-placed knives |
+| `LevelConfig` | `Core/Data/Level/` | Single level definition (target group, knife count) |
+| `StageConfig` | `Core/Data/Level/` | Collection of levels plus visual theme reference |
+| `TargetConfig` | `Core/Data/Target/` | Per-target config (position, scale, speed, knivesToBreak) |
+| `StageLayoutSettings` | `Core/Data/Level/` | Visual settings (background, target sprite) |
 | `ILevelCatalog` | `Core/Abstractions/Gameplay/` | Interface for stage/level retrieval |
+| `ILevelSpawner` | `Core/Abstractions/Gameplay/` | Interface for spawning level objects |
 
 **Data Structure:**
 ```
-StageData
-├── stageName: string
-├── layoutSettings: StageLayoutSettings (background, target sprite)
-└── levels: List<LevelData>
-
-LevelData
-├── knives: int (0 = auto-calculate from targets)
-└── targetGroup: TargetGroupConfig
-
-TargetGroupConfig
-└── targets: List<TargetDefinition>
-
-TargetDefinition
-├── prefab: GameObject (optional override)
-├── orbitRadius: float
-├── startingAngle: float
-├── orbitDegreesPerSecond: float
-├── baseScale: float
-├── knivesToBreak: int
-├── rotation: RotationConfig
-├── preStuckKnives: PreStuckKnifeConfig
-└── hitableObjects: List<HitableDefinition>
+StagesConfigAsset
+└── List<StageConfig>
+    ├── stageName: string
+    ├── layoutSettings: StageLayoutSettings
+    └── List<LevelConfig>
+        ├── knifeCount: int (0 = auto-calculate)
+        └── List<TargetConfig>
+            ├── prefabOverride: GameObject
+            ├── orbitRadius: float
+            ├── startingAngle: float
+            ├── orbitSpeed: float
+            ├── baseScale: float
+            ├── knivesToBreak: int
+            ├── rotationSpeed: float
+            └── rotationDirection: int
 ```
 
 #### 6.2 Infrastructure Layer 🟩
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `StagesConfigAsset` | `Infrastructure/Leveling/` | ScriptableObject holding all StageData |
+| `StagesConfigAsset` | `Infrastructure/Leveling/` | ScriptableObject holding list of StageConfig |
 | `StagesConfigCatalog` | `Infrastructure/Leveling/` | Implements ILevelCatalog, reads StagesConfigAsset |
-| `TargetFactory` | `Infrastructure/Leveling/` | Creates targets from TargetDefinition, assigns rotation behavior |
-| `LevelSpawner` | `Infrastructure/Leveling/` | Clears level, spawns targets under level root |
-| `RotationBehaviorFactory` | `Infrastructure/Leveling/` | Creates IRotationBehavior from RotationConfig |
-| `TargetGeometry` | `Infrastructure/Leveling/` | Utility for surface point calculations |
+| `RotationBehaviorFactory` | `Infrastructure/Leveling/` | Creates IRotationBehavior from TargetConfig |
 
 #### 6.3 Application Layer 🟨
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `RuntimeLevelRulesProvider` | `App/Services/Session/` | Mutable IConfigurationProvider<LevelRules> set per level |
-| `LevelSetupService` | `App/Services/` | Orchestrates level load: catalog → spawner → session start |
-| `TargetTrackingService` | `App/Services/` | Tracks multiple targets, reports all destroyed → level complete |
+| `RuntimeLevelRulesProvider` | `App/Services/Session/` | Mutable IConfigurationProvider<LevelRules> |
+| `LevelSetupService` | `App/Services/Leveling/` | Orchestrates level loading: catalog → spawner → session start |
+| `TargetTrackingService` | `App/Services/Target/` | Tracks targets, reports all destroyed → completion |
 
 **Level Load Sequence:**
-1. Resolve LevelData from catalog (stage index, level index)
-2. Derive LevelRules from target group (knife count, total knivesToBreak)
+1. Resolve LevelConfig from catalog (stage index, level index)
+2. Derive LevelRules from target group
 3. Set RuntimeLevelRulesProvider
-4. Clear existing level via LevelSpawner
-5. Spawn targets via TargetFactory
-6. Spawn pre-stuck knives
-7. Start LevelSession
+4. Clear/Spawn via ILevelSpawner
+5. Register spawned targets with TargetTrackingService
+6. Start LevelSession
 
 #### 6.4 Presentation Layer 🟧
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| Update `TargetView` | | Support per-target knivesToBreak threshold, destruction callback |
-| `TargetHitTracker` | `Presentation/Gameplay/Target/` | Tracks hits per target, raises destroyed event |
+| `LevelSpawner` | `Presentation/Gameplay/Leveling/` | Implements ILevelSpawner, spawns TargetViews |
+| `TargetFactory` | `Presentation/Gameplay/Leveling/` | Creates/Configures TargetView instances |
+| Update `TargetView` | `Presentation/Gameplay/Target/` | Added Hit Tracking, KnivesToBreak, Destruction logic |
 
 #### 6.5 Configurations
 
 | Asset | Location | Purpose |
 |-------|----------|---------|
 | `StagesConfig.asset` | `Configurations/Gameplay/` | Main content definition |
-| `StageLayoutSettings_*.asset` | `Configurations/StagesLayout/` | Per-stage visuals |
-
----
-
-### Test Criteria
-
-- [ ] StagesConfig.asset defines multiple stages with multiple levels
-- [ ] Loading level 0,0 spawns correct target layout
-- [ ] Switching levels changes rotation speed and target count
-- [ ] Knife count derives from target group if not explicitly set
-- [ ] Multiple targets spawn and track independently
-- [ ] Destroying all targets completes level
-- [ ] Pre-stuck knives appear at level start
 
 ---
 
@@ -416,18 +387,6 @@ On LevelFailed:
 
 ---
 
-### Test Criteria
-
-- [ ] Complete level 1 → Auto-loads level 2
-- [ ] Complete all levels in stage → Loads next stage level 1
-- [ ] Fail level → Popup appears
-- [ ] Click Retry → Same level reloads
-- [ ] Click Restart Stage → Stage level 1 loads
-- [ ] Game pauses on fail (Time.timeScale = 0)
-- [ ] Game resumes on retry/restart
-
----
-
 ## 8. Phase 6: Collectibles
 
 ### Goal
@@ -451,7 +410,7 @@ Collectibles add depth without changing core mechanics. Uses established pattern
 | `HitableHitEventData` | `Core/Data/Hitable/` | Impact position payload |
 | `IFruitTracker` | `Core/Abstractions/` | Interface for fruit counting |
 
-**Add to TargetDefinition:**
+**Add to TargetConfig:**
 ```
 hitableObjects: List<HitableDefinition>
 hitableObjectSpacingOffset: float
@@ -484,18 +443,6 @@ hitableObjectSpacingOffset: float
 4. Spawn particle effect
 5. Raise HitableHitEvent
 6. Destroy GameObject
-
----
-
-### Test Criteria
-
-- [ ] Tomatoes spawn at configured angles on target
-- [ ] Tomatoes rotate with target (parented)
-- [ ] Knife hits tomato → Tomato destroyed
-- [ ] HitableHitEvent raised
-- [ ] FruitService count increments
-- [ ] Knife continues to target after hitting tomato
-- [ ] Tomato hit does NOT count toward target threshold
 
 ---
 
@@ -563,18 +510,6 @@ Feedback transforms mechanics into experience. Uses event listeners from earlier
 
 ---
 
-### Test Criteria
-
-- [ ] Throw knife → Hear throw sound
-- [ ] Knife sticks → Hear wood thunk + see splinters
-- [ ] Target shakes and flashes on hit
-- [ ] Knife hits knife → Hear metal clang
-- [ ] Hit tomato → Hear splat + see juice particles
-- [ ] Background music plays and loops
-- [ ] All parameters configurable via ScriptableObjects
-
----
-
 ## 10. Phase 8: User Interface
 
 ### Goal
@@ -628,21 +563,6 @@ IsMuted: bool
 **UI Raycast Blocking:**
 - Before throw, check if pointer over UI
 - If UI element under pointer, suppress throw
-
----
-
-### Test Criteria
-
-- [ ] HUD shows "STAGE X" correctly
-- [ ] Progress bar shows correct number of dots
-- [ ] Current level dot is highlighted
-- [ ] Knife magazine shows correct count
-- [ ] Each throw reduces visible knife icons
-- [ ] Fruit counter shows total, updates on collect
-- [ ] Mute button toggles audio on/off
-- [ ] Fail popup has working Retry button
-- [ ] Fail popup has working Restart Stage button
-- [ ] Tapping UI buttons doesn't throw knife
 
 ---
 
@@ -705,17 +625,6 @@ PlayerData
 
 ---
 
-### Test Criteria
-
-- [ ] Complete a level → Progress saved
-- [ ] Close and reopen game → Resumes at correct level
-- [ ] Toggle mute → Setting persists after restart
-- [ ] Collect fruits → Total persists after restart
-- [ ] Delete save file → Game starts fresh
-- [ ] Corrupt save file → Game handles gracefully
-
----
-
 ## 12. Phase 10: Polish & Performance
 
 ### Goal
@@ -766,37 +675,13 @@ IRotationBehavior
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| Update `ThrowService` | | Use pool instead of Instantiate |
-| Update `VFXFeedbackService` | | Use particle pool |
+| `ThrowService` | | Use pool instead of Instantiate |
+| `VFXFeedbackService` | | Use particle pool |
 
 **Pre-Stuck Knives:**
 - Spawn knives already stuck at level start
-- Configure via PreStuckKnifeConfig on TargetDefinition
+- Configure via PreStuckKnifeConfig on TargetConfig
 - These are obstacles, not throwable
-
----
-
-### Test Criteria
-
-#### Pooling
-- [ ] Rapid throwing shows no frame drops
-- [ ] Profiler shows minimal GC during gameplay
-- [ ] Knives correctly reset when returned to pool
-
-#### Rotation Behaviors
-- [ ] Level with Pulsating → Speed visibly oscillates
-- [ ] Level with Flipping → Direction randomly reverses
-- [ ] Level with Curve → Speed follows pattern
-
-#### Pre-Stuck Knives
-- [ ] Level with pre-stuck knives → They appear at start
-- [ ] They rotate with target
-- [ ] Hitting them causes fail
-
-#### Multi-Target
-- [ ] Level with 2 targets → Both appear
-- [ ] Destroy one → Other remains
-- [ ] Destroy all → Level complete
 
 ---
 
@@ -838,7 +723,7 @@ A phase is **COMPLETE** when:
 | ScriptableObject event channel | 🟩 Infrastructure/Events/ |
 | ScriptableObject config asset | 🟩 Infrastructure/Leveling/ |
 | Unity system wrapper | 🟩 Infrastructure/ |
-| Spawner/Factory | 🟩 Infrastructure/Leveling/ |
+| Spawner/Factory (View creation) | 🟧 Presentation/Gameplay/Leveling/ |
 | File I/O | 🟩 Infrastructure/Persistence/ |
 | Service orchestrating features | 🟨 App/Services/ |
 | VContainer installer | Bootstrapper/ |

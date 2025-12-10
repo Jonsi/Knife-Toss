@@ -3,6 +3,7 @@ alwaysApply: true
 ---
 **CRITICAL: Always check project scripts and architecture comprehencively before thinking of implementation.**
 
+- Add summary blocks to *public* classes interfaces and methods
 - Never create meta files yourself or assets unless expicitly asked to
 - Make sure you understand game logic and related code carefully
 - Remove bad practices, potential bugs, and unnecessary complexity.

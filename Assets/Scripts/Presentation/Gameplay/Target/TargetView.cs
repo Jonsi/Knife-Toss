@@ -1,11 +1,10 @@
 using System;
+using Infrastructure.Leveling;
 using KnifeToss.Core.Abstractions.Collision;
-using KnifeToss.Core.Abstractions.Config;
 using KnifeToss.Core.Abstractions.Gameplay.Target;
 using KnifeToss.Core.Data.Target;
 using KnifeToss.Presentation.Gameplay.Knife;
 using UnityEngine;
-using VContainer;
 
 namespace KnifeToss.Presentation.Gameplay.Target
 {
@@ -21,8 +20,15 @@ namespace KnifeToss.Presentation.Gameplay.Target
         [SerializeField] private CircleCollider2D _Collider;
 
         private IRotationBehavior _RotationBehavior;
-        private IConfigurationProvider<TargetConfiguration> _ConfigurationProvider;
         private float _CurrentRotation;
+        
+        public int KnivesToBreak { get; private set; }
+        public int HitsReceived { get; private set; }
+        
+        /// <summary>
+        /// Event raised when the target is destroyed.
+        /// </summary>
+        public event Action<ITargetView> OnDestroyed;
 
         /// <summary>
         /// Gets the cached type for efficient collision routing.
@@ -45,7 +51,7 @@ namespace KnifeToss.Presentation.Gameplay.Target
                 {
                     return _Collider.radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y);
                 }
-                return _ConfigurationProvider?.GetConfiguration().Radius ?? 1f;
+                return 1f;
             }
         }
 
@@ -59,12 +65,18 @@ namespace KnifeToss.Presentation.Gameplay.Target
         /// </summary>
         public Transform Transform => transform;
 
-        [Inject]
-        private void Construct(
-            IConfigurationProvider<TargetConfiguration> configurationProvider,
-            IRotationBehavior rotationBehavior)
+        public void Initialize(TargetConfig config)
         {
-            _ConfigurationProvider = configurationProvider;
+            KnivesToBreak = config.KnivesToBreak;
+            _CurrentRotation = config.StartingAngle;
+            HitsReceived = 0;
+            
+            // Set initial rotation
+            transform.rotation = Quaternion.Euler(0f, 0f, _CurrentRotation);
+        }
+
+        public void SetRotationBehavior(IRotationBehavior rotationBehavior)
+        {
             _RotationBehavior = rotationBehavior;
         }
 
@@ -91,6 +103,23 @@ namespace KnifeToss.Presentation.Gameplay.Target
 
             AttachKnife(knife);
             ApplyStickTransform(knife, impactPoint);
+            
+            RegisterHit();
+        }
+
+        private void RegisterHit()
+        {
+            HitsReceived++;
+            if (HitsReceived >= KnivesToBreak)
+            {
+                DestroyTarget();
+            }
+        }
+
+        private void DestroyTarget()
+        {
+            OnDestroyed?.Invoke(this);
+            Destroy(gameObject);
         }
 
         private void AttachKnife(KnifeView knife) => knife.transform.SetParent(Transform);
