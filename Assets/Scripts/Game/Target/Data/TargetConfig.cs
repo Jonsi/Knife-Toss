@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace KnifeToss.Game.Target.Data
+namespace Game.Target.Data
 {
     /// <summary>
     /// Configuration data for a single target instance in a level.

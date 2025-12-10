@@ -1,4 +1,4 @@
-namespace KnifeToss.Game.Level.Data
+namespace Game.Level.Data
 {
     /// <summary>
     /// Payload for communicating a level state transition.

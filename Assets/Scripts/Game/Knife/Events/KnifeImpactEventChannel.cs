@@ -1,8 +1,8 @@
-using KnifeToss.Common.Events;
-using KnifeToss.Game.Knife.Data;
+using Common.Events;
+using Game.Knife.Data;
 using UnityEngine;
 
-namespace KnifeToss.Game.Knife.Events
+namespace Game.Knife.Events
 {
     /// <summary>
     /// Event channel for knife impact outcomes (stuck or bounced).

@@ -1,6 +1,6 @@
-using KnifeToss.Game.Collision.Data;
+using Game.Collision.Data;
 
-namespace KnifeToss.Game.Collision.Interfaces
+namespace Game.Collision.Interfaces
 {
     /// <summary>
     /// Interface for handling collisions between two IHitable objects.

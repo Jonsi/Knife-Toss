@@ -1,8 +1,7 @@
-using KnifeToss.Common.Attributes;
 using UnityEditor;
 using UnityEngine;
 
-namespace KnifeToss.Common.Attributes
+namespace Common.Attributes.Editor
 {
     /// <summary>
     /// Drawer that renders properties as read-only in the inspector.

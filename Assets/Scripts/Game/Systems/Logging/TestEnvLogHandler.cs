@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace KnifeToss.Game.Systems.Logging
+namespace Game.Systems.Logging
 {
     /// <summary>
     /// Delegates log handling while allowing test-environment customization.

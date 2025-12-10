@@ -1,6 +1,6 @@
 using System;
 
-namespace KnifeToss.Common.Events
+namespace Common.Events
 {
     /// <summary>
     /// Interface for event channels that enable decoupled communication between systems.

@@ -1,7 +1,7 @@
-using KnifeToss.Game.Knife.Interfaces;
+using Game.Knife.Interfaces;
 using UnityEngine;
 
-namespace KnifeToss.Game.Knife.States
+namespace Game.Knife.States
 {
     /// <summary>
     /// State when knife is in flight after being thrown.

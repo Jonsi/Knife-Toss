@@ -1,4 +1,4 @@
-namespace KnifeToss.Common.Config
+namespace Common.Config
 {
     /// <summary>
     /// Generic interface for providers of configuration data.

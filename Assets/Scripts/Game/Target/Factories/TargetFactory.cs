@@ -1,10 +1,10 @@
 using System;
-using KnifeToss.Game.Target.Data;
-using KnifeToss.Game.Target.Presentation;
+using Game.Target.Data;
+using Game.Target.Presentation;
 using UnityEngine;
 using VContainer;
 
-namespace KnifeToss.Game.Target.Factories
+namespace Game.Target.Factories
 {
     /// <summary>
     /// Factory responsible for instantiating and configuring target objects.

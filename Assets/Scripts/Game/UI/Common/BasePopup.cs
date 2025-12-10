@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KnifeToss.Game.UI.Common
+namespace Game.UI.Common
 {
     /// <summary>
     /// Base class for UI popups providing common show/hide functionality.

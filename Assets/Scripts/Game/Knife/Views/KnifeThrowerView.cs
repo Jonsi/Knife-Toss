@@ -1,10 +1,10 @@
-using KnifeToss.Common.Events;
-using KnifeToss.Game.Knife.Data;
-using KnifeToss.Game.Throwing.Interfaces;
+using Common.Events;
+using Game.Knife.Data;
+using Game.Throwing.Interfaces;
 using UnityEngine;
 using VContainer;
 
-namespace KnifeToss.Game.Knife.Presentation
+namespace Game.Knife.Views
 {
     /// <summary>
     /// MonoBehaviour responsible for spawning knife instances when throw input is received.

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KnifeToss.Game.Knife.Data
+namespace Game.Knife.Data
 {
     /// <summary>
     /// Payload describing a knife impact outcome.

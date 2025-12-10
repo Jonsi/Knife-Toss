@@ -1,4 +1,4 @@
-namespace KnifeToss.Game.Knife.Data
+namespace Game.Knife.Data
 {
     /// <summary>
     /// Types of knife impact outcomes.

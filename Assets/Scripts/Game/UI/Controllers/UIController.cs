@@ -1,10 +1,10 @@
-using KnifeToss.Game.Level.Data;
-using KnifeToss.Game.Level.Events;
-using KnifeToss.Game.Level.States;
-using KnifeToss.Game.UI.Popups;
+using Game.Level.Data;
+using Game.Level.Events;
+using Game.Level.States;
+using Game.UI.Popups;
 using UnityEngine;
 
-namespace KnifeToss.Game.UI.Controllers
+namespace Game.UI.Controllers
 {
     public class UIController : MonoBehaviour
     {

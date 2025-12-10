@@ -1,14 +1,14 @@
 using System;
-using KnifeToss.Common.Events;
-using KnifeToss.Game.Collision.Data;
-using KnifeToss.Game.Collision.Interfaces;
-using KnifeToss.Game.Knife.Interfaces;
-using KnifeToss.Game.Knife.States;
-using KnifeToss.Game.Target.Data;
+using Common.Events;
+using Game.Collision.Data;
+using Game.Collision.Interfaces;
+using Game.Knife.Interfaces;
+using Game.Knife.States;
+using Game.Target.Data;
 using UnityEngine;
 using VContainer;
 
-namespace KnifeToss.Game.Knife.Presentation
+namespace Game.Knife.Views
 {
     /// <summary>
     /// MonoBehaviour wrapper for the knife visual representation.

@@ -1,7 +1,6 @@
 using System;
-using KnifeToss.Common.State;
 
-namespace KnifeToss.Common.State
+namespace Common.Patterns.State
 {
     /// <summary>
     /// Simple state machine that manages enter/exit/update of states.

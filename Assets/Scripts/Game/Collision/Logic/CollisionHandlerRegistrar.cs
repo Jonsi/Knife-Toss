@@ -1,8 +1,8 @@
-using KnifeToss.Game.Collision.Interfaces;
-using KnifeToss.Game.Collision.Logic.Handlers;
+using Game.Collision.Interfaces;
+using Game.Collision.Logic.Handlers;
 using VContainer.Unity;
 
-namespace KnifeToss.Game.Collision.Logic
+namespace Game.Collision.Logic
 {
     /// <summary>
     /// Registers all collision handlers with the collision handlerRouter on startup.

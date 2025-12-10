@@ -1,7 +1,7 @@
-using KnifeToss.Game.Level.States;
+using Game.Level.States;
 using VContainer.Unity;
 
-namespace KnifeToss.Game.Systems.Flow
+namespace Game.Systems.Flow
 {
     /// <summary>
     /// Top-level flow controller responsible for initializing the game.

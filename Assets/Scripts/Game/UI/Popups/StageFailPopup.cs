@@ -1,10 +1,10 @@
-using KnifeToss.Game.Level.States;
-using KnifeToss.Game.UI.Common;
+using Game.Level.States;
+using Game.UI.Common;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace KnifeToss.Game.UI.Popups
+namespace Game.UI.Popups
 {
     public class StageFailPopup : BasePopup
     {

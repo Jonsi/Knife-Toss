@@ -1,7 +1,7 @@
-using KnifeToss.Common.State;
-using KnifeToss.Game.Level.Data;
+using Common.Patterns.State;
+using Game.Level.Data;
 
-namespace KnifeToss.Game.Level.States
+namespace Game.Level.States
 {
     /// <summary>
     /// Base class for level state implementations.

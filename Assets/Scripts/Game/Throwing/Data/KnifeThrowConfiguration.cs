@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace KnifeToss.Game.Throwing.Data
+namespace Game.Throwing.Data
 {
     /// <summary>
     /// Contains configuration data for knife throwing behavior.

@@ -1,8 +1,8 @@
-using KnifeToss.Common.Events;
-using KnifeToss.Game.Collision.Data;
+using Common.Events;
+using Game.Collision.Data;
 using UnityEngine;
 
-namespace KnifeToss.Game.Collision.Events
+namespace Game.Collision.Events
 {
     /// <summary>
     /// ScriptableObject event channel for collision events.

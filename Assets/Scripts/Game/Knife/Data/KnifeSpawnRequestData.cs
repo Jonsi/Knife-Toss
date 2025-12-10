@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KnifeToss.Game.Knife.Data
+namespace Game.Knife.Data
 {
     /// <summary>
     /// Data structure for knife spawn request events.

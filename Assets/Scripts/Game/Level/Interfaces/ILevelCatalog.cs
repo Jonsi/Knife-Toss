@@ -1,6 +1,6 @@
-using KnifeToss.Game.Level.Data;
+using Game.Level.Data;
 
-namespace KnifeToss.Game.Level.Interfaces
+namespace Game.Level.Interfaces
 {
     /// <summary>
     /// Interface for accessing stage and level structure information.

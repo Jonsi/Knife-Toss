@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace KnifeToss.Game.Level.Data
+namespace Game.Level.Data
 {
     /// <summary>
     /// Visual settings for a stage layout (backgrounds, sprites).

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using KnifeToss.Common.Events;
-using KnifeToss.Game.Knife.Data;
-using KnifeToss.Game.Target.Interfaces;
+using Common.Events;
+using Game.Knife.Data;
+using Game.Target.Interfaces;
 
-namespace KnifeToss.Game.Level.States
+namespace Game.Level.States
 {
     /// <summary>
     /// Level is actively being played.

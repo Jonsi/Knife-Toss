@@ -1,7 +1,7 @@
-using KnifeToss.Game.Collision.Interfaces;
+using Game.Collision.Interfaces;
 using UnityEngine;
 
-namespace KnifeToss.Game.Collision.Data
+namespace Game.Collision.Data
 {
     /// <summary>
     /// Immutable data structure containing collision information.

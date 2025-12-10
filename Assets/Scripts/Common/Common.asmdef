@@ -1,9 +1,6 @@
 {
-    "name": "KnifeToss.Common",
-    "rootNamespace": "KnifeToss",
-    "references": [
-        "VContainer"
-    ],
+    "name": "Common",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

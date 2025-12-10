@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KnifeToss.Common.Attributes
+namespace Common.Attributes
 {
     /// <summary>
     /// Marks a field as read-only in the Unity inspector.

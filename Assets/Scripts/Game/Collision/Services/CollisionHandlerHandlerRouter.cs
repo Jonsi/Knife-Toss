@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using KnifeToss.Common.Events;
-using KnifeToss.Game.Collision.Data;
-using KnifeToss.Game.Collision.Interfaces;
-using KnifeToss.Game.Collision.Logic;
+using Common.Events;
+using Game.Collision.Data;
+using Game.Collision.Interfaces;
+using Game.Collision.Logic;
 using VContainer.Unity;
 
-namespace KnifeToss.Game.Collision.Services
+namespace Game.Collision.Services
 {
     /// <summary>
     /// Routes collision events to appropriate handlers based on the types involved.

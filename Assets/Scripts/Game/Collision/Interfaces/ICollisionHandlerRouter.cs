@@ -1,7 +1,6 @@
-using KnifeToss.Game.Collision.Data;
-using KnifeToss.Game.Collision.Logic;
+using Game.Collision.Logic;
 
-namespace KnifeToss.Game.Collision.Interfaces
+namespace Game.Collision.Interfaces
 {
     /// <summary>
     /// Interface for routing collision events to appropriate handlers.

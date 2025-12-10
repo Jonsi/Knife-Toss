@@ -1,10 +1,10 @@
 using System;
 using System.Threading;
-using KnifeToss.Game.Throwing.Interfaces;
+using Game.Throwing.Interfaces;
 using KnifeToss.Systems.Input;
 using UnityEngine.InputSystem;
 
-namespace KnifeToss.Game.Systems.Input
+namespace Game.Systems.Input
 {
     /// <summary>
     /// Adapts Unity Input System input to the game's player throw input listener interface.

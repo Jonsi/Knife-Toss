@@ -1,6 +1,6 @@
 using System;
 
-namespace KnifeToss.Game.Collision.Interfaces
+namespace Game.Collision.Interfaces
 {
     /// <summary>
     /// Marker interface for objects that can participate in collision detection.

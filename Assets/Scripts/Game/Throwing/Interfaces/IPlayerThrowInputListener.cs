@@ -1,6 +1,6 @@
 using System;
 
-namespace KnifeToss.Game.Throwing.Interfaces
+namespace Game.Throwing.Interfaces
 {
     /// <summary>
     /// Interface for listening to player throw input actions and notifying subscribers when a throw is requested.

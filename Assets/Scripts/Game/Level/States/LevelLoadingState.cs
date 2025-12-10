@@ -1,7 +1,7 @@
 using System.Linq;
-using KnifeToss.Game.Level.Data;
+using Game.Level.Data;
 
-namespace KnifeToss.Game.Level.States
+namespace Game.Level.States
 {
     /// <summary>
     /// Level is initializing and not yet playable.

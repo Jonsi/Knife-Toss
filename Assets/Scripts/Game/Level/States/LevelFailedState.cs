@@ -1,4 +1,4 @@
-namespace KnifeToss.Game.Level.States
+namespace Game.Level.States
 {
     /// <summary>
     /// Level has failed.

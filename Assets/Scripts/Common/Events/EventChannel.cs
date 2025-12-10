@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using KnifeToss.Common.Events;
 using UnityEngine;
 
-namespace KnifeToss.Common.Events
+namespace Common.Events
 {
     /// <summary>
     /// Very simple event channel where subscribers are stored by owner (handler.Target).

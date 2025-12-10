@@ -1,6 +1,6 @@
 using System;
 
-namespace KnifeToss.Game.Target.Data
+namespace Game.Target.Data
 {
     /// <summary>
     /// Contains position and rotation configuration for a knife sticking to a target.

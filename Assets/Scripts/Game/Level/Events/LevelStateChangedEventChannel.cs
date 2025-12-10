@@ -1,8 +1,8 @@
-using KnifeToss.Common.Events;
-using KnifeToss.Game.Level.Data;
+using Common.Events;
+using Game.Level.Data;
 using UnityEngine;
 
-namespace KnifeToss.Game.Level.Events
+namespace Game.Level.Events
 {
     /// <summary>
     /// Event channel for level state transitions.

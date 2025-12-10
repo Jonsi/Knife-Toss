@@ -1,8 +1,8 @@
-using KnifeToss.Game.Target.Data;
-using KnifeToss.Game.Target.Interfaces;
-using KnifeToss.Game.Target.Logic;
+using Game.Target.Data;
+using Game.Target.Interfaces;
+using Game.Target.Logic;
 
-namespace KnifeToss.Game.Target.Factories
+namespace Game.Target.Factories
 {
     /// <summary>
     /// Factory for creating rotation behaviors based on target configuration.

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using KnifeToss.Common.Attributes;
-using KnifeToss.Game.Target.Data;
+using Common.Attributes;
+using Game.Target.Data;
 using UnityEngine;
 
-namespace KnifeToss.Game.Level.Data
+namespace Game.Level.Data
 {
     /// <summary>
     /// Configuration for a single game level.

@@ -1,6 +1,6 @@
-using KnifeToss.Common.State;
+using Common.Patterns.State;
 
-namespace KnifeToss.Game.Knife.States
+namespace Game.Knife.States
 {
     /// <summary>
     /// State machine for knife states; composes and owns all knife state instances.

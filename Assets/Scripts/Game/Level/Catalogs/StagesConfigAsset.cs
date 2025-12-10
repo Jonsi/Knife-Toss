@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using KnifeToss.Game.Level.Data;
+using Game.Level.Data;
 using UnityEngine;
 
-namespace KnifeToss.Game.Level.Catalogs
+namespace Game.Level.Catalogs
 {
     /// <summary>
     /// Master configuration asset holding all stages and levels.

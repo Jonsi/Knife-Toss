@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KnifeToss.Game.Systems.Settings
+namespace Game.Systems.Settings
 {
     /// <summary>
     /// Holds global game configuration flags.

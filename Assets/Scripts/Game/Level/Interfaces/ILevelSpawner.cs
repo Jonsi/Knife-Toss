@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using KnifeToss.Game.Level.Data;
-using KnifeToss.Game.Target.Interfaces;
+using Game.Level.Data;
+using Game.Target.Interfaces;
 
-namespace KnifeToss.Game.Level.Interfaces
+namespace Game.Level.Interfaces
 {
     /// <summary>
     /// Interface for spawning level content.

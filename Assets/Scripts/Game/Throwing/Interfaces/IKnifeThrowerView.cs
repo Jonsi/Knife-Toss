@@ -1,6 +1,6 @@
-using KnifeToss.Game.Knife.Data;
+using Game.Knife.Data;
 
-namespace KnifeToss.Game.Throwing.Interfaces
+namespace Game.Throwing.Interfaces
 {
     /// <summary>
     /// Interface for the view component responsible for spawning knife instances.

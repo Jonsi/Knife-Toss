@@ -1,10 +1,10 @@
-using KnifeToss.Common.Events;
-using KnifeToss.Game.Collision.Data;
-using KnifeToss.Game.Knife.Data;
-using KnifeToss.Game.Knife.Presentation;
-using KnifeToss.Game.Level.Data;
+using Common.Events;
+using Game.Collision.Data;
+using Game.Knife.Data;
+using Game.Knife.Views;
+using Game.Level.Data;
 
-namespace KnifeToss.Game.Collision.Logic.Handlers
+namespace Game.Collision.Logic.Handlers
 {
     /// <summary>
     /// Handles collisions between knives (in-flight knife hitting another knife results in bounce/fail).

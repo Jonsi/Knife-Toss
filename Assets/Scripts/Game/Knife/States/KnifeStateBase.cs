@@ -1,8 +1,8 @@
-using KnifeToss.Common.State;
-using KnifeToss.Game.Knife.Interfaces;
+using Common.Patterns.State;
+using Game.Knife.Interfaces;
 using UnityEngine;
 
-namespace KnifeToss.Game.Knife.States
+namespace Game.Knife.States
 {
     /// <summary>
     /// Base state for knife behavior that tracks velocity and updates position.

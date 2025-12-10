@@ -1,11 +1,11 @@
 using System;
-using KnifeToss.Game.Collision.Interfaces;
-using KnifeToss.Game.Knife.Presentation;
-using KnifeToss.Game.Target.Data;
-using KnifeToss.Game.Target.Interfaces;
+using Game.Collision.Interfaces;
+using Game.Knife.Views;
+using Game.Target.Data;
+using Game.Target.Interfaces;
 using UnityEngine;
 
-namespace KnifeToss.Game.Target.Presentation
+namespace Game.Target.Presentation
 {
     /// <summary>
     /// MonoBehaviour wrapper for the target visual representation.

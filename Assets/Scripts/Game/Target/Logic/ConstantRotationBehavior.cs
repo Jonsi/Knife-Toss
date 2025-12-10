@@ -1,6 +1,6 @@
-using KnifeToss.Game.Target.Interfaces;
+using Game.Target.Interfaces;
 
-namespace KnifeToss.Game.Target.Logic
+namespace Game.Target.Logic
 {
     /// <summary>
     /// Constant speed rotation behavior implementation.

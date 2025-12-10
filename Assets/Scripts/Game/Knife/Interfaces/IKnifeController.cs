@@ -1,4 +1,4 @@
-namespace KnifeToss.Game.Knife.Interfaces
+namespace Game.Knife.Interfaces
 {
     /// <summary>
     /// Interface for controlling knife behavior and state transitions.

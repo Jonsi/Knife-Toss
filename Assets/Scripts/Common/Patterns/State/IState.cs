@@ -1,4 +1,4 @@
-namespace KnifeToss.Common.State
+namespace Common.Patterns.State
 {
     /// <summary>
     /// Generic state contract for state machine-driven logic.

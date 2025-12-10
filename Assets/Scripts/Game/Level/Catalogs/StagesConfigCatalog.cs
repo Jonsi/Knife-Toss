@@ -1,7 +1,7 @@
-using KnifeToss.Game.Level.Data;
-using KnifeToss.Game.Level.Interfaces;
+using Game.Level.Data;
+using Game.Level.Interfaces;
 
-namespace KnifeToss.Game.Level.Catalogs
+namespace Game.Level.Catalogs
 {
     /// <summary>
     /// Implementation of ILevelCatalog using the scriptable object StagesConfigAsset.

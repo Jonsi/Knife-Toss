@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace KnifeToss.Game.Level.Data
+namespace Game.Level.Data
 {
     /// <summary>
     /// Configuration for a game stage, containing visual settings and a sequence of levels.

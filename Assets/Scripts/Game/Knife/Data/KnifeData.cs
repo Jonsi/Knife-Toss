@@ -1,6 +1,6 @@
 using System;
 
-namespace KnifeToss.Game.Knife.Data
+namespace Game.Knife.Data
 {
     /// <summary>
     /// Contains configuration data for a knife instance.

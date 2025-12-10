@@ -1,6 +1,6 @@
 using System;
 
-namespace KnifeToss.Game.Level.Data
+namespace Game.Level.Data
 {
     /// <summary>
     /// Immutable rules that govern a level session (knife allowance and win condition).

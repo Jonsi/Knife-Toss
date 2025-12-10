@@ -1,10 +1,10 @@
-using KnifeToss.Common.Events;
-using KnifeToss.Common.State;
-using KnifeToss.Game.Knife.Data;
-using KnifeToss.Game.Level.Data;
+using Common.Events;
+using Common.Patterns.State;
+using Game.Knife.Data;
+using Game.Level.Data;
 using VContainer.Unity;
 
-namespace KnifeToss.Game.Level.States
+namespace Game.Level.States
 {
     /// <summary>
     /// State machine that manages the entire game flow within a stage.

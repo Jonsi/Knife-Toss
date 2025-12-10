@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-using KnifeToss.Game.Level.Data;
-using KnifeToss.Game.Level.Interfaces;
-using KnifeToss.Game.Target.Factories;
-using KnifeToss.Game.Target.Interfaces;
+using Game.Level.Data;
+using Game.Level.Interfaces;
+using Game.Target.Factories;
+using Game.Target.Interfaces;
 using UnityEngine;
 
-namespace KnifeToss.Game.Level.Spawning
+namespace Game.Level.Spawning
 {
     /// <summary>
     /// Manages spawning and clearing of level objects.

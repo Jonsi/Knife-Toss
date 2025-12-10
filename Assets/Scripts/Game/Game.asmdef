@@ -1,8 +1,7 @@
 {
-    "name": "KnifeToss.Game",
-    "rootNamespace": "KnifeToss",
+    "name": "Game",
     "references": [
-        "KnifeToss.Common",
+        "Common",
         "VContainer",
         "Unity.InputSystem",
         "UniTask"

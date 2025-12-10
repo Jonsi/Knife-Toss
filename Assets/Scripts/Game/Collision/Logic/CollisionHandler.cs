@@ -1,7 +1,7 @@
-using KnifeToss.Game.Collision.Data;
-using KnifeToss.Game.Collision.Interfaces;
+using Game.Collision.Data;
+using Game.Collision.Interfaces;
 
-namespace KnifeToss.Game.Collision.Logic
+namespace Game.Collision.Logic
 {
     /// <summary>
     /// Generic base class for type-safe collision handling.

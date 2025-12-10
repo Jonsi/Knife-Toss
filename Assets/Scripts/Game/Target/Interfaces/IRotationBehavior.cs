@@ -1,4 +1,4 @@
-namespace KnifeToss.Game.Target.Interfaces
+namespace Game.Target.Interfaces
 {
     /// <summary>
     /// Strategy interface for target rotation behaviors.

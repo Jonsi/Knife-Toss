@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using KnifeToss.Game.Level.Interfaces;
-using KnifeToss.Game.Target.Interfaces;
+using Game.Level.Interfaces;
+using Game.Target.Interfaces;
 
-namespace KnifeToss.Game.Level.Data
+namespace Game.Level.Data
 {
     /// <summary>
     /// Pure data container for the current stage/level session state.

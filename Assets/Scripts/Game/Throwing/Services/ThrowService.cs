@@ -1,12 +1,12 @@
-using KnifeToss.Common.Config;
-using KnifeToss.Common.Events;
-using KnifeToss.Game.Knife.Data;
-using KnifeToss.Game.Level.Data;
-using KnifeToss.Game.Throwing.Data;
-using KnifeToss.Game.Throwing.Interfaces;
+using Common.Config;
+using Common.Events;
+using Game.Knife.Data;
+using Game.Level.Data;
+using Game.Throwing.Data;
+using Game.Throwing.Interfaces;
 using VContainer.Unity;
 
-namespace KnifeToss.Game.Throwing.Services
+namespace Game.Throwing.Services
 {
     /// <summary>
     /// Service that coordinates knife throwing actions based on player input.

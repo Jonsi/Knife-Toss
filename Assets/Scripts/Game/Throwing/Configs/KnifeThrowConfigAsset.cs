@@ -1,8 +1,8 @@
-using KnifeToss.Common.Config;
-using KnifeToss.Game.Throwing.Data;
+using Common.Config;
+using Game.Throwing.Data;
 using UnityEngine;
 
-namespace KnifeToss.Game.Throwing.Configs
+namespace Game.Throwing.Configs
 {
     /// <summary>
     /// ScriptableObject asset containing configuration data for knife throwing behavior.

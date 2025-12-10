@@ -1,6 +1,6 @@
 using System;
 
-namespace KnifeToss.Game.Target.Interfaces
+namespace Game.Target.Interfaces
 {
     /// <summary>
     /// Interface for target view presentation components.

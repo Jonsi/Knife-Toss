@@ -1,6 +1,6 @@
 using System;
 
-namespace KnifeToss.Game.Throwing.Interfaces
+namespace Game.Throwing.Interfaces
 {
     /// <summary>
     /// Interface for the service that coordinates knife throwing actions based on player input.
