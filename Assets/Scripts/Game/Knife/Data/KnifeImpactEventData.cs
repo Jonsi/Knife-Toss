@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace Game.Knife.Data
 {
     /// <summary>
@@ -7,13 +5,11 @@ namespace Game.Knife.Data
     /// </summary>
     public struct KnifeImpactEventData
     {
-        public KnifeImpactType ImpactType;
-        public Vector2 ImpactPoint;
+        public readonly KnifeImpactType ImpactType;
 
-        public KnifeImpactEventData(KnifeImpactType impactType, Vector2 impactPoint)
+        public KnifeImpactEventData(KnifeImpactType impactType)
         {
-            this.ImpactType = impactType;
-            this.ImpactPoint = impactPoint;
+            ImpactType = impactType;
         }
     }
 }

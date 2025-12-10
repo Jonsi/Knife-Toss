@@ -15,13 +15,13 @@ namespace Game.Knife.States
 
         public KnifeStateMachine(KnifeLoadedState loaded, KnifeInFlightState inFlight, KnifeStuckState stuck, KnifeBouncedState bounced, KnifePooledState pooled)
         {
-            this.Loaded = loaded;
-            this.InFlight = inFlight;
-            this.Stuck = stuck;
-            this.Bounced = bounced;
-            this.Pooled = pooled;
+            Loaded = loaded;
+            InFlight = inFlight;
+            Stuck = stuck;
+            Bounced = bounced;
+            Pooled = pooled;
 
-            SetState(this.Loaded);
+            SetState(Loaded);
         }
 
         public bool IsInFlight => ReferenceEquals(CurrentState, InFlight);

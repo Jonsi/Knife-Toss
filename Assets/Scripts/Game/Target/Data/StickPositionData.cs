@@ -20,8 +20,8 @@ namespace Game.Target.Data
 
         public StickPositionData(float offset, float rotationOffset)
         {
-            this.Offset = offset;
-            this.RotationOffset = rotationOffset;
+            Offset = offset;
+            RotationOffset = rotationOffset;
         }
     }
 }

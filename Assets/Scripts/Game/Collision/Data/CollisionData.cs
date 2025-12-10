@@ -25,9 +25,9 @@ namespace Game.Collision.Data
 
         public CollisionData(IHitable source, IHitable target, Vector2 impactPoint)
         {
-            this.Source = source;
-            this.Target = target;
-            this.ImpactPoint = impactPoint;
+            Source = source;
+            Target = target;
+            ImpactPoint = impactPoint;
         }
     }
 }

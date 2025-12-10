@@ -33,7 +33,7 @@ namespace Game.Collision.Logic.Handlers
             knife.StopMovement();
             target.Stick(knife, data.ImpactPoint);
             
-            _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Stuck, data.ImpactPoint));
+            _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Stuck));
         }
     }
 }

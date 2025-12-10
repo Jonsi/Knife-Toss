@@ -14,7 +14,7 @@ namespace Game.Level.States
 
         protected LevelStateBase(StageStateMachine machine)
         {
-            this.Machine = machine;
+            Machine = machine;
         }
 
         public virtual void Enter() { }

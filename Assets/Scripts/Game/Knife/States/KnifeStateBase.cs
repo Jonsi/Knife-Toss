@@ -15,7 +15,7 @@ namespace Game.Knife.States
 
         protected KnifeStateBase(IKnifeViewContext knifeView)
         {
-            this.KnifeView = knifeView;
+            KnifeView = knifeView;
         }
 
         public virtual void Enter() { }
@@ -32,7 +32,7 @@ namespace Game.Knife.States
 
         protected void SetMovement(Vector2 direction, float speed)
         {
-            this.Speed = speed;
+            Speed = speed;
             Velocity = direction.normalized * speed;
         }
     }

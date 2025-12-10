@@ -25,7 +25,7 @@ namespace Game.Collision.Logic.Handlers
             if (!_StageData.IsThrowingActive)
                 return;
 
-            if (data.Source is not KnifeView knife || data.Target is not KnifeView otherKnife)
+            if (data.Source is not KnifeView knife || data.Target is not KnifeView)
                 return;
 
             if (!knife.IsInFlight)
@@ -33,7 +33,7 @@ namespace Game.Collision.Logic.Handlers
 
             knife.Bounce();
             
-            _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Bounced, data.ImpactPoint));
+            _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Bounced));
         }
     }
 }

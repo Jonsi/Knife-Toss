@@ -28,7 +28,7 @@ namespace Game.Level.Spawning
         {
             foreach (Transform child in _LevelRoot)
             {
-                UnityEngine.Object.Destroy(child.gameObject);
+                Object.Destroy(child.gameObject);
             }
         }
 
