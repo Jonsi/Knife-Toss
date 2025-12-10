@@ -15,7 +15,9 @@ namespace KnifeToss.Core.Abstractions.Gameplay.Session
         /// <summary>
         /// Initializes or restarts the session with current rules.
         /// </summary>
-        void StartSession();
+        /// <param name="stageIndex">The index of the current stage.</param>
+        /// <param name="levelIndex">The index of the current level.</param>
+        void StartSession(int stageIndex, int levelIndex);
 
         /// <summary>
         /// Attempts to register a throw; returns false if throws are blocked.
@@ -33,4 +35,3 @@ namespace KnifeToss.Core.Abstractions.Gameplay.Session
         void RegisterBounce(Vector2 impactPoint);
     }
 }
-

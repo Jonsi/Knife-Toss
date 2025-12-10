@@ -20,19 +20,22 @@ namespace App.Services.Leveling
         private readonly RuntimeLevelRulesProvider _rulesProvider;
         private readonly ILevelSessionService _sessionService;
         private readonly TargetTrackingService _targetTrackingService;
+        private readonly LevelSessionLogger _sessionLogger;
 
         public LevelSetupService(
             StagesConfigCatalog levelCatalog,
             ILevelSpawner levelSpawner,
             RuntimeLevelRulesProvider rulesProvider,
             ILevelSessionService sessionService,
-            TargetTrackingService targetTrackingService)
+            TargetTrackingService targetTrackingService,
+            LevelSessionLogger sessionLogger)
         {
             _levelCatalog = levelCatalog;
             _levelSpawner = levelSpawner;
             _rulesProvider = rulesProvider;
             _sessionService = sessionService;
             _targetTrackingService = targetTrackingService;
+            _sessionLogger = sessionLogger;
         }
 
         /// <summary>
@@ -49,8 +52,14 @@ namespace App.Services.Leveling
                 return;
             }
 
+            if (levelIndex == 0)
+            {
+                _sessionLogger.LogStageStarted(stageIndex);
+            }
+
             int totalKnivesToBreak = config.Targets.Sum(t => t.KnivesToBreak);
             
+            // Determine knife count: prefer pre-calculated value from config, fallback to runtime calculation
             int knifeCount = config.KnifeCount > 0 ? config.KnifeCount : totalKnivesToBreak + config.ExtraKnives;
 
             LevelRules rules = new LevelRules(knifeCount, totalKnivesToBreak);
@@ -59,7 +68,7 @@ namespace App.Services.Leveling
             var targets = _levelSpawner.SpawnLevel(config);
             _targetTrackingService.RegisterTargets(targets);
 
-            _sessionService.StartSession();
+            _sessionService.StartSession(stageIndex, levelIndex);
         }
     }
 }

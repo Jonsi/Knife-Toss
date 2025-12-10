@@ -22,6 +22,8 @@ namespace App.Services.Session
         private readonly TargetTrackingService _targetTrackingService;
 
         private LevelSession _session;
+        private int _currentStageIndex;
+        private int _currentLevelIndex;
 
         public bool IsPlaying => _session?.IsPlaying ?? false;
         public int KnivesThrown => _session?.KnivesThrown ?? 0;
@@ -56,8 +58,11 @@ namespace App.Services.Session
             RaiseStateChanged(previous, current);
         }
 
-        public void StartSession()
+        public void StartSession(int stageIndex, int levelIndex)
         {
+            _currentStageIndex = stageIndex;
+            _currentLevelIndex = levelIndex;
+
             LevelRules rules = _rulesProvider.GetConfiguration();
             string previous = _session?.CurrentStateName ?? string.Empty;
 
@@ -115,7 +120,7 @@ namespace App.Services.Session
                 return;
 
             _stateChangedChannel.Raise(new LevelStateChangedEventData(previous, current));
-            _sessionLogger.LogState(current);
+            _sessionLogger.LogState(current, _currentStageIndex, _currentLevelIndex);
         }
     }
 }
