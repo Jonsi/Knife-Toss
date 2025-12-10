@@ -1,4 +1,4 @@
-using Common.Events;
+using System;
 using Game.Entities.Knife.Data;
 using Game.KnifeThrower.Interfaces;
 using UnityEngine;
@@ -8,49 +8,21 @@ namespace Game.Entities.Knife.Views
 {
     /// <summary>
     /// MonoBehaviour responsible for spawning knife instances when throw input is received.
-    /// Listens to spawn request events and creates knife instances.
+    /// Exposes an event when a knife is spawned.
     /// </summary>
     public class KnifeThrowerView : MonoBehaviour, IKnifeThrowerView
     {
         [SerializeField] private KnifeView _KnifePrefab;
         [SerializeField] private Transform _SpawnPoint;
 
-        private IEventChannel<KnifeSpawnRequestData> _SpawnRequestEventChannel;
         private IObjectResolver _Resolver;
 
+        public event Action<KnifeSpawnRequestData> OnKnifeSpawned;
+
         [Inject]
-        private void Construct(
-            IEventChannel<KnifeSpawnRequestData> spawnRequestEventChannel, 
-            IObjectResolver resolver)
+        private void Construct(IObjectResolver resolver)
         {
-            _SpawnRequestEventChannel = spawnRequestEventChannel;
             _Resolver = resolver;
-        }
-
-        private void OnEnable()
-        {
-            SubscribeToEvents();
-        }
-
-        private void OnDisable()
-        {
-            UnsubscribeFromEvents();
-        }
-
-        private void SubscribeToEvents()
-        {
-            if (_SpawnRequestEventChannel != null)
-            {
-                _SpawnRequestEventChannel.Subscribe(SpawnKnife);
-            }
-        }
-
-        private void UnsubscribeFromEvents()
-        {
-            if (_SpawnRequestEventChannel != null)
-            {
-                _SpawnRequestEventChannel.Unsubscribe(SpawnKnife);
-            }
         }
 
         public void SpawnKnife(KnifeSpawnRequestData spawnData)
@@ -64,6 +36,8 @@ namespace Game.Entities.Knife.Views
             
             _Resolver?.Inject(knifeView);
             knifeView.Launch(Vector2.up, spawnData.ThrowSpeed);
+            
+            OnKnifeSpawned?.Invoke(spawnData);
         }
     }
 }

@@ -2,26 +2,26 @@ using System.Collections.Generic;
 using Common.Events;
 using Game.Entities.Knife.Data;
 using Game.Entities.Target.Interfaces;
+using Game.KnifeThrower.Interfaces;
 
 namespace Game.Flow.Level.States
 {
     public class LevelPlayingState : LevelStateBase 
     {
         private readonly IEventChannel<KnifeImpactEventData> _ImpactChannel;
-        private readonly IEventChannel<KnifeSpawnRequestData> _SpawnChannel;
+        private readonly IKnifeThrowerView _KnifeThrowerView;
         private readonly List<ITargetView> _SubscribedTargets = new List<ITargetView>();
 
         public LevelPlayingState(
             LevelStateMachine machine,
             IEventChannel<KnifeImpactEventData> impactChannel,
-            IEventChannel<KnifeSpawnRequestData> spawnChannel)
+            IKnifeThrowerView knifeThrowerView)
             : base(machine)
         {
             _ImpactChannel = impactChannel;
-            _SpawnChannel = spawnChannel;
+            _KnifeThrowerView = knifeThrowerView;
 
             _ImpactChannel.Subscribe(OnKnifeImpact);
-            _SpawnChannel.Subscribe(OnKnifeSpawned);
         }
 
         public override void Enter()
@@ -35,6 +35,9 @@ namespace Game.Flow.Level.States
             {
                 target.OnDestroyed += HandleTargetDestroyed;
             }
+
+            if (_KnifeThrowerView != null)
+                _KnifeThrowerView.OnKnifeSpawned += OnKnifeSpawned;
         }
 
         public override void Exit()
@@ -46,6 +49,9 @@ namespace Game.Flow.Level.States
                 target.OnDestroyed -= HandleTargetDestroyed;
             }
             _SubscribedTargets.Clear();
+
+            if (_KnifeThrowerView != null)
+                _KnifeThrowerView.OnKnifeSpawned -= OnKnifeSpawned;
         }
 
         private void OnKnifeSpawned(KnifeSpawnRequestData data)
@@ -95,4 +101,3 @@ namespace Game.Flow.Level.States
         }
     }
 }
-

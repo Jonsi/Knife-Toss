@@ -1131,8 +1131,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2b8445528252b545af987225e2219c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: KnifeToss.Presentation::KnifeToss.Presentation.UI.UIController
-  _StageFailPopup: {fileID: 0}
-  _StateChangedChannel: {fileID: 0}
+  _StageFailPopup: {fileID: 1957040492}
+  _LevelFailedChannel: {fileID: 11400000, guid: 604458cf20b3869489fbff706e752db8, type: 2}
+  _RetryLevelChannel: {fileID: 11400000, guid: eef8d9c482392e74bb97e0df72cf980b, type: 2}
+  _RestartStageChannel: {fileID: 11400000, guid: a8aafdd4ae42ad145876819d5f37bedb, type: 2}
 --- !u!1 &651901804
 GameObject:
   m_ObjectHideFlags: 0
@@ -2629,14 +2631,18 @@ MonoBehaviour:
   _GameSettings: {fileID: 11400000, guid: 067b2b4cb241a1c47942f156372a8db5, type: 2}
   _KnifeThrowConfig: {fileID: 11400000, guid: 5255f097d202e7341b60016482ff9511, type: 2}
   _StagesConfig: {fileID: 11400000, guid: ddb146cdbe01d9a40879053fee124b76, type: 2}
-  _KnifeSpawnRequestEventChannel: {fileID: 11400000, guid: fbdb1286b0eeecf4887e9d55512a8e49, type: 2}
   _CollisionEventChannel: {fileID: 11400000, guid: 550df89ae380ec743af103ed588ae1b1, type: 2}
   _KnifeImpactEventChannel: {fileID: 11400000, guid: f05ddbed278f4b14cac948a5951b4fe9, type: 2}
-  _LevelStateChangedEventChannel: {fileID: 11400000, guid: 222d569b4ef95d54b957784f65d38a85, type: 2}
+  _LevelCompletedEventChannel: {fileID: 11400000, guid: 974f3462f6e1f6e4d9645afc67160fff, type: 2}
+  _LevelFailedEventChannel: {fileID: 11400000, guid: 604458cf20b3869489fbff706e752db8, type: 2}
+  _StageCompletedEventChannel: {fileID: 11400000, guid: 24f3aae2e2417e2478e9677f5f8a8825, type: 2}
+  _ReturnToMenuEventChannel: {fileID: 11400000, guid: 67ee024458bba644abb8a2f664ce3204, type: 2}
+  _RetryLevelClickedChannel: {fileID: 11400000, guid: a8aafdd4ae42ad145876819d5f37bedb, type: 2}
+  _RestartStageClickedChannel: {fileID: 11400000, guid: eef8d9c482392e74bb97e0df72cf980b, type: 2}
   _KnifeThrowerView: {fileID: 497239670}
   _LevelRoot: {fileID: 182301541}
   _StageFailPopup: {fileID: 1957040492}
-  _DefaultTargetPrefab: {fileID: 1336281483645859630, guid: 0e557c846743ed044bf689812c8bae87, type: 3}
+  _UIController: {fileID: 633680713}
 --- !u!4 &1928512257
 Transform:
   m_ObjectHideFlags: 0
@@ -2702,8 +2708,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cb91085276cc764fac831fe4ca7293c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Presentation.UI.StageFailPopup
-  _RetryButton: {fileID: 0}
-  _RestartStageButton: {fileID: 0}
+  _RetryButton: {fileID: 392187580}
+  _RestartStageButton: {fileID: 321148377}
+  _RetryLevelChannel: {fileID: 11400000, guid: a8aafdd4ae42ad145876819d5f37bedb, type: 2}
+  _RestartStageChannel: {fileID: 11400000, guid: eef8d9c482392e74bb97e0df72cf980b, type: 2}
 --- !u!1 &1982895829
 GameObject:
   m_ObjectHideFlags: 0
@@ -2848,7 +2856,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 1106308695
   m_SortingOrder: 0

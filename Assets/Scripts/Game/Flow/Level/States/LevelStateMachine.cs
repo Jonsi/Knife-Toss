@@ -2,6 +2,7 @@ using Common.Events;
 using Common.Patterns.State;
 using Game.Entities.Knife.Data;
 using Game.Flow.Events;
+using Game.KnifeThrower.Interfaces;
 using VContainer.Unity;
 
 namespace Game.Flow.Level.States
@@ -23,14 +24,14 @@ namespace Game.Flow.Level.States
             LevelCompletedEventChannel levelCompletedChannel,
             LevelFailedEventChannel levelFailedChannel,
             IEventChannel<KnifeImpactEventData> impactChannel,
-            IEventChannel<KnifeSpawnRequestData> spawnRequestChannel)
+            IKnifeThrowerView knifeThrowerView)
         {
             Context = context;
             _LevelCompletedChannel = levelCompletedChannel;
             _LevelFailedChannel = levelFailedChannel;
 
             Loading = new LevelLoadingState(this);
-            Playing = new LevelPlayingState(this, impactChannel, spawnRequestChannel);
+            Playing = new LevelPlayingState(this, impactChannel, knifeThrowerView);
             Completed = new LevelCompletedState(this);
             Failed = new LevelFailedState(this);
         }

@@ -42,7 +42,6 @@ namespace Game.Installers
         [SerializeField] private StagesConfigAsset _StagesConfig;
         
         [Header("Event Channels")]
-        [SerializeField] private KnifeSpawnRequestEventChannel _KnifeSpawnRequestEventChannel;
         [SerializeField] private CollisionEventChannel _CollisionEventChannel;
         [SerializeField] private KnifeImpactEventChannel _KnifeImpactEventChannel;
         
@@ -51,12 +50,10 @@ namespace Game.Installers
         [SerializeField] private LevelFailedEventChannel _LevelFailedEventChannel;
         [SerializeField] private StageCompletedEventChannel _StageCompletedEventChannel;
         [SerializeField] private ReturnToMenuEventChannel _ReturnToMenuEventChannel;
-        [SerializeField] private VoidEventChannel _StageRetryRequestChannel;
-        [SerializeField] private VoidEventChannel _StageRestartRequestChannel;
 
         [Header("UI Event Channels")]
-        [SerializeField] private VoidEventChannel _RetryLevelChannel;
-        [SerializeField] private VoidEventChannel _RestartStageChannel;
+        [SerializeField] private VoidEventChannel _RetryLevelClickedChannel;
+        [SerializeField] private VoidEventChannel _RestartStageClickedChannel;
         
         [Header("Scene References")]
         [SerializeField] private KnifeThrowerView _KnifeThrowerView;
@@ -118,27 +115,19 @@ namespace Game.Installers
                 c.Resolve<LevelCompletedEventChannel>(),
                 c.Resolve<LevelFailedEventChannel>(),
                 c.Resolve<StageCompletedEventChannel>(),
-                _StageRetryRequestChannel,
-                _StageRestartRequestChannel
+                _RetryLevelClickedChannel,    // Injected directly, skipping intermediate channel
+                _RestartStageClickedChannel   // Injected directly, skipping intermediate channel
             ), Lifetime.Singleton);
 
             builder.RegisterEntryPoint<StageFlowController>().As<IStageFlowController>();
 
             // Game Flow
             builder.Register<GameData>(Lifetime.Singleton);
-            builder.Register<GameStateMachine>(Lifetime.Singleton);
+            builder.Register<GameStateMachine>(Lifetime.Singleton).As<IGameStateMachine>();
             
-            // Manual construction for GameFlowController to inject specific VoidEventChannels
+            // Manual construction for GameFlowController
             builder.Register(c => new GameFlowController(
-                c.Resolve<GameStateMachine>(),
-                c.Resolve<IStageFlowController>(),
-                c.Resolve<StageCompletedEventChannel>(),
-                c.Resolve<ReturnToMenuEventChannel>(),
-                _RetryLevelChannel,
-                _RestartStageChannel,
-                _StageRetryRequestChannel,
-                _StageRestartRequestChannel,
-                c.Resolve<ILevelCatalog>()
+                c.Resolve<IGameStateMachine>()
             ), Lifetime.Singleton).AsImplementedInterfaces();
 
             if (_UIController != null)
@@ -155,7 +144,7 @@ namespace Game.Installers
         private void RegisterKnifeServices(IContainerBuilder builder)
         {
             builder.RegisterInstance(_KnifeThrowConfig).As<IConfigurationProvider<KnifeThrowConfiguration>>();
-            builder.RegisterInstance(_KnifeSpawnRequestEventChannel).As<IEventChannel<KnifeSpawnRequestData>>();
+            // Removed KnifeSpawnRequestEventChannel registration
             builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
             builder.RegisterEntryPoint<ThrowService>().As<IThrowService>();
             builder.RegisterComponent(_KnifeThrowerView).As<IKnifeThrowerView>();

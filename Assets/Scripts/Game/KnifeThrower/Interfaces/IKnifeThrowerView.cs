@@ -1,3 +1,4 @@
+using System;
 using Game.Entities.Knife.Data;
 
 namespace Game.KnifeThrower.Interfaces
@@ -12,6 +13,10 @@ namespace Game.KnifeThrower.Interfaces
         /// </summary>
         /// <param name="spawnData">Configuration for spawn offset and throw speed.</param>
         void SpawnKnife(KnifeSpawnRequestData spawnData);
+
+        /// <summary>
+        /// Event raised when a knife is spawned.
+        /// </summary>
+        event Action<KnifeSpawnRequestData> OnKnifeSpawned;
     }
 }
-

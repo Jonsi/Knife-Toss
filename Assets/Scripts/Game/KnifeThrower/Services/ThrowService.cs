@@ -1,7 +1,6 @@
 using Common.Config;
 using Common.Events;
 using Game.Entities.Knife.Data;
-using Game.Flow.Level;
 using Game.KnifeThrower.Configs;
 using Game.KnifeThrower.Interfaces;
 using VContainer.Unity;
@@ -10,13 +9,13 @@ namespace Game.KnifeThrower.Services
 {
     /// <summary>
     /// Service that coordinates knife throwing actions based on player input.
-    /// Handles the flow from input events to knife spawning via event channels.
+    /// Handles the flow from input events to knife spawning via direct interface call.
     /// </summary>
     public class ThrowService : IThrowService, IStartable
     {
         private readonly IPlayerThrowInputListener _PlayerThrowInputListener;
         private readonly IConfigurationProvider<KnifeThrowConfiguration> _KnifeThrowConfigurationProvider;
-        private readonly IEventChannel<KnifeSpawnRequestData> _SpawnRequestEventChannel;
+        private readonly IKnifeThrowerView _KnifeThrowerView;
         private bool _IsRunning;
 
         /// <summary>
@@ -25,11 +24,11 @@ namespace Game.KnifeThrower.Services
         public ThrowService(
             IPlayerThrowInputListener playerThrowInputListener, 
             IConfigurationProvider<KnifeThrowConfiguration> knifeThrowConfigurationProvider,
-            IEventChannel<KnifeSpawnRequestData> spawnRequestEventChannel)
+            IKnifeThrowerView knifeThrowerView)
         {
             _PlayerThrowInputListener = playerThrowInputListener;
             _KnifeThrowConfigurationProvider = knifeThrowConfigurationProvider;
-            _SpawnRequestEventChannel = spawnRequestEventChannel;
+            _KnifeThrowerView = knifeThrowerView;
         }
 
         /// <summary>
@@ -55,7 +54,7 @@ namespace Game.KnifeThrower.Services
                 ThrowSpeed = config.ThrowSpeed
             };
             
-            _SpawnRequestEventChannel.Raise(spawnData);
+            _KnifeThrowerView.SpawnKnife(spawnData);
         }
 
         /// <summary>

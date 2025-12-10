@@ -7,11 +7,22 @@ using VContainer.Unity;
 
 namespace Game.Flow.Game
 {
-    public class GameStateMachine : StateMachine, ITickable
+    /// <summary>
+    /// State machine that manages high-level game states such as playing, paused, etc.
+    /// </summary>
+    public class GameStateMachine : StateMachine, IGameStateMachine, ITickable
     {
+        /// <summary>
+        /// Gets the shared game data context.
+        /// </summary>
         public GameData Context { get; }
 
-        public readonly GamePlayingState Playing;
+        private readonly GamePlayingState _Playing;
+
+        /// <summary>
+        /// Gets the playing state instance.
+        /// </summary>
+        public IState Playing => _Playing;
         
         public readonly IStageFlowController StageFlowController;
         public readonly ILevelCatalog LevelCatalog;
@@ -27,7 +38,7 @@ namespace Game.Flow.Game
             StageFlowController = stageFlowController;
             LevelCatalog = levelCatalog;
 
-            Playing = new GamePlayingState(this, stageCompletedChannel, returnToMenuChannel);
+            _Playing = new GamePlayingState(this, stageCompletedChannel, returnToMenuChannel);
         }
 
         public void Tick()
