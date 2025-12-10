@@ -1,8 +1,7 @@
-using Game.Level.States;
+using Common.Events;
 using Game.UI.Common;
 using UnityEngine;
 using UnityEngine.UI;
-using VContainer;
 
 namespace Game.UI.Popups
 {
@@ -12,13 +11,9 @@ namespace Game.UI.Popups
         [SerializeField] private Button _RetryButton;
         [SerializeField] private Button _RestartStageButton;
 
-        private StageStateMachine _StateMachine;
-
-        [Inject]
-        public void Construct(StageStateMachine stateMachine)
-        {
-            _StateMachine = stateMachine;
-        }
+        [Header("Channels")]
+        [SerializeField] private VoidEventChannel _RetryLevelChannel;
+        [SerializeField] private VoidEventChannel _RestartStageChannel;
 
         private void OnEnable()
         {
@@ -34,18 +29,14 @@ namespace Game.UI.Popups
 
         private void OnRetryClicked()
         {
-            if (_StateMachine != null)
-            {
-                _StateMachine.Failed.RetryLevel();
-            }
+            if (_RetryLevelChannel != null)
+                _RetryLevelChannel.Raise();
         }
 
         private void OnRestartStageClicked()
         {
-            if (_StateMachine != null)
-            {
-                _StateMachine.Failed.RestartStage();
-            }
+            if (_RestartStageChannel != null)
+                _RestartStageChannel.Raise();
         }
     }
 }

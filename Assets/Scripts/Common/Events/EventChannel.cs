@@ -10,7 +10,7 @@ namespace Common.Events
     /// </summary>
     public abstract class EventChannel<T> : ScriptableObject, IEventChannel<T>
     {
-        private readonly Dictionary<object, Action<T>> _subscriptions = new();
+        private readonly Dictionary<object, Action<T>> _Subscriptions = new();
 
         /// <summary>
         /// Invokes the event for all subscribers with the provided data.
@@ -18,7 +18,7 @@ namespace Common.Events
         /// <param name="data">Payload for the event.</param>
         public void Raise(T data)
         {
-            foreach (var callback in _subscriptions.Values)
+            foreach (var callback in _Subscriptions.Values)
             {
                 callback?.Invoke(data);
             }
@@ -36,7 +36,7 @@ namespace Common.Events
             }
 
             var owner = handler.Target;
-            _subscriptions[owner] = handler;
+            _Subscriptions[owner] = handler;
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Common.Events
             }
 
             var owner = handler.Target;
-            _subscriptions.Remove(owner);
+            _Subscriptions.Remove(owner);
         }
 
         /// <summary>
@@ -65,12 +65,52 @@ namespace Common.Events
                 return;
             }
 
-            _subscriptions.Remove(owner);
+            _Subscriptions.Remove(owner);
         }
 
         /// <summary>
         /// Clears all subscriptions.
         /// </summary>
+        public void UnsubscribeAll()
+        {
+            _Subscriptions.Clear();
+        }
+    }
+    
+    /// <summary>
+    /// Event channel for void events (no data passed).
+    /// </summary>
+    [CreateAssetMenu(fileName = "VoidEventChannel", menuName = "Knife Toss/Events/Void Event Channel")]
+    public class VoidEventChannel : ScriptableObject, IEventChannel
+    {
+        private readonly Dictionary<object, Action> _subscriptions = new();
+
+        public void Raise()
+        {
+            foreach (var callback in _subscriptions.Values)
+            {
+                callback?.Invoke();
+            }
+        }
+
+        public void Subscribe(Action handler)
+        {
+            if (handler == null)
+                return;
+
+            var owner = handler.Target;
+            _subscriptions[owner] = handler;
+        }
+
+        public void Unsubscribe(Action handler)
+        {
+            if (handler == null)
+                return;
+
+            var owner = handler.Target;
+            _subscriptions.Remove(owner);
+        }
+
         public void UnsubscribeAll()
         {
             _subscriptions.Clear();

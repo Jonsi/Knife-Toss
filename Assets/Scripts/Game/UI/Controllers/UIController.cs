@@ -1,6 +1,6 @@
-using Game.Level.Data;
-using Game.Level.Events;
-using Game.Level.States;
+using Common.Events;
+using Game.Flow.Events;
+using Game.Flow.Level;
 using Game.UI.Popups;
 using UnityEngine;
 
@@ -12,32 +12,44 @@ namespace Game.UI.Controllers
         [SerializeField] private StageFailPopup _StageFailPopup;
 
         [Header("Channels")]
-        [SerializeField] private LevelStateChangedEventChannel _StateChangedChannel;
+        [SerializeField] private LevelFailedEventChannel _LevelFailedChannel;
+        [SerializeField] private VoidEventChannel _RetryLevelChannel;
+        [SerializeField] private VoidEventChannel _RestartStageChannel;
 
         private void OnEnable()
         {
-            if (_StateChangedChannel != null)
-                _StateChangedChannel.Subscribe(OnLevelStateChanged);
+            if (_LevelFailedChannel != null)
+                _LevelFailedChannel.Subscribe(OnLevelFailed);
+            
+            if (_RetryLevelChannel != null)
+                _RetryLevelChannel.Subscribe(OnRetryOrRestart);
+
+            if (_RestartStageChannel != null)
+                _RestartStageChannel.Subscribe(OnRetryOrRestart);
         }
 
         private void OnDisable()
         {
-            if (_StateChangedChannel != null)
-                _StateChangedChannel.Unsubscribe(OnLevelStateChanged);
+            if (_LevelFailedChannel != null)
+                _LevelFailedChannel.Unsubscribe(OnLevelFailed);
+
+            if (_RetryLevelChannel != null)
+                _RetryLevelChannel.Unsubscribe(OnRetryOrRestart);
+
+            if (_RestartStageChannel != null)
+                _RestartStageChannel.Unsubscribe(OnRetryOrRestart);
         }
 
-        private void OnLevelStateChanged(LevelStateChangedEventData data)
+        private void OnLevelFailed(LevelData data)
         {
-            if (data.CurrentState == nameof(LevelFailedState))
-            {
-                if (_StageFailPopup != null)
-                    _StageFailPopup.Show();
-            }
-            else if (data.CurrentState == nameof(LevelPlayingState) || data.CurrentState == nameof(LevelLoadingState))
-            {
-                if (_StageFailPopup != null)
-                    _StageFailPopup.Hide();
-            }
+            if (_StageFailPopup != null)
+                _StageFailPopup.Show();
+        }
+
+        private void OnRetryOrRestart()
+        {
+            if (_StageFailPopup != null)
+                _StageFailPopup.Hide();
         }
     }
 }

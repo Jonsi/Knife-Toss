@@ -9,17 +9,22 @@ using Game.Entities.Knife.Data;
 using Game.Entities.Knife.Events;
 using Game.Entities.Knife.Views;
 using Game.Entities.Target.Factories;
+using Game.Flow.Events;
+using Game.Flow.Game;
+using Game.Flow.Interfaces;
+using Game.Flow.Level;
+using Game.Flow.Level.States;
+using Game.Flow.Stage;
+using Game.Flow.Stage.States;
 using Game.Input;
 using Game.KnifeThrower.Configs;
 using Game.KnifeThrower.Interfaces;
 using Game.KnifeThrower.Services;
 using Game.Level.Catalogs;
-using Game.Level.Data;
-using Game.Level.Events;
 using Game.Level.Interfaces;
 using Game.Level.Spawning;
-using Game.Level.States;
 using Game.Settings;
+using Game.UI.Controllers;
 using Game.UI.Popups;
 using UnityEngine;
 using VContainer;
@@ -40,12 +45,24 @@ namespace Game.Installers
         [SerializeField] private KnifeSpawnRequestEventChannel _KnifeSpawnRequestEventChannel;
         [SerializeField] private CollisionEventChannel _CollisionEventChannel;
         [SerializeField] private KnifeImpactEventChannel _KnifeImpactEventChannel;
-        [SerializeField] private LevelStateChangedEventChannel _LevelStateChangedEventChannel;
+        
+        [Header("Flow Event Channels")]
+        [SerializeField] private LevelCompletedEventChannel _LevelCompletedEventChannel;
+        [SerializeField] private LevelFailedEventChannel _LevelFailedEventChannel;
+        [SerializeField] private StageCompletedEventChannel _StageCompletedEventChannel;
+        [SerializeField] private ReturnToMenuEventChannel _ReturnToMenuEventChannel;
+        [SerializeField] private VoidEventChannel _StageRetryRequestChannel;
+        [SerializeField] private VoidEventChannel _StageRestartRequestChannel;
+
+        [Header("UI Event Channels")]
+        [SerializeField] private VoidEventChannel _RetryLevelChannel;
+        [SerializeField] private VoidEventChannel _RestartStageChannel;
         
         [Header("Scene References")]
         [SerializeField] private KnifeThrowerView _KnifeThrowerView;
         [SerializeField] private Transform _LevelRoot;
         [SerializeField] private StageFailPopup _StageFailPopup;
+        [SerializeField] private UIController _UIController;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -75,14 +92,60 @@ namespace Game.Installers
         {
             builder.RegisterInstance(CreateLogger()).As<ILogger>();
 
-            builder.RegisterInstance(_LevelStateChangedEventChannel).As<IEventChannel<LevelStateChangedEventData>>();
+            // Event Channels
             builder.RegisterInstance(_KnifeImpactEventChannel).As<IEventChannel<KnifeImpactEventData>>();
+            builder.RegisterInstance(_LevelCompletedEventChannel);
+            builder.RegisterInstance(_LevelFailedEventChannel);
+            builder.RegisterInstance(_StageCompletedEventChannel);
+            builder.RegisterInstance(_ReturnToMenuEventChannel);
+            
+            // NOTE: We do not register VoidEventChannel instances generically because there are multiple.
+            // We pass them explicitly to consumers.
 
-            builder.Register<StageData>(Lifetime.Singleton);
-            builder.Register<StageStateMachine>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
+            // Level Flow
+            builder.Register<LevelData>(Lifetime.Singleton);
+            builder.Register<LevelStateMachine>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<LevelFlowController>().As<ILevelFlowController>();
 
-            builder.RegisterEntryPoint<GameFlowController>();
+            // Stage Flow
+            builder.Register<StageData>(Lifetime.Singleton).WithParameter(0);
+            
+            // Manual construction for StageStateMachine to inject specific VoidEventChannels
+            builder.Register(c => new StageStateMachine(
+                c.Resolve<StageData>(),
+                c.Resolve<ILevelFlowController>(),
+                c.Resolve<ILevelCatalog>(),
+                c.Resolve<LevelCompletedEventChannel>(),
+                c.Resolve<LevelFailedEventChannel>(),
+                c.Resolve<StageCompletedEventChannel>(),
+                _StageRetryRequestChannel,
+                _StageRestartRequestChannel
+            ), Lifetime.Singleton);
 
+            builder.RegisterEntryPoint<StageFlowController>().As<IStageFlowController>();
+
+            // Game Flow
+            builder.Register<GameData>(Lifetime.Singleton);
+            builder.Register<GameStateMachine>(Lifetime.Singleton);
+            
+            // Manual construction for GameFlowController to inject specific VoidEventChannels
+            builder.Register(c => new GameFlowController(
+                c.Resolve<GameStateMachine>(),
+                c.Resolve<IStageFlowController>(),
+                c.Resolve<StageCompletedEventChannel>(),
+                c.Resolve<ReturnToMenuEventChannel>(),
+                _RetryLevelChannel,
+                _RestartStageChannel,
+                _StageRetryRequestChannel,
+                _StageRestartRequestChannel,
+                c.Resolve<ILevelCatalog>()
+            ), Lifetime.Singleton).AsImplementedInterfaces();
+
+            if (_UIController != null)
+            {
+                builder.RegisterComponent(_UIController);
+            }
+            
             if (_StageFailPopup != null)
             {
                 builder.RegisterComponent(_StageFailPopup);

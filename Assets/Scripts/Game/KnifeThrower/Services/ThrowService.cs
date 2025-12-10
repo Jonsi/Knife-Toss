@@ -1,9 +1,9 @@
 using Common.Config;
 using Common.Events;
 using Game.Entities.Knife.Data;
+using Game.Flow.Level;
 using Game.KnifeThrower.Configs;
 using Game.KnifeThrower.Interfaces;
-using Game.Level.Data;
 using VContainer.Unity;
 
 namespace Game.KnifeThrower.Services
@@ -17,7 +17,6 @@ namespace Game.KnifeThrower.Services
         private readonly IPlayerThrowInputListener _PlayerThrowInputListener;
         private readonly IConfigurationProvider<KnifeThrowConfiguration> _KnifeThrowConfigurationProvider;
         private readonly IEventChannel<KnifeSpawnRequestData> _SpawnRequestEventChannel;
-        private readonly StageData _StageData;
         private bool _IsRunning;
 
         /// <summary>
@@ -26,13 +25,11 @@ namespace Game.KnifeThrower.Services
         public ThrowService(
             IPlayerThrowInputListener playerThrowInputListener, 
             IConfigurationProvider<KnifeThrowConfiguration> knifeThrowConfigurationProvider,
-            IEventChannel<KnifeSpawnRequestData> spawnRequestEventChannel,
-            StageData stageData)
+            IEventChannel<KnifeSpawnRequestData> spawnRequestEventChannel)
         {
             _PlayerThrowInputListener = playerThrowInputListener;
             _KnifeThrowConfigurationProvider = knifeThrowConfigurationProvider;
             _SpawnRequestEventChannel = spawnRequestEventChannel;
-            _StageData = stageData;
         }
 
         /// <summary>
@@ -51,9 +48,6 @@ namespace Game.KnifeThrower.Services
 
         private void HandleThrowRequested()
         {
-            if (!_StageData.IsThrowingActive || !_StageData.HasKnivesRemaining)
-                return;
-
             var config = _KnifeThrowConfigurationProvider.GetConfiguration();
             var spawnData = new KnifeSpawnRequestData
             {
