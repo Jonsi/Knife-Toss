@@ -1,11 +1,11 @@
 using System;
 using KnifeToss.Core.Abstractions.Config;
 using KnifeToss.Core.Abstractions.Events;
-using KnifeToss.Core.Abstractions.Gameplay.Session;
 using KnifeToss.Core.Abstractions.Input;
 using KnifeToss.Core.Abstractions.Throwing;
 using KnifeToss.Core.Data.Knife;
 using KnifeToss.Core.Data.Throwing;
+using KnifeToss.Core.Domain.Level;
 using VContainer.Unity;
 
 namespace App.Services.Throwing
@@ -16,28 +16,25 @@ namespace App.Services.Throwing
     /// </summary>
     public class ThrowService : IThrowService, IStartable
     {
-        private readonly IPlayerThrowInputListener _PlayerThrowInputListener;
-        private readonly IConfigurationProvider<KnifeThrowConfiguration> _KnifeThrowConfigurationProvider;
-        private readonly IEventChannel<KnifeSpawnRequestData> _SpawnRequestEventChannel;
-        private readonly ILevelSessionService _LevelSessionService;
-        private bool _IsRunning;
+        private readonly IPlayerThrowInputListener _playerThrowInputListener;
+        private readonly IConfigurationProvider<KnifeThrowConfiguration> _knifeThrowConfigurationProvider;
+        private readonly IEventChannel<KnifeSpawnRequestData> _spawnRequestEventChannel;
+        private readonly StageData _stageData;
+        private bool _isRunning;
 
         /// <summary>
         /// Initializes a new instance of the ThrowService.
         /// </summary>
-        /// <param name="playerThrowInputListener">The listener that provides player throw input events.</param>
-        /// <param name="knifeThrowConfigurationProvider">The configuration provider for knife throw parameters.</param>
-        /// <param name="spawnRequestEventChannel">The event channel for raising knife spawn requests.</param>
         public ThrowService(
             IPlayerThrowInputListener playerThrowInputListener, 
             IConfigurationProvider<KnifeThrowConfiguration> knifeThrowConfigurationProvider,
             IEventChannel<KnifeSpawnRequestData> spawnRequestEventChannel,
-            ILevelSessionService levelSessionService)
+            StageData stageData)
         {
-            _PlayerThrowInputListener = playerThrowInputListener;
-            _KnifeThrowConfigurationProvider = knifeThrowConfigurationProvider;
-            _SpawnRequestEventChannel = spawnRequestEventChannel;
-            _LevelSessionService = levelSessionService;
+            _playerThrowInputListener = playerThrowInputListener;
+            _knifeThrowConfigurationProvider = knifeThrowConfigurationProvider;
+            _spawnRequestEventChannel = spawnRequestEventChannel;
+            _stageData = stageData;
         }
 
         /// <summary>
@@ -46,27 +43,27 @@ namespace App.Services.Throwing
         /// </summary>
         public void Start()
         {
-            if (_IsRunning)
+            if (_isRunning)
                 return;
 
-            _PlayerThrowInputListener.OnThrowRequested += HandleThrowRequested;
-            _PlayerThrowInputListener.Initialize();
-            _IsRunning = true;
+            _playerThrowInputListener.OnThrowRequested += HandleThrowRequested;
+            _playerThrowInputListener.Initialize();
+            _isRunning = true;
         }
 
         private void HandleThrowRequested()
         {
-            if (!_LevelSessionService.TryRegisterThrow())
+            if (!_stageData.IsThrowingActive || !_stageData.HasKnivesRemaining)
                 return;
 
-            KnifeThrowConfiguration config = _KnifeThrowConfigurationProvider.GetConfiguration();
+            var config = _knifeThrowConfigurationProvider.GetConfiguration();
             var spawnData = new KnifeSpawnRequestData
             {
                 SpawnOffset = config.SpawnPositionOffset,
                 ThrowSpeed = config.ThrowSpeed
             };
             
-            _SpawnRequestEventChannel.Raise(spawnData);
+            _spawnRequestEventChannel.Raise(spawnData);
         }
 
         /// <summary>
@@ -82,12 +79,12 @@ namespace App.Services.Throwing
         /// </summary>
         public void Stop()
         {
-            if (!_IsRunning)
+            if (!_isRunning)
                 return;
 
-            _PlayerThrowInputListener.OnThrowRequested -= HandleThrowRequested;
-            _PlayerThrowInputListener.Dispose();
-            _IsRunning = false;
+            _playerThrowInputListener.OnThrowRequested -= HandleThrowRequested;
+            _playerThrowInputListener.Dispose();
+            _isRunning = false;
         }
     }
 }

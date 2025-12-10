@@ -187,7 +187,7 @@ This plan follows the **Layered Architecture** already established in the codeba
 
 | Component | Location | Status |
 |-----------|----------|--------|
-| `GameStateMachine` | `Core/Domain/` | ✅ Complete |
+| `StageStateMachine` | `Core/Domain/` | ✅ Complete |
 | `LevelStateBase` | `Core/Domain/Level/` | ✅ Complete |
 | `LevelLoadingState` | `Core/Domain/Level/` | ✅ Complete |
 | `LevelPlayingState` | `Core/Domain/Level/` | ✅ Complete |

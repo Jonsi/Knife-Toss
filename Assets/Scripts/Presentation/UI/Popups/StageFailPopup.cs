@@ -1,8 +1,5 @@
-using Infrastructure.Events;
-using KnifeToss.Core.Abstractions.Flow;
-using KnifeToss.Core.Abstractions.Leveling;
-using KnifeToss.Core.Data.Commands;
-using KnifeToss.Core.Domain.Level.Commands;
+using KnifeToss.Core.Domain;
+using KnifeToss.Core.Domain.Level;
 using KnifeToss.Presentation.UI.Common;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,19 +13,12 @@ namespace KnifeToss.Presentation.UI.Popups
         [SerializeField] private Button _retryButton;
         [SerializeField] private Button _restartStageButton;
 
-        [Header("Channels")]
-        [SerializeField] private CommandEventChannel _commandChannel;
-
-        private IStageNavigator _navigator;
-        private IStageProgressTracker _tracker;
-        private ILevelSetupService _levelSetup;
+        private StageStateMachine _StateMachine;
 
         [Inject]
-        public void Construct(IStageNavigator navigator, IStageProgressTracker tracker, ILevelSetupService levelSetup)
+        public void Construct(StageStateMachine stateMachine)
         {
-            _navigator = navigator;
-            _tracker = tracker;
-            _levelSetup = levelSetup;
+            _StateMachine = stateMachine;
         }
 
         private void OnEnable()
@@ -45,19 +35,17 @@ namespace KnifeToss.Presentation.UI.Popups
 
         private void OnRetryClicked()
         {
-            if (_commandChannel != null && _navigator != null && _tracker != null && _levelSetup != null)
+            if (_StateMachine != null)
             {
-                var command = new RetryLevelCommand(_navigator, _tracker, _levelSetup);
-                _commandChannel.Raise(new CommandEventData(command));
+                _StateMachine.Failed.RetryLevel();
             }
         }
 
         private void OnRestartStageClicked()
         {
-            if (_commandChannel != null && _navigator != null && _tracker != null && _levelSetup != null)
+            if (_StateMachine != null)
             {
-                var command = new RestartStageCommand(_navigator, _tracker, _levelSetup);
-                _commandChannel.Raise(new CommandEventData(command));
+                _StateMachine.Failed.RestartStage();
             }
         }
     }

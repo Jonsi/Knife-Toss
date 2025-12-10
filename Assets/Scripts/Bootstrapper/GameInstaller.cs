@@ -1,10 +1,6 @@
-using App.Services.Leveling;
 using App.Services.Collision;
-using App.Services.Commands;
 using App.Services.Flow;
-using App.Services.Session;
 using App.Services.Throwing;
-using App.Services.Target;
 using Infrastructure.Events;
 using Infrastructure.Input;
 using Infrastructure.Leveling;
@@ -13,21 +9,19 @@ using Infrastructure.Settings;
 using KnifeToss.Core.Abstractions.Collision;
 using KnifeToss.Core.Abstractions.Config;
 using KnifeToss.Core.Abstractions.Events;
-using KnifeToss.Core.Abstractions.Flow;
 using KnifeToss.Core.Abstractions.Gameplay;
-using KnifeToss.Core.Abstractions.Gameplay.Session;
 using KnifeToss.Core.Abstractions.Input;
-using KnifeToss.Core.Abstractions.Leveling;
 using KnifeToss.Core.Abstractions.Throwing;
 using KnifeToss.Core.Data.Collision;
-using KnifeToss.Core.Data.Commands;
 using KnifeToss.Core.Data.Knife;
 using KnifeToss.Core.Data.Level;
 using KnifeToss.Core.Data.Throwing;
+using KnifeToss.Core.Domain;
+using KnifeToss.Core.Domain.Level;
 using KnifeToss.Presentation.Gameplay.Collision;
 using KnifeToss.Presentation.Gameplay.Knife;
-using KnifeToss.Presentation.Gameplay.Target;
 using KnifeToss.Presentation.Gameplay.Leveling;
+using KnifeToss.Presentation.Gameplay.Target;
 using KnifeToss.Presentation.UI.Popups;
 using UnityEngine;
 using VContainer;
@@ -37,7 +31,6 @@ namespace Bootstrapper
 {
     /// <summary>
     /// Main composition root that configures dependency injection for all game systems.
-    /// This installer can reference all layers as it's specifically for DI configuration.
     /// </summary>
     public class GameInstaller : LifetimeScope
     {
@@ -50,7 +43,6 @@ namespace Bootstrapper
         [SerializeField] private CollisionEventChannel collisionEventChannel;
         [SerializeField] private KnifeImpactEventChannel knifeImpactEventChannel;
         [SerializeField] private LevelStateChangedEventChannel levelStateChangedEventChannel;
-        [SerializeField] private CommandEventChannel commandEventChannel;
         
         [Header("Scene References")]
         [SerializeField] private KnifeThrowerView knifeThrowerView;
@@ -60,18 +52,13 @@ namespace Bootstrapper
         [Header("Prefabs")]
         [SerializeField] private TargetView defaultTargetPrefab;
 
-        /// <summary>
-        /// Configures the dependency injection container with all services and components.
-        /// </summary>
         protected override void Configure(IContainerBuilder builder)
         {
             GameSettingsAccess.Initialize(gameSettings);
             
             RegisterInfrastructure(builder);
-            RegisterLevelSessionServices(builder);
-            RegisterGameFlow(builder);
+            RegisterGameCore(builder);
             RegisterKnifeServices(builder);
-            RegisterTargetServices(builder);
             RegisterCollisionServices(builder);
         }
 
@@ -79,11 +66,9 @@ namespace Bootstrapper
         {
             builder.RegisterInstance(stagesConfig);
             builder.Register<StagesConfigCatalog>(Lifetime.Singleton).As<ILevelCatalog>().AsSelf();
-            builder.Register<RuntimeLevelRulesProvider>(Lifetime.Singleton).As<IConfigurationProvider<LevelRules>>().AsSelf();
             
             builder.Register<RotationBehaviorFactory>(Lifetime.Singleton);
             
-            // Factories moved to Presentation
             builder.Register<TargetFactory>(Lifetime.Singleton)
                 .WithParameter(defaultTargetPrefab);
             
@@ -92,34 +77,22 @@ namespace Bootstrapper
                 .As<ILevelSpawner>();
         }
 
-        private void RegisterGameFlow(IContainerBuilder builder)
+        private void RegisterGameCore(IContainerBuilder builder)
         {
             builder.RegisterInstance(CreateLogger()).As<ILogger>();
-            builder.RegisterInstance(commandEventChannel).As<IEventChannel<CommandEventData>>();
-            
-            builder.Register<StageProgressTracker>(Lifetime.Singleton)
-                .As<IStageProgressTracker>()
-                .As<IStageNavigator>();
-            
-            builder.Register<LevelSetupService>(Lifetime.Singleton).As<ILevelSetupService>().AsSelf();
-            
-            builder.RegisterEntryPoint<CommandDispatcher>(Lifetime.Singleton);
-            builder.RegisterEntryPoint<LevelFlowCoordinator>(Lifetime.Singleton);
+
+            builder.RegisterInstance(levelStateChangedEventChannel).As<IEventChannel<LevelStateChangedEventData>>();
+            builder.RegisterInstance(knifeImpactEventChannel).As<IEventChannel<KnifeImpactEventData>>();
+
+            builder.Register<StageData>(Lifetime.Singleton);
+            builder.Register<StageStateMachine>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
+
             builder.RegisterEntryPoint<GameFlowController>(Lifetime.Singleton);
 
             if (stageFailPopup != null)
             {
                 builder.RegisterComponent(stageFailPopup);
             }
-        }
-
-        private void RegisterLevelSessionServices(IContainerBuilder builder)
-        {
-            builder.RegisterInstance(knifeImpactEventChannel).As<IEventChannel<KnifeImpactEventData>>();
-            builder.RegisterInstance(levelStateChangedEventChannel).As<IEventChannel<LevelStateChangedEventData>>();
-            builder.Register<LevelSessionLogger>(Lifetime.Singleton);
-            builder.Register<TargetTrackingService>(Lifetime.Singleton);
-            builder.Register<LevelSessionService>(Lifetime.Singleton).As<ILevelSessionService>();
         }
 
         private void RegisterKnifeServices(IContainerBuilder builder)
@@ -129,11 +102,6 @@ namespace Bootstrapper
             builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
             builder.RegisterEntryPoint<ThrowService>(Lifetime.Singleton).As<IThrowService>();
             builder.RegisterComponent(knifeThrowerView).As<IKnifeThrowerView>();
-        }
-
-        private void RegisterTargetServices(IContainerBuilder builder)
-        {
-            // Targets are now spawned dynamically via LevelSpawner/TargetFactory
         }
 
         private void RegisterCollisionServices(IContainerBuilder builder)

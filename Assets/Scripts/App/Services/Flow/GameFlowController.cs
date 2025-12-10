@@ -1,25 +1,24 @@
-using App.Services.Leveling;
+using KnifeToss.Core.Domain;
 using VContainer.Unity;
 
 namespace App.Services.Flow
 {
     /// <summary>
-    /// Top-level flow controller responsible for initializing a level session.
-    /// Extend this to manage stages/levels as they are introduced.
+    /// Top-level flow controller responsible for initializing the game.
+    /// Delegates specific level logic to the StageStateMachine.
     /// </summary>
     public class GameFlowController : IStartable
     {
-        private readonly LevelSetupService _LevelSetupService;
+        private readonly StageStateMachine _StateMachine;
 
-        public GameFlowController(LevelSetupService levelSetupService)
+        public GameFlowController(StageStateMachine stateMachine)
         {
-            _LevelSetupService = levelSetupService;
+            _StateMachine = stateMachine;
         }
 
         public void Start()
         {
-            // Load the first level of the first stage.
-            _LevelSetupService.LoadLevel(0, 0);
+            _StateMachine.StartStage(0);
         }
     }
 }

@@ -1,7 +1,9 @@
 {
     "name": "KnifeToss.Core",
     "rootNamespace": "KnifeToss",
-    "references": [],
+    "references": [
+        "VContainer"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
@@ -12,4 +14,3 @@
     "versionDefines": [],
     "noEngineReferences": false
 }
-
