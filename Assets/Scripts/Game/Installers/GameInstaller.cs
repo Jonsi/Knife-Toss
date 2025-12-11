@@ -1,31 +1,11 @@
-using Common.Collision.Data;
 using Common.Collision.Events;
-using Common.Collision.Interfaces;
-using Common.Collision.Logic;
-using Common.Config;
 using Common.Events;
-using Game.CollisionHandlers;
-using Game.Entities.Collectible.Data;
 using Game.Entities.Collectible.Events;
-using Game.Entities.Collectible.Spawning;
-using Game.Entities.Knife.Data;
 using Game.Entities.Knife.Events;
 using Game.Entities.Knife.Views;
-using Game.Entities.Target.Factories;
 using Game.Flow.Events;
-using Game.Flow.Game;
-using Game.Flow.Interfaces;
-using Game.Flow.Level;
-using Game.Flow.Level.States;
-using Game.Flow.Stage;
-using Game.Flow.Stage.States;
-using Game.Input;
 using Game.KnifeThrower.Configs;
-using Game.KnifeThrower.Interfaces;
-using Game.KnifeThrower.Services;
 using Game.Level.Catalogs;
-using Game.Level.Interfaces;
-using Game.Level.Spawning;
 using Game.Settings;
 using Game.UI.Controllers;
 using Game.UI.Popups;
@@ -67,86 +47,64 @@ namespace Game.Installers
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.RegisterInstance(_GameSettings);
-            builder.RegisterInstance(_StagesConfig);
-            builder.Register<StagesConfigCatalog>(Lifetime.Singleton).As<ILevelCatalog>().AsSelf();
-            
-            builder.Register<RotationBehaviorFactory>(Lifetime.Singleton);
-            
-            builder.Register<CollectibleSpawner>(Lifetime.Singleton);
-
-            builder.Register<TargetFactory>(Lifetime.Singleton)
-                .WithParameter(_StagesConfig.DefaultTargetPrefab);
-            
-            builder.Register<LevelSpawner>(Lifetime.Singleton)
-                .WithParameter(_LevelRoot)
-                .As<ILevelSpawner>();
-            builder.RegisterInstance(CreateLogger()).As<ILogger>();
-
-            // Event Channels
-            builder.RegisterInstance(_KnifeImpactEventChannel).As<IEventChannel<KnifeImpactEventData>>();
-            builder.RegisterInstance(_LevelCompletedEventChannel);
-            builder.RegisterInstance(_LevelFailedEventChannel);
-            builder.RegisterInstance(_StageCompletedEventChannel);
-            builder.RegisterInstance(_ReturnToMenuEventChannel);
-            
-            if (_CollectibleHitEventChannel != null)
-                builder.RegisterInstance(_CollectibleHitEventChannel).As<IEventChannel<CollectibleHitEventData>>();
-
-            builder.Register<LevelData>(Lifetime.Singleton);
-            builder.Register<LevelStateMachine>(Lifetime.Singleton);
-            builder.RegisterEntryPoint<LevelFlowController>().As<ILevelFlowController>();
-
-            builder.Register<StageData>(Lifetime.Singleton).WithParameter(0);
-            
-            builder.Register(c => new StageStateMachine(
-                c.Resolve<StageData>(),
-                c.Resolve<ILevelFlowController>(),
-                c.Resolve<ILevelCatalog>(),
-                c.Resolve<LevelCompletedEventChannel>(),
-                c.Resolve<LevelFailedEventChannel>(),
-                c.Resolve<StageCompletedEventChannel>(),
-                _RetryLevelClickedChannel,
-                _RestartStageClickedChannel
-            ), Lifetime.Singleton);
-
-            builder.RegisterEntryPoint<StageFlowController>().As<IStageFlowController>();
-
-            builder.Register<GameData>(Lifetime.Singleton);
-            builder.Register<GameStateMachine>(Lifetime.Singleton).As<IGameStateMachine>();
-            
-            builder.Register(c => new GameFlowController(
-                c.Resolve<IGameStateMachine>()
-            ), Lifetime.Singleton).AsImplementedInterfaces();
-
-            if (_UIController != null)
-            {
-                builder.RegisterComponent(_UIController);
-            }
-            
-            if (_StageFailPopup != null)
-            {
-                builder.RegisterComponent(_StageFailPopup);
-            }
-            builder.RegisterInstance(_KnifeThrowConfig).As<IConfigurationProvider<KnifeThrowConfiguration>>();
-            builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
-            builder.RegisterEntryPoint<ThrowService>().As<IThrowService>();
-            builder.RegisterComponent(_KnifeThrowerView).As<IKnifeThrowerView>();
-            builder.RegisterInstance(_CollisionEventChannel).As<IEventChannel<CollisionData>>();
-            builder.RegisterEntryPoint<CollisionHandlerHandlerRouter>().As<ICollisionHandlerRouter>();
-            builder.Register<KnifeHitTargetHandler>(Lifetime.Singleton);
-            builder.Register<KnifeHitKnifeHandler>(Lifetime.Singleton);
-            builder.Register<KnifeHitCollectibleHandler>(Lifetime.Singleton);
-            builder.RegisterEntryPoint<CollisionHandlerRegistrar>();
+            Install(builder, CreateTargetInstaller());
+            Install(builder, CreateKnifeInstaller());
+            Install(builder, CreateCollectibleInstaller());
+            Install(builder, CreateLevelInstaller());
+            Install(builder, CreateStageInstaller());
+            Install(builder, CreateGameFlowInstaller());
+            Install(builder, CreateCollisionInstaller());
+            Install(builder, CreateUIInstaller());
         }
-        private ILogger CreateLogger()
+
+        private static void Install(IContainerBuilder builder, IInstaller installer)
         {
-#if TEST_ENV
-            ILogHandler handlerBase = new TestEnvLogHandler(Debug.unityLogger.logHandler, () => GameSettingsAccess.IsTestLoggingEnabled, includeStackTrace: false);
-            return new Logger(handlerBase) { logEnabled = true };
-#else
-            return Debug.unityLogger;
-#endif
+            installer.Install(builder);
+        }
+
+        private TargetInstaller CreateTargetInstaller()
+        {
+            return new TargetInstaller(_StagesConfig.DefaultTargetPrefab);
+        }
+
+        private KnifeInstaller CreateKnifeInstaller()
+        {
+            return new KnifeInstaller(_KnifeThrowConfig, _KnifeThrowerView, _KnifeImpactEventChannel);
+        }
+
+        private CollectibleInstaller CreateCollectibleInstaller()
+        {
+            return new CollectibleInstaller(_CollectibleHitEventChannel);
+        }
+
+        private LevelInstaller CreateLevelInstaller()
+        {
+            return new LevelInstaller(_LevelRoot, _LevelCompletedEventChannel, _LevelFailedEventChannel);
+        }
+
+        private StageInstaller CreateStageInstaller()
+        {
+            return new StageInstaller(
+                _StagesConfig,
+                _StageCompletedEventChannel,
+                _ReturnToMenuEventChannel,
+                _RetryLevelClickedChannel,
+                _RestartStageClickedChannel);
+        }
+
+        private GameFlowInstaller CreateGameFlowInstaller()
+        {
+            return new GameFlowInstaller(_GameSettings);
+        }
+
+        private CollisionInstaller CreateCollisionInstaller()
+        {
+            return new CollisionInstaller(_CollisionEventChannel);
+        }
+
+        private UIInstaller CreateUIInstaller()
+        {
+            return new UIInstaller(_UIController, _StageFailPopup);
         }
     }
 }
