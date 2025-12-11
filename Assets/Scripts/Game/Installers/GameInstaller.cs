@@ -68,14 +68,6 @@ namespace Game.Installers
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterInstance(_GameSettings);
-            RegisterInfrastructure(builder);
-            RegisterGameCore(builder);
-            RegisterKnifeServices(builder);
-            RegisterCollisionServices(builder);
-        }
-
-        private void RegisterInfrastructure(IContainerBuilder builder)
-        {
             builder.RegisterInstance(_StagesConfig);
             builder.Register<StagesConfigCatalog>(Lifetime.Singleton).As<ILevelCatalog>().AsSelf();
             
@@ -89,10 +81,6 @@ namespace Game.Installers
             builder.Register<LevelSpawner>(Lifetime.Singleton)
                 .WithParameter(_LevelRoot)
                 .As<ILevelSpawner>();
-        }
-
-        private void RegisterGameCore(IContainerBuilder builder)
-        {
             builder.RegisterInstance(CreateLogger()).As<ILogger>();
 
             // Event Channels
@@ -140,18 +128,10 @@ namespace Game.Installers
             {
                 builder.RegisterComponent(_StageFailPopup);
             }
-        }
-
-        private void RegisterKnifeServices(IContainerBuilder builder)
-        {
             builder.RegisterInstance(_KnifeThrowConfig).As<IConfigurationProvider<KnifeThrowConfiguration>>();
             builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
             builder.RegisterEntryPoint<ThrowService>().As<IThrowService>();
             builder.RegisterComponent(_KnifeThrowerView).As<IKnifeThrowerView>();
-        }
-
-        private void RegisterCollisionServices(IContainerBuilder builder)
-        {
             builder.RegisterInstance(_CollisionEventChannel).As<IEventChannel<CollisionData>>();
             builder.RegisterEntryPoint<CollisionHandlerHandlerRouter>().As<ICollisionHandlerRouter>();
             builder.Register<KnifeHitTargetHandler>(Lifetime.Singleton);
@@ -159,7 +139,6 @@ namespace Game.Installers
             builder.Register<KnifeHitCollectibleHandler>(Lifetime.Singleton);
             builder.RegisterEntryPoint<CollisionHandlerRegistrar>();
         }
-        
         private ILogger CreateLogger()
         {
 #if TEST_ENV
