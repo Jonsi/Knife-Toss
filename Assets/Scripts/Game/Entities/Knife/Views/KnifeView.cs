@@ -70,7 +70,7 @@ namespace Game.Entities.Knife.Views
         private void OnTriggerEnter2D(Collider2D other)
         {
             var collisionChannel = _CollisionChannel;
-            if (!IsInFlight || collisionChannel == null)
+            if (collisionChannel == null)
                 return;
             
             var hitable = other.GetComponent<IHitable>();

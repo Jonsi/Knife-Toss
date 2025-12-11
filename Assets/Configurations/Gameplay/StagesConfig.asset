@@ -34,7 +34,7 @@ MonoBehaviour:
         - <Prefab>k__BackingField: {fileID: 8469477875108916277, guid: d5abd729dc883c14193d9008126a4bf2, type: 3}
           <Value>k__BackingField: 1
           <AngleOffset>k__BackingField: 0
-          <RadiusOffset>k__BackingField: 0
+          <RadiusOffset>k__BackingField: 0.1
     - <KnifeCount>k__BackingField: 8
       <ExtraKnives>k__BackingField: 2
       <Targets>k__BackingField:
