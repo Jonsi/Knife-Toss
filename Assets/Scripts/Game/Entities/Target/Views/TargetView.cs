@@ -19,9 +19,11 @@ namespace Game.Entities.Target.Views
 
         [SerializeField] private CircleCollider2D _Collider;
         [SerializeField] private TargetHitFeedback _HitFeedback;
+        [SerializeField] private Transform _StuckObjectsHolder;
 
         private IRotationBehavior _RotationBehavior;
         private float _CurrentRotation;
+        private Transform StickParent => _StuckObjectsHolder != null ? _StuckObjectsHolder : transform;
         
         public int KnivesToBreak { get; private set; }
         public int HitsReceived { get; private set; }
@@ -64,7 +66,7 @@ namespace Game.Entities.Target.Views
         /// <summary>
         /// Gets the transform for parenting stuck knives.
         /// </summary>
-        public Transform Transform => transform;
+        public Transform Transform => StickParent;
 
         /// <summary>
         /// Plays hit feedback on the target.
@@ -131,7 +133,7 @@ namespace Game.Entities.Target.Views
             Destroy(gameObject);
         }
 
-        private void AttachKnife(KnifeView knife) => knife.transform.SetParent(Transform);
+        private void AttachKnife(KnifeView knife) => knife.transform.SetParent(StickParent);
 
         private void ApplyStickTransform(KnifeView knife, Vector2 impactPoint)
         {
