@@ -18,7 +18,9 @@ namespace Game.Installers
         /// </summary>
         /// <param name="controller">UI controller component.</param>
         /// <param name="failPopup">Stage fail popup component.</param>
-        public UIInstaller(UIController controller, StageFailPopup failPopup)
+        public UIInstaller(
+            UIController controller,
+            StageFailPopup failPopup)
         {
             _Controller = controller;
             _FailPopup = failPopup;

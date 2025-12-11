@@ -237,13 +237,14 @@ GameObject:
   - component: {fileID: 239220524}
   - component: {fileID: 239220523}
   - component: {fileID: 239220522}
+  - component: {fileID: 239220525}
   m_Layer: 5
   m_Name: KnifeMagazine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &239220520
 RectTransform:
   m_ObjectHideFlags: 0
@@ -328,6 +329,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 239220519}
   m_CullTransparentMesh: 1
+--- !u!114 &239220525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 239220519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55d52becb3a4ee44f99a03065c8f1263, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.HUD.KnifeMagazineDisplay
+  _Container: {fileID: 239220520}
+  _IconPrefab: {fileID: 2974728482922833682, guid: 28701cd410730cf468e28b2636177e85, type: 3}
+  _ActiveColor: {r: 1, g: 1, b: 1, a: 1}
+  _InactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  _LevelStartedChannel: {fileID: 11400000, guid: 8016f38368e175c479eb37bb6b1726fd, type: 2}
+  _KnifeThrownChannel: {fileID: 11400000, guid: 80b1350cead05974f808ed72efda1384, type: 2}
+  _RetryChannel: {fileID: 11400000, guid: a8aafdd4ae42ad145876819d5f37bedb, type: 2}
+  _RestartChannel: {fileID: 11400000, guid: eef8d9c482392e74bb97e0df72cf980b, type: 2}
 --- !u!1 &321148375
 GameObject:
   m_ObjectHideFlags: 0
@@ -746,7 +767,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 50.542923, y: 0}
-  m_SizeDelta: {x: 101.085846, y: 7.085846}
+  m_SizeDelta: {x: 101.085846, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &450363080
 MonoBehaviour:
@@ -988,6 +1009,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: KnifeToss.Presentation::Presentation.Gameplay.Knife.KnifeThrowerView
   _KnifePrefab: {fileID: 4654195710904408416, guid: d9ae20e742e0c9b4294c6c2a0ecd0920, type: 3}
   _SpawnPoint: {fileID: 497239671}
+  _LoadAnimator: {fileID: 0}
 --- !u!4 &497239671
 Transform:
   m_ObjectHideFlags: 0
@@ -1057,7 +1079,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &562274315
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2151,6 +2173,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1419487719}
+  - component: {fileID: 1419487720}
   m_Layer: 5
   m_Name: StageProgressBar
   m_TagString: Untagged
@@ -2180,6 +2203,25 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 3}
   m_SizeDelta: {x: 0, y: 94}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1419487720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1419487718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5d7eecd7311972478c897c799bb6e4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.HUD.StageProgressBarView
+  _Container: {fileID: 1982895830}
+  _SlotPrefab: {fileID: 5219921149204258293, guid: 69781c1d83faeb5408dfd48fdee49b28, type: 3}
+  _ActiveColor: {r: 1, g: 1, b: 1, a: 1}
+  _InactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  _LevelStartedChannel: {fileID: 11400000, guid: 8016f38368e175c479eb37bb6b1726fd, type: 2}
+  _CurrentStageLabel: {fileID: 484845561}
+  _NextStageLabel: {fileID: 432973995}
 --- !u!1 &1485787341
 GameObject:
   m_ObjectHideFlags: 0
@@ -2218,7 +2260,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -50.542923, y: 0}
-  m_SizeDelta: {x: 101.085846, y: 101.085846}
+  m_SizeDelta: {x: 101.085846, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1485787343
 MonoBehaviour:
@@ -2596,9 +2638,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 239220520}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 54, y: -729.6}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1812161475
@@ -2782,6 +2824,7 @@ MonoBehaviour:
   _LevelFailedEventChannel: {fileID: 11400000, guid: 604458cf20b3869489fbff706e752db8, type: 2}
   _StageCompletedEventChannel: {fileID: 11400000, guid: 24f3aae2e2417e2478e9677f5f8a8825, type: 2}
   _ReturnToMenuEventChannel: {fileID: 11400000, guid: 67ee024458bba644abb8a2f664ce3204, type: 2}
+  _LevelStartedEventChannel: {fileID: 11400000, guid: 8016f38368e175c479eb37bb6b1726fd, type: 2}
   _RetryLevelClickedChannel: {fileID: 11400000, guid: a8aafdd4ae42ad145876819d5f37bedb, type: 2}
   _RestartStageClickedChannel: {fileID: 11400000, guid: eef8d9c482392e74bb97e0df72cf980b, type: 2}
   _SoundSettings: {fileID: 11400000, guid: 189e658594fd4ea4d8b64463039ef584, type: 2}
@@ -3004,7 +3047,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 1106308695
   m_SortingOrder: 0

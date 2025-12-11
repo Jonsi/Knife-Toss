@@ -11,18 +11,21 @@ namespace Game.Flow.Stage.States
         private readonly LevelFailedEventChannel _LevelFailedChannel;
         private readonly VoidEventChannel _RetryRequestChannel;
         private readonly VoidEventChannel _RestartRequestChannel;
+        private readonly LevelStartedEventChannel _LevelStartedChannel;
 
         public StagePlayingState(
             StageStateMachine machine,
             LevelCompletedEventChannel levelCompletedChannel,
             LevelFailedEventChannel levelFailedChannel,
             VoidEventChannel retryRequestChannel,
-            VoidEventChannel restartRequestChannel) : base(machine) 
+            VoidEventChannel restartRequestChannel,
+            LevelStartedEventChannel levelStartedChannel) : base(machine) 
         {
             _LevelCompletedChannel = levelCompletedChannel;
             _LevelFailedChannel = levelFailedChannel;
             _RetryRequestChannel = retryRequestChannel;
             _RestartRequestChannel = restartRequestChannel;
+            _LevelStartedChannel = levelStartedChannel;
         }
 
         public override void Enter()
@@ -31,6 +34,9 @@ namespace Game.Flow.Stage.States
             _LevelFailedChannel.Subscribe(HandleLevelFailed);
             _RetryRequestChannel.Subscribe(OnRetryRequested);
             _RestartRequestChannel.Subscribe(OnRestartRequested);
+            
+            var config = Machine.LevelCatalog.GetLevelConfig(Context.StageIndex, Context.CurrentLevelIndex);
+            RaiseLevelStarted(config);
         }
 
         public override void Exit()
@@ -78,6 +84,22 @@ namespace Game.Flow.Stage.States
         {
             LevelConfig config = Machine.LevelCatalog.GetLevelConfig(Context.StageIndex, Context.CurrentLevelIndex);
             Machine.LevelFlowController.LoadLevel(config);
+            RaiseLevelStarted(config);
+        }
+
+        private void RaiseLevelStarted(LevelConfig config)
+        {
+            if (_LevelStartedChannel == null || config == null)
+                return;
+
+            var data = new LevelStartedEventData
+            {
+                StageIndex = Context.StageIndex,
+                LevelIndex = Context.CurrentLevelIndex,
+                TotalLevelsInStage = Machine.LevelCatalog.GetLevelCount(Context.StageIndex),
+                TotalKnives = config.KnifeCount
+            };
+            _LevelStartedChannel.Raise(data);
         }
     }
 }

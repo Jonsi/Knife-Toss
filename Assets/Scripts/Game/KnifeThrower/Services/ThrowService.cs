@@ -1,8 +1,12 @@
+using System.Collections.Generic;
 using Common.Config;
 using Common.Events;
 using Game.Entities.Knife.Data;
 using Game.KnifeThrower.Configs;
 using Game.KnifeThrower.Interfaces;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using VContainer.Unity;
 
 namespace Game.KnifeThrower.Services
@@ -50,9 +54,29 @@ namespace Game.KnifeThrower.Services
 
         private void HandleThrowRequested()
         {
+            if (IsPointerOverUI())
+                return;
+
             var config = _KnifeThrowConfigurationProvider.GetConfiguration();
             _KnifeThrowerView.ThrowLoadedKnife(config.ThrowSpeed);
             LoadKnife(config);
+        }
+
+        private bool IsPointerOverUI()
+        {
+            var eventSystem = EventSystem.current;
+            if (eventSystem == null)
+                return false;
+
+            var pointer = Pointer.current;
+            if (pointer == null)
+                return false;
+
+            var position = pointer.position.ReadValue();
+            var pointerData = new PointerEventData(eventSystem) { position = position };
+            var raycastResults = new List<RaycastResult>();
+            eventSystem.RaycastAll(pointerData, raycastResults);
+            return raycastResults.Count > 0;
         }
 
         private void LoadKnife(KnifeThrowConfiguration config)

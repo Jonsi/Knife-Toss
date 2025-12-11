@@ -27,7 +27,8 @@ namespace Game.Flow.Stage.States
             LevelFailedEventChannel levelFailedChannel,
             StageCompletedEventChannel stageCompletedChannel,
             VoidEventChannel retryRequestChannel,
-            VoidEventChannel restartRequestChannel)
+            VoidEventChannel restartRequestChannel,
+            LevelStartedEventChannel levelStartedChannel)
         {
             Context = context;
             LevelFlowController = levelFlowController;
@@ -35,7 +36,13 @@ namespace Game.Flow.Stage.States
             StageCompletedChannel = stageCompletedChannel;
 
             Loading = new StageLoadingState(this);
-            Playing = new StagePlayingState(this, levelCompletedChannel, levelFailedChannel, retryRequestChannel, restartRequestChannel);
+            Playing = new StagePlayingState(
+                this,
+                levelCompletedChannel,
+                levelFailedChannel,
+                retryRequestChannel,
+                restartRequestChannel,
+                levelStartedChannel);
             Completed = new StageCompletedState(this);
         }
 

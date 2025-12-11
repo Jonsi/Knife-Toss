@@ -1,26 +1,29 @@
-## Phase Setup Instructions
+## Phase 8 Setup Steps (UI)
 
-1. Open the Unity scene that uses `GameInstaller` and ensure all serialized references are assigned.
-2. Verify configuration assets exist and are linked:
-   - `Assets/Configurations/Audio/SoundSettings.asset`
-   - `Assets/Configurations/VFX/VFXSettings.asset`
-   - `Assets/Configurations/Animations/TargetHitAnimationConfig.asset`
-   - `Assets/Configurations/Animations/KnifeLoadAnimationConfig.asset`
-   - `Assets/Configurations/EventChannels/KnifeThrownEventChannel.asset`
-3. Prefab wiring:
-   - `Target.prefab`: assign `TargetHitFeedback` component fields (config, transform, sprite renderer) and reference it in `TargetView`.
-   - `Knife.prefab`: assign `KnifeLoadAnimator` component fields (config, sprite renderer, optional visual root) and reference it in `KnifeView`.
-4. Scene objects:
-   - `GameInstaller` serialized fields: audio settings, VFX settings, audio player, event channels (collision, knife impact, knife thrown, collectible hit, level completed/failed), retry/restart channels, stage and UI references.
-   - `AudioPlayer` GameObject: ensure it has an `AudioSource` configured for SFX.
-5. Asset checks:
-   - Particle prefabs referenced in `VFXSettings` (e.g., knife hit target particles) are present under `Assets/Prefabs`.
-   - Audio clips referenced in `SoundSettings` exist under `Assets/Audio`.
-6. Assembly definition:
-   - `Assets/Scripts/Game/Game.asmdef` includes references to `DOTween` and `DOTween.Modules`.
-7. Playmode smoke test:
-   - Run a level, confirm throw, impact, collectible, and level result sounds play.
-   - Confirm knife hit particles spawn on stick events.
-   - Confirm target hit shake/tint and knife load animation play.
+1) Scene prerequisites
+- Ensure a single EventSystem exists in the scene for UI raycast checks.
+- Confirm GameInstaller is in the scene and assigned as the active LifetimeScope.
 
+2) Create/assign event channels (assets)
+- LevelStartedEventChannel: create under Configurations/EventChannels/Level/ and assign to GameInstaller field.
+- KnifeThrownEventChannel, CollectibleHitEventChannel, RetryLevelClicked, RestartStageClicked: ensure existing assets are assigned in GameInstaller.
 
+3) Assign GameInstaller scene references
+- KnifeThrowerView → existing scene object.
+- LevelRoot → transform that holds spawned level content.
+- StageFailPopup → fail popup GameObject.
+- UIController → UI controller GameObject.
+
+4) Configure HUD objects (event-driven, no DI)
+- StageProgressBarView: set Container; SlotPrefab (ProgressBarSlot); Completed/Incomplete colors; assign LevelStartedEventChannel.
+- KnifeMagazineDisplay: set Container; IconPrefab (MagazineKnifeIcon); Active/Inactive colors; assign LevelStartedEventChannel, KnifeThrownEventChannel, RetryLevelClicked, RestartStageClicked.
+- CollectibleCountDisplay: set CountText (TMP); assign LevelStartedEventChannel, CollectibleHitEventChannel, RetryLevelClicked, RestartStageClicked.
+- MuteButtonView: set Button (UI Button); Label (TMP); assign SettingsService instance reference.
+
+5) Verify TextMeshPro assembly reference
+- Game.asmdef must include Unity.TextMeshPro (already added). If missing, add it and reimport.
+
+6) Playmode validation
+- Launch Play mode and throw knives; HUD should reflect stage/level, progress dots, knife magazine, and collectible count.
+- Click mute button to toggle audio; label should swap between MUTE/UNMUTE and audio should pause/resume.
+- Attempt to throw while pointer is over UI; throw should be blocked.

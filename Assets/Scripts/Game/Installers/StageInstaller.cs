@@ -20,6 +20,7 @@ namespace Game.Installers
         private readonly ReturnToMenuEventChannel _ReturnToMenuChannel;
         private readonly VoidEventChannel _RetryChannel;
         private readonly VoidEventChannel _RestartChannel;
+        private readonly LevelStartedEventChannel _LevelStartedChannel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StageInstaller"/> class.
@@ -29,18 +30,21 @@ namespace Game.Installers
         /// <param name="returnToMenuChannel">Return to menu event channel.</param>
         /// <param name="retryChannel">Retry level request channel.</param>
         /// <param name="restartChannel">Restart stage request channel.</param>
+        /// <param name="levelStartedChannel">Level started event channel.</param>
         public StageInstaller(
             StagesConfigAsset stagesConfig,
             StageCompletedEventChannel stageCompletedChannel,
             ReturnToMenuEventChannel returnToMenuChannel,
             VoidEventChannel retryChannel,
-            VoidEventChannel restartChannel)
+            VoidEventChannel restartChannel,
+            LevelStartedEventChannel levelStartedChannel)
         {
             _StagesConfig = stagesConfig;
             _StageCompletedChannel = stageCompletedChannel;
             _ReturnToMenuChannel = returnToMenuChannel;
             _RetryChannel = retryChannel;
             _RestartChannel = restartChannel;
+            _LevelStartedChannel = levelStartedChannel;
         }
 
         /// <summary>
@@ -56,6 +60,7 @@ namespace Game.Installers
             builder.RegisterEntryPoint<StageFlowController>().As<IStageFlowController>();
             builder.RegisterInstance(_StageCompletedChannel);
             builder.RegisterInstance(_ReturnToMenuChannel);
+            builder.RegisterInstance(_LevelStartedChannel);
         }
 
         private StageStateMachine CreateStageStateMachine(IObjectResolver resolver)
@@ -68,7 +73,8 @@ namespace Game.Installers
                 resolver.Resolve<LevelFailedEventChannel>(),
                 _StageCompletedChannel,
                 _RetryChannel,
-                _RestartChannel);
+                _RestartChannel,
+                _LevelStartedChannel);
         }
     }
 }

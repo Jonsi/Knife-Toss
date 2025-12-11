@@ -414,7 +414,6 @@ IsMuted: bool
 | `StageProgressBarView` | `Assets/Scripts/Game/UI/HUD/` | Level progress dots |
 | `KnifeMagazineDisplay` | `Assets/Scripts/Game/UI/HUD/` | Remaining knife icons |
 | `CollectibleCountDisplay` | `Assets/Scripts/Game/UI/HUD/` | Total collectible currency display |
-| `StageLabelView` | `Assets/Scripts/Game/UI/HUD/` | "STAGE 1" text |
 | `MuteButtonView` | `Assets/Scripts/Game/UI/HUD/` | Toggle audio |
 | `StageFailPopupView` | `Assets/Scripts/Game/UI/Popups/` | Retry/Restart buttons |
 | `BasePopup` | `Assets/Scripts/Game/UI/Common/` | Base class for popups |
