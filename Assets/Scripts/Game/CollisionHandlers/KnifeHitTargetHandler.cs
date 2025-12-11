@@ -25,6 +25,9 @@ namespace Game.CollisionHandlers
             if (data.Source is not KnifeView knife || data.Target is not TargetView target)
                 return;
 
+            if (!knife.IsInFlight)
+                return;
+
             knife.StopMovement();
             target.Stick(knife, data.ImpactPoint);
             target.PlayHitFeedback();
