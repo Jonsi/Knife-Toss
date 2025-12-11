@@ -2633,6 +2633,7 @@ MonoBehaviour:
   _StagesConfig: {fileID: 11400000, guid: ddb146cdbe01d9a40879053fee124b76, type: 2}
   _CollisionEventChannel: {fileID: 11400000, guid: 550df89ae380ec743af103ed588ae1b1, type: 2}
   _KnifeImpactEventChannel: {fileID: 11400000, guid: f05ddbed278f4b14cac948a5951b4fe9, type: 2}
+  _CollectibleHitEventChannel: {fileID: 11400000, guid: d09bfa9eabb3b3d4a82eb07099a20991, type: 2}
   _LevelCompletedEventChannel: {fileID: 11400000, guid: 974f3462f6e1f6e4d9645afc67160fff, type: 2}
   _LevelFailedEventChannel: {fileID: 11400000, guid: 604458cf20b3869489fbff706e752db8, type: 2}
   _StageCompletedEventChannel: {fileID: 11400000, guid: 24f3aae2e2417e2478e9677f5f8a8825, type: 2}

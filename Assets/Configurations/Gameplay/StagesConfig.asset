@@ -30,6 +30,11 @@ MonoBehaviour:
         <KnivesToBreak>k__BackingField: 4
         <RotationSpeed>k__BackingField: 35
         <RotationDirection>k__BackingField: 1
+        <Collectibles>k__BackingField:
+        - <Prefab>k__BackingField: {fileID: 8469477875108916277, guid: d5abd729dc883c14193d9008126a4bf2, type: 3}
+          <Value>k__BackingField: 1
+          <AngleOffset>k__BackingField: 0
+          <RadiusOffset>k__BackingField: 0
     - <KnifeCount>k__BackingField: 8
       <ExtraKnives>k__BackingField: 2
       <Targets>k__BackingField:
@@ -41,6 +46,7 @@ MonoBehaviour:
         <KnivesToBreak>k__BackingField: 6
         <RotationSpeed>k__BackingField: 165.8
         <RotationDirection>k__BackingField: -1
+        <Collectibles>k__BackingField: []
     - <KnifeCount>k__BackingField: 12
       <ExtraKnives>k__BackingField: 3
       <Targets>k__BackingField:
@@ -52,6 +58,7 @@ MonoBehaviour:
         <KnivesToBreak>k__BackingField: 4
         <RotationSpeed>k__BackingField: 70
         <RotationDirection>k__BackingField: 1
+        <Collectibles>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 1.05
         <OrbitRadius>k__BackingField: 1.2
@@ -60,6 +67,7 @@ MonoBehaviour:
         <KnivesToBreak>k__BackingField: 5
         <RotationSpeed>k__BackingField: 80
         <RotationDirection>k__BackingField: -1
+        <Collectibles>k__BackingField: []
     - <KnifeCount>k__BackingField: 14
       <ExtraKnives>k__BackingField: 3
       <Targets>k__BackingField:
@@ -71,6 +79,7 @@ MonoBehaviour:
         <KnivesToBreak>k__BackingField: 6
         <RotationSpeed>k__BackingField: 90
         <RotationDirection>k__BackingField: 1
+        <Collectibles>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 0.85
         <OrbitRadius>k__BackingField: 0.9
@@ -79,6 +88,7 @@ MonoBehaviour:
         <KnivesToBreak>k__BackingField: 5
         <RotationSpeed>k__BackingField: 110
         <RotationDirection>k__BackingField: -1
+        <Collectibles>k__BackingField: []
   - <StageName>k__BackingField: Stage 2
     <LayoutSettings>k__BackingField:
       <BackgroundSprite>k__BackingField: {fileID: -7443756053782179069, guid: 9142eceb5798ce747bebc096288bcbd6, type: 3}
@@ -95,6 +105,7 @@ MonoBehaviour:
         <KnivesToBreak>k__BackingField: 5
         <RotationSpeed>k__BackingField: 90
         <RotationDirection>k__BackingField: 1
+        <Collectibles>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 0.9
         <OrbitRadius>k__BackingField: 1.1
@@ -103,6 +114,7 @@ MonoBehaviour:
         <KnivesToBreak>k__BackingField: 4
         <RotationSpeed>k__BackingField: 120
         <RotationDirection>k__BackingField: -1
+        <Collectibles>k__BackingField: []
     - <KnifeCount>k__BackingField: 14
       <ExtraKnives>k__BackingField: 3
       <Targets>k__BackingField:
@@ -114,6 +126,7 @@ MonoBehaviour:
         <KnivesToBreak>k__BackingField: 6
         <RotationSpeed>k__BackingField: 120
         <RotationDirection>k__BackingField: 1
+        <Collectibles>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 0.8
         <OrbitRadius>k__BackingField: 0.8
@@ -122,6 +135,7 @@ MonoBehaviour:
         <KnivesToBreak>k__BackingField: 5
         <RotationSpeed>k__BackingField: 130
         <RotationDirection>k__BackingField: -1
+        <Collectibles>k__BackingField: []
     - <KnifeCount>k__BackingField: 17
       <ExtraKnives>k__BackingField: 3
       <Targets>k__BackingField:
@@ -133,6 +147,7 @@ MonoBehaviour:
         <KnivesToBreak>k__BackingField: 5
         <RotationSpeed>k__BackingField: 150
         <RotationDirection>k__BackingField: 1
+        <Collectibles>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 0.9
         <OrbitRadius>k__BackingField: 1
@@ -141,6 +156,7 @@ MonoBehaviour:
         <KnivesToBreak>k__BackingField: 5
         <RotationSpeed>k__BackingField: 160
         <RotationDirection>k__BackingField: -1
+        <Collectibles>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 0.75
         <OrbitRadius>k__BackingField: 0.6
@@ -149,6 +165,7 @@ MonoBehaviour:
         <KnivesToBreak>k__BackingField: 4
         <RotationSpeed>k__BackingField: 180
         <RotationDirection>k__BackingField: 1
+        <Collectibles>k__BackingField: []
     - <KnifeCount>k__BackingField: 19
       <ExtraKnives>k__BackingField: 3
       <Targets>k__BackingField:
@@ -160,6 +177,7 @@ MonoBehaviour:
         <KnivesToBreak>k__BackingField: 6
         <RotationSpeed>k__BackingField: 180
         <RotationDirection>k__BackingField: 1
+        <Collectibles>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 0.9
         <OrbitRadius>k__BackingField: 1.1
@@ -168,6 +186,7 @@ MonoBehaviour:
         <KnivesToBreak>k__BackingField: 5
         <RotationSpeed>k__BackingField: 200
         <RotationDirection>k__BackingField: -1
+        <Collectibles>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 0.8
         <OrbitRadius>k__BackingField: 0.7
@@ -176,3 +195,4 @@ MonoBehaviour:
         <KnivesToBreak>k__BackingField: 5
         <RotationSpeed>k__BackingField: 220
         <RotationDirection>k__BackingField: 1
+        <Collectibles>k__BackingField: []
