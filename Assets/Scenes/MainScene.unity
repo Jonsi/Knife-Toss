@@ -988,6 +988,7 @@ GameObject:
   m_Component:
   - component: {fileID: 497239671}
   - component: {fileID: 497239670}
+  - component: {fileID: 497239672}
   m_Layer: 0
   m_Name: KnifeThrower
   m_TagString: Untagged
@@ -1009,7 +1010,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: KnifeToss.Presentation::Presentation.Gameplay.Knife.KnifeThrowerView
   _KnifePrefab: {fileID: 4654195710904408416, guid: d9ae20e742e0c9b4294c6c2a0ecd0920, type: 3}
   _SpawnPoint: {fileID: 497239671}
-  _LoadAnimator: {fileID: 0}
+  _LoadAnimator: {fileID: 497239672}
 --- !u!4 &497239671
 Transform:
   m_ObjectHideFlags: 0
@@ -1025,6 +1026,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &497239672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497239669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd29a6fcf03ec14ea167e9fff487c20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.Entities.Knife.Feedback.KnifeLoadAnimator
+  _Config: {fileID: 11400000, guid: ffeed95d9871d8f44972dfe4fe032a4c, type: 2}
 --- !u!1 &509203401
 GameObject:
   m_ObjectHideFlags: 0
@@ -2217,8 +2231,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game::Game.UI.HUD.StageProgressBarView
   _Container: {fileID: 1982895830}
   _SlotPrefab: {fileID: 5219921149204258293, guid: 69781c1d83faeb5408dfd48fdee49b28, type: 3}
-  _ActiveColor: {r: 1, g: 1, b: 1, a: 1}
-  _InactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  _CompletedColor: {r: 0.3295524, g: 1, b: 0, a: 1}
+  _IncompleteColor: {r: 1, g: 1, b: 1, a: 1}
   _LevelStartedChannel: {fileID: 11400000, guid: 8016f38368e175c479eb37bb6b1726fd, type: 2}
   _CurrentStageLabel: {fileID: 484845561}
   _NextStageLabel: {fileID: 432973995}
