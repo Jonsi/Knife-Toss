@@ -5,6 +5,9 @@ using Common.Collision.Logic;
 using Common.Config;
 using Common.Events;
 using Game.CollisionHandlers;
+using Game.Entities.Collectible.Data;
+using Game.Entities.Collectible.Events;
+using Game.Entities.Collectible.Spawning;
 using Game.Entities.Knife.Data;
 using Game.Entities.Knife.Events;
 using Game.Entities.Knife.Views;
@@ -44,6 +47,7 @@ namespace Game.Installers
         [Header("Event Channels")]
         [SerializeField] private CollisionEventChannel _CollisionEventChannel;
         [SerializeField] private KnifeImpactEventChannel _KnifeImpactEventChannel;
+        [SerializeField] private CollectibleHitEventChannel _CollectibleHitEventChannel;
         
         [Header("Flow Event Channels")]
         [SerializeField] private LevelCompletedEventChannel _LevelCompletedEventChannel;
@@ -77,6 +81,8 @@ namespace Game.Installers
             
             builder.Register<RotationBehaviorFactory>(Lifetime.Singleton);
             
+            builder.Register<CollectibleSpawner>(Lifetime.Singleton);
+
             builder.Register<TargetFactory>(Lifetime.Singleton)
                 .WithParameter(_StagesConfig.DefaultTargetPrefab);
             
@@ -96,18 +102,15 @@ namespace Game.Installers
             builder.RegisterInstance(_StageCompletedEventChannel);
             builder.RegisterInstance(_ReturnToMenuEventChannel);
             
-            // NOTE: We do not register VoidEventChannel instances generically because there are multiple.
-            // We pass them explicitly to consumers.
+            if (_CollectibleHitEventChannel != null)
+                builder.RegisterInstance(_CollectibleHitEventChannel).As<IEventChannel<CollectibleHitEventData>>();
 
-            // Level Flow
             builder.Register<LevelData>(Lifetime.Singleton);
             builder.Register<LevelStateMachine>(Lifetime.Singleton);
             builder.RegisterEntryPoint<LevelFlowController>().As<ILevelFlowController>();
 
-            // Stage Flow
             builder.Register<StageData>(Lifetime.Singleton).WithParameter(0);
             
-            // Manual construction for StageStateMachine to inject specific VoidEventChannels
             builder.Register(c => new StageStateMachine(
                 c.Resolve<StageData>(),
                 c.Resolve<ILevelFlowController>(),
@@ -115,17 +118,15 @@ namespace Game.Installers
                 c.Resolve<LevelCompletedEventChannel>(),
                 c.Resolve<LevelFailedEventChannel>(),
                 c.Resolve<StageCompletedEventChannel>(),
-                _RetryLevelClickedChannel,    // Injected directly, skipping intermediate channel
-                _RestartStageClickedChannel   // Injected directly, skipping intermediate channel
+                _RetryLevelClickedChannel,
+                _RestartStageClickedChannel
             ), Lifetime.Singleton);
 
             builder.RegisterEntryPoint<StageFlowController>().As<IStageFlowController>();
 
-            // Game Flow
             builder.Register<GameData>(Lifetime.Singleton);
             builder.Register<GameStateMachine>(Lifetime.Singleton).As<IGameStateMachine>();
             
-            // Manual construction for GameFlowController
             builder.Register(c => new GameFlowController(
                 c.Resolve<IGameStateMachine>()
             ), Lifetime.Singleton).AsImplementedInterfaces();
@@ -144,7 +145,6 @@ namespace Game.Installers
         private void RegisterKnifeServices(IContainerBuilder builder)
         {
             builder.RegisterInstance(_KnifeThrowConfig).As<IConfigurationProvider<KnifeThrowConfiguration>>();
-            // Removed KnifeSpawnRequestEventChannel registration
             builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
             builder.RegisterEntryPoint<ThrowService>().As<IThrowService>();
             builder.RegisterComponent(_KnifeThrowerView).As<IKnifeThrowerView>();
@@ -156,9 +156,10 @@ namespace Game.Installers
             builder.RegisterEntryPoint<CollisionHandlerHandlerRouter>().As<ICollisionHandlerRouter>();
             builder.Register<KnifeHitTargetHandler>(Lifetime.Singleton);
             builder.Register<KnifeHitKnifeHandler>(Lifetime.Singleton);
+            builder.Register<KnifeHitCollectibleHandler>(Lifetime.Singleton);
             builder.RegisterEntryPoint<CollisionHandlerRegistrar>();
         }
-
+        
         private ILogger CreateLogger()
         {
 #if TEST_ENV

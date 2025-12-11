@@ -36,6 +36,10 @@ namespace Game.Entities.Target.Data
         
         [Tooltip("Direction of rotation (1 for clockwise, -1 for counter-clockwise).")]
         [field: SerializeField] public int RotationDirection { get; private set; } = 1;
+
+        [Header("Collectibles")]
+        [Tooltip("List of collectibles to attach to this target.")]
+        [field: SerializeField] public System.Collections.Generic.List<Game.Entities.Collectible.Data.CollectibleConfig> Collectibles { get; private set; } = new();
     }
 }
 

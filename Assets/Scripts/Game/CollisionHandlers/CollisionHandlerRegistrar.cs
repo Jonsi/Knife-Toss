@@ -12,22 +12,25 @@ namespace Game.CollisionHandlers
         private readonly ICollisionHandlerRouter _HandlerRouter;
         private readonly KnifeHitTargetHandler _KnifeHitTargetHandler;
         private readonly KnifeHitKnifeHandler _KnifeHitKnifeHandler;
+        private readonly KnifeHitCollectibleHandler _KnifeHitCollectibleHandler;
 
         public CollisionHandlerRegistrar(
             ICollisionHandlerRouter handlerRouter,
             KnifeHitTargetHandler knifeHitTargetHandler,
-            KnifeHitKnifeHandler knifeHitKnifeHandler)
+            KnifeHitKnifeHandler knifeHitKnifeHandler,
+            KnifeHitCollectibleHandler knifeHitCollectibleHandler)
         {
             _HandlerRouter = handlerRouter;
             _KnifeHitTargetHandler = knifeHitTargetHandler;
             _KnifeHitKnifeHandler = knifeHitKnifeHandler;
+            _KnifeHitCollectibleHandler = knifeHitCollectibleHandler;
         }
 
         public void Start()
         {
             _HandlerRouter.Register(_KnifeHitTargetHandler);
             _HandlerRouter.Register(_KnifeHitKnifeHandler);
+            _HandlerRouter.Register(_KnifeHitCollectibleHandler);
         }
     }
 }
-

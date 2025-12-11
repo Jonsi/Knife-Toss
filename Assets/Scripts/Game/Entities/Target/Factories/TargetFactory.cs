@@ -1,4 +1,5 @@
 using System;
+using Game.Entities.Collectible.Spawning;
 using Game.Entities.Target.Data;
 using Game.Entities.Target.Views;
 using UnityEngine;
@@ -13,15 +14,25 @@ namespace Game.Entities.Target.Factories
     {
         private readonly IObjectResolver _ObjectResolver;
         private readonly RotationBehaviorFactory _RotationBehaviorFactory;
+        private readonly CollectibleSpawner _CollectibleSpawner;
         private readonly TargetView _DefaultPrefab;
 
+        /// <summary>
+        /// Initializes a new instance of the TargetFactory.
+        /// </summary>
+        /// <param name="objectResolver">DI container.</param>
+        /// <param name="rotationBehaviorFactory">Factory for rotation behaviors.</param>
+        /// <param name="collectibleSpawner">Spawner for collectibles.</param>
+        /// <param name="defaultPrefab">Default target prefab.</param>
         public TargetFactory(
             IObjectResolver objectResolver,
             RotationBehaviorFactory rotationBehaviorFactory,
+            CollectibleSpawner collectibleSpawner,
             TargetView defaultPrefab)
         {
             _ObjectResolver = objectResolver;
             _RotationBehaviorFactory = rotationBehaviorFactory;
+            _CollectibleSpawner = collectibleSpawner;
             _DefaultPrefab = defaultPrefab;
         }
 
@@ -57,6 +68,11 @@ namespace Game.Entities.Target.Factories
             
             _ObjectResolver.Inject(instance);
 
+            if (config.Collectibles != null && config.Collectibles.Count > 0)
+            {
+                _CollectibleSpawner.SpawnCollectibles(instance, config.Collectibles);
+            }
+
             return instance;
         }
 
@@ -71,4 +87,3 @@ namespace Game.Entities.Target.Factories
         }
     }
 }
-

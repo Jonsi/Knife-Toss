@@ -4,16 +4,21 @@ namespace Game.Flow.Game
     {
         public int CurrentStageIndex { get; internal set; }
         
-        // Add other game-session persistent data here (like total score, lives, etc if not in PlayerData)
+        /// <summary>
+        /// Total currency collected across the entire game session.
+        /// </summary>
+        public int TotalCollected { get; internal set; }
 
         public GameData()
         {
             CurrentStageIndex = 0;
+            TotalCollected = 0;
         }
 
         public void Reset()
         {
             CurrentStageIndex = 0;
+            TotalCollected = 0;
         }
     }
 }

@@ -19,6 +19,11 @@ namespace Game.Flow.Level
         public int KnivesStuck { get; internal set; }
         public bool IsThrowingActive { get; internal set; }
         
+        /// <summary>
+        /// Total currency items collected in this level.
+        /// </summary>
+        public int CollectedCount { get; internal set; }
+        
         public List<ITargetView> ActiveTargets { get; } = new List<ITargetView>();
 
         public bool HasKnivesRemaining => KnivesThrown < KnifeCount;
@@ -33,6 +38,7 @@ namespace Game.Flow.Level
         {
             KnivesThrown = 0;
             KnivesStuck = 0;
+            CollectedCount = 0;
             IsThrowingActive = false;
             ActiveTargets.Clear();
         }

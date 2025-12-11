@@ -2,26 +2,32 @@ using System.Collections.Generic;
 using Common.Events;
 using Game.Entities.Knife.Data;
 using Game.Entities.Target.Interfaces;
+using Game.Flow.Game;
 using Game.KnifeThrower.Interfaces;
+using Game.Entities.Collectible.Data;
 
 namespace Game.Flow.Level.States
 {
     public class LevelPlayingState : LevelStateBase 
     {
         private readonly IEventChannel<KnifeImpactEventData> _ImpactChannel;
+        private readonly IEventChannel<CollectibleHitEventData> _CollectibleHitChannel;
         private readonly IKnifeThrowerView _KnifeThrowerView;
+        private readonly GameData _GameData;
         private readonly List<ITargetView> _SubscribedTargets = new List<ITargetView>();
 
         public LevelPlayingState(
             LevelStateMachine machine,
             IEventChannel<KnifeImpactEventData> impactChannel,
-            IKnifeThrowerView knifeThrowerView)
+            IEventChannel<CollectibleHitEventData> collectibleHitChannel,
+            IKnifeThrowerView knifeThrowerView,
+            GameData gameData)
             : base(machine)
         {
             _ImpactChannel = impactChannel;
+            _CollectibleHitChannel = collectibleHitChannel;
             _KnifeThrowerView = knifeThrowerView;
-
-            _ImpactChannel.Subscribe(OnKnifeImpact);
+            _GameData = gameData;
         }
 
         public override void Enter()
@@ -38,6 +44,10 @@ namespace Game.Flow.Level.States
 
             if (_KnifeThrowerView != null)
                 _KnifeThrowerView.OnKnifeSpawned += OnKnifeSpawned;
+                
+            _ImpactChannel.Subscribe(OnKnifeImpact);
+            if (_CollectibleHitChannel != null)
+                _CollectibleHitChannel.Subscribe(OnCollectibleHit);
         }
 
         public override void Exit()
@@ -52,6 +62,10 @@ namespace Game.Flow.Level.States
 
             if (_KnifeThrowerView != null)
                 _KnifeThrowerView.OnKnifeSpawned -= OnKnifeSpawned;
+                
+            _ImpactChannel.Unsubscribe(OnKnifeImpact);
+            if (_CollectibleHitChannel != null)
+                _CollectibleHitChannel.Unsubscribe(OnCollectibleHit);
         }
 
         private void OnKnifeSpawned(KnifeSpawnRequestData data)
@@ -77,6 +91,19 @@ namespace Game.Flow.Level.States
             {
                 Context.KnivesStuck++;
                 CheckCompletion();
+            }
+        }
+        
+        private void OnCollectibleHit(CollectibleHitEventData data)
+        {
+            if (Machine.Current != this)
+                return;
+
+            Context.CollectedCount += data.Value;
+            
+            if (_GameData != null)
+            {
+                _GameData.TotalCollected += data.Value;
             }
         }
 
