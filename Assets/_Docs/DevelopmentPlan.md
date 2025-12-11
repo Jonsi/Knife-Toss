@@ -15,7 +15,7 @@
 - [Phase 3: Game States](#phase-3-game-states) ✅ COMPLETE
 - [Phase 4: Level Configuration](#phase-4-level-configuration) ✅ COMPLETE
 - [Phase 5: Flow & Progression](#phase-5-flow--progression) ✅ COMPLETE
-- [Phase 6: Collectibles & Currencies](#phase-6-collectibles--currencies)
+- [Phase 6: Collectibles & Currencies](#phase-6-collectibles--currencies--complete) ✅ COMPLETE
 - [Phase 7: Feedback Systems](#phase-7-feedback-systems)
 - [Phase 8: User Interface](#phase-8-user-interface)
 - [Phase 9: Persistence](#phase-9-persistence)
@@ -245,7 +245,7 @@ On StageCompleted (GamePlayingState):
 
 ---
 
-## Phase 6: Collectibles & Currencies
+## Phase 6: Collectibles & Currencies ✅ COMPLETE
 
 ### Goal
 
@@ -263,11 +263,11 @@ Collectibles add depth without changing core mechanics. Uses established pattern
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `CollectibleDefinition` | `Core/Data/Collectible/` | Config for collectible placement (config, count, spacing) |
-| `CollectibleObjectConfig` | `Core/Data/Collectible/` | Prefab reference, particle effect |
-| `CollectibleHitEventData` | `Core/Data/Collectible/` | Impact position payload |
-| `CollectibleCurrencyDefinition` (tomato) | `Core/Data/Collectible/` | Defines the tomato currency collectible type, reward amount, visuals |
-| `ICollectibleTracker` | `Core/Abstractions/` | Interface for tracking collectible currency (e.g., tomatoes) |
+| `CollectibleDefinition` | `Assets/Scripts/Game/Collectibles/Data/` | Config for collectible placement (config, count, spacing) |
+| `CollectibleObjectConfig` | `Assets/Scripts/Game/Collectibles/Data/` | Prefab reference, particle effect |
+| `CollectibleHitEventData` | `Assets/Scripts/Game/Collectibles/Data/` | Impact position payload |
+| `CollectibleCurrencyDefinition` (tomato) | `Assets/Scripts/Game/Collectibles/Data/` | Defines the tomato currency collectible type, reward amount, visuals |
+| `ICollectibleTracker` | `Assets/Scripts/Game/Collectibles/Interfaces/` | Interface for tracking collectible currency (e.g., tomatoes) |
 
 **Add to TargetConfig:**
 ```
@@ -279,21 +279,21 @@ collectibleSpacingOffset: float
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `CollectibleSpawner` | `Infrastructure/Leveling/` | Positions collectibles (including tomato currency) on target perimeter |
-| `CollectibleHitEventChannel` | `Infrastructure/Events/` | Event channel for collectible hits, including tomato currency pickups |
+| `CollectibleSpawner` | `Assets/Scripts/Game/Collectibles/Spawning/` | Positions collectibles (including tomato currency) on target perimeter |
+| `CollectibleHitEventChannel` | `Configurations/EventChannels/` | Event channel for collectible hits, including tomato currency pickups |
 
 #### Services
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `CollectibleService` | `App/Services/` | Tracks tomato currency (and future collectible currencies), listens to hit events, updates tracker |
+| `CollectibleService` | `Assets/Scripts/Game/Collectibles/Services/` | Tracks tomato currency (and future collectible currencies), listens to hit events, updates tracker |
 
 #### Views & Collision
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `CollectibleObjectView` | `Presentation/Gameplay/Collectibles/` | MonoBehaviour for a collectible currency object (e.g., tomato); implements `IHitable` |
-| `KnifeHitCollectibleHandler` | `Presentation/Gameplay/Collision/` | Handles knife-collectible collision |
+| `CollectibleObjectView` | `Assets/Scripts/Game/Collectibles/Views/` | MonoBehaviour for a collectible currency object (e.g., tomato); implements `IHitable` |
+| `KnifeHitCollectibleHandler` | `Assets/Scripts/Game/CollisionHandlers/` | Handles knife-collectible collision |
 
 **Hit Behavior:**
 1. Knife collision detected
@@ -323,24 +323,24 @@ Feedback transforms mechanics into experience. Uses event listeners from earlier
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `IAudioPlayer` | `Core/Abstractions/Audio/` | Interface for SFX playback |
-| `IMusicPlayer` | `Core/Abstractions/Audio/` | Interface for BGM |
-| `SoundSettings` | `Core/Data/Audio/` | ScriptableObject with all audio clips |
+| `IAudioPlayer` | `Assets/Scripts/Game/Feedback/Audio/Interfaces/` | Interface for SFX playback |
+| `IMusicPlayer` | `Assets/Scripts/Game/Feedback/Audio/Interfaces/` | Interface for BGM |
+| `SoundSettings` | `Assets/Scripts/Game/Feedback/Audio/Data/` | ScriptableObject with all audio clips |
 
 #### Systems
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `AudioPlayer` | `Infrastructure/Audio/` | Implements IAudioPlayer |
-| `MusicPlayer` | `Infrastructure/Audio/` | Implements IMusicPlayer |
-| `ParticleSpawner` | `Infrastructure/VFX/` | Spawns particle prefabs at positions |
+| `AudioPlayer` | `Assets/Scripts/Game/Feedback/Audio/Systems/` | Implements IAudioPlayer |
+| `MusicPlayer` | `Assets/Scripts/Game/Feedback/Audio/Systems/` | Implements IMusicPlayer |
+| `ParticleSpawner` | `Assets/Scripts/Game/Feedback/VFX/Systems/` | Spawns particle prefabs at positions |
 
 #### Services
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `AudioFeedbackService` | `App/Services/Audio/` | Listens to events, plays sounds |
-| `VFXFeedbackService` | `App/Services/VFX/` | Listens to events, spawns particles |
+| `AudioFeedbackService` | `Assets/Scripts/Game/Feedback/Audio/Services/` | Listens to events, plays sounds |
+| `VFXFeedbackService` | `Assets/Scripts/Game/Feedback/VFX/Services/` | Listens to events, spawns particles |
 
 **Event → Sound Mapping:**
 | Event | Sound |
@@ -356,8 +356,8 @@ Feedback transforms mechanics into experience. Uses event listeners from earlier
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `TargetHitFeedback` | `Presentation/Gameplay/Target/` | DOTween shake + tint on hit |
-| `KnifeLoadAnimator` | `Presentation/Gameplay/Knife/` | Slide-up + fade animation |
+| `TargetHitFeedback` | `Assets/Scripts/Game/Entities/Target/Feedback/` | DOTween shake + tint on hit |
+| `KnifeLoadAnimator` | `Assets/Scripts/Game/Entities/Knife/Feedback/` | Slide-up + fade animation |
 
 #### Assets
 
@@ -387,15 +387,15 @@ UI visualizes all systems built so far.
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `ILevelHudData` | `Core/Abstractions/UI/` | Interface exposing HUD data |
-| `ButtonClickEventData` | `Core/Data/UI/` | UI sound feedback payload |
+| `ILevelHudData` | `Assets/Scripts/Game/UI/Interfaces/` | Interface exposing HUD data |
+| `ButtonClickEventData` | `Assets/Scripts/Game/UI/Data/` | UI sound feedback payload |
 
 #### Services & ViewModels
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `LevelHudViewModel` | `App/Services/UI/` | Provides data to HUD views |
-| `SettingsService` | `App/Services/` | Manages mute state |
+| `LevelHudViewModel` | `Assets/Scripts/Game/UI/ViewModels/` | Provides data to HUD views |
+| `SettingsService` | `Assets/Scripts/Game/UI/Services/` | Manages mute state |
 
 **ViewModel Properties:**
 ```
@@ -411,13 +411,13 @@ IsMuted: bool
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `StageProgressBarView` | `Presentation/UI/HUD/` | Level progress dots |
-| `KnifeMagazineDisplay` | `Presentation/UI/HUD/` | Remaining knife icons |
-| `CollectibleCountDisplay` | `Presentation/UI/HUD/` | Total collectible currency display |
-| `StageLabelView` | `Presentation/UI/HUD/` | "STAGE 1" text |
-| `MuteButtonView` | `Presentation/UI/HUD/` | Toggle audio |
-| `StageFailPopupView` | `Presentation/UI/Popups/` | Retry/Restart buttons |
-| `BasePopup` | `Presentation/UI/Common/` | Base class for popups |
+| `StageProgressBarView` | `Assets/Scripts/Game/UI/HUD/` | Level progress dots |
+| `KnifeMagazineDisplay` | `Assets/Scripts/Game/UI/HUD/` | Remaining knife icons |
+| `CollectibleCountDisplay` | `Assets/Scripts/Game/UI/HUD/` | Total collectible currency display |
+| `StageLabelView` | `Assets/Scripts/Game/UI/HUD/` | "STAGE 1" text |
+| `MuteButtonView` | `Assets/Scripts/Game/UI/HUD/` | Toggle audio |
+| `StageFailPopupView` | `Assets/Scripts/Game/UI/Popups/` | Retry/Restart buttons |
+| `BasePopup` | `Assets/Scripts/Game/UI/Common/` | Base class for popups |
 
 **UI Raycast Blocking:**
 - Before throw, check if pointer over UI
@@ -443,10 +443,10 @@ Persistence makes progression meaningful.
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `PlayerData` | `Core/Data/Persistence/` | Root save data structure |
-| `PlayerProgressData` | `Core/Data/Persistence/` | Stage/level progress, fruits |
-| `PlayerSettingsData` | `Core/Data/Persistence/` | Audio, vibration settings |
-| `IPlayerDataStore` | `Core/Abstractions/Persistence/` | Interface for save/load |
+| `PlayerData` | `Assets/Scripts/Game/Persistence/Data/` | Root save data structure |
+| `PlayerProgressData` | `Assets/Scripts/Game/Persistence/Data/` | Stage/level progress, fruits |
+| `PlayerSettingsData` | `Assets/Scripts/Game/Persistence/Data/` | Audio, vibration settings |
+| `IPlayerDataStore` | `Assets/Scripts/Game/Persistence/Interfaces/` | Interface for save/load |
 
 **Data Structure:**
 ```
@@ -463,7 +463,7 @@ PlayerData
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `FilePlayerDataStore` | `Infrastructure/Persistence/` | JSON file read/write |
+| `FilePlayerDataStore` | `Assets/Scripts/Game/Persistence/Storage/` | JSON file read/write |
 
 **File Operations:**
 - Path: `Application.persistentDataPath/playerData.json`
@@ -474,7 +474,7 @@ PlayerData
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `PlayerDataService` | `App/Services/Persistence/` | Manages data lifecycle |
+| `PlayerDataService` | `Assets/Scripts/Game/Persistence/Services/` | Manages data lifecycle |
 
 **Save Triggers:**
 - Level completed
@@ -502,10 +502,10 @@ Optimization and variety build on stable foundation.
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `IPoolable` | `Core/Abstractions/Pooling/` | Interface for pooled objects |
-| `PulsatingRotationBehavior` | `Core/Domain/Target/` | Speed oscillates sinusoidally |
-| `FlippingRotationBehavior` | `Core/Domain/Target/` | Direction randomly reverses |
-| `CurveRotationBehavior` | `Core/Domain/Target/` | Speed follows AnimationCurve |
+| `IPoolable` | `Assets/Scripts/Game/Pooling/Interfaces/` | Interface for pooled objects |
+| `PulsatingRotationBehavior` | `Assets/Scripts/Game/Entities/Target/RotationBehaviors/` | Speed oscillates sinusoidally |
+| `FlippingRotationBehavior` | `Assets/Scripts/Game/Entities/Target/RotationBehaviors/` | Direction randomly reverses |
+| `CurveRotationBehavior` | `Assets/Scripts/Game/Entities/Target/RotationBehaviors/` | Speed follows AnimationCurve |
 
 **Additional Rotation Strategies:**
 ```
@@ -520,9 +520,9 @@ IRotationBehavior
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `ObjectPool<T>` | `Infrastructure/Pooling/` | Generic pool implementation |
-| `KnifePool` | `Infrastructure/Pooling/` | Knife-specific pool |
-| `ParticlePool` | `Infrastructure/Pooling/` | Particle effect pool |
+| `ObjectPool<T>` | `Assets/Scripts/Game/Pooling/` | Generic pool implementation |
+| `KnifePool` | `Assets/Scripts/Game/Pooling/` | Knife-specific pool |
+| `ParticlePool` | `Assets/Scripts/Game/Pooling/` | Particle effect pool |
 
 **Pool Operations:**
 - `Warmup(count)`: Pre-instantiate
@@ -534,8 +534,8 @@ IRotationBehavior
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `ThrowService` | | Use pool instead of Instantiate |
-| `VFXFeedbackService` | | Use particle pool |
+| `ThrowService` | `Assets/Scripts/Game/KnifeThrower/` | Use pool instead of Instantiate |
+| `VFXFeedbackService` | `Assets/Scripts/Game/Feedback/VFX/Services/` | Use particle pool |
 
 **Pre-Stuck Knives:**
 - Spawn knives already stuck at level start

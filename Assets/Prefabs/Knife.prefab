@@ -80,6 +80,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: KnifeToss.Presentation::Presentation.Gameplay.Knife.KnifeView
   _SpriteRenderer: {fileID: 5543959450069452106}
+  _VisualRoot: {fileID: 6845354428870092820}
   _StickPositionData:
     Offset: 0
     RotationOffset: 0

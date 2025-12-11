@@ -20,6 +20,7 @@ namespace Game.Entities.Knife.Views
         private static readonly Type CachedType = typeof(KnifeView);
 
         [SerializeField] private SpriteRenderer _SpriteRenderer;
+        [SerializeField] private Transform _VisualRoot;
         [SerializeField] private StickPositionData _StickPositionData;
         [SerializeField] private Collider2D _Collider;
         
@@ -46,6 +47,9 @@ namespace Game.Entities.Knife.Views
         /// Exposes transform for state consumption.
         /// </summary>
         public Transform Transform => transform;
+
+        public Transform VisualRoot => _VisualRoot != null ? _VisualRoot : transform;
+        public SpriteRenderer SpriteRenderer => _SpriteRenderer;
 
         [Inject]
         private void Construct(IEventChannel<CollisionData> collisionChannel)
@@ -106,6 +110,7 @@ namespace Game.Entities.Knife.Views
             _StateMachine.Bounced.ConfigureBounce(new Vector2(0f, 6f), 360f);
             _StateMachine.SetState(_StateMachine.Bounced);
         }
+
 
         /// <summary>
         /// Resets the knife to its initial loaded state.

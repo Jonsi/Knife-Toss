@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Common.Events
@@ -18,7 +19,8 @@ namespace Common.Events
         /// <param name="data">Payload for the event.</param>
         public void Raise(T data)
         {
-            foreach (var callback in _Subscriptions.Values)
+            var callbacks = _Subscriptions.Values.ToArray();
+            foreach (var callback in callbacks)
             {
                 callback?.Invoke(data);
             }

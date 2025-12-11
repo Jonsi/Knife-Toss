@@ -42,19 +42,27 @@ namespace Game.KnifeThrower.Services
 
             _PlayerThrowInputListener.OnThrowRequested += HandleThrowRequested;
             _PlayerThrowInputListener.Initialize();
+            
+            var config = _KnifeThrowConfigurationProvider.GetConfiguration();
+            LoadKnife(config);
             _IsRunning = true;
         }
 
         private void HandleThrowRequested()
         {
             var config = _KnifeThrowConfigurationProvider.GetConfiguration();
+            _KnifeThrowerView.ThrowLoadedKnife(config.ThrowSpeed);
+            LoadKnife(config);
+        }
+
+        private void LoadKnife(KnifeThrowConfiguration config)
+        {
             var spawnData = new KnifeSpawnRequestData
             {
                 SpawnOffset = config.SpawnPositionOffset,
                 ThrowSpeed = config.ThrowSpeed
             };
-            
-            _KnifeThrowerView.SpawnKnife(spawnData);
+            _KnifeThrowerView.LoadKnife(spawnData);
         }
 
         /// <summary>

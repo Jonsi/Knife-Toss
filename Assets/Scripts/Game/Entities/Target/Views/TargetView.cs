@@ -3,6 +3,7 @@ using Common.Collision.Interfaces;
 using Game.Entities.Knife.Views;
 using Game.Entities.Target.Data;
 using Game.Entities.Target.Interfaces;
+using Game.Entities.Target.Feedback;
 using UnityEngine;
 
 namespace Game.Entities.Target.Views
@@ -17,6 +18,7 @@ namespace Game.Entities.Target.Views
         private const float KNIFE_ROTATION_FACING_CENTER = 90f;
 
         [SerializeField] private CircleCollider2D _Collider;
+        [SerializeField] private TargetHitFeedback _HitFeedback;
 
         private IRotationBehavior _RotationBehavior;
         private float _CurrentRotation;
@@ -63,6 +65,14 @@ namespace Game.Entities.Target.Views
         /// Gets the transform for parenting stuck knives.
         /// </summary>
         public Transform Transform => transform;
+
+        /// <summary>
+        /// Plays hit feedback on the target.
+        /// </summary>
+        public void PlayHitFeedback()
+        {
+            _HitFeedback?.PlayHitFeedback();
+        }
 
         public void Initialize(TargetConfig config)
         {

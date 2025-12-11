@@ -102,6 +102,7 @@ GameObject:
   - component: {fileID: 2159086235203521432}
   - component: {fileID: 170391262003376939}
   - component: {fileID: 1336281483645859630}
+  - component: {fileID: 1708567030376354758}
   m_Layer: 0
   m_Name: Target
   m_TagString: Target
@@ -174,3 +175,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   _Collider: {fileID: 170391262003376939}
+  _HitFeedback: {fileID: 1708567030376354758}
+--- !u!114 &1708567030376354758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5427965671015069626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfd7f47b911adf74fb05e39041cbe4ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.Entities.Target.Feedback.TargetHitFeedback
+  _Config: {fileID: 11400000, guid: c32fe60958de6e344be20fc84f411e04, type: 2}
+  _TargetTransform: {fileID: 3461550744564480743}
+  _SpriteRenderer: {fileID: 729744686567893219}

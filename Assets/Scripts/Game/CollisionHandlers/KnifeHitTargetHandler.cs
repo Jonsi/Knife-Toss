@@ -27,8 +27,9 @@ namespace Game.CollisionHandlers
 
             knife.StopMovement();
             target.Stick(knife, data.ImpactPoint);
+            target.PlayHitFeedback();
             
-            _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Stuck));
+            _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Stuck, data.ImpactPoint));
         }
     }
 }

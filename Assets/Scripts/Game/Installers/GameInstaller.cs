@@ -5,10 +5,14 @@ using Game.Entities.Knife.Events;
 using Game.Entities.Knife.Views;
 using Game.Flow.Events;
 using Game.KnifeThrower.Configs;
+using Game.KnifeThrower.Events;
 using Game.Level.Catalogs;
 using Game.Settings;
 using Game.UI.Controllers;
 using Game.UI.Popups;
+using Game.Feedback.Audio.Data;
+using Game.Feedback.Audio.Systems;
+using Game.Feedback.VFX.Data;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -27,6 +31,7 @@ namespace Game.Installers
         [Header("Event Channels")]
         [SerializeField] private CollisionEventChannel _CollisionEventChannel;
         [SerializeField] private KnifeImpactEventChannel _KnifeImpactEventChannel;
+        [SerializeField] private KnifeThrownEventChannel _KnifeThrownEventChannel;
         [SerializeField] private CollectibleHitEventChannel _CollectibleHitEventChannel;
         
         [Header("Flow Event Channels")]
@@ -38,6 +43,11 @@ namespace Game.Installers
         [Header("UI Event Channels")]
         [SerializeField] private VoidEventChannel _RetryLevelClickedChannel;
         [SerializeField] private VoidEventChannel _RestartStageClickedChannel;
+
+        [Header("Feedback")]
+        [SerializeField] private SoundSettings _SoundSettings;
+        [SerializeField] private VFXSettings _VfxSettings;
+        [SerializeField] private AudioPlayer _AudioPlayer;
         
         [Header("Scene References")]
         [SerializeField] private KnifeThrowerView _KnifeThrowerView;
@@ -54,6 +64,8 @@ namespace Game.Installers
             Install(builder, CreateStageInstaller());
             Install(builder, CreateGameFlowInstaller());
             Install(builder, CreateCollisionInstaller());
+            Install(builder, CreateAudioInstaller());
+            Install(builder, CreateVFXInstaller());
             Install(builder, CreateUIInstaller());
         }
 
@@ -69,7 +81,11 @@ namespace Game.Installers
 
         private KnifeInstaller CreateKnifeInstaller()
         {
-            return new KnifeInstaller(_KnifeThrowConfig, _KnifeThrowerView, _KnifeImpactEventChannel);
+            return new KnifeInstaller(
+                _KnifeThrowConfig,
+                _KnifeThrowerView,
+                _KnifeImpactEventChannel,
+                _KnifeThrownEventChannel);
         }
 
         private CollectibleInstaller CreateCollectibleInstaller()
@@ -100,6 +116,23 @@ namespace Game.Installers
         private CollisionInstaller CreateCollisionInstaller()
         {
             return new CollisionInstaller(_CollisionEventChannel);
+        }
+
+        private AudioInstaller CreateAudioInstaller()
+        {
+            return new AudioInstaller(
+                _SoundSettings,
+                _AudioPlayer,
+                _KnifeThrownEventChannel,
+                _KnifeImpactEventChannel,
+                _CollectibleHitEventChannel,
+                _LevelCompletedEventChannel,
+                _LevelFailedEventChannel);
+        }
+
+        private VFXInstaller CreateVFXInstaller()
+        {
+            return new VFXInstaller(_VfxSettings, _KnifeImpactEventChannel);
         }
 
         private UIInstaller CreateUIInstaller()

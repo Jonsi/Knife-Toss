@@ -6,6 +6,7 @@ using Game.Entities.Knife.Views;
 using Game.Input;
 using Game.KnifeThrower.Configs;
 using Game.KnifeThrower.Interfaces;
+using Game.KnifeThrower.Events;
 using Game.KnifeThrower.Services;
 using VContainer;
 using VContainer.Unity;
@@ -20,6 +21,7 @@ namespace Game.Installers
         private readonly KnifeThrowConfigAsset _Config;
         private readonly KnifeThrowerView _View;
         private readonly KnifeImpactEventChannel _ImpactChannel;
+        private readonly KnifeThrownEventChannel _ThrownChannel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KnifeInstaller"/> class.
@@ -27,14 +29,17 @@ namespace Game.Installers
         /// <param name="config">Knife throw configuration asset.</param>
         /// <param name="view">Knife thrower view component.</param>
         /// <param name="impactChannel">Knife impact event channel.</param>
+        /// <param name="thrownChannel">Knife thrown event channel.</param>
         public KnifeInstaller(
             KnifeThrowConfigAsset config,
             KnifeThrowerView view,
-            KnifeImpactEventChannel impactChannel)
+            KnifeImpactEventChannel impactChannel,
+            KnifeThrownEventChannel thrownChannel)
         {
             _Config = config;
             _View = view;
             _ImpactChannel = impactChannel;
+            _ThrownChannel = thrownChannel;
         }
 
         /// <summary>
@@ -48,6 +53,7 @@ namespace Game.Installers
             builder.RegisterEntryPoint<ThrowService>().As<IThrowService>();
             builder.RegisterComponent(_View).As<IKnifeThrowerView>();
             builder.RegisterInstance(_ImpactChannel).As<IEventChannel<KnifeImpactEventData>>();
+            builder.RegisterInstance(_ThrownChannel).As<IEventChannel>();
         }
     }
 }

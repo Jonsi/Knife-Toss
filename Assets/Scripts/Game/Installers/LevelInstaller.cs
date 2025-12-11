@@ -1,3 +1,4 @@
+using Common.Events;
 using Game.Flow.Events;
 using Game.Flow.Interfaces;
 using Game.Flow.Level;
@@ -48,8 +49,8 @@ namespace Game.Installers
             builder.Register<LevelData>(Lifetime.Singleton);
             builder.Register<LevelStateMachine>(Lifetime.Singleton);
             builder.RegisterEntryPoint<LevelFlowController>().As<ILevelFlowController>();
-            builder.RegisterInstance(_CompletedChannel);
-            builder.RegisterInstance(_FailedChannel);
+            builder.RegisterInstance(_CompletedChannel).AsSelf().As<IEventChannel<LevelData>>();
+            builder.RegisterInstance(_FailedChannel).AsSelf().As<IEventChannel<LevelData>>();
         }
     }
 }

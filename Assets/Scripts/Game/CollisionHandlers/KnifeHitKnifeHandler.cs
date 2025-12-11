@@ -28,7 +28,7 @@ namespace Game.CollisionHandlers
 
             knife.Bounce();
             
-            _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Bounced));
+            _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Bounced, data.ImpactPoint));
         }
     }
 }

@@ -4,7 +4,9 @@
         "Common",
         "VContainer",
         "Unity.InputSystem",
-        "UniTask"
+        "UniTask",
+        "DOTween",
+        "DOTween.Modules"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

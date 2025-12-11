@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Common.Events
@@ -14,7 +15,8 @@ namespace Common.Events
 
         public void Raise()
         {
-            foreach (var callback in _subscriptions.Values)
+            var callbacks = _subscriptions.Values.ToArray();
+            foreach (var callback in callbacks)
             {
                 callback?.Invoke();
             }
@@ -48,4 +50,5 @@ namespace Common.Events
         }
     }
 }
+
 
