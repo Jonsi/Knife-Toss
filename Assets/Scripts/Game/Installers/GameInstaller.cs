@@ -64,6 +64,7 @@ namespace Game.Installers
             Install(builder, CreateLevelInstaller());
             Install(builder, CreateStageInstaller());
             Install(builder, CreateGameFlowInstaller());
+            Install(builder, CreatePersistenceInstaller());
             Install(builder, CreateCollisionInstaller());
             Install(builder, CreateAudioInstaller());
             Install(builder, CreateVFXInstaller());
@@ -113,6 +114,14 @@ namespace Game.Installers
         private GameFlowInstaller CreateGameFlowInstaller()
         {
             return new GameFlowInstaller(_GameSettings);
+        }
+
+        private PersistenceInstaller CreatePersistenceInstaller()
+        {
+            return new PersistenceInstaller(
+                _LevelCompletedEventChannel,
+                _StageCompletedEventChannel,
+                _CollectibleHitEventChannel);
         }
 
         private CollisionInstaller CreateCollisionInstaller()

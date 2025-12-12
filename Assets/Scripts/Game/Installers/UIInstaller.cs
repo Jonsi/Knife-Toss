@@ -1,4 +1,5 @@
 using Game.UI.Controllers;
+using Game.UI.HUD;
 using Game.UI.Popups;
 using VContainer;
 using VContainer.Unity;
@@ -34,6 +35,7 @@ namespace Game.Installers
         {
             builder.RegisterComponent(_Controller);
             builder.RegisterComponent(_FailPopup);
+            builder.RegisterComponentInHierarchy<CollectibleCountDisplay>();
         }
     }
 }

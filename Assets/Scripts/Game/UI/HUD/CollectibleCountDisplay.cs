@@ -2,8 +2,10 @@ using Common.Events;
 using Game.Entities.Collectible.Data;
 using Game.Entities.Collectible.Events;
 using Game.Flow.Events;
+using Game.Flow.Game;
 using TMPro;
 using UnityEngine;
+using VContainer;
 
 namespace Game.UI.HUD
 {
@@ -15,10 +17,16 @@ namespace Game.UI.HUD
         [SerializeField] private TMP_Text _CountText;
         [SerializeField] private LevelStartedEventChannel _LevelStartedChannel;
         [SerializeField] private CollectibleHitEventChannel _CollectibleHitChannel;
-        [SerializeField] private VoidEventChannel _RetryChannel;
-        [SerializeField] private VoidEventChannel _RestartChannel;
 
+        private GameData _GameData;
         private int _TotalCollectibles;
+
+        [Inject]
+        private void Construct(GameData gameData)
+        {
+            _GameData = gameData;
+            _TotalCollectibles = _GameData.TotalCollected;
+        }
 
         private void Update()
         {
@@ -34,10 +42,8 @@ namespace Game.UI.HUD
                 _LevelStartedChannel.Subscribe(OnLevelStarted);
             if (_CollectibleHitChannel != null)
                 _CollectibleHitChannel.Subscribe(OnCollectibleHit);
-            if (_RetryChannel != null)
-                _RetryChannel.Subscribe(ResetCount);
-            if (_RestartChannel != null)
-                _RestartChannel.Subscribe(ResetCount);
+
+            SyncFromGameData();
         }
 
         private void OnDisable()
@@ -46,15 +52,11 @@ namespace Game.UI.HUD
                 _LevelStartedChannel.Unsubscribe(OnLevelStarted);
             if (_CollectibleHitChannel != null)
                 _CollectibleHitChannel.Unsubscribe(OnCollectibleHit);
-            if (_RetryChannel != null)
-                _RetryChannel.Unsubscribe(ResetCount);
-            if (_RestartChannel != null)
-                _RestartChannel.Unsubscribe(ResetCount);
         }
 
         private void OnLevelStarted(LevelStartedEventData data)
         {
-            _TotalCollectibles = 0;
+            SyncFromGameData();
         }
 
         private void OnCollectibleHit(CollectibleHitEventData data)
@@ -62,9 +64,14 @@ namespace Game.UI.HUD
             _TotalCollectibles += data.Value;
         }
 
-        private void ResetCount()
+        private void SyncFromGameData()
         {
-            _TotalCollectibles = 0;
+            if (_GameData == null)
+            {
+                return;
+            }
+
+            _TotalCollectibles = _GameData.TotalCollected;
         }
     }
 }

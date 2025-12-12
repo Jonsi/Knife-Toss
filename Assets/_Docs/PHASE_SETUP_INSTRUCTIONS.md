@@ -27,3 +27,20 @@
 - Launch Play mode and throw knives; HUD should reflect stage/level, progress dots, knife magazine, and collectible count.
 - Click mute button to toggle audio; label should swap between MUTE/UNMUTE and audio should pause/resume.
 - Attempt to throw while pointer is over UI; throw should be blocked.
+
+## Phase 9 Setup Steps (Persistence)
+
+1) Scene prerequisites
+- GameInstaller present and active LifetimeScope (already required).
+
+2) Event channels (assets)
+- LevelCompletedEventChannel, StageCompletedEventChannel, CollectibleHitEventChannel: ensure assets exist under Configurations/EventChannels/ and are assigned to GameInstaller.
+
+3) GameInstaller wiring
+- PersistenceInstaller is invoked in GameInstaller.Configure; verify the three channels above are assigned in the inspector.
+
+4) Save location
+- playerData.json is stored at Application.persistentDataPath; first save creates it automatically.
+
+5) Playmode validation
+- Enter Play mode, complete a level and a stage, collect at least one collectible, exit Play mode, re-enter, and confirm stage index and total collectibles persist.
