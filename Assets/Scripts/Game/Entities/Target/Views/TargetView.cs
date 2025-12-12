@@ -1,5 +1,6 @@
 using System;
 using Common.Collision.Interfaces;
+using Common.Events;
 using Game.Entities.Knife.Views;
 using Game.Entities.Target.Data;
 using Game.Entities.Target.Interfaces;
@@ -21,11 +22,13 @@ namespace Game.Entities.Target.Views
         [SerializeField] private TargetHitFeedback _HitFeedback;
         [SerializeField] private Transform _StuckObjectsHolder;
 
+
         private IRotationBehavior _RotationBehavior;
         private float _CurrentRotation;
         private Transform StickParent => _StuckObjectsHolder != null ? _StuckObjectsHolder : transform;
         private bool _HasNotifiedDestroyed;
-        
+        private System.Collections.Generic.List<KnifeView> _StuckKnives = new();
+
         public int KnivesToBreak { get; private set; }
         public int HitsReceived { get; private set; }
         
@@ -82,7 +85,7 @@ namespace Game.Entities.Target.Views
             KnivesToBreak = config.KnivesToBreak;
             _CurrentRotation = config.StartingAngle;
             HitsReceived = 0;
-            
+
             // Set initial rotation
             transform.rotation = Quaternion.Euler(0f, 0f, _CurrentRotation);
         }
@@ -115,7 +118,8 @@ namespace Game.Entities.Target.Views
 
             AttachKnife(knife);
             ApplyStickTransform(knife, impactPoint);
-            
+            _StuckKnives.Add(knife);
+
             RegisterHit();
         }
 
@@ -149,6 +153,9 @@ namespace Game.Entities.Target.Views
 
         private void DestroyTarget()
         {
+            // Knives will be cleaned up when level completes
+            _StuckKnives.Clear();
+
             NotifyDestroyed();
             Destroy(gameObject);
         }

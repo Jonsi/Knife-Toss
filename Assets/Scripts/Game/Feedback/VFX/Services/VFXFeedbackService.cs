@@ -1,7 +1,6 @@
 using System;
 using Common.Events;
 using Game.Entities.Knife.Data;
-using Game.Feedback.VFX.Data;
 using Game.Pooling;
 using UnityEngine;
 using VContainer.Unity;
@@ -13,7 +12,6 @@ namespace Game.Feedback.VFX.Services
     /// </summary>
     public class VFXFeedbackService : IStartable, IDisposable
     {
-        private readonly VFXSettings _VfxSettings;
         private readonly IEventChannel<KnifeImpactEventData> _KnifeImpactChannel;
         private readonly ParticlePoolProvider _KnifeHitPool;
         private bool _IsStarted;
@@ -22,15 +20,11 @@ namespace Game.Feedback.VFX.Services
         /// Initializes a new instance of the <see cref="VFXFeedbackService"/> class.
         /// </summary>
         public VFXFeedbackService(
-            VFXSettings vfxSettings,
             IEventChannel<KnifeImpactEventData> knifeImpactChannel,
             ParticlePoolProvider knifeHitPoolProvider)
         {
-            _VfxSettings = vfxSettings;
             _KnifeImpactChannel = knifeImpactChannel;
-            _KnifeHitPool = knifeHitPoolProvider ?? (vfxSettings?.KnifeHitTargetParticlesPrefab != null
-                ? new ParticlePoolProvider(vfxSettings.KnifeHitTargetParticlesPrefab)
-                : null);
+            _KnifeHitPool = knifeHitPoolProvider;
         }
 
         /// <inheritdoc />

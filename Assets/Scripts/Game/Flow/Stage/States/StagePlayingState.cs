@@ -1,7 +1,12 @@
 using Common.Events;
+using Game.Entities.Knife.Data;
+using Game.Entities.Knife.Views;
 using Game.Flow.Events;
 using Game.Flow.Level;
+using Game.KnifeThrower.Interfaces;
 using Game.Level.Data;
+using Game.Pooling;
+using UnityEngine;
 
 namespace Game.Flow.Stage.States
 {
@@ -12,6 +17,8 @@ namespace Game.Flow.Stage.States
         private readonly VoidEventChannel _RetryRequestChannel;
         private readonly VoidEventChannel _RestartRequestChannel;
         private readonly LevelStartedEventChannel _LevelStartedChannel;
+        private readonly IKnifeThrowerView _KnifeThrowerView;
+        private readonly KnifePoolProvider _KnifePoolProvider;
 
         public StagePlayingState(
             StageStateMachine machine,
@@ -19,13 +26,17 @@ namespace Game.Flow.Stage.States
             LevelFailedEventChannel levelFailedChannel,
             VoidEventChannel retryRequestChannel,
             VoidEventChannel restartRequestChannel,
-            LevelStartedEventChannel levelStartedChannel) : base(machine) 
+            LevelStartedEventChannel levelStartedChannel,
+            IKnifeThrowerView knifeThrowerView,
+            KnifePoolProvider knifePoolProvider) : base(machine)
         {
             _LevelCompletedChannel = levelCompletedChannel;
             _LevelFailedChannel = levelFailedChannel;
             _RetryRequestChannel = retryRequestChannel;
             _RestartRequestChannel = restartRequestChannel;
             _LevelStartedChannel = levelStartedChannel;
+            _KnifeThrowerView = knifeThrowerView;
+            _KnifePoolProvider = knifePoolProvider;
         }
 
         public override void Enter()
@@ -34,7 +45,10 @@ namespace Game.Flow.Stage.States
             _LevelFailedChannel.Subscribe(HandleLevelFailed);
             _RetryRequestChannel.Subscribe(OnRetryRequested);
             _RestartRequestChannel.Subscribe(OnRestartRequested);
-            
+
+            // Load initial knife for the level
+            LoadKnifeForLevel();
+
             var config = Machine.LevelCatalog.GetLevelConfig(Context.StageIndex, Context.CurrentLevelIndex);
             RaiseLevelStarted(config);
         }
@@ -100,6 +114,18 @@ namespace Game.Flow.Stage.States
                 TotalKnives = config.KnifeCount
             };
             _LevelStartedChannel.Raise(data);
+        }
+
+        private void LoadKnifeForLevel()
+        {
+            // Get a knife from the pool and load it into the thrower
+            var knife = _KnifePoolProvider.Get();
+            var spawnData = new KnifeSpawnRequestData
+            {
+                SpawnOffset = Vector2.zero, // Default spawn position
+                ThrowSpeed = 10f // Default throw speed, could be configured
+            };
+            _KnifeThrowerView.LoadKnife(knife, spawnData);
         }
     }
 }

@@ -3,8 +3,10 @@ using Game.Flow.Events;
 using Game.Flow.Interfaces;
 using Game.Flow.Stage;
 using Game.Flow.Stage.States;
+using Game.KnifeThrower.Interfaces;
 using Game.Level.Catalogs;
 using Game.Level.Interfaces;
+using Game.Pooling;
 using VContainer;
 using VContainer.Unity;
 
@@ -60,7 +62,7 @@ namespace Game.Installers
             builder.RegisterEntryPoint<StageFlowController>().As<IStageFlowController>();
             builder.RegisterInstance(_StageCompletedChannel);
             builder.RegisterInstance(_ReturnToMenuChannel);
-            builder.RegisterInstance(_LevelStartedChannel);
+            builder.RegisterInstance(_LevelStartedChannel).As<IEventChannel<LevelStartedEventData>>();
         }
 
         private StageStateMachine CreateStageStateMachine(IObjectResolver resolver)
@@ -74,7 +76,9 @@ namespace Game.Installers
                 _StageCompletedChannel,
                 _RetryChannel,
                 _RestartChannel,
-                _LevelStartedChannel);
+                _LevelStartedChannel,
+                resolver.Resolve<IKnifeThrowerView>(),
+                resolver.Resolve<KnifePoolProvider>());
         }
     }
 }

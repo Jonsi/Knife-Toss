@@ -42,8 +42,6 @@ namespace Game.Flow.Level.States
                 target.OnDestroyed += HandleTargetDestroyed;
             }
 
-            if (_KnifeThrowerView != null)
-                _KnifeThrowerView.OnKnifeSpawned += OnKnifeSpawned;
                 
             _ImpactChannel.Subscribe(OnKnifeImpact);
             if (_CollectibleHitChannel != null)
@@ -60,8 +58,6 @@ namespace Game.Flow.Level.States
             }
             _SubscribedTargets.Clear();
 
-            if (_KnifeThrowerView != null)
-                _KnifeThrowerView.OnKnifeSpawned -= OnKnifeSpawned;
                 
             _ImpactChannel.Unsubscribe(OnKnifeImpact);
             if (_CollectibleHitChannel != null)

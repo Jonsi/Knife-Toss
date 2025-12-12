@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
 using Common.Config;
 using Common.Events;
 using Game.Entities.Knife.Data;
+using Game.Entities.Knife.Views;
 using Game.KnifeThrower.Configs;
 using Game.KnifeThrower.Interfaces;
+using Game.Pooling;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -13,26 +16,29 @@ namespace Game.KnifeThrower.Services
 {
     /// <summary>
     /// Service that coordinates knife throwing actions based on player input.
-    /// Handles the flow from input events to knife spawning via direct interface call.
+    /// Manages knife lifecycle through pooling and view coordination.
     /// </summary>
-    public class ThrowService : IThrowService, IStartable
+    public class ThrowService : IThrowService, IStartable, IDisposable
     {
         private readonly IPlayerThrowInputListener _PlayerThrowInputListener;
         private readonly IConfigurationProvider<KnifeThrowConfiguration> _KnifeThrowConfigurationProvider;
         private readonly IKnifeThrowerView _KnifeThrowerView;
+        private readonly KnifePoolProvider _KnifePoolProvider;
         private bool _IsRunning;
 
         /// <summary>
         /// Initializes a new instance of the ThrowService.
         /// </summary>
         public ThrowService(
-            IPlayerThrowInputListener playerThrowInputListener, 
+            IPlayerThrowInputListener playerThrowInputListener,
             IConfigurationProvider<KnifeThrowConfiguration> knifeThrowConfigurationProvider,
-            IKnifeThrowerView knifeThrowerView)
+            IKnifeThrowerView knifeThrowerView,
+            KnifePoolProvider knifePoolProvider)
         {
             _PlayerThrowInputListener = playerThrowInputListener;
             _KnifeThrowConfigurationProvider = knifeThrowConfigurationProvider;
             _KnifeThrowerView = knifeThrowerView;
+            _KnifePoolProvider = knifePoolProvider;
         }
 
         /// <summary>
@@ -46,9 +52,6 @@ namespace Game.KnifeThrower.Services
 
             _PlayerThrowInputListener.OnThrowRequested += HandleThrowRequested;
             _PlayerThrowInputListener.Initialize();
-            
-            var config = _KnifeThrowConfigurationProvider.GetConfiguration();
-            LoadKnife(config);
             _IsRunning = true;
         }
 
@@ -86,7 +89,8 @@ namespace Game.KnifeThrower.Services
                 SpawnOffset = config.SpawnPositionOffset,
                 ThrowSpeed = config.ThrowSpeed
             };
-            _KnifeThrowerView.LoadKnife(spawnData);
+            var knife = _KnifePoolProvider.Get();
+            _KnifeThrowerView.LoadKnife(knife, spawnData);
         }
 
         /// <summary>

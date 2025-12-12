@@ -5,17 +5,21 @@
 - EventSystem for UI raycast checks (already required).
 
 2) Event channels (assets)
-- KnifeImpactEventChannel: ensure asset exists under Configurations/EventChannels/ and is assigned to GameInstaller (used for VFX pooling).
+- LevelStartedEventChannel: ensure asset exists under Configurations/EventChannels/ and is assigned to GameInstaller (used for automatic knife cleanup when levels start).
 
 3) Assign GameInstaller scene references
-- KnifeThrowerView → existing scene object (provides knife prefab reference for pooling).
+- KnifeThrowerView → existing scene object with knife prefab assigned (used for pooling).
 - LevelRoot → transform that holds spawned level content.
 - StageFailPopup → fail popup GameObject.
 - UIController → UI controller GameObject.
 - All other references from previous phases.
 
-4) Configure VFX settings asset
-- VFXSettings.asset: update KnifeHitTargetParticlesPrefab and CollectibleHitParticlesPrefab to reference ParticleSystem prefabs (changed from GameObject to ParticleSystem type).
+4) Configure PoolSettings asset
+- Create PoolSettings.asset using Assets > Create > Knife Toss > Pooling > Pool Settings
+- Assign KnifePrefab to your knife prefab with KnifeView component
+- Assign KnifeHitTargetParticlesPrefab to your knife hit particle effect
+- Optionally assign CollectibleHitParticlesPrefab to collectible hit particles
+- Configure warmup counts and max pool sizes as needed
 
 5) Update target configurations
 - In StagesConfigAsset, update existing TargetConfig instances with new rotation behavior fields:
@@ -23,16 +27,17 @@
   - For Pulsating: set PulsateAmplitude and PulsateFrequency.
   - For Flipping: set FlipMinInterval and FlipMaxInterval.
   - For Curve: assign AnimationCurve to RotationCurve field.
-- Add PreStuckKnives list if desired: specify Angle and optional PrefabOverride for obstacle knives.
+- Add PreStuckKnives list if desired: specify Angle and PrefabOverride for obstacle knives.
 
 6) Verify pooling setup
-- KnifePoolProvider and ParticlePoolProvider are auto-registered via DI; ensure knife prefab is assigned in KnifeThrowerView for pooling to work.
-- Particle pools require VFXSettings to have valid ParticleSystem references.
+- Pooling is automatic - KnifePoolProvider and ParticlePoolProvider register via DI.
+- Pool parents are created automatically as "KnifePool_{prefab.name}" and "ParticlePool_{prefab.name}".
+- Level cleanup happens automatically when new levels start.
 
 7) Playmode validation
-- Throw knives and verify pooling: knives should be reused from pool without new instantiations visible in scene hierarchy.
-- Impact targets and collectibles: particle effects should spawn and auto-return to pool after playing.
-- Test rotation behaviors: configure different targets with varying rotation types and verify sinusoidal oscillation, random direction flips, and curve-following speeds.
-- Test pre-stuck knives: level should spawn obstacle knives at configured angles; they should block thrown knives and clean up properly on target destruction.
-- Performance check: monitor object counts in profiler during gameplay to confirm pooling reduces allocations.</contents>
+- Throw knives: verify they're reused from pool (no new GameObjects created).
+- Change levels: verify automatic cleanup (pooled objects return to their parents).
+- Test rotation behaviors: different targets should rotate with constant, pulsating, flipping, or curve patterns.
+- Test pre-stuck knives: should appear at configured angles on targets.
+- Performance: monitor object counts - pooling should prevent accumulation of unused objects.</contents>
 </xai:function_call 1>2. Event channels (assets)

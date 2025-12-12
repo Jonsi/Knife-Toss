@@ -2,7 +2,9 @@ using Common.Events;
 using Common.Patterns.State;
 using Game.Flow.Events;
 using Game.Flow.Interfaces;
+using Game.KnifeThrower.Interfaces;
 using Game.Level.Interfaces;
+using Game.Pooling;
 using VContainer.Unity;
 
 namespace Game.Flow.Stage.States
@@ -28,7 +30,9 @@ namespace Game.Flow.Stage.States
             StageCompletedEventChannel stageCompletedChannel,
             VoidEventChannel retryRequestChannel,
             VoidEventChannel restartRequestChannel,
-            LevelStartedEventChannel levelStartedChannel)
+            LevelStartedEventChannel levelStartedChannel,
+            IKnifeThrowerView knifeThrowerView,
+            KnifePoolProvider knifePoolProvider)
         {
             Context = context;
             LevelFlowController = levelFlowController;
@@ -42,7 +46,9 @@ namespace Game.Flow.Stage.States
                 levelFailedChannel,
                 retryRequestChannel,
                 restartRequestChannel,
-                levelStartedChannel);
+                levelStartedChannel,
+                knifeThrowerView,
+                knifePoolProvider);
             Completed = new StageCompletedState(this);
         }
 

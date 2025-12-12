@@ -1,4 +1,4 @@
-using Game.Feedback.VFX.Systems;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -6,32 +6,66 @@ namespace Game.Pooling
 {
     /// <summary>
     /// Provides pooled particle systems backed by Unity ObjectPool.
+    /// Maintains its own list of pooled objects for efficient management.
     /// </summary>
     public class ParticlePoolProvider
     {
         private readonly ObjectPool<ParticleSystem> _Pool;
+        private readonly Transform _poolParent;
+        private readonly List<ParticleSystem> _pooledObjects = new();
+        private readonly ParticleSystem _prefab;
 
         /// <summary>
         /// Initializes a new instance of the particle pool provider.
         /// </summary>
-        /// <param name="prefab">Particle system prefab used for pool creation.</param>
-        /// <param name="lifecycleActions">Optional lifecycle hooks.</param>
-        public ParticlePoolProvider(ParticleSystem prefab, PoolLifecycleActions<ParticleSystem> lifecycleActions = null)
+        /// <param name="poolSettings">Pool settings containing particle prefab and configuration.</param>
+        public ParticlePoolProvider(PoolSettings poolSettings)
         {
+            if (poolSettings == null)
+            {
+                throw new System.ArgumentNullException(nameof(poolSettings), "Pool settings cannot be null");
+            }
+
+            var prefab = poolSettings.KnifeHitTargetParticlesPrefab;
+            if (prefab == null)
+            {
+                throw new System.ArgumentException("KnifeHitTargetParticlesPrefab cannot be null in pool settings", nameof(poolSettings));
+            }
+
+            _prefab = prefab;
+
+            // Create a dedicated parent for pooled objects
+            var poolParent = new GameObject($"ParticlePool_{prefab.name}").transform;
+            Object.DontDestroyOnLoad(poolParent.gameObject);
+            _poolParent = poolParent;
             _Pool = new ObjectPool<ParticleSystem>(
-                () => CreateParticle(prefab, this),
+                () => CreateParticle(),
                 particle =>
                 {
-                    lifecycleActions?.OnGet?.Invoke(particle);
+                    particle.transform.SetParent(null, false);
                     particle.gameObject.SetActive(true);
                     particle.Play(true);
                 },
                 particle =>
                 {
-                    lifecycleActions?.OnRelease?.Invoke(particle);
                     particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
                     particle.gameObject.SetActive(false);
-                });
+                    particle.transform.SetParent(_poolParent, false);
+                    _pooledObjects.Add(particle);
+                },
+                defaultCapacity: poolSettings.ParticlePoolWarmupCount,
+                maxSize: poolSettings.ParticlePoolMaxSize);
+
+            // Pre-warm the pool by creating initial objects
+            var warmupObjects = new ParticleSystem[poolSettings.ParticlePoolWarmupCount];
+            for (int i = 0; i < poolSettings.ParticlePoolWarmupCount; i++)
+            {
+                warmupObjects[i] = _Pool.Get();
+            }
+            for (int i = 0; i < poolSettings.ParticlePoolWarmupCount; i++)
+            {
+                _Pool.Release(warmupObjects[i]);
+            }
         }
 
         /// <summary>
@@ -42,6 +76,7 @@ namespace Game.Pooling
         public ParticleSystem Get(Vector3 position)
         {
             var particle = _Pool.Get();
+            _pooledObjects.Remove(particle);
             particle.transform.position = position;
             return particle;
         }
@@ -67,13 +102,22 @@ namespace Game.Pooling
             Release(particle);
         }
 
-        private static ParticleSystem CreateParticle(ParticleSystem prefab, ParticlePoolProvider provider)
+        private ParticleSystem CreateParticle()
         {
-            var instance = Object.Instantiate(prefab);
+            if (_prefab == null)
+            {
+                throw new System.InvalidOperationException("Particle prefab is null");
+            }
+
+            var instance = Object.Instantiate<ParticleSystem>(_prefab);
+            if (instance == null)
+            {
+                throw new System.InvalidOperationException($"Failed to instantiate particle system from prefab {_prefab}");
+            }
             var main = instance.main;
             main.stopAction = ParticleSystemStopAction.Callback;
-            var returner = instance.gameObject.AddComponent<PooledParticleReturner>();
-            returner.Initialize(provider, instance);
+            var handler = instance.gameObject.AddComponent<ParticleReturnHandler>();
+            handler.Initialize(this);
             instance.gameObject.SetActive(false);
             instance.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             return instance;

@@ -12,7 +12,7 @@ using Game.UI.Controllers;
 using Game.UI.Popups;
 using Game.Feedback.Audio.Data;
 using Game.Feedback.Audio.Systems;
-using Game.Feedback.VFX.Data;
+using Game.Pooling;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -47,8 +47,10 @@ namespace Game.Installers
 
         [Header("Feedback")]
         [SerializeField] private SoundSettings _SoundSettings;
-        [SerializeField] private VFXSettings _VfxSettings;
         [SerializeField] private AudioPlayer _AudioPlayer;
+
+        [Header("Pooling")]
+        [SerializeField] private PoolSettings _PoolSettings;
         
         [Header("Scene References")]
         [SerializeField] private KnifeThrowerView _KnifeThrowerView;
@@ -86,6 +88,7 @@ namespace Game.Installers
             return new KnifeInstaller(
                 _KnifeThrowConfig,
                 _KnifeThrowerView,
+                _PoolSettings,
                 _KnifeImpactEventChannel,
                 _KnifeThrownEventChannel);
         }
@@ -143,7 +146,7 @@ namespace Game.Installers
 
         private VFXInstaller CreateVFXInstaller()
         {
-            return new VFXInstaller(_VfxSettings, _KnifeImpactEventChannel);
+            return new VFXInstaller(_PoolSettings, _KnifeImpactEventChannel);
         }
 
         private UIInstaller CreateUIInstaller()

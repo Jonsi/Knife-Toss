@@ -129,13 +129,6 @@ namespace Game.Entities.Knife.Views
             _StateMachine.SetState(_StateMachine.Loaded);
         }
 
-        /// <summary>
-        /// Returns the knife to the pool.
-        /// </summary>
-        public void ReturnToPool()
-        {
-            _StateMachine.SetState(_StateMachine.Pooled);
-        }
 
         public void SetActive(bool isActive)
         {

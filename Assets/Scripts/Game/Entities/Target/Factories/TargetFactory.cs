@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Common.Events;
 using Game.Entities.Collectible.Spawning;
 using Game.Entities.Knife.Views;
 using Game.Entities.Target.Data;
@@ -19,7 +20,6 @@ namespace Game.Entities.Target.Factories
         private readonly RotationBehaviorFactory _RotationBehaviorFactory;
         private readonly CollectibleSpawner _CollectibleSpawner;
         private readonly TargetView _DefaultPrefab;
-        private readonly KnifePoolProvider _KnifePoolProvider;
 
         /// <summary>
         /// Initializes a new instance of the TargetFactory.
@@ -28,19 +28,16 @@ namespace Game.Entities.Target.Factories
         /// <param name="rotationBehaviorFactory">Factory for rotation behaviors.</param>
         /// <param name="collectibleSpawner">Spawner for collectibles.</param>
         /// <param name="defaultPrefab">Default target prefab.</param>
-        /// <param name="knifePoolProvider">Pool provider for knives.</param>
         public TargetFactory(
             IObjectResolver objectResolver,
             RotationBehaviorFactory rotationBehaviorFactory,
             CollectibleSpawner collectibleSpawner,
-            TargetView defaultPrefab,
-            KnifePoolProvider knifePoolProvider)
+            TargetView defaultPrefab)
         {
             _ObjectResolver = objectResolver;
             _RotationBehaviorFactory = rotationBehaviorFactory;
             _CollectibleSpawner = collectibleSpawner;
             _DefaultPrefab = defaultPrefab;
-            _KnifePoolProvider = knifePoolProvider;
         }
 
         /// <summary>
@@ -72,7 +69,7 @@ namespace Game.Entities.Target.Factories
             instance.SetRotationBehavior(rotationBehavior);
 
             instance.Initialize(config);
-            
+
             _ObjectResolver.Inject(instance);
 
             if (config.Collectibles != null && config.Collectibles.Count > 0)
@@ -100,65 +97,26 @@ namespace Game.Entities.Target.Factories
 
         private void SpawnPreStuckKnives(IReadOnlyList<PreStuckKnifeConfig> preStuckConfigs, TargetView target)
         {
-            var pooledKnives = new List<KnifeView>();
-            var overrideKnives = new List<KnifeView>();
-
             for (int i = 0; i < preStuckConfigs.Count; i++)
             {
                 var knifeConfig = preStuckConfigs[i];
-                var knife = CreatePreStuckKnife(knifeConfig, pooledKnives, overrideKnives);
+                var knife = CreatePreStuckKnife(knifeConfig);
                 if (knife == null)
                     continue;
 
                 knife.StopMovement();
                 target.PlacePreStuckKnife(knife, knifeConfig.Angle);
             }
-
-            if (pooledKnives.Count == 0 && overrideKnives.Count == 0)
-                return;
-
-            target.OnDestroyed += _ =>
-            {
-                ReleasePooledKnives(pooledKnives);
-                DestroyOverrideKnives(overrideKnives);
-            };
         }
 
-        private KnifeView CreatePreStuckKnife(PreStuckKnifeConfig knifeConfig, IList<KnifeView> pooledKnives, IList<KnifeView> overrideKnives)
+        private KnifeView CreatePreStuckKnife(PreStuckKnifeConfig knifeConfig)
         {
             if (knifeConfig == null)
                 return null;
 
-            if (knifeConfig.PrefabOverride != null)
-            {
-                var knife = UnityEngine.Object.Instantiate(knifeConfig.PrefabOverride);
-                _ObjectResolver.Inject(knife);
-                overrideKnives.Add(knife);
-                return knife;
-            }
-
-            var pooledKnife = _KnifePoolProvider.Get();
-            pooledKnives.Add(pooledKnife);
-            return pooledKnife;
-        }
-
-        private void ReleasePooledKnives(IEnumerable<KnifeView> knives)
-        {
-            foreach (var knife in knives)
-            {
-                _KnifePoolProvider.Release(knife);
-            }
-        }
-
-        private void DestroyOverrideKnives(IEnumerable<KnifeView> knives)
-        {
-            foreach (var knife in knives)
-            {
-                if (knife == null)
-                    continue;
-
-                UnityEngine.Object.Destroy(knife.gameObject);
-            }
+            var knife = UnityEngine.Object.Instantiate(knifeConfig.PrefabOverride);
+            _ObjectResolver.Inject(knife);
+            return knife;
         }
     }
 }

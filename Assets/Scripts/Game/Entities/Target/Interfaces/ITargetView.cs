@@ -21,5 +21,11 @@ namespace Game.Entities.Target.Interfaces
         /// Event raised when the target is destroyed.
         /// </summary>
         event Action<ITargetView> OnDestroyed;
+
+        /// <summary>
+        /// Initializes the target with configuration.
+        /// </summary>
+        /// <param name="config">Target configuration.</param>
+        void Initialize(Game.Entities.Target.Data.TargetConfig config);
     }
 }
