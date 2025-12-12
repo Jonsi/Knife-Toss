@@ -6,7 +6,8 @@ namespace Game.Entities.Knife.Data
     public enum KnifeImpactType
     {
         Stuck = 0,
-        Bounced = 1
+        Bounced = 1,
+        OutOfView = 2
     }
 }
 

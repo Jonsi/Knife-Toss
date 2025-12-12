@@ -2,6 +2,7 @@ using System;
 using Common.Collision.Data;
 using Common.Collision.Interfaces;
 using Common.Events;
+using Game.Entities.Knife.Data;
 using Game.Entities.Knife.Interfaces;
 using Game.Entities.Knife.States;
 using Game.Entities.Target.Data;
@@ -25,8 +26,11 @@ namespace Game.Entities.Knife.Views
         [SerializeField] private Collider2D _Collider;
         
         private KnifeStateMachine _StateMachine;
+        private Camera _MainCamera;
+        private bool _HasReportedOutOfView;
 
         private IEventChannel<CollisionData> _CollisionChannel;
+        private IEventChannel<KnifeImpactEventData> _ImpactChannel;
 
         /// <summary>
         /// Gets the cached type for efficient collision routing.
@@ -52,19 +56,22 @@ namespace Game.Entities.Knife.Views
         public SpriteRenderer SpriteRenderer => _SpriteRenderer;
 
         [Inject]
-        private void Construct(IEventChannel<CollisionData> collisionChannel)
+        private void Construct(IEventChannel<CollisionData> collisionChannel, IEventChannel<KnifeImpactEventData> impactChannel)
         {
             _CollisionChannel = collisionChannel;
+            _ImpactChannel = impactChannel;
         }
 
         private void Awake()
         {
             InitializeStateMachine();
+            _MainCamera = Camera.main;
         }
 
         private void Update()
         {
             _StateMachine?.Update(Time.deltaTime);
+            CheckOutOfView();
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -89,6 +96,7 @@ namespace Game.Entities.Knife.Views
         /// <param name="speed">The speed at which to launch the knife.</param>
         public void Launch(Vector2 direction, float speed)
         {
+            _HasReportedOutOfView = false;
             _StateMachine.InFlight.Launch(direction, speed);
             _StateMachine.SetState(_StateMachine.InFlight);
         }
@@ -117,6 +125,7 @@ namespace Game.Entities.Knife.Views
         /// </summary>
         public void ResetKnife()
         {
+            _HasReportedOutOfView = false;
             _StateMachine.SetState(_StateMachine.Loaded);
         }
 
@@ -147,6 +156,28 @@ namespace Game.Entities.Knife.Views
         {
             if (_Collider != null)
                 _Collider.enabled = enabled;
+        }
+
+        private void CheckOutOfView()
+        {
+            if (_HasReportedOutOfView)
+                return;
+
+            var mainCamera = _MainCamera;
+            if (mainCamera == null)
+                return;
+
+            if (_StateMachine == null || !_StateMachine.IsInFlight)
+                return;
+
+            Vector3 viewportPoint = mainCamera.WorldToViewportPoint(transform.position);
+            bool isOutOfView = viewportPoint.x < 0f || viewportPoint.x > 1f || viewportPoint.y < 0f || viewportPoint.y > 1f;
+
+            if (!isOutOfView)
+                return;
+
+            _HasReportedOutOfView = true;
+            _ImpactChannel?.Raise(new KnifeImpactEventData(KnifeImpactType.OutOfView, transform.position));
         }
     }
 }
