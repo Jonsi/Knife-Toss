@@ -1438,6 +1438,7 @@ GameObject:
   m_Component:
   - component: {fileID: 773830223}
   - component: {fileID: 773830225}
+  - component: {fileID: 773830226}
   m_Layer: 5
   m_Name: FruitCountDisplay
   m_TagString: Untagged
@@ -1474,6 +1475,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 773830222}
   m_CullTransparentMesh: 1
+--- !u!114 &773830226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 773830222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19da4493b496f4439515f3942c7597c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.HUD.CollectibleCountDisplay
+  _CountText: {fileID: 1550521643}
+  _LevelStartedChannel: {fileID: 11400000, guid: 8016f38368e175c479eb37bb6b1726fd, type: 2}
+  _CollectibleHitChannel: {fileID: 11400000, guid: d09bfa9eabb3b3d4a82eb07099a20991, type: 2}
 --- !u!1 &777620290
 GameObject:
   m_ObjectHideFlags: 0

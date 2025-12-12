@@ -519,22 +519,22 @@ IRotationBehavior
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `ObjectPool<T>` | `Assets/Scripts/Game/Pooling/` | Generic pool implementation |
-| `KnifePool` | `Assets/Scripts/Game/Pooling/` | Knife-specific pool |
-| `ParticlePool` | `Assets/Scripts/Game/Pooling/` | Particle effect pool |
+| `UnityEngine.Pool.ObjectPool<T>` | Built-in | Use built-in pooling (no custom pool class) |
+| `KnifePoolProvider` | `Assets/Scripts/Game/Pooling/` | Configures built-in pool for knives |
+| `ParticlePoolProvider` | `Assets/Scripts/Game/Pooling/` | Configures built-in pool for particles |
 
 **Pool Operations:**
-- `Warmup(count)`: Pre-instantiate
-- `Get()`: Retrieve or create
-- `Return(obj)`: Deactivate, re-pool
-- Reset state on return
+- Use built-in `ObjectPool<T>` with create/on-get/on-release actions
+- Optional warmup during provider initialization
+- `Get()`/`Release()` from built-in pool; reset state on release
+- Configure max size and collection checks via provider settings
 
 #### Services
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `ThrowService` | `Assets/Scripts/Game/KnifeThrower/` | Use pool instead of Instantiate |
-| `VFXFeedbackService` | `Assets/Scripts/Game/Feedback/VFX/Services/` | Use particle pool |
+| `ThrowService` | `Assets/Scripts/Game/KnifeThrower/` | Retrieves knives from built-in pool |
+| `VFXFeedbackService` | `Assets/Scripts/Game/Feedback/VFX/Services/` | Retrieves particles from built-in pool |
 
 **Pre-Stuck Knives:**
 - Spawn knives already stuck at level start
