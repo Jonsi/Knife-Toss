@@ -487,7 +487,7 @@ PlayerData
 
 ### Goal
 
-Object pooling, additional rotation behaviors, pre-stuck knives, multi-target levels fully polished.
+Built-in pooling (Unity `ObjectPool<T>`), additional rotation behaviors, pre-stuck knives, multi-target levels fully polished.
 
 ### Why This Phase Last
 
@@ -501,7 +501,7 @@ Optimization and variety build on stable foundation.
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `IPoolable` | `Assets/Scripts/Game/Pooling/Interfaces/` | Interface for pooled objects |
+| `PoolLifecycleActions` | `Assets/Scripts/Game/Pooling/` | OnGet/OnRelease delegates for built-in pools |
 | `PulsatingRotationBehavior` | `Assets/Scripts/Game/Entities/Target/RotationBehaviors/` | Speed oscillates sinusoidally |
 | `FlippingRotationBehavior` | `Assets/Scripts/Game/Entities/Target/RotationBehaviors/` | Direction randomly reverses |
 | `CurveRotationBehavior` | `Assets/Scripts/Game/Entities/Target/RotationBehaviors/` | Speed follows AnimationCurve |
@@ -524,9 +524,9 @@ IRotationBehavior
 | `ParticlePoolProvider` | `Assets/Scripts/Game/Pooling/` | Configures built-in pool for particles |
 
 **Pool Operations:**
-- Use built-in `ObjectPool<T>` with create/on-get/on-release actions
+- Use built-in `ObjectPool<T>` with create/on-get/on-release actions (no custom pool interface)
 - Optional warmup during provider initialization
-- `Get()`/`Release()` from built-in pool; reset state on release
+- `Get()`/`Release()` from built-in pool; reset state via release actions
 - Configure max size and collection checks via provider settings
 
 #### Services

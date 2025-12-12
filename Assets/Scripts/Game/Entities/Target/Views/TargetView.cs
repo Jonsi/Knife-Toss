@@ -24,6 +24,7 @@ namespace Game.Entities.Target.Views
         private IRotationBehavior _RotationBehavior;
         private float _CurrentRotation;
         private Transform StickParent => _StuckObjectsHolder != null ? _StuckObjectsHolder : transform;
+        private bool _HasNotifiedDestroyed;
         
         public int KnivesToBreak { get; private set; }
         public int HitsReceived { get; private set; }
@@ -127,10 +128,43 @@ namespace Game.Entities.Target.Views
             }
         }
 
+        /// <summary>
+        /// Places a pre-stuck knife at the specified angle without affecting hit counts.
+        /// </summary>
+        /// <param name="knife">Knife view to position.</param>
+        /// <param name="angleDegrees">Angle in degrees around the target.</param>
+        public void PlacePreStuckKnife(KnifeView knife, float angleDegrees)
+        {
+            if (knife == null)
+                return;
+
+            AttachKnife(knife);
+            StickPositionData stickData = knife.StickPositionData;
+            Vector2 finalPosition = CalculateStickPosition(stickData.Offset, angleDegrees);
+            float finalRotation = CalculateStickRotation(angleDegrees, stickData.RotationOffset);
+
+            knife.transform.localPosition = finalPosition;
+            knife.transform.localRotation = Quaternion.Euler(0f, 0f, finalRotation);
+        }
+
         private void DestroyTarget()
         {
-            OnDestroyed?.Invoke(this);
+            NotifyDestroyed();
             Destroy(gameObject);
+        }
+
+        private void OnDestroy()
+        {
+            NotifyDestroyed();
+        }
+
+        private void NotifyDestroyed()
+        {
+            if (_HasNotifiedDestroyed)
+                return;
+
+            _HasNotifiedDestroyed = true;
+            OnDestroyed?.Invoke(this);
         }
 
         private void AttachKnife(KnifeView knife) => knife.transform.SetParent(StickParent);

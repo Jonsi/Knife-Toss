@@ -1,46 +1,38 @@
-## Phase 8 Setup Steps (UI)
+## Phase 10 Setup Steps (Polish & Performance)
 
 1) Scene prerequisites
-- Ensure a single EventSystem exists in the scene for UI raycast checks.
-- Confirm GameInstaller is in the scene and assigned as the active LifetimeScope.
+- GameInstaller active LifetimeScope (already required).
+- EventSystem for UI raycast checks (already required).
 
-2) Create/assign event channels (assets)
-- LevelStartedEventChannel: create under Configurations/EventChannels/Level/ and assign to GameInstaller field.
-- KnifeThrownEventChannel, CollectibleHitEventChannel, RetryLevelClicked, RestartStageClicked: ensure existing assets are assigned in GameInstaller.
+2) Event channels (assets)
+- KnifeImpactEventChannel: ensure asset exists under Configurations/EventChannels/ and is assigned to GameInstaller (used for VFX pooling).
 
 3) Assign GameInstaller scene references
-- KnifeThrowerView → existing scene object.
+- KnifeThrowerView → existing scene object (provides knife prefab reference for pooling).
 - LevelRoot → transform that holds spawned level content.
 - StageFailPopup → fail popup GameObject.
 - UIController → UI controller GameObject.
+- All other references from previous phases.
 
-4) Configure HUD objects (event-driven, no DI)
-- StageProgressBarView: set Container; SlotPrefab (ProgressBarSlot); Completed/Incomplete colors; assign LevelStartedEventChannel.
-- KnifeMagazineDisplay: set Container; IconPrefab (MagazineKnifeIcon); Active/Inactive colors; assign LevelStartedEventChannel, KnifeThrownEventChannel, RetryLevelClicked, RestartStageClicked.
-- CollectibleCountDisplay: set CountText (TMP); assign LevelStartedEventChannel, CollectibleHitEventChannel, RetryLevelClicked, RestartStageClicked.
-- MuteButtonView: set Button (UI Button); Label (TMP); assign SettingsService instance reference.
+4) Configure VFX settings asset
+- VFXSettings.asset: update KnifeHitTargetParticlesPrefab and CollectibleHitParticlesPrefab to reference ParticleSystem prefabs (changed from GameObject to ParticleSystem type).
 
-5) Verify TextMeshPro assembly reference
-- Game.asmdef must include Unity.TextMeshPro (already added). If missing, add it and reimport.
+5) Update target configurations
+- In StagesConfigAsset, update existing TargetConfig instances with new rotation behavior fields:
+  - RotationBehaviorType: set to "Constant", "Pulsating", "Flipping", or "Curve".
+  - For Pulsating: set PulsateAmplitude and PulsateFrequency.
+  - For Flipping: set FlipMinInterval and FlipMaxInterval.
+  - For Curve: assign AnimationCurve to RotationCurve field.
+- Add PreStuckKnives list if desired: specify Angle and optional PrefabOverride for obstacle knives.
 
-6) Playmode validation
-- Launch Play mode and throw knives; HUD should reflect stage/level, progress dots, knife magazine, and collectible count.
-- Click mute button to toggle audio; label should swap between MUTE/UNMUTE and audio should pause/resume.
-- Attempt to throw while pointer is over UI; throw should be blocked.
+6) Verify pooling setup
+- KnifePoolProvider and ParticlePoolProvider are auto-registered via DI; ensure knife prefab is assigned in KnifeThrowerView for pooling to work.
+- Particle pools require VFXSettings to have valid ParticleSystem references.
 
-## Phase 9 Setup Steps (Persistence)
-
-1) Scene prerequisites
-- GameInstaller present and active LifetimeScope (already required).
-
-2) Event channels (assets)
-- LevelCompletedEventChannel, StageCompletedEventChannel, CollectibleHitEventChannel: ensure assets exist under Configurations/EventChannels/ and are assigned to GameInstaller.
-
-3) GameInstaller wiring
-- PersistenceInstaller is invoked in GameInstaller.Configure; verify the three channels above are assigned in the inspector.
-
-4) Save location
-- playerData.json is stored at Application.persistentDataPath; first save creates it automatically.
-
-5) Playmode validation
-- Enter Play mode, complete a level and a stage, collect at least one collectible, exit Play mode, re-enter, and confirm stage index and total collectibles persist.
+7) Playmode validation
+- Throw knives and verify pooling: knives should be reused from pool without new instantiations visible in scene hierarchy.
+- Impact targets and collectibles: particle effects should spawn and auto-return to pool after playing.
+- Test rotation behaviors: configure different targets with varying rotation types and verify sinusoidal oscillation, random direction flips, and curve-following speeds.
+- Test pre-stuck knives: level should spawn obstacle knives at configured angles; they should block thrown knives and clean up properly on target destruction.
+- Performance check: monitor object counts in profiler during gameplay to confirm pooling reduces allocations.</contents>
+</xai:function_call 1>2. Event channels (assets)

@@ -2,6 +2,7 @@ using System;
 using Common.Events;
 using Game.Entities.Knife.Data;
 using Game.Feedback.VFX.Data;
+using Game.Pooling;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -14,6 +15,7 @@ namespace Game.Feedback.VFX.Services
     {
         private readonly VFXSettings _VfxSettings;
         private readonly IEventChannel<KnifeImpactEventData> _KnifeImpactChannel;
+        private readonly ParticlePoolProvider _KnifeHitPool;
         private bool _IsStarted;
 
         /// <summary>
@@ -21,10 +23,14 @@ namespace Game.Feedback.VFX.Services
         /// </summary>
         public VFXFeedbackService(
             VFXSettings vfxSettings,
-            IEventChannel<KnifeImpactEventData> knifeImpactChannel)
+            IEventChannel<KnifeImpactEventData> knifeImpactChannel,
+            ParticlePoolProvider knifeHitPoolProvider)
         {
             _VfxSettings = vfxSettings;
             _KnifeImpactChannel = knifeImpactChannel;
+            _KnifeHitPool = knifeHitPoolProvider ?? (vfxSettings?.KnifeHitTargetParticlesPrefab != null
+                ? new ParticlePoolProvider(vfxSettings.KnifeHitTargetParticlesPrefab)
+                : null);
         }
 
         /// <inheritdoc />
@@ -63,13 +69,7 @@ namespace Game.Feedback.VFX.Services
 
         private void SpawnKnifeHitParticles(Vector2 position)
         {
-            var prefab = _VfxSettings?.KnifeHitTargetParticlesPrefab;
-            if (prefab == null)
-            {
-                return;
-            }
-
-            UnityEngine.Object.Instantiate(prefab, position, Quaternion.identity);
+            _KnifeHitPool?.Get(position);
         }
     }
 }

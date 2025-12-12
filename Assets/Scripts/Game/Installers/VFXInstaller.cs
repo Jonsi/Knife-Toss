@@ -2,6 +2,7 @@ using Common.Events;
 using Game.Entities.Knife.Data;
 using Game.Feedback.VFX.Data;
 using Game.Feedback.VFX.Services;
+using Game.Pooling;
 using VContainer;
 using VContainer.Unity;
 
@@ -33,6 +34,12 @@ namespace Game.Installers
         public void Install(IContainerBuilder builder)
         {
             builder.RegisterInstance(_VfxSettings);
+            builder.Register<ParticlePoolProvider>(resolver =>
+            {
+                if (_VfxSettings.KnifeHitTargetParticlesPrefab == null)
+                    return null;
+                return new ParticlePoolProvider(_VfxSettings.KnifeHitTargetParticlesPrefab);
+            }, Lifetime.Singleton);
             builder.RegisterEntryPoint<VFXFeedbackService>();
         }
     }

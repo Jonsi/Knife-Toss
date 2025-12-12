@@ -8,6 +8,7 @@ using Game.KnifeThrower.Configs;
 using Game.KnifeThrower.Interfaces;
 using Game.KnifeThrower.Events;
 using Game.KnifeThrower.Services;
+using Game.Pooling;
 using VContainer;
 using VContainer.Unity;
 
@@ -52,6 +53,8 @@ namespace Game.Installers
             builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
             builder.RegisterEntryPoint<ThrowService>().As<IThrowService>();
             builder.RegisterComponent(_View).As<IKnifeThrowerView>();
+            builder.RegisterInstance(_View.KnifePrefab);
+            builder.Register<KnifePoolProvider>(Lifetime.Singleton);
             builder.RegisterInstance(_ImpactChannel).As<IEventChannel<KnifeImpactEventData>>();
             builder.RegisterInstance(_ThrownChannel).As<IEventChannel>();
         }
