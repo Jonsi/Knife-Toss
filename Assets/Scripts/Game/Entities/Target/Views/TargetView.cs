@@ -162,7 +162,6 @@ namespace Game.Entities.Target.Views
 
         private void OnDestroy()
         {
-            NotifyDestroyed();
         }
 
         private void NotifyDestroyed()
