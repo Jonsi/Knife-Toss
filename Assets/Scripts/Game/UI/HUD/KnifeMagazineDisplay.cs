@@ -23,7 +23,7 @@ namespace Game.UI.HUD
         [SerializeField] private VoidEventChannel _RestartChannel;
 
         private readonly List<Image> _Icons = new List<Image>();
-        private int _CachedTotalKnives = -1;
+        private int _TotalKnives = 0;
         private int _KnivesRemaining = 0;
 
         private void OnEnable()
@@ -33,18 +33,9 @@ namespace Game.UI.HUD
             if (_KnifeThrownChannel != null)
                 _KnifeThrownChannel.Subscribe(OnKnifeThrown);
             if (_RetryChannel != null)
-                _RetryChannel.Subscribe(ResetCounts);
+                _RetryChannel.Subscribe(OnReset);
             if (_RestartChannel != null)
-                _RestartChannel.Subscribe(ResetCounts);
-
-            RebuildIfNeeded();
-            Refresh();
-        }
-
-        private void Update()
-        {
-            RebuildIfNeeded();
-            Refresh();
+                _RestartChannel.Subscribe(OnReset);
         }
 
         private void OnDisable()
@@ -54,52 +45,18 @@ namespace Game.UI.HUD
             if (_KnifeThrownChannel != null)
                 _KnifeThrownChannel.Unsubscribe(OnKnifeThrown);
             if (_RetryChannel != null)
-                _RetryChannel.Unsubscribe(ResetCounts);
+                _RetryChannel.Unsubscribe(OnReset);
             if (_RestartChannel != null)
-                _RestartChannel.Unsubscribe(ResetCounts);
+                _RestartChannel.Unsubscribe(OnReset);
         }
 
         private void OnLevelStarted(LevelStartedEventData data)
         {
-            _CachedTotalKnives = data.TotalKnives;
+            _TotalKnives = data.TotalKnives;
             _KnivesRemaining = data.TotalKnives;
-            Rebuild();
-            Refresh();
-        }
 
-        private void OnKnifeThrown()
-        {
-            if (_KnivesRemaining > 0)
-                _KnivesRemaining--;
-        }
-
-        private void ResetCounts()
-        {
-            _KnivesRemaining = _CachedTotalKnives;
-            Refresh();
-        }
-
-        private void RebuildIfNeeded()
-        {
-            if (_Container == null || _IconPrefab == null)
-                return;
-
-            if (_CachedTotalKnives < 0)
-                return;
-
-            Rebuild();
-        }
-
-        private void Rebuild()
-        {
-            for (int i = 0; i < _Icons.Count; i++)
-            {
-                if (_Icons[i] != null)
-                    Destroy(_Icons[i].gameObject);
-            }
-            _Icons.Clear();
-
-            for (int i = 0; i < _CachedTotalKnives; i++)
+            // Create icons if we don't have enough
+            while (_Icons.Count < _TotalKnives)
             {
                 var iconObject = Instantiate(_IconPrefab, _Container);
                 iconObject.transform.localScale = Vector3.one;
@@ -109,20 +66,43 @@ namespace Game.UI.HUD
                     _Icons.Add(image);
                 }
             }
+
+            // Hide excess icons if we have too many
+            for (int i = _TotalKnives; i < _Icons.Count; i++)
+            {
+                if (_Icons[i] != null)
+                    _Icons[i].gameObject.SetActive(false);
+            }
+
+            UpdateVisuals();
         }
 
-        private void Refresh()
+        private void OnKnifeThrown()
         {
-            if (_CachedTotalKnives < 0)
-                return;
+            if (_KnivesRemaining > 0)
+            {
+                _KnivesRemaining--;
+                UpdateVisuals();
+            }
+        }
 
+        private void OnReset()
+        {
+            _KnivesRemaining = _TotalKnives;
+            UpdateVisuals();
+        }
+
+        private void UpdateVisuals()
+        {
             for (int i = 0; i < _Icons.Count; i++)
             {
                 var icon = _Icons[i];
                 if (icon == null)
                     continue;
 
-                icon.color = i < _KnivesRemaining ? _ActiveColor : _InactiveColor;
+                bool isActive = i < _KnivesRemaining;
+                icon.gameObject.SetActive(i < _TotalKnives);
+                icon.color = isActive ? _ActiveColor : _InactiveColor;
             }
         }
     }
