@@ -8,14 +8,13 @@ using Game.Entities.Collectible.Data;
 
 namespace Game.Flow.Level.States
 {
-    public class LevelPlayingState : LevelStateBase
+    public class LevelPlayingState : LevelStateBase 
     {
         private readonly IEventChannel<KnifeImpactEventData> _ImpactChannel;
         private readonly IEventChannel<CollectibleHitEventData> _CollectibleHitChannel;
         private readonly IKnifeThrowerView _KnifeThrowerView;
         private readonly GameData _GameData;
         private readonly List<ITargetView> _SubscribedTargets = new List<ITargetView>();
-        private bool _ShouldCompleteLevel;
 
         public LevelPlayingState(
             LevelStateMachine machine,
@@ -34,7 +33,6 @@ namespace Game.Flow.Level.States
         public override void Enter()
         {
             Context.IsThrowingActive = true;
-            _ShouldCompleteLevel = false;
 
             _SubscribedTargets.Clear();
             _SubscribedTargets.AddRange(Context.ActiveTargets);
@@ -64,15 +62,6 @@ namespace Game.Flow.Level.States
             _ImpactChannel.Unsubscribe(OnKnifeImpact);
             if (_CollectibleHitChannel != null)
                 _CollectibleHitChannel.Unsubscribe(OnCollectibleHit);
-        }
-
-        public override void Update(float deltaTime)
-        {
-            if (_ShouldCompleteLevel)
-            {
-                _ShouldCompleteLevel = false;
-                Machine.SetState(Machine.Completed);
-            }
         }
 
         private void OnKnifeSpawned(KnifeSpawnRequestData data)
@@ -124,7 +113,7 @@ namespace Game.Flow.Level.States
         {
             if (Context.AreAllTargetsDestroyed)
             {
-                _ShouldCompleteLevel = true;
+                Machine.SetState(Machine.Completed);
                 return;
             }
 
