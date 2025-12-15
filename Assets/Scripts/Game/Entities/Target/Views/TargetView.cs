@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Common.Collision.Interfaces;
+using Cysharp.Threading.Tasks;
 using Game.Entities.Knife.Views;
 using Game.Entities.Target.Data;
 using Game.Entities.Target.Data.Behaviors;
@@ -22,6 +23,7 @@ namespace Game.Entities.Target.Views
 
         [SerializeField] private CircleCollider2D _Collider;
         [SerializeField] private TargetHitFeedback _HitFeedback;
+        [SerializeField] private TargetShatterController _ShatterController;
         [SerializeField] private Transform _StuckObjectsHolder;
 
         private readonly LocalBehaviorRuntime _LocalBehaviorRuntime = new();
@@ -34,6 +36,7 @@ namespace Game.Entities.Target.Views
         private Transform StickParent => _StuckObjectsHolder != null ? _StuckObjectsHolder : transform;
         private bool _HasNotifiedDestroyed;
         private List<KnifeView> _StuckKnives = new();
+        private bool _IsDestroying;
 
         public int KnivesToBreak { get; private set; }
         public int HitsReceived { get; private set; }
@@ -119,6 +122,9 @@ namespace Game.Entities.Target.Views
 
         private void Update()
         {
+            if (_IsDestroying)
+                return;
+
             TickBehaviors(Time.deltaTime);
         }
 
@@ -210,9 +216,24 @@ namespace Game.Entities.Target.Views
 
         private void DestroyTarget()
         {
-            // Knives will be cleaned up when level completes
-            _StuckKnives.Clear();
+            if (_IsDestroying)
+                return;
 
+            _IsDestroying = true;
+            _StuckKnives.Clear();
+            DestroyTargetRoutine().Forget();
+        }
+
+        private async UniTask DestroyTargetRoutine()
+        {
+            if (_ShatterController != null)
+                await _ShatterController.PlayShatterAsync();
+
+            FinalizeDestruction();
+        }
+
+        private void FinalizeDestruction()
+        {
             NotifyDestroyed();
             Destroy(gameObject);
         }

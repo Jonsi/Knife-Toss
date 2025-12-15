@@ -59,7 +59,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 73ed3816ee2c09e499878030fb5348b1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 170391262003376939}
   - component: {fileID: 1336281483645859630}
   - component: {fileID: 1708567030376354758}
+  - component: {fileID: 4383808365025300950}
   m_Layer: 0
   m_Name: Target
   m_TagString: Target
@@ -208,6 +209,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   _Collider: {fileID: 170391262003376939}
   _HitFeedback: {fileID: 1708567030376354758}
+  _ShatterController: {fileID: 4383808365025300950}
   _StuckObjectsHolder: {fileID: 5579884299155848479}
 --- !u!114 &1708567030376354758
 MonoBehaviour:
@@ -224,3 +226,19 @@ MonoBehaviour:
   _Config: {fileID: 11400000, guid: c32fe60958de6e344be20fc84f411e04, type: 2}
   _TargetTransform: {fileID: 3461550744564480743}
   _SpriteRenderer: {fileID: 729744686567893219}
+--- !u!114 &4383808365025300950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5427965671015069626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bec47953f96fd644b804b964743283b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.Entities.Target.Feedback.TargetShatterController
+  _SpriteRenderer: {fileID: 729744686567893219}
+  _AnimationConfig: {fileID: 11400000, guid: 83c0d90097009ca49b39db4403908e57, type: 2}
+  _ShardMaterial: {fileID: 2100000, guid: 73ed3816ee2c09e499878030fb5348b1, type: 2}
+  _DetachedParent: {fileID: 2159086235203521432}
