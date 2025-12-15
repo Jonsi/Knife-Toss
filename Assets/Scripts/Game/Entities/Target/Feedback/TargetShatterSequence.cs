@@ -29,7 +29,7 @@ namespace Game.Entities.Target.Feedback
         /// Creates and initializes a shatter sequence for the provided sprite renderer.
         /// </summary>
         /// <returns>The created sequence instance or null if initialization failed.</returns>
-        public static TargetShatterSequence Create(SpriteRenderer sourceRenderer, TargetShatterAnimationConfig config, Material shardMaterial, Transform parentOverride)
+        public static TargetShatterSequence Create(SpriteRenderer sourceRenderer, TargetShatterAnimationConfig config, Material shardMaterial)
         {
             if (sourceRenderer == null || config == null || shardMaterial == null)
                 return null;
@@ -39,9 +39,6 @@ namespace Game.Entities.Target.Feedback
                 return null;
 
             var host = new GameObject("TargetShatterSequence");
-            if (parentOverride != null)
-                host.transform.SetParent(parentOverride);
-
             Transform sourceTransform = sourceRenderer.transform;
             host.transform.SetPositionAndRotation(sourceTransform.position, sourceTransform.rotation);
             host.transform.localScale = sourceTransform.lossyScale;

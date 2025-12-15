@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Common.Collision.Interfaces;
-using Cysharp.Threading.Tasks;
 using Game.Entities.Knife.Views;
 using Game.Entities.Target.Data;
 using Game.Entities.Target.Data.Behaviors;
@@ -36,7 +35,6 @@ namespace Game.Entities.Target.Views
         private Transform StickParent => _StuckObjectsHolder != null ? _StuckObjectsHolder : transform;
         private bool _HasNotifiedDestroyed;
         private List<KnifeView> _StuckKnives = new();
-        private bool _IsDestroying;
 
         public int KnivesToBreak { get; private set; }
         public int HitsReceived { get; private set; }
@@ -120,13 +118,7 @@ namespace Game.Entities.Target.Views
             transform.localRotation = Quaternion.Euler(0f, 0f, _CurrentRotation);
         }
 
-        private void Update()
-        {
-            if (_IsDestroying)
-                return;
-
-            TickBehaviors(Time.deltaTime);
-        }
+        private void Update() => TickBehaviors(Time.deltaTime);
 
         private void TickBehaviors(float deltaTime)
         {
@@ -216,23 +208,11 @@ namespace Game.Entities.Target.Views
 
         private void DestroyTarget()
         {
-            if (_IsDestroying)
+            if (_HasNotifiedDestroyed)
                 return;
 
-            _IsDestroying = true;
-            if (_Collider != null)
-            {
-                _Collider.enabled = false;
-            }
+            _ShatterController?.PlayShatter();
             _StuckKnives.Clear();
-            DestroyTargetRoutine().Forget();
-        }
-
-        private async UniTask DestroyTargetRoutine()
-        {
-            if (_ShatterController != null)
-                await _ShatterController.PlayShatterAsync();
-
             FinalizeDestruction();
         }
 
