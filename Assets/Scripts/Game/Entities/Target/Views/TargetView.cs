@@ -220,6 +220,10 @@ namespace Game.Entities.Target.Views
                 return;
 
             _IsDestroying = true;
+            if (_Collider != null)
+            {
+                _Collider.enabled = false;
+            }
             _StuckKnives.Clear();
             DestroyTargetRoutine().Forget();
         }

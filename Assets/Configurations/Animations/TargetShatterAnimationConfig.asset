@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 188ad3006879ab34e96a1bf563370539, type: 3}
   m_Name: TargetShatterAnimationConfig
   m_EditorClassIdentifier: Game::Game.Feedback.Animation.Data.TargetShatterAnimationConfig
-  <ShardCountRange>k__BackingField: {x: 2, y: 2}
+  <ShardCountRange>k__BackingField: {x: 3, y: 3}
   <SpawnJitter>k__BackingField: {x: 0, y: 0}
-  <ForceMagnitudeRange>k__BackingField: {x: -1.5, y: 2.5}
+  <SliceAngleRange>k__BackingField: {x: 20, y: 120}
+  <HorizontalForceRange>k__BackingField: {x: -2, y: 2}
+  <VerticalForceRange>k__BackingField: {x: 3, y: 5}
   <Gravity>k__BackingField: -20
   <Drag>k__BackingField: 0
-  <Lifetime>k__BackingField: 1.8
+  <Lifetime>k__BackingField: 1
   <FadeDelay>k__BackingField: 0.3
   <FadeDuration>k__BackingField: 0.5
   <TargetColor>k__BackingField: {r: 1, g: 1, b: 1, a: 0}

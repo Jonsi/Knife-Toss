@@ -242,3 +242,4 @@ MonoBehaviour:
   _AnimationConfig: {fileID: 11400000, guid: 83c0d90097009ca49b39db4403908e57, type: 2}
   _ShardMaterial: {fileID: 2100000, guid: 73ed3816ee2c09e499878030fb5348b1, type: 2}
   _DetachedParent: {fileID: 2159086235203521432}
+  _VisualRoot: {fileID: 1792144616048034259}
