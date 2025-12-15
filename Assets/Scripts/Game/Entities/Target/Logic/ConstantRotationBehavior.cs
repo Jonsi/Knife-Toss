@@ -6,7 +6,7 @@ namespace Game.Entities.Target.Logic
     /// Constant speed rotation behavior implementation.
     /// Rotates at a fixed speed in degrees per second.
     /// </summary>
-    public class ConstantRotationBehavior : IRotationBehavior
+    public class ConstantRotationBehavior : ILocalTargetBehavior
     {
         private readonly float _Speed;
 
@@ -20,13 +20,12 @@ namespace Game.Entities.Target.Logic
         }
 
         /// <summary>
-        /// Calculates the rotation delta for the current frame.
+        /// Applies rotation for the current frame.
         /// </summary>
-        /// <param name="deltaTime">The time elapsed since the last frame.</param>
-        /// <returns>The rotation delta in degrees.</returns>
-        public float GetRotationDelta(float deltaTime)
+        /// <param name="runtime">Frame runtime context.</param>
+        public void Tick(LocalBehaviorRuntime runtime)
         {
-            return _Speed * deltaTime;
+            runtime.AddRotationDelta(_Speed * runtime.DeltaTime);
         }
     }
 }

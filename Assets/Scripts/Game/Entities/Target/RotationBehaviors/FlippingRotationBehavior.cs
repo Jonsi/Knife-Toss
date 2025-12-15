@@ -1,4 +1,5 @@
 using Game.Entities.Target.Interfaces;
+using Game.Entities.Target.Logic;
 using UnityEngine;
 
 namespace Game.Entities.Target.RotationBehaviors
@@ -6,7 +7,7 @@ namespace Game.Entities.Target.RotationBehaviors
     /// <summary>
     /// Rotation behavior that flips direction at random intervals.
     /// </summary>
-    public class FlippingRotationBehavior : IRotationBehavior
+    public class FlippingRotationBehavior : ILocalTargetBehavior
     {
         private readonly float _SpeedMagnitude;
         private readonly float _MinInterval;
@@ -30,13 +31,12 @@ namespace Game.Entities.Target.RotationBehaviors
         }
 
         /// <summary>
-        /// Calculates the rotation delta for the current frame.
+        /// Applies the flipping rotation for the current frame.
         /// </summary>
-        /// <param name="deltaTime">Time elapsed since last frame.</param>
-        /// <returns>Rotation delta in degrees.</returns>
-        public float GetRotationDelta(float deltaTime)
+        /// <param name="runtime">Frame runtime context.</param>
+        public void Tick(LocalBehaviorRuntime runtime)
         {
-            _TimeUntilFlip -= deltaTime;
+            _TimeUntilFlip -= runtime.DeltaTime;
             if (_TimeUntilFlip <= 0f)
             {
                 _Direction = _Direction == 0 ? 1 : -_Direction;
@@ -44,7 +44,7 @@ namespace Game.Entities.Target.RotationBehaviors
             }
 
             float speed = _SpeedMagnitude * _Direction;
-            return speed * deltaTime;
+            runtime.AddRotationDelta(speed * runtime.DeltaTime);
         }
 
         private float GetNextInterval()

@@ -1,17 +1,19 @@
 using System;
+using System.Collections.Generic;
 using Common.Collision.Interfaces;
-using Common.Events;
 using Game.Entities.Knife.Views;
 using Game.Entities.Target.Data;
-using Game.Entities.Target.Interfaces;
+using Game.Entities.Target.Data.Behaviors;
 using Game.Entities.Target.Feedback;
+using Game.Entities.Target.Interfaces;
+using Game.Entities.Target.Logic;
 using UnityEngine;
 
 namespace Game.Entities.Target.Views
 {
     /// <summary>
     /// MonoBehaviour wrapper for the target visual representation.
-    /// Handles rotation via injected rotation behavior.
+    /// Handles movement behaviors configured per target.
     /// </summary>
     public class TargetView : MonoBehaviour, ITargetView, IHitable
     {
@@ -22,16 +24,20 @@ namespace Game.Entities.Target.Views
         [SerializeField] private TargetHitFeedback _HitFeedback;
         [SerializeField] private Transform _StuckObjectsHolder;
 
+        private readonly LocalBehaviorRuntime _LocalBehaviorRuntime = new();
+        private readonly WorldBehaviorRuntime _WorldBehaviorRuntime = new();
+        private readonly List<ILocalTargetBehavior> _LocalBehaviors = new();
+        private readonly List<IWorldTargetBehavior> _WorldBehaviors = new();
 
-        private IRotationBehavior _RotationBehavior;
         private float _CurrentRotation;
+        private Transform _WorldCenter;
         private Transform StickParent => _StuckObjectsHolder != null ? _StuckObjectsHolder : transform;
         private bool _HasNotifiedDestroyed;
-        private System.Collections.Generic.List<KnifeView> _StuckKnives = new();
+        private List<KnifeView> _StuckKnives = new();
 
         public int KnivesToBreak { get; private set; }
         public int HitsReceived { get; private set; }
-        
+
         /// <summary>
         /// Event raised when the target is destroyed.
         /// </summary>
@@ -80,30 +86,81 @@ namespace Game.Entities.Target.Views
             _HitFeedback?.PlayHitFeedback();
         }
 
+        /// <summary>
+        /// Configures the behaviors that drive this target.
+        /// </summary>
+        /// <param name="behaviorCollection">Runtime behavior set.</param>
+        /// <param name="worldCenter">Optional world center reference.</param>
+        public void ConfigureBehaviors(TargetBehaviorCollection behaviorCollection, Transform worldCenter)
+        {
+            _LocalBehaviors.Clear();
+            _WorldBehaviors.Clear();
+
+            if (behaviorCollection != null)
+            {
+                if (behaviorCollection.LocalBehaviors != null)
+                    _LocalBehaviors.AddRange(behaviorCollection.LocalBehaviors);
+                if (behaviorCollection.WorldBehaviors != null)
+                    _WorldBehaviors.AddRange(behaviorCollection.WorldBehaviors);
+            }
+
+            _WorldCenter = worldCenter;
+            TickBehaviors(0f);
+        }
+
         public void Initialize(TargetConfig config)
         {
             KnivesToBreak = config.KnivesToBreak;
-            _CurrentRotation = config.StartingAngle;
+            _CurrentRotation = config.InitialRotation;
             HitsReceived = 0;
 
-            // Set initial rotation
-            transform.rotation = Quaternion.Euler(0f, 0f, _CurrentRotation);
-        }
-
-        public void SetRotationBehavior(IRotationBehavior rotationBehavior)
-        {
-            _RotationBehavior = rotationBehavior;
+            transform.localRotation = Quaternion.Euler(0f, 0f, _CurrentRotation);
         }
 
         private void Update()
         {
-            if (_RotationBehavior == null)
+            TickBehaviors(Time.deltaTime);
+        }
+
+        private void TickBehaviors(float deltaTime)
+        {
+            UpdateWorldBehaviors(deltaTime);
+            UpdateLocalBehaviors(deltaTime);
+        }
+
+        private void UpdateWorldBehaviors(float deltaTime)
+        {
+            if (_WorldBehaviors.Count == 0)
                 return;
 
-            float rotationDelta = _RotationBehavior.GetRotationDelta(Time.deltaTime);
-            _CurrentRotation += rotationDelta;
+            Vector3 center = _WorldCenter != null ? _WorldCenter.position : Vector3.zero;
+            _WorldBehaviorRuntime.Begin(deltaTime, center, transform.position);
+
+            for (int i = 0; i < _WorldBehaviors.Count; i++)
+            {
+                _WorldBehaviors[i].Tick(_WorldBehaviorRuntime);
+            }
+
+            transform.position = _WorldBehaviorRuntime.Position;
+        }
+
+        private void UpdateLocalBehaviors(float deltaTime)
+        {
+            if (_LocalBehaviors.Count == 0)
+                return;
+
+            _LocalBehaviorRuntime.Begin(deltaTime);
+            for (int i = 0; i < _LocalBehaviors.Count; i++)
+            {
+                _LocalBehaviors[i].Tick(_LocalBehaviorRuntime);
+            }
+
+            if (!_LocalBehaviorRuntime.HasRotationDelta)
+                return;
+
+            _CurrentRotation += _LocalBehaviorRuntime.RotationDelta;
             _CurrentRotation %= 360f;
-            transform.rotation = Quaternion.Euler(0f, 0f, _CurrentRotation);
+            transform.localRotation = Quaternion.Euler(0f, 0f, _CurrentRotation);
         }
 
         /// <summary>
@@ -158,10 +215,6 @@ namespace Game.Entities.Target.Views
 
             NotifyDestroyed();
             Destroy(gameObject);
-        }
-
-        private void OnDestroy()
-        {
         }
 
         private void NotifyDestroyed()

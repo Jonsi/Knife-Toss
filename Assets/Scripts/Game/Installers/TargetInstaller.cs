@@ -1,6 +1,5 @@
 using Game.Entities.Target.Factories;
 using Game.Entities.Target.Views;
-using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
@@ -28,7 +27,7 @@ namespace Game.Installers
         /// <param name="builder">Container builder instance.</param>
         public void Install(IContainerBuilder builder)
         {
-            builder.Register<RotationBehaviorFactory>(Lifetime.Singleton);
+            builder.Register<TargetBehaviorFactory>(Lifetime.Singleton);
             builder.Register<TargetFactory>(Lifetime.Singleton)
                 .WithParameter(_DefaultTargetPrefab);
         }

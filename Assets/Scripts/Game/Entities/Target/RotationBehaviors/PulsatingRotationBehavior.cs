@@ -1,4 +1,5 @@
 using Game.Entities.Target.Interfaces;
+using Game.Entities.Target.Logic;
 using UnityEngine;
 
 namespace Game.Entities.Target.RotationBehaviors
@@ -6,7 +7,7 @@ namespace Game.Entities.Target.RotationBehaviors
     /// <summary>
     /// Rotation behavior that oscillates speed with a sine wave.
     /// </summary>
-    public class PulsatingRotationBehavior : IRotationBehavior
+    public class PulsatingRotationBehavior : ILocalTargetBehavior
     {
         private readonly float _BaseSpeed;
         private readonly float _Amplitude;
@@ -27,16 +28,15 @@ namespace Game.Entities.Target.RotationBehaviors
         }
 
         /// <summary>
-        /// Calculates the rotation delta for the current frame.
+        /// Applies the pulsating rotation for the current frame.
         /// </summary>
-        /// <param name="deltaTime">Time elapsed since last frame.</param>
-        /// <returns>Rotation delta in degrees.</returns>
-        public float GetRotationDelta(float deltaTime)
+        /// <param name="runtime">Frame runtime context.</param>
+        public void Tick(LocalBehaviorRuntime runtime)
         {
-            _Elapsed += deltaTime;
+            _Elapsed += runtime.DeltaTime;
             float oscillation = Mathf.Sin(_Elapsed * _Frequency * Mathf.PI * 2f) * _Amplitude;
             float speed = _BaseSpeed + oscillation;
-            return speed * deltaTime;
+            runtime.AddRotationDelta(speed * runtime.DeltaTime);
         }
     }
 }
