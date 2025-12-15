@@ -24,6 +24,7 @@ namespace Game.Entities.Target.Views
         [SerializeField] private TargetHitFeedback _HitFeedback;
         [SerializeField] private TargetShatterController _ShatterController;
         [SerializeField] private Transform _StuckObjectsHolder;
+        [SerializeField] private TargetSpawnAnimator _SpawnAnimator;
 
         private readonly LocalBehaviorRuntime _LocalBehaviorRuntime = new();
         private readonly WorldBehaviorRuntime _WorldBehaviorRuntime = new();
@@ -116,6 +117,14 @@ namespace Game.Entities.Target.Views
             HitsReceived = 0;
 
             transform.localRotation = Quaternion.Euler(0f, 0f, _CurrentRotation);
+        }
+
+        /// <summary>
+        /// Triggers the optional spawn animation once the target is fully configured.
+        /// </summary>
+        public void PlaySpawnAnimation()
+        {
+            _SpawnAnimator?.PlaySpawnAnimation();
         }
 
         private void Update() => TickBehaviors(Time.deltaTime);

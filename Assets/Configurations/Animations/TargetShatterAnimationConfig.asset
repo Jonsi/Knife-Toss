@@ -20,6 +20,6 @@ MonoBehaviour:
   <Gravity>k__BackingField: -20
   <Drag>k__BackingField: 0
   <Lifetime>k__BackingField: 1
-  <FadeDelay>k__BackingField: 0.3
+  <FadeDelay>k__BackingField: 0.5
   <FadeDuration>k__BackingField: 0.5
   <TargetColor>k__BackingField: {r: 1, g: 1, b: 1, a: 0}

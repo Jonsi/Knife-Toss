@@ -79,6 +79,8 @@ namespace Game.Entities.Target.Factories
             {
                 SpawnPreStuckKnives(config.PreStuckKnives, instance);
             }
+            
+            instance.PlaySpawnAnimation();
 
             return instance;
         }
