@@ -8,10 +8,14 @@ namespace Game.Entities.Target.Data.Behaviors
     public interface ILocalBehaviorConfig
     {
         /// <summary>
+        /// Gets the kind identifier for this local behavior.
+        /// </summary>
+        TargetLocalBehaviorKind Kind { get; }
+
+        /// <summary>
         /// Creates the runtime local behavior.
         /// </summary>
         /// <returns>Behavior instance.</returns>
         ILocalTargetBehavior CreateLocalBehavior();
     }
 }
-

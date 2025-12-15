@@ -9,10 +9,10 @@ namespace Game.Entities.Target.Data.Behaviors.Local
     /// Configuration for a flipping spin behavior.
     /// </summary>
     [Serializable]
-    public class FlippingSpinBehaviorConfig : TargetBehaviorConfig, ILocalBehaviorConfig
+    public class FlippingSpinBehaviorConfig : ILocalBehaviorConfig
     {
         /// <inheritdoc />
-        public override TargetBehaviorKind Kind => TargetBehaviorKind.FlippingSpin;
+        public TargetLocalBehaviorKind Kind => TargetLocalBehaviorKind.FlippingSpin;
 
         [Tooltip("Base rotation speed in degrees per second.")]
         [SerializeField] private float _BaseSpeed = 50f;

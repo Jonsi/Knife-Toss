@@ -3,24 +3,19 @@
 Follow these steps to configure the new designer-friendly target behavior system. All assets live directly in level config data—no ScriptableObjects required.
 
 ### 1. Understanding the Structure
-- `TargetConfig` (per level target) now exposes a single `TargetBehaviorSet`.
-- Each behavior entry derives from `TargetBehaviorConfig` and implements `ILocalBehaviorConfig` (local rotation/scale) or `IWorldBehaviorConfig` (world motion).
+- `TargetConfig` (per level target) now exposes a `TargetBehaviorSet` with two lists: **World Behaviors** and **Local Behaviors**.
+- Each behavior entry derives from `TargetBehaviorConfig` and implements either `ILocalBehaviorConfig` (local rotation/scale) or `IWorldBehaviorConfig` (world motion).
 - Behaviors are serialized via `[SerializeReference]`, so you can mix different behavior types and toggle them individually.
 
 ### 2. Adding Behaviors to a Target
 1. Open the level asset (e.g., `StagesConfig.asset`) and expand a target entry.
-2. Under the `Behaviors` list, click the `+` icon to add a new reference entry.
-3. Use the **Behavior Kind** dropdown on each entry to pick the desired type:
-   - `ConstantSpin` – constant local rotation.
-   - `PulsatingSpin` – sine-wave speed variation.
-   - `FlippingSpin` – random direction flips.
-   - `CurveSpin` – rotation speed driven by an `AnimationCurve`.
-   - `Orbit` – world-space orbit around the level center.
-4. The inspector automatically swaps in the corresponding configuration fields for that kind. Adjust the parameters (speed, amplitudes, angles, etc.) as needed.
+2. Expand either **World Behaviors** (for orbit/bobbing/etc.) or **Local Behaviors** (for spins/scales) and use the `+` icon to add a new entry.
+3. Use the **Behavior Kind** dropdown on each entry to pick the desired type (world list currently offers `Orbit`; local list offers `ConstantSpin`, `PulsatingSpin`, `FlippingSpin`, `CurveSpin`).
+4. The inspector automatically swaps in the corresponding configuration fields for that kind. Adjust the parameters (speed, amplitudes, angles, etc.) as needed. For `Orbit`, set **Distance From Center** to define how far the target orbits from the center point.
 5. Use the checkbox on each entry to enable/disable it without removing the data.
 
 ### 3. Stacking Local and World Behaviors
-- You can add multiple entries of any type. Example: one `OrbitBehaviorConfig` + two different spin behaviors for layered motion.
+- Add as many entries as you need in each list. Example: one `Orbit` behavior in the world list + two different spin behaviors in the local list for layered motion.
 - World behaviors evaluate first, updating the target position; local behaviors then adjust rotation/scale around that position.
 
 ### 4. Initial Rotation and Scale

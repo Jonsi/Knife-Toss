@@ -9,10 +9,10 @@ namespace Game.Entities.Target.Data.Behaviors.Local
     /// Configuration for a pulsating spin behavior.
     /// </summary>
     [Serializable]
-    public class PulsatingSpinBehaviorConfig : TargetBehaviorConfig, ILocalBehaviorConfig
+    public class PulsatingSpinBehaviorConfig : ILocalBehaviorConfig
     {
         /// <inheritdoc />
-        public override TargetBehaviorKind Kind => TargetBehaviorKind.PulsatingSpin;
+        public TargetLocalBehaviorKind Kind => TargetLocalBehaviorKind.PulsatingSpin;
 
         [Tooltip("Base rotation speed in degrees per second.")]
         [SerializeField] private float _BaseSpeed = 50f;

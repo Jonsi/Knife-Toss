@@ -9,10 +9,10 @@ namespace Game.Entities.Target.Data.Behaviors.Local
     /// Configuration for a curve-driven spin behavior.
     /// </summary>
     [Serializable]
-    public class CurveSpinBehaviorConfig : TargetBehaviorConfig, ILocalBehaviorConfig
+    public class CurveSpinBehaviorConfig : ILocalBehaviorConfig
     {
         /// <inheritdoc />
-        public override TargetBehaviorKind Kind => TargetBehaviorKind.CurveSpin;
+        public TargetLocalBehaviorKind Kind => TargetLocalBehaviorKind.CurveSpin;
 
         [Tooltip("Curve describing rotation speed over time.")]
         [SerializeField] private AnimationCurve _Curve = AnimationCurve.Linear(0f, 0f, 1f, 0f);

@@ -9,21 +9,21 @@ namespace Game.Entities.Target.WorldBehaviors
     /// </summary>
     public class OrbitWorldBehavior : IWorldTargetBehavior
     {
-        private readonly float _Radius;
         private readonly float _DegreesPerSecond;
+        private readonly float _DistanceFromCenter;
         private float _Angle;
 
         /// <summary>
         /// Initializes a new instance of the orbit world behavior.
         /// </summary>
-        /// <param name="radius">Orbit radius.</param>
         /// <param name="startingAngle">Starting angle in degrees.</param>
         /// <param name="degreesPerSecond">Angular speed in degrees per second.</param>
-        public OrbitWorldBehavior(float radius, float startingAngle, float degreesPerSecond)
+        /// <param name="distanceFromCenter">Distance applied from the orbit center.</param>
+        public OrbitWorldBehavior(float startingAngle, float degreesPerSecond, float distanceFromCenter)
         {
-            _Radius = Mathf.Max(0f, radius);
             _Angle = startingAngle;
             _DegreesPerSecond = degreesPerSecond;
+            _DistanceFromCenter = Mathf.Max(0f, distanceFromCenter);
         }
 
         /// <summary>
@@ -34,9 +34,12 @@ namespace Game.Entities.Target.WorldBehaviors
         {
             _Angle += _DegreesPerSecond * runtime.DeltaTime;
             float radians = _Angle * Mathf.Deg2Rad;
-            Vector3 offset = new Vector3(Mathf.Cos(radians), Mathf.Sin(radians), 0f) * _Radius;
+            Vector3 direction = new Vector3(Mathf.Cos(radians), Mathf.Sin(radians), 0f);
+            if (direction.sqrMagnitude < Mathf.Epsilon)
+                direction = Vector3.right;
+
+            Vector3 offset = direction.normalized * _DistanceFromCenter;
             runtime.OverridePosition(runtime.WorldCenter + offset);
         }
     }
 }
-

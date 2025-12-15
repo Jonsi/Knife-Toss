@@ -9,19 +9,19 @@ namespace Game.Entities.Target.Data.Behaviors.World
     /// Configuration for an orbit world behavior.
     /// </summary>
     [Serializable]
-    public class OrbitBehaviorConfig : TargetBehaviorConfig, IWorldBehaviorConfig
+    public class OrbitBehaviorConfig : IWorldBehaviorConfig
     {
         /// <inheritdoc />
-        public override TargetBehaviorKind Kind => TargetBehaviorKind.Orbit;
-
-        [Tooltip("Radius of the orbit path.")]
-        [SerializeField] private float _Radius;
+        public TargetWorldBehaviorKind Kind => TargetWorldBehaviorKind.Orbit;
 
         [Tooltip("Starting angle in degrees.")]
         [SerializeField] private float _StartingAngle;
 
         [Tooltip("Angular speed in degrees per second.")]
         [SerializeField] private float _DegreesPerSecond;
+
+        [Tooltip("Distance from the orbit center applied to the target.")]
+        [SerializeField] private float _DistanceFromCenter = 1f;
 
         public OrbitBehaviorConfig()
         {
@@ -30,20 +30,20 @@ namespace Game.Entities.Target.Data.Behaviors.World
         /// <summary>
         /// Initializes a new instance with explicit parameters.
         /// </summary>
-        /// <param name="radius">Orbit radius.</param>
         /// <param name="startingAngle">Starting angle in degrees.</param>
         /// <param name="degreesPerSecond">Angular speed.</param>
-        public OrbitBehaviorConfig(float radius, float startingAngle, float degreesPerSecond)
+        /// <param name="distanceFromCenter">Distance from the orbit center.</param>
+        public OrbitBehaviorConfig(float startingAngle, float degreesPerSecond, float distanceFromCenter = 1f)
         {
-            _Radius = radius;
             _StartingAngle = startingAngle;
             _DegreesPerSecond = degreesPerSecond;
+            _DistanceFromCenter = distanceFromCenter;
         }
 
         /// <inheritdoc />
         public IWorldTargetBehavior CreateWorldBehavior()
         {
-            return new OrbitWorldBehavior(_Radius, _StartingAngle, _DegreesPerSecond);
+            return new OrbitWorldBehavior(_StartingAngle, _DegreesPerSecond, _DistanceFromCenter);
         }
     }
 }

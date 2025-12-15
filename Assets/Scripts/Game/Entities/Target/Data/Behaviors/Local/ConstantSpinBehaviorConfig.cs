@@ -8,10 +8,10 @@ namespace Game.Entities.Target.Data.Behaviors.Local
     /// Configuration for a constant spin local behavior.
     /// </summary>
     [Serializable]
-    public class ConstantSpinBehaviorConfig : TargetBehaviorConfig, ILocalBehaviorConfig
+    public class ConstantSpinBehaviorConfig : ILocalBehaviorConfig
     {
         /// <inheritdoc />
-        public override TargetBehaviorKind Kind => TargetBehaviorKind.ConstantSpin;
+        public TargetLocalBehaviorKind Kind => TargetLocalBehaviorKind.ConstantSpin;
 
         [UnityEngine.Tooltip("Rotation speed in degrees per second.")]
         [UnityEngine.SerializeField] private float _Speed = 50f;

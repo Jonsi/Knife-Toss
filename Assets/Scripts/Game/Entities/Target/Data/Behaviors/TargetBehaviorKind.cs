@@ -1,24 +1,22 @@
 namespace Game.Entities.Target.Data.Behaviors
 {
     /// <summary>
-    /// Supported behavior types for targets.
+    /// Supported local behavior types.
     /// </summary>
-    public enum TargetBehaviorKind
+    public enum TargetLocalBehaviorKind
     {
         ConstantSpin = 0,
         PulsatingSpin = 1,
         FlippingSpin = 2,
-        CurveSpin = 3,
-        Orbit = 100
+        CurveSpin = 3
     }
 
     /// <summary>
-    /// Logical scope for a behavior.
+    /// Supported world behavior types.
     /// </summary>
-    public enum TargetBehaviorScope
+    public enum TargetWorldBehaviorKind
     {
-        Local,
-        World
+        Orbit = 0
     }
-}
 
+}

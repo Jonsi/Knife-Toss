@@ -7,41 +7,26 @@ namespace Game.Entities.Target.Data.Behaviors
     /// </summary>
     public static class TargetBehaviorMetadata
     {
-        /// <summary>
-        /// Gets the configuration type associated with the specified kind.
-        /// </summary>
-        /// <param name="kind">Behavior kind.</param>
-        /// <returns>Configuration type.</returns>
-        public static Type GetConfigType(TargetBehaviorKind kind)
+        public static Type GetLocalConfigType(TargetLocalBehaviorKind kind)
         {
             return kind switch
             {
-                TargetBehaviorKind.ConstantSpin => typeof(Local.ConstantSpinBehaviorConfig),
-                TargetBehaviorKind.PulsatingSpin => typeof(Local.PulsatingSpinBehaviorConfig),
-                TargetBehaviorKind.FlippingSpin => typeof(Local.FlippingSpinBehaviorConfig),
-                TargetBehaviorKind.CurveSpin => typeof(Local.CurveSpinBehaviorConfig),
-                TargetBehaviorKind.Orbit => typeof(World.OrbitBehaviorConfig),
+                TargetLocalBehaviorKind.ConstantSpin => typeof(Local.ConstantSpinBehaviorConfig),
+                TargetLocalBehaviorKind.PulsatingSpin => typeof(Local.PulsatingSpinBehaviorConfig),
+                TargetLocalBehaviorKind.FlippingSpin => typeof(Local.FlippingSpinBehaviorConfig),
+                TargetLocalBehaviorKind.CurveSpin => typeof(Local.CurveSpinBehaviorConfig),
                 _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null)
             };
         }
 
-        /// <summary>
-        /// Gets the execution scope for the specified behavior kind.
-        /// </summary>
-        /// <param name="kind">Behavior kind.</param>
-        /// <returns>Behavior scope.</returns>
-        public static TargetBehaviorScope GetScope(TargetBehaviorKind kind)
+        public static Type GetWorldConfigType(TargetWorldBehaviorKind kind)
         {
             return kind switch
             {
-                TargetBehaviorKind.ConstantSpin => TargetBehaviorScope.Local,
-                TargetBehaviorKind.PulsatingSpin => TargetBehaviorScope.Local,
-                TargetBehaviorKind.FlippingSpin => TargetBehaviorScope.Local,
-                TargetBehaviorKind.CurveSpin => TargetBehaviorScope.Local,
-                TargetBehaviorKind.Orbit => TargetBehaviorScope.World,
-                _ => TargetBehaviorScope.Local
+                TargetWorldBehaviorKind.Orbit => typeof(World.OrbitBehaviorConfig),
+                _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null)
             };
         }
+
     }
 }
-

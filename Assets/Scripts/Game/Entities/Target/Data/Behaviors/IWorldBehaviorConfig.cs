@@ -8,10 +8,14 @@ namespace Game.Entities.Target.Data.Behaviors
     public interface IWorldBehaviorConfig
     {
         /// <summary>
+        /// Gets the kind identifier for this world behavior.
+        /// </summary>
+        TargetWorldBehaviorKind Kind { get; }
+
+        /// <summary>
         /// Creates the runtime world behavior.
         /// </summary>
         /// <returns>Behavior instance.</returns>
         IWorldTargetBehavior CreateWorldBehavior();
     }
 }
-

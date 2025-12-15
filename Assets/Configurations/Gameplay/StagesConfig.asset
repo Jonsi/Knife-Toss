@@ -19,28 +19,20 @@ MonoBehaviour:
       <BackgroundSprite>k__BackingField: {fileID: -7443756053782179069, guid: 50dc143a9afde614ba766440323cc9b9, type: 3}
       <TargetSprite>k__BackingField: {fileID: 21300000, guid: fc35562c87fb46646b13ec7b4ea06903, type: 3}
     <Levels>k__BackingField:
-    - <KnifeCount>k__BackingField: 4
+    - <KnifeCount>k__BackingField: 5
       <ExtraKnives>k__BackingField: 0
       <Targets>k__BackingField:
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 1
-        <OrbitRadius>k__BackingField: 0
-        <StartingAngle>k__BackingField: 0
-        <OrbitSpeed>k__BackingField: 0
-        <KnivesToBreak>k__BackingField: 4
-        <RotationSpeed>k__BackingField: 35
-        <RotationDirection>k__BackingField: 1
-        <RotationBehaviorType>k__BackingField: Constant
-        <PulsateAmplitude>k__BackingField: 0
-        <PulsateFrequency>k__BackingField: 1
-        <FlipMinInterval>k__BackingField: 1
-        <FlipMaxInterval>k__BackingField: 3
-        <RotationCurve>k__BackingField:
-          serializedVersion: 2
-          m_Curve: []
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+        <KnivesToBreak>k__BackingField: 5
+        <InitialRotation>k__BackingField: 0
+        <Behaviors>k__BackingField:
+          _LocalBehaviors:
+          - _Enabled: 1
+            _Kind: 0
+            _Config:
+              rid: 49942340492591247
+          _WorldBehaviors: []
         <Collectibles>k__BackingField:
         - <Prefab>k__BackingField: {fileID: 8469477875108916277, guid: d5abd729dc883c14193d9008126a4bf2, type: 3}
           <Value>k__BackingField: 1
@@ -52,23 +44,11 @@ MonoBehaviour:
       <Targets>k__BackingField:
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 1
-        <OrbitRadius>k__BackingField: 0.8
-        <StartingAngle>k__BackingField: 0
-        <OrbitSpeed>k__BackingField: 101.9
         <KnivesToBreak>k__BackingField: 6
-        <RotationSpeed>k__BackingField: 165.8
-        <RotationDirection>k__BackingField: -1
-        <RotationBehaviorType>k__BackingField: Constant
-        <PulsateAmplitude>k__BackingField: 0
-        <PulsateFrequency>k__BackingField: 1
-        <FlipMinInterval>k__BackingField: 1
-        <FlipMaxInterval>k__BackingField: 3
-        <RotationCurve>k__BackingField:
-          serializedVersion: 2
-          m_Curve: []
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+        <InitialRotation>k__BackingField: 0
+        <Behaviors>k__BackingField:
+          _LocalBehaviors: []
+          _WorldBehaviors: []
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
     - <KnifeCount>k__BackingField: 12
@@ -76,44 +56,20 @@ MonoBehaviour:
       <Targets>k__BackingField:
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 0.9
-        <OrbitRadius>k__BackingField: 1.2
-        <StartingAngle>k__BackingField: 0
-        <OrbitSpeed>k__BackingField: 35
         <KnivesToBreak>k__BackingField: 4
-        <RotationSpeed>k__BackingField: 70
-        <RotationDirection>k__BackingField: 1
-        <RotationBehaviorType>k__BackingField: Constant
-        <PulsateAmplitude>k__BackingField: 0
-        <PulsateFrequency>k__BackingField: 1
-        <FlipMinInterval>k__BackingField: 1
-        <FlipMaxInterval>k__BackingField: 3
-        <RotationCurve>k__BackingField:
-          serializedVersion: 2
-          m_Curve: []
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+        <InitialRotation>k__BackingField: 0
+        <Behaviors>k__BackingField:
+          _LocalBehaviors: []
+          _WorldBehaviors: []
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 1.05
-        <OrbitRadius>k__BackingField: 1.2
-        <StartingAngle>k__BackingField: 180
-        <OrbitSpeed>k__BackingField: -30
         <KnivesToBreak>k__BackingField: 5
-        <RotationSpeed>k__BackingField: 80
-        <RotationDirection>k__BackingField: -1
-        <RotationBehaviorType>k__BackingField: Constant
-        <PulsateAmplitude>k__BackingField: 0
-        <PulsateFrequency>k__BackingField: 1
-        <FlipMinInterval>k__BackingField: 1
-        <FlipMaxInterval>k__BackingField: 3
-        <RotationCurve>k__BackingField:
-          serializedVersion: 2
-          m_Curve: []
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+        <InitialRotation>k__BackingField: 180
+        <Behaviors>k__BackingField:
+          _LocalBehaviors: []
+          _WorldBehaviors: []
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
     - <KnifeCount>k__BackingField: 14
@@ -121,44 +77,20 @@ MonoBehaviour:
       <Targets>k__BackingField:
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 1.1
-        <OrbitRadius>k__BackingField: 1.5
-        <StartingAngle>k__BackingField: 45
-        <OrbitSpeed>k__BackingField: 45
         <KnivesToBreak>k__BackingField: 6
-        <RotationSpeed>k__BackingField: 90
-        <RotationDirection>k__BackingField: 1
-        <RotationBehaviorType>k__BackingField: Constant
-        <PulsateAmplitude>k__BackingField: 0
-        <PulsateFrequency>k__BackingField: 1
-        <FlipMinInterval>k__BackingField: 1
-        <FlipMaxInterval>k__BackingField: 3
-        <RotationCurve>k__BackingField:
-          serializedVersion: 2
-          m_Curve: []
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+        <InitialRotation>k__BackingField: 45
+        <Behaviors>k__BackingField:
+          _LocalBehaviors: []
+          _WorldBehaviors: []
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 0.85
-        <OrbitRadius>k__BackingField: 0.9
-        <StartingAngle>k__BackingField: 225
-        <OrbitSpeed>k__BackingField: -55
         <KnivesToBreak>k__BackingField: 5
-        <RotationSpeed>k__BackingField: 110
-        <RotationDirection>k__BackingField: -1
-        <RotationBehaviorType>k__BackingField: Constant
-        <PulsateAmplitude>k__BackingField: 0
-        <PulsateFrequency>k__BackingField: 1
-        <FlipMinInterval>k__BackingField: 1
-        <FlipMaxInterval>k__BackingField: 3
-        <RotationCurve>k__BackingField:
-          serializedVersion: 2
-          m_Curve: []
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+        <InitialRotation>k__BackingField: 225
+        <Behaviors>k__BackingField:
+          _LocalBehaviors: []
+          _WorldBehaviors: []
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
   - <StageName>k__BackingField: Stage 2
@@ -171,44 +103,20 @@ MonoBehaviour:
       <Targets>k__BackingField:
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 1
-        <OrbitRadius>k__BackingField: 1.1
-        <StartingAngle>k__BackingField: 0
-        <OrbitSpeed>k__BackingField: 40
         <KnivesToBreak>k__BackingField: 5
-        <RotationSpeed>k__BackingField: 90
-        <RotationDirection>k__BackingField: 1
-        <RotationBehaviorType>k__BackingField: Constant
-        <PulsateAmplitude>k__BackingField: 0
-        <PulsateFrequency>k__BackingField: 1
-        <FlipMinInterval>k__BackingField: 1
-        <FlipMaxInterval>k__BackingField: 3
-        <RotationCurve>k__BackingField:
-          serializedVersion: 2
-          m_Curve: []
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+        <InitialRotation>k__BackingField: 0
+        <Behaviors>k__BackingField:
+          _LocalBehaviors: []
+          _WorldBehaviors: []
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 0.9
-        <OrbitRadius>k__BackingField: 1.1
-        <StartingAngle>k__BackingField: 180
-        <OrbitSpeed>k__BackingField: -40
         <KnivesToBreak>k__BackingField: 4
-        <RotationSpeed>k__BackingField: 120
-        <RotationDirection>k__BackingField: -1
-        <RotationBehaviorType>k__BackingField: Constant
-        <PulsateAmplitude>k__BackingField: 0
-        <PulsateFrequency>k__BackingField: 1
-        <FlipMinInterval>k__BackingField: 1
-        <FlipMaxInterval>k__BackingField: 3
-        <RotationCurve>k__BackingField:
-          serializedVersion: 2
-          m_Curve: []
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+        <InitialRotation>k__BackingField: 180
+        <Behaviors>k__BackingField:
+          _LocalBehaviors: []
+          _WorldBehaviors: []
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
     - <KnifeCount>k__BackingField: 14
@@ -216,44 +124,20 @@ MonoBehaviour:
       <Targets>k__BackingField:
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 1.05
-        <OrbitRadius>k__BackingField: 1.3
-        <StartingAngle>k__BackingField: 60
-        <OrbitSpeed>k__BackingField: 55
         <KnivesToBreak>k__BackingField: 6
-        <RotationSpeed>k__BackingField: 120
-        <RotationDirection>k__BackingField: 1
-        <RotationBehaviorType>k__BackingField: Constant
-        <PulsateAmplitude>k__BackingField: 0
-        <PulsateFrequency>k__BackingField: 1
-        <FlipMinInterval>k__BackingField: 1
-        <FlipMaxInterval>k__BackingField: 3
-        <RotationCurve>k__BackingField:
-          serializedVersion: 2
-          m_Curve: []
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+        <InitialRotation>k__BackingField: 60
+        <Behaviors>k__BackingField:
+          _LocalBehaviors: []
+          _WorldBehaviors: []
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 0.8
-        <OrbitRadius>k__BackingField: 0.8
-        <StartingAngle>k__BackingField: 240
-        <OrbitSpeed>k__BackingField: -70
         <KnivesToBreak>k__BackingField: 5
-        <RotationSpeed>k__BackingField: 130
-        <RotationDirection>k__BackingField: -1
-        <RotationBehaviorType>k__BackingField: Constant
-        <PulsateAmplitude>k__BackingField: 0
-        <PulsateFrequency>k__BackingField: 1
-        <FlipMinInterval>k__BackingField: 1
-        <FlipMaxInterval>k__BackingField: 3
-        <RotationCurve>k__BackingField:
-          serializedVersion: 2
-          m_Curve: []
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+        <InitialRotation>k__BackingField: 240
+        <Behaviors>k__BackingField:
+          _LocalBehaviors: []
+          _WorldBehaviors: []
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
     - <KnifeCount>k__BackingField: 17
@@ -261,65 +145,29 @@ MonoBehaviour:
       <Targets>k__BackingField:
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 0.9
-        <OrbitRadius>k__BackingField: 1.6
-        <StartingAngle>k__BackingField: 0
-        <OrbitSpeed>k__BackingField: 65
         <KnivesToBreak>k__BackingField: 5
-        <RotationSpeed>k__BackingField: 150
-        <RotationDirection>k__BackingField: 1
-        <RotationBehaviorType>k__BackingField: Constant
-        <PulsateAmplitude>k__BackingField: 0
-        <PulsateFrequency>k__BackingField: 1
-        <FlipMinInterval>k__BackingField: 1
-        <FlipMaxInterval>k__BackingField: 3
-        <RotationCurve>k__BackingField:
-          serializedVersion: 2
-          m_Curve: []
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+        <InitialRotation>k__BackingField: 0
+        <Behaviors>k__BackingField:
+          _LocalBehaviors: []
+          _WorldBehaviors: []
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 0.9
-        <OrbitRadius>k__BackingField: 1
-        <StartingAngle>k__BackingField: 140
-        <OrbitSpeed>k__BackingField: -85
         <KnivesToBreak>k__BackingField: 5
-        <RotationSpeed>k__BackingField: 160
-        <RotationDirection>k__BackingField: -1
-        <RotationBehaviorType>k__BackingField: Constant
-        <PulsateAmplitude>k__BackingField: 0
-        <PulsateFrequency>k__BackingField: 1
-        <FlipMinInterval>k__BackingField: 1
-        <FlipMaxInterval>k__BackingField: 3
-        <RotationCurve>k__BackingField:
-          serializedVersion: 2
-          m_Curve: []
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+        <InitialRotation>k__BackingField: 140
+        <Behaviors>k__BackingField:
+          _LocalBehaviors: []
+          _WorldBehaviors: []
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 0.75
-        <OrbitRadius>k__BackingField: 0.6
-        <StartingAngle>k__BackingField: 280
-        <OrbitSpeed>k__BackingField: 120
         <KnivesToBreak>k__BackingField: 4
-        <RotationSpeed>k__BackingField: 180
-        <RotationDirection>k__BackingField: 1
-        <RotationBehaviorType>k__BackingField: Constant
-        <PulsateAmplitude>k__BackingField: 0
-        <PulsateFrequency>k__BackingField: 1
-        <FlipMinInterval>k__BackingField: 1
-        <FlipMaxInterval>k__BackingField: 3
-        <RotationCurve>k__BackingField:
-          serializedVersion: 2
-          m_Curve: []
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+        <InitialRotation>k__BackingField: 280
+        <Behaviors>k__BackingField:
+          _LocalBehaviors: []
+          _WorldBehaviors: []
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
     - <KnifeCount>k__BackingField: 19
@@ -327,64 +175,35 @@ MonoBehaviour:
       <Targets>k__BackingField:
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 1
-        <OrbitRadius>k__BackingField: 1.8
-        <StartingAngle>k__BackingField: 20
-        <OrbitSpeed>k__BackingField: 90
         <KnivesToBreak>k__BackingField: 6
-        <RotationSpeed>k__BackingField: 180
-        <RotationDirection>k__BackingField: 1
-        <RotationBehaviorType>k__BackingField: Constant
-        <PulsateAmplitude>k__BackingField: 0
-        <PulsateFrequency>k__BackingField: 1
-        <FlipMinInterval>k__BackingField: 1
-        <FlipMaxInterval>k__BackingField: 3
-        <RotationCurve>k__BackingField:
-          serializedVersion: 2
-          m_Curve: []
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+        <InitialRotation>k__BackingField: 20
+        <Behaviors>k__BackingField:
+          _LocalBehaviors: []
+          _WorldBehaviors: []
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 0.9
-        <OrbitRadius>k__BackingField: 1.1
-        <StartingAngle>k__BackingField: 160
-        <OrbitSpeed>k__BackingField: -110
         <KnivesToBreak>k__BackingField: 5
-        <RotationSpeed>k__BackingField: 200
-        <RotationDirection>k__BackingField: -1
-        <RotationBehaviorType>k__BackingField: Constant
-        <PulsateAmplitude>k__BackingField: 0
-        <PulsateFrequency>k__BackingField: 1
-        <FlipMinInterval>k__BackingField: 1
-        <FlipMaxInterval>k__BackingField: 3
-        <RotationCurve>k__BackingField:
-          serializedVersion: 2
-          m_Curve: []
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+        <InitialRotation>k__BackingField: 160
+        <Behaviors>k__BackingField:
+          _LocalBehaviors: []
+          _WorldBehaviors: []
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
         <BaseScale>k__BackingField: 0.8
-        <OrbitRadius>k__BackingField: 0.7
-        <StartingAngle>k__BackingField: 300
-        <OrbitSpeed>k__BackingField: 140
         <KnivesToBreak>k__BackingField: 5
-        <RotationSpeed>k__BackingField: 220
-        <RotationDirection>k__BackingField: 1
-        <RotationBehaviorType>k__BackingField: Constant
-        <PulsateAmplitude>k__BackingField: 0
-        <PulsateFrequency>k__BackingField: 1
-        <FlipMinInterval>k__BackingField: 1
-        <FlipMaxInterval>k__BackingField: 3
-        <RotationCurve>k__BackingField:
-          serializedVersion: 2
-          m_Curve: []
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+        <InitialRotation>k__BackingField: 300
+        <Behaviors>k__BackingField:
+          _LocalBehaviors: []
+          _WorldBehaviors: []
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 49942340492591247
+      type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
+      data:
+        _Speed: 100
