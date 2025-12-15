@@ -111,15 +111,12 @@ namespace Game.Entities.Target.Data.Behaviors
             for (int i = 0; i < entries.Count; i++)
             {
                 TargetLocalBehaviorEntry entry = entries[i];
-                if (entry == null || !entry.Enabled)
+                if (entry?.Config == null)
                     continue;
 
-                if (entry.Config is ILocalBehaviorConfig localConfig)
-                {
-                    var behavior = localConfig.CreateLocalBehavior();
-                    if (behavior != null)
-                        collection.AddLocalBehavior(behavior);
-                }
+                var behavior = entry.Config.CreateLocalBehavior();
+                if (behavior != null)
+                    collection.AddLocalBehavior(behavior);
             }
         }
 
@@ -131,15 +128,12 @@ namespace Game.Entities.Target.Data.Behaviors
             for (int i = 0; i < entries.Count; i++)
             {
                 TargetWorldBehaviorEntry entry = entries[i];
-                if (entry == null || !entry.Enabled)
+                if (entry?.Config == null)
                     continue;
 
-                if (entry.Config is IWorldBehaviorConfig worldConfig)
-                {
-                    var behavior = worldConfig.CreateWorldBehavior();
-                    if (behavior != null)
-                        collection.AddWorldBehavior(behavior);
-                }
+                var behavior = entry.Config.CreateWorldBehavior();
+                if (behavior != null)
+                    collection.AddWorldBehavior(behavior);
             }
         }
 

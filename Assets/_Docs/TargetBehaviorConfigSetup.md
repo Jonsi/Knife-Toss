@@ -12,7 +12,7 @@ Follow these steps to configure the new designer-friendly target behavior system
 2. Expand either **World Behaviors** (for orbit/bobbing/etc.) or **Local Behaviors** (for spins/scales) and use the `+` icon to add a new entry.
 3. Use the **Behavior Kind** dropdown on each entry to pick the desired type (world list currently offers `Orbit`; local list offers `ConstantSpin`, `PulsatingSpin`, `FlippingSpin`, `CurveSpin`).
 4. The inspector automatically swaps in the corresponding configuration fields for that kind. Adjust the parameters (speed, amplitudes, angles, etc.) as needed. For `Orbit`, set **Distance From Center** to define how far the target orbits from the center point.
-5. Use the checkbox on each entry to enable/disable it without removing the data.
+5. Configure each entry directly; entries are always active while present in the list.
 
 ### 3. Stacking Local and World Behaviors
 - Add as many entries as you need in each list. Example: one `Orbit` behavior in the world list + two different spin behaviors in the local list for layered motion.
