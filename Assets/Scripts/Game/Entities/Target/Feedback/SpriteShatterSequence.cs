@@ -1,35 +1,36 @@
 using System;
 using System.Collections.Generic;
+using Game.Entities.Target.Feedback;
 using Game.Feedback.Animation.Data;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
-namespace Game.Entities.Target.Feedback
+namespace Game.Feedback.Animation
 {
     /// <summary>
-    /// Drives the runtime behavior of spawned target shards.
+    /// Drives the runtime behavior of spawned sprite shards.
     /// </summary>
-    public class TargetShatterSequence : MonoBehaviour
+    public class SpriteShatterSequence : MonoBehaviour
     {
         private static readonly int ColorId = Shader.PropertyToID("_Color");
 
         private readonly List<ShardInstance> _ActiveShards = new();
 
-        private TargetShatterAnimationConfig _Config;
+        private SpriteShatterAnimationConfig _Config;
         private Material _ShardMaterial;
         private bool _IsCompleted;
 
         /// <summary>
         /// Event raised when the shatter sequence has completed.
         /// </summary>
-        public event Action<TargetShatterSequence> Completed;
+        public event Action<SpriteShatterSequence> Completed;
 
         /// <summary>
         /// Creates and initializes a shatter sequence for the provided sprite renderer.
         /// </summary>
         /// <returns>The created sequence instance or null if initialization failed.</returns>
-        public static TargetShatterSequence Create(SpriteRenderer sourceRenderer, TargetShatterAnimationConfig config, Material shardMaterial)
+        public static SpriteShatterSequence Create(SpriteRenderer sourceRenderer, SpriteShatterAnimationConfig config, Material shardMaterial)
         {
             if (sourceRenderer == null || config == null || shardMaterial == null)
                 return null;
@@ -38,12 +39,12 @@ namespace Game.Entities.Target.Feedback
             if (sprite == null)
                 return null;
 
-            var host = new GameObject("TargetShatterSequence");
+            var host = new GameObject("SpriteShatterSequence");
             Transform sourceTransform = sourceRenderer.transform;
             host.transform.SetPositionAndRotation(sourceTransform.position, sourceTransform.rotation);
             host.transform.localScale = sourceTransform.lossyScale;
 
-            TargetShatterSequence sequence = host.AddComponent<TargetShatterSequence>();
+            SpriteShatterSequence sequence = host.AddComponent<SpriteShatterSequence>();
             if (!sequence.Initialize(sprite, sourceRenderer, config, shardMaterial))
             {
                 UnityEngine.Object.Destroy(host);
@@ -53,7 +54,7 @@ namespace Game.Entities.Target.Feedback
             return sequence;
         }
 
-        private bool Initialize(Sprite sprite, SpriteRenderer sourceRenderer, TargetShatterAnimationConfig config, Material shardMaterial)
+        private bool Initialize(Sprite sprite, SpriteRenderer sourceRenderer, SpriteShatterAnimationConfig config, Material shardMaterial)
         {
             _Config = config;
             _ShardMaterial = shardMaterial;
@@ -62,7 +63,7 @@ namespace Game.Entities.Target.Feedback
                 return false;
 
             int shardCount = GetShardCount();
-            IReadOnlyList<Mesh> meshes = TargetShardMeshBuilder.Build(sprite, shardCount, _Config.SliceAngleRange);
+            IReadOnlyList<Mesh> meshes = SpriteShardMeshBuilder.Build(sprite, shardCount, _Config);
             if (meshes.Count == 0)
             {
                 return false;
@@ -126,7 +127,7 @@ namespace Game.Entities.Target.Feedback
 
         private void SpawnShard(Mesh mesh, SpriteRenderer sourceRenderer, Texture spriteTexture)
         {
-            var shardObject = new GameObject("TargetShardPiece");
+            var shardObject = new GameObject("SpriteShardPiece");
             shardObject.transform.SetParent(transform, false);
             shardObject.transform.localPosition = new Vector3(RandomJitter(_Config.SpawnJitter.x), RandomJitter(_Config.SpawnJitter.y), 0f);
             shardObject.transform.localRotation = Quaternion.identity;

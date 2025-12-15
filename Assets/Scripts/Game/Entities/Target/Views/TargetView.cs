@@ -7,6 +7,7 @@ using Game.Entities.Target.Data.Behaviors;
 using Game.Entities.Target.Feedback;
 using Game.Entities.Target.Interfaces;
 using Game.Entities.Target.Logic;
+using Game.Feedback.Animation;
 using UnityEngine;
 
 namespace Game.Entities.Target.Views
@@ -22,7 +23,7 @@ namespace Game.Entities.Target.Views
 
         [SerializeField] private CircleCollider2D _Collider;
         [SerializeField] private TargetHitFeedback _HitFeedback;
-        [SerializeField] private TargetShatterController _ShatterController;
+        [SerializeField] private SpriteShatterController _ShatterController;
         [SerializeField] private Transform _StuckObjectsHolder;
         [SerializeField] private TargetSpawnAnimator _SpawnAnimator;
 
@@ -220,6 +221,7 @@ namespace Game.Entities.Target.Views
             if (_HasNotifiedDestroyed)
                 return;
 
+            PlayStuckKnifeShatters();
             _ShatterController?.PlayShatter();
             _StuckKnives.Clear();
             FinalizeDestruction();
@@ -241,6 +243,14 @@ namespace Game.Entities.Target.Views
         }
 
         private void AttachKnife(KnifeView knife) => knife.transform.SetParent(StickParent);
+
+        private void PlayStuckKnifeShatters()
+        {
+            for (int i = 0; i < _StuckKnives.Count; i++)
+            {
+                _StuckKnives[i]?.PlayShatterEffect();
+            }
+        }
 
         private void ApplyStickTransform(KnifeView knife, Vector2 impactPoint)
         {

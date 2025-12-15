@@ -33,11 +33,7 @@ namespace Game.CollisionHandlers
             if (!collectible.MarkAsHit())
                 return;
 
-            if (collectible.HitParticlesPrefab != null)
-            {
-                Object.Instantiate(collectible.HitParticlesPrefab, collectible.transform.position, Quaternion.identity);
-            }
-
+            collectible.PlayHitFeedback();
             _CollectibleHitChannel.Raise(new CollectibleHitEventData(data.ImpactPoint, collectible.Value));
 
             Object.Destroy(collectible.gameObject);

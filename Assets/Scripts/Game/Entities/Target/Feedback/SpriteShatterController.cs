@@ -1,15 +1,15 @@
 using Game.Feedback.Animation.Data;
 using UnityEngine;
 
-namespace Game.Entities.Target.Feedback
+namespace Game.Feedback.Animation
 {
     /// <summary>
-    /// Triggers runtime shatter sequences for the owning target.
+    /// Triggers runtime shatter sequences for any sprite-driven entity.
     /// </summary>
-    public class TargetShatterController : MonoBehaviour
+    public class SpriteShatterController : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer _SpriteRenderer;
-        [SerializeField] private TargetShatterAnimationConfig _AnimationConfig;
+        [SerializeField] private SpriteShatterAnimationConfig _AnimationConfig;
         [SerializeField] private Material _ShardMaterial;
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace Game.Entities.Target.Feedback
             if (_SpriteRenderer == null || _AnimationConfig == null || _ShardMaterial == null)
                 return;
 
-            TargetShatterSequence.Create(_SpriteRenderer, _AnimationConfig, _ShardMaterial);
+            SpriteShatterSequence.Create(_SpriteRenderer, _AnimationConfig, _ShardMaterial);
         }
     }
 }

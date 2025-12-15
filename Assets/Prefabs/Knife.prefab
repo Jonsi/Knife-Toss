@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 5543959450069452106}
   - component: {fileID: 359776916962366960}
   - component: {fileID: 7574083789125918831}
+  - component: {fileID: 2931372984952118166}
   m_Layer: 0
   m_Name: Knife
   m_TagString: Knife
@@ -85,6 +86,7 @@ MonoBehaviour:
     Offset: 0
     RotationOffset: 0
   _Collider: {fileID: 359776916962366960}
+  _ShatterController: {fileID: 2931372984952118166}
 --- !u!212 &5543959450069452106
 SpriteRenderer:
   serializedVersion: 2
@@ -217,3 +219,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &2931372984952118166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4613744281827678251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bec47953f96fd644b804b964743283b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.Feedback.Animation.SpriteShatterController
+  _SpriteRenderer: {fileID: 5543959450069452106}
+  _AnimationConfig: {fileID: 11400000, guid: 3079d13cf8c2d1f48b4610021efe7090, type: 2}
+  _ShardMaterial: {fileID: 2100000, guid: 73ed3816ee2c09e499878030fb5348b1, type: 2}

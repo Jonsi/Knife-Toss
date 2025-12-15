@@ -1,8 +1,8 @@
 using System;
 using Common.Collision.Interfaces;
 using Game.Entities.Collectible.Data;
+using Game.Feedback.Animation;
 using UnityEngine;
-using VContainer;
 
 namespace Game.Entities.Collectible.Views
 {
@@ -15,6 +15,7 @@ namespace Game.Entities.Collectible.Views
         private static readonly Type CachedType = typeof(CollectibleView);
 
         [SerializeField] private Collider2D _Collider;
+        [SerializeField] private SpriteShatterController _ShatterController;
         
         /// <summary>
         /// Particle effect to spawn when collected.
@@ -26,7 +27,6 @@ namespace Game.Entities.Collectible.Views
         public int Value { get; private set; }
 
         public Type HitableType => CachedType;
-        public GameObject HitParticlesPrefab => _HitParticlesPrefab;
 
         public void Initialize(CollectibleConfig config)
         {
@@ -52,6 +52,22 @@ namespace Game.Entities.Collectible.Views
             
             return true;
         }
+
+        /// <summary>
+        /// Plays the configured hit visual effect.
+        /// </summary>
+        public void PlayHitFeedback()
+        {
+            if (_ShatterController != null)
+            {
+                _ShatterController.PlayShatter();
+                return;
+            }
+
+            if (_HitParticlesPrefab != null)
+            {
+                Instantiate(_HitParticlesPrefab, transform.position, Quaternion.identity);
+            }
+        }
     }
 }
-

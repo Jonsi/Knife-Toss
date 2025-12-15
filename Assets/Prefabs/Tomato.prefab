@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4184338960856274286}
   - component: {fileID: 1009142160881821546}
   - component: {fileID: -271805343802311218}
+  - component: {fileID: 1620193684696534949}
   m_Layer: 0
   m_Name: Tomato
   m_TagString: Untagged
@@ -142,4 +143,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KnifeToss.Presentation.Gameplay.HitableObjectView
   _Collider: {fileID: 1009142160881821546}
+  _ShatterController: {fileID: 1620193684696534949}
   _HitParticlesPrefab: {fileID: 4599585174594216639, guid: 20c1ef8e83242c54e9b724b12d0a1d90, type: 3}
+--- !u!114 &1620193684696534949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8469477875108916277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bec47953f96fd644b804b964743283b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.Feedback.Animation.SpriteShatterController
+  _SpriteRenderer: {fileID: 4184338960856274286}
+  _AnimationConfig: {fileID: 11400000, guid: 65e4943a5ec8738408aa42a2edb88169, type: 2}
+  _ShardMaterial: {fileID: 2100000, guid: 73ed3816ee2c09e499878030fb5348b1, type: 2}

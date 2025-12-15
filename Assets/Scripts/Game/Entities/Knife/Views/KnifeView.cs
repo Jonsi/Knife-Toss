@@ -6,6 +6,7 @@ using Game.Entities.Knife.Data;
 using Game.Entities.Knife.Interfaces;
 using Game.Entities.Knife.States;
 using Game.Entities.Target.Data;
+using Game.Feedback.Animation;
 using UnityEngine;
 using VContainer;
 
@@ -24,6 +25,7 @@ namespace Game.Entities.Knife.Views
         [SerializeField] private Transform _VisualRoot;
         [SerializeField] private StickPositionData _StickPositionData;
         [SerializeField] private Collider2D _Collider;
+        [SerializeField] private SpriteShatterController _ShatterController;
         
         private KnifeStateMachine _StateMachine;
         private Camera _MainCamera;
@@ -171,6 +173,14 @@ namespace Game.Entities.Knife.Views
 
             _HasReportedOutOfView = true;
             _ImpactChannel?.Raise(new KnifeImpactEventData(KnifeImpactType.OutOfView, transform.position));
+        }
+
+        /// <summary>
+        /// Plays the configured shatter effect for this knife if available.
+        /// </summary>
+        public void PlayShatterEffect()
+        {
+            _ShatterController?.PlayShatter();
         }
     }
 }

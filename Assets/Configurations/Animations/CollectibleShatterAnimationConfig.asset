@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 188ad3006879ab34e96a1bf563370539, type: 3}
+  m_Name: CollectibleShatterAnimationConfig
+  m_EditorClassIdentifier: Game::Game.Feedback.Animation.Data.SpriteShatterAnimationConfig
+  <ShardCountRange>k__BackingField: {x: 6, y: 14}
+  <SpawnJitter>k__BackingField: {x: 0.05, y: 0.05}
+  <SliceAngleRange>k__BackingField: {x: 20, y: 120}
+  <HorizontalForceRange>k__BackingField: {x: -3, y: 3}
+  <VerticalForceRange>k__BackingField: {x: 2, y: 6}
+  <Gravity>k__BackingField: -20
+  <Drag>k__BackingField: 3
+  <Lifetime>k__BackingField: 1.8
+  <FadeDelay>k__BackingField: 0.3
+  <FadeDuration>k__BackingField: 0.5
+  <TargetColor>k__BackingField: {r: 1, g: 1, b: 1, a: 0}
