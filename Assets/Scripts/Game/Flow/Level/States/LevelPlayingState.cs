@@ -77,7 +77,7 @@ namespace Game.Flow.Level.States
             if (Machine.Current != this)
                 return;
 
-            if (data.ImpactType == KnifeImpactType.Bounced || data.ImpactType == KnifeImpactType.OutOfView)
+            if (data.ImpactType == KnifeImpactType.Bounced)
             {
                 Machine.SetState(Machine.Failed);
                 return;

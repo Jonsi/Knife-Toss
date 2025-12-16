@@ -37,7 +37,7 @@ namespace Game.Level.Catalogs
                                 required += target.KnivesToBreak;
                         }
                     }
-                    level.KnifeCount = required + level.ExtraKnives;
+                    level.KnifeCount = required;
                 }
             }
         }

@@ -12,13 +12,10 @@ namespace Game.Level.Data
     [Serializable]
     public class LevelConfig
     {
-        [Tooltip("Total calculated knives for the level (Sum of Targets + Extra).")]
+        [Tooltip("Total calculated knives for the level (sum of target requirements).")]
         [ReadOnly]
         [field: SerializeField] public int KnifeCount { get; set; }
 
-        [Tooltip("Additional margin of knives allowed beyond the target requirements.")]
-        [field: SerializeField] public int ExtraKnives { get; private set; } = 3;
-        
         [Tooltip("List of targets to spawn in this level.")]
         [field: SerializeField] public List<TargetConfig> Targets { get; private set; } = new();
     }
