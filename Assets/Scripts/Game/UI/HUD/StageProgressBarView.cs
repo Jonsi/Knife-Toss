@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Game.Flow.Events;
+using Game.Flow.Stage;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,24 +17,22 @@ namespace Game.UI.HUD
         [SerializeField] private Color _CompletedColor = Color.white;
         [SerializeField] private Color _IncompleteColor = Color.gray;
         [SerializeField] private LevelStartedEventChannel _LevelStartedChannel;
+        [SerializeField] private StageCompletedEventChannel _StageCompletedChannel;
         [SerializeField] private TMP_Text _CurrentStageLabel;
         [SerializeField] private TMP_Text _NextStageLabel;
 
         private readonly List<Image> _Slots = new List<Image>();
         private int _CachedLevelCount = -1;
         private int _CurrentLevelIndex = 0;
+        private int _CurrentStageIndex = -1;
 
         private void OnEnable()
         {
             if (_LevelStartedChannel != null)
                 _LevelStartedChannel.Subscribe(OnLevelStarted);
+            if (_StageCompletedChannel != null)
+                _StageCompletedChannel.Subscribe(OnStageCompleted);
 
-            RebuildIfNeeded();
-            Refresh();
-        }
-
-        private void Update()
-        {
             RebuildIfNeeded();
             Refresh();
         }
@@ -42,14 +41,34 @@ namespace Game.UI.HUD
         {
             if (_LevelStartedChannel != null)
                 _LevelStartedChannel.Unsubscribe(OnLevelStarted);
+            if (_StageCompletedChannel != null)
+                _StageCompletedChannel.Unsubscribe(OnStageCompleted);
         }
 
         private void OnLevelStarted(LevelStartedEventData data)
         {
+            bool levelCountChanged = data.TotalLevelsInStage != _CachedLevelCount;
+
             _CachedLevelCount = data.TotalLevelsInStage;
             _CurrentLevelIndex = data.LevelIndex;
+            _CurrentStageIndex = data.StageIndex;
             UpdateStageLabels(data.StageIndex);
-            Rebuild();
+
+            if (levelCountChanged || _Slots.Count != _CachedLevelCount)
+                Rebuild();
+
+            Refresh();
+        }
+
+        private void OnStageCompleted(StageData data)
+        {
+            if (data == null)
+                return;
+
+            if (_CurrentStageIndex >= 0 && data.StageIndex != _CurrentStageIndex)
+                return;
+
+            _CurrentLevelIndex = _CachedLevelCount;
             Refresh();
         }
 
@@ -59,6 +78,9 @@ namespace Game.UI.HUD
                 return;
 
             if (_CachedLevelCount < 0)
+                return;
+
+            if (_Slots.Count == _CachedLevelCount)
                 return;
 
             Rebuild();
