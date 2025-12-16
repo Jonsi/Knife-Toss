@@ -7,6 +7,7 @@ using Game.Entities.Knife.Interfaces;
 using Game.Entities.Knife.States;
 using Game.Entities.Target.Data;
 using Game.Feedback.Animation;
+using Game.Pooling;
 using UnityEngine;
 using VContainer;
 
@@ -33,6 +34,7 @@ namespace Game.Entities.Knife.Views
 
         private IEventChannel<CollisionData> _CollisionChannel;
         private IEventChannel<KnifeImpactEventData> _ImpactChannel;
+        private KnifePoolProvider _KnifePoolProvider;
 
         /// <summary>
         /// Gets the cached type for efficient collision routing.
@@ -58,7 +60,9 @@ namespace Game.Entities.Knife.Views
         public SpriteRenderer SpriteRenderer => _SpriteRenderer;
 
         [Inject]
-        private void Construct(IEventChannel<CollisionData> collisionChannel, IEventChannel<KnifeImpactEventData> impactChannel)
+        private void Construct(
+            IEventChannel<CollisionData> collisionChannel,
+            IEventChannel<KnifeImpactEventData> impactChannel)
         {
             _CollisionChannel = collisionChannel;
             _ImpactChannel = impactChannel;
@@ -162,7 +166,7 @@ namespace Game.Entities.Knife.Views
             if (mainCamera == null)
                 return;
 
-            if (_StateMachine == null || !_StateMachine.IsInFlight)
+            if (_StateMachine == null || !_StateMachine.ShouldMonitorOutOfView)
                 return;
 
             Vector3 viewportPoint = mainCamera.WorldToViewportPoint(transform.position);
@@ -173,6 +177,7 @@ namespace Game.Entities.Knife.Views
 
             _HasReportedOutOfView = true;
             _ImpactChannel?.Raise(new KnifeImpactEventData(KnifeImpactType.OutOfView, transform.position));
+            ReturnToPool();
         }
 
         /// <summary>
@@ -181,6 +186,20 @@ namespace Game.Entities.Knife.Views
         public void PlayShatterEffect()
         {
             _ShatterController?.PlayShatter();
+        }
+
+        private void ReturnToPool()
+        {
+            if (_KnifePoolProvider == null)
+                return;
+
+            _StateMachine?.SetState(_StateMachine.Pooled);
+            _KnifePoolProvider.Release(this);
+        }
+
+        internal void AssignPoolProvider(KnifePoolProvider poolProvider)
+        {
+            _KnifePoolProvider = poolProvider;
         }
     }
 }

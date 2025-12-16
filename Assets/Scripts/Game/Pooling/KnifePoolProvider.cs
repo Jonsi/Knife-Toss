@@ -13,6 +13,8 @@ namespace Game.Pooling
     public class KnifePoolProvider
     {
         private readonly ObjectPool<KnifeView> _Pool;
+        private readonly IObjectResolver _Resolver;
+        private readonly KnifeView _KnifePrefab;
         private readonly Transform _poolParent;
         private readonly List<KnifeView> _pooledObjects = new();
 
@@ -23,18 +25,19 @@ namespace Game.Pooling
         /// <param name="poolSettings">Pool settings containing knife prefab and configuration.</param>
         public KnifePoolProvider(IObjectResolver resolver, PoolSettings poolSettings)
         {
-            var knifePrefab = poolSettings.KnifePrefab;
-            if (knifePrefab == null)
+            _Resolver = resolver;
+            _KnifePrefab = poolSettings.KnifePrefab;
+            if (_KnifePrefab == null)
             {
                 throw new System.ArgumentException("KnifePrefab cannot be null in pool settings", nameof(poolSettings));
             }
 
             // Create a dedicated parent for pooled objects
-            var poolParent = new GameObject($"KnifePool_{knifePrefab.name}").transform;
+            var poolParent = new GameObject($"KnifePool_{_KnifePrefab.name}").transform;
             Object.DontDestroyOnLoad(poolParent.gameObject);
             _poolParent = poolParent;
             _Pool = new ObjectPool<KnifeView>(
-                createFunc: () => CreateKnife(resolver, knifePrefab),
+                createFunc: CreateKnife,
                 actionOnGet: OnKnifeRetrieved,
                 actionOnRelease: OnKnifeReleased,
                 defaultCapacity: poolSettings.KnifePoolWarmupCount,
@@ -77,6 +80,7 @@ namespace Game.Pooling
         public KnifeView Get()
         {
             var knife = _Pool.Get();
+            _pooledObjects.Remove(knife);
             knife.transform.SetParent(null, false);
             knife.gameObject.SetActive(true);
             knife.ResetKnife();
@@ -103,10 +107,11 @@ namespace Game.Pooling
             return _pooledObjects;
         }
 
-        private static KnifeView CreateKnife(IObjectResolver resolver, KnifeView prefab)
+        private KnifeView CreateKnife()
         {
-            var instance = Object.Instantiate(prefab);
-            resolver.Inject(instance);
+            var instance = Object.Instantiate(_KnifePrefab);
+            _Resolver.Inject(instance);
+            instance.AssignPoolProvider(this);
             return instance;
         }
     }

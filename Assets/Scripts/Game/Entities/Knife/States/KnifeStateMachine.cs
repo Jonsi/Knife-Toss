@@ -25,6 +25,9 @@ namespace Game.Entities.Knife.States
         }
 
         public bool IsInFlight => ReferenceEquals(CurrentState, InFlight);
+
+        public bool ShouldMonitorOutOfView =>
+            ReferenceEquals(CurrentState, InFlight) ||
+            ReferenceEquals(CurrentState, Bounced);
     }
 }
-
