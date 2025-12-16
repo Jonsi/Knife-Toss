@@ -17,7 +17,7 @@ namespace Game.Flow.Level.States
             int totalKnivesToBreak = config.Targets.Sum(t => t.KnivesToBreak);
             Context.KnifeCount = config.KnifeCount > 0 ? config.KnifeCount : totalKnivesToBreak + config.ExtraKnives;
 
-            var spawnedTargets = Context.LevelSpawner.SpawnLevel(config);
+            var spawnedTargets = Context.LevelSpawner.SpawnLevel(config, Context.StageConfig);
             Context.ActiveTargets.AddRange(spawnedTargets);
 
             Machine.SetState(Machine.Playing);

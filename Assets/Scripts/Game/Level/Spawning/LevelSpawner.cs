@@ -36,15 +36,16 @@ namespace Game.Level.Spawning
         /// Spawns all targets defined in the level configuration.
         /// </summary>
         /// <param name="config">The level configuration.</param>
+        /// <param name="stageConfig">The stage configuration for the current level.</param>
         /// <returns>A list of spawned TargetView instances.</returns>
-        public List<ITargetView> SpawnLevel(LevelConfig config)
+        public List<ITargetView> SpawnLevel(LevelConfig config, StageConfig stageConfig)
         {
             ClearLevel();
 
             var spawnedTargets = new List<ITargetView>();
             foreach (var targetConfig in config.Targets)
             {
-                var target = _TargetFactory.Create(targetConfig, _LevelRoot);
+                var target = _TargetFactory.Create(targetConfig, _LevelRoot, stageConfig);
                 spawnedTargets.Add(target);
             }
 
@@ -52,4 +53,3 @@ namespace Game.Level.Spawning
         }
     }
 }
-

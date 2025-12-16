@@ -4,6 +4,7 @@ using Game.Entities.Collectible.Spawning;
 using Game.Entities.Knife.Views;
 using Game.Entities.Target.Data;
 using Game.Entities.Target.Views;
+using Game.Level.Data;
 using Game.Pooling;
 using UnityEngine;
 using VContainer;
@@ -44,8 +45,9 @@ namespace Game.Entities.Target.Factories
         /// </summary>
         /// <param name="config">Configuration for the target.</param>
         /// <param name="parent">Parent transform for the target.</param>
+        /// <param name="stageConfig">Stage-level configuration providing defaults.</param>
         /// <returns>The instantiated TargetView.</returns>
-        public TargetView Create(TargetConfig config, Transform parent)
+        public TargetView Create(TargetConfig config, Transform parent, StageConfig stageConfig)
         {
             TargetView prefab = config.PrefabOverride != null
                 ? config.PrefabOverride
@@ -70,14 +72,17 @@ namespace Game.Entities.Target.Factories
 
             _ObjectResolver.Inject(instance);
 
-            if (config.Collectibles != null && config.Collectibles.Count > 0)
+            var stageKnifePrefab = stageConfig?.DefaultKnifePrefab;
+            var stageCollectiblePrefab = stageConfig?.DefaultCollectiblePrefab;
+
+            if (stageCollectiblePrefab != null && config.Collectibles != null && config.Collectibles.Count > 0)
             {
-                _CollectibleSpawner.SpawnCollectibles(instance, config.Collectibles);
+                _CollectibleSpawner.SpawnCollectibles(instance, config.Collectibles, stageCollectiblePrefab);
             }
 
-            if (config.PreStuckKnives != null && config.PreStuckKnives.Count > 0)
+            if (stageKnifePrefab != null && config.PreStuckKnives != null && config.PreStuckKnives.Count > 0)
             {
-                SpawnPreStuckKnives(config.PreStuckKnives, instance);
+                SpawnPreStuckKnives(config.PreStuckKnives, instance, stageKnifePrefab);
             }
             
             instance.PlaySpawnAnimation();
@@ -85,12 +90,18 @@ namespace Game.Entities.Target.Factories
             return instance;
         }
 
-        private void SpawnPreStuckKnives(IReadOnlyList<PreStuckKnifeConfig> preStuckConfigs, TargetView target)
+        private void SpawnPreStuckKnives(
+            IReadOnlyList<PreStuckKnifeConfig> preStuckConfigs,
+            TargetView target,
+            KnifeView knifePrefab)
         {
+            if (knifePrefab == null)
+                return;
+
             for (int i = 0; i < preStuckConfigs.Count; i++)
             {
                 var knifeConfig = preStuckConfigs[i];
-                var knife = CreatePreStuckKnife(knifeConfig);
+                var knife = CreatePreStuckKnife(knifePrefab);
                 if (knife == null)
                     continue;
 
@@ -99,12 +110,12 @@ namespace Game.Entities.Target.Factories
             }
         }
 
-        private KnifeView CreatePreStuckKnife(PreStuckKnifeConfig knifeConfig)
+        private KnifeView CreatePreStuckKnife(KnifeView knifePrefab)
         {
-            if (knifeConfig == null)
+            if (knifePrefab == null)
                 return null;
 
-            var knife = UnityEngine.Object.Instantiate(knifeConfig.PrefabOverride);
+            var knife = UnityEngine.Object.Instantiate(knifePrefab);
             _ObjectResolver.Inject(knife);
             return knife;
         }

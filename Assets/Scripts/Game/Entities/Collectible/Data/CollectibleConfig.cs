@@ -9,9 +9,6 @@ namespace Game.Entities.Collectible.Data
     [Serializable]
     public class CollectibleConfig
     {
-        [Tooltip("The collectible prefab to spawn.")]
-        [field: SerializeField] public GameObject Prefab { get; private set; }
-
         [Tooltip("Currency value awarded when collected.")]
         [field: SerializeField] public int Value { get; private set; } = 1;
 

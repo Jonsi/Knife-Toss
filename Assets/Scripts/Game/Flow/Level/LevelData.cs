@@ -12,6 +12,7 @@ namespace Game.Flow.Level
     {
         public ILevelSpawner LevelSpawner { get; }
 
+        public StageConfig StageConfig { get; internal set; }
         public LevelConfig Config { get; internal set; }
 
         public int KnifeCount { get; internal set; }

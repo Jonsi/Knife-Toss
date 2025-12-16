@@ -18,8 +18,9 @@ namespace Game.Flow.Level
             _StateMachine = stateMachine;
         }
 
-        public void LoadLevel(LevelConfig config)
+        public void LoadLevel(StageConfig stageConfig, LevelConfig config)
         {
+            _StateMachine.Context.StageConfig = stageConfig;
             _StateMachine.Context.Config = config;
             _StateMachine.SetState(_StateMachine.Loading);
         }

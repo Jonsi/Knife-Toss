@@ -26,5 +26,12 @@ namespace Game.Level.Interfaces
         /// <param name="levelIndex">The index of the level within the stage.</param>
         /// <returns>The level configuration.</returns>
         LevelConfig GetLevelConfig(int stageIndex, int levelIndex);
+
+        /// <summary>
+        /// Retrieves the configuration object for a given stage.
+        /// </summary>
+        /// <param name="stageIndex">The index of the stage.</param>
+        /// <returns>The stage configuration or null if unavailable.</returns>
+        StageConfig GetStageConfig(int stageIndex);
     }
 }

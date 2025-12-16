@@ -53,5 +53,18 @@ namespace Game.Level.Catalogs
 
             return levels[levelIndex];
         }
+
+        /// <summary>
+        /// Retrieves the configuration for the specified stage index.
+        /// </summary>
+        /// <param name="stageIndex">The stage index to look up.</param>
+        /// <returns>The stage configuration, or null if the index is invalid.</returns>
+        public StageConfig GetStageConfig(int stageIndex)
+        {
+            if (stageIndex < 0 || stageIndex >= _ConfigAsset.Stages.Count)
+                return null;
+
+            return _ConfigAsset.Stages[stageIndex];
+        }
     }
 }

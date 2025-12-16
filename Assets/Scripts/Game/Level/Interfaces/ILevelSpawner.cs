@@ -18,8 +18,8 @@ namespace Game.Level.Interfaces
         /// Spawns objects for the specified level configuration.
         /// </summary>
         /// <param name="config">The level configuration to spawn.</param>
+        /// <param name="stageConfig">Stage configuration providing defaults for this level.</param>
         /// <returns>A list of spawned target views.</returns>
-        List<ITargetView> SpawnLevel(LevelConfig config);
+        List<ITargetView> SpawnLevel(LevelConfig config, StageConfig stageConfig);
     }
 }
-

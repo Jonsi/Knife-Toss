@@ -10,7 +10,9 @@ namespace Game.Flow.Interfaces
         /// <summary>
         /// Loads and starts the level using the provided configuration.
         /// </summary>
-        void LoadLevel(LevelConfig config);
+        /// <param name="stageConfig">Stage configuration that owns the level.</param>
+        /// <param name="config">Specific level configuration to load.</param>
+        void LoadLevel(StageConfig stageConfig, LevelConfig config);
 
         /// <summary>
         /// Retries the currently active level.

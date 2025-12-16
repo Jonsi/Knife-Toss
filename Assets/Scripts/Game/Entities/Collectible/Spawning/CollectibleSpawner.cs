@@ -28,33 +28,26 @@ namespace Game.Entities.Collectible.Spawning
         /// </summary>
         /// <param name="target">The target view to attach collectibles to.</param>
         /// <param name="configs">List of collectible configurations.</param>
-        public void SpawnCollectibles(TargetView target, List<CollectibleConfig> configs)
+        /// <param name="defaultPrefab">The prefab to instantiate for each collectible.</param>
+        public void SpawnCollectibles(TargetView target, List<CollectibleConfig> configs, CollectibleView defaultPrefab)
         {
-            if (target == null || configs == null)
+            if (target == null || configs == null || defaultPrefab == null)
                 return;
 
             foreach (var config in configs)
             {
-                if (config.Prefab == null)
-                    continue;
-
-                SpawnSingleCollectible(target, config);
+                SpawnSingleCollectible(target, config, defaultPrefab);
             }
         }
 
-        private void SpawnSingleCollectible(TargetView target, CollectibleConfig config)
+        private void SpawnSingleCollectible(TargetView target, CollectibleConfig config, CollectibleView defaultPrefab)
         {
             Vector3 position = CalculatePositionOnTarget(target, config);
             Quaternion rotation = CalculateRotationOnTarget(config);
 
-            GameObject instanceObj = Object.Instantiate(config.Prefab, position, rotation, target.Transform);
-            
-            var view = instanceObj.GetComponent<CollectibleView>();
-            if (view != null)
-            {
-                view.Initialize(config);
-                _ObjectResolver.Inject(view);
-            }
+            CollectibleView view = Object.Instantiate(defaultPrefab, position, rotation, target.Transform);
+            view.Initialize(config);
+            _ObjectResolver.Inject(view);
         }
 
         private Vector3 CalculatePositionOnTarget(TargetView target, CollectibleConfig config)

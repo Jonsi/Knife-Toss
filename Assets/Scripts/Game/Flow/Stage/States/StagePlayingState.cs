@@ -97,7 +97,11 @@ namespace Game.Flow.Stage.States
         private void LoadCurrentLevel()
         {
             LevelConfig config = Machine.LevelCatalog.GetLevelConfig(Context.StageIndex, Context.CurrentLevelIndex);
-            Machine.LevelFlowController.LoadLevel(config);
+            if (config == null)
+                return;
+
+            var stageConfig = Machine.LevelCatalog.GetStageConfig(Context.StageIndex);
+            Machine.LevelFlowController.LoadLevel(stageConfig, config);
             RaiseLevelStarted(config);
         }
 
