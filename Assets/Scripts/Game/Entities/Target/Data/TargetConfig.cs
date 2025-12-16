@@ -26,15 +26,12 @@ namespace Game.Entities.Target.Data
         [field: Tooltip("Initial local rotation offset in degrees.")]
         [field: SerializeField] public float InitialRotation { get; private set; }
 
-        [field: Header("Behaviors")]
         [field: Tooltip("Local and world behaviors applied to this target.")]
         [field: SerializeField] public TargetBehaviorSet Behaviors { get; private set; } = new();
 
-        [field: Header("Collectibles")]
         [field: Tooltip("List of collectibles to attach to this target.")]
         [field: SerializeField] public List<Game.Entities.Collectible.Data.CollectibleConfig> Collectibles { get; private set; } = new();
 
-        [field: Header("Pre-Stuck Knives")]
         [field: Tooltip("Knives that should start already stuck to this target.")]
         [field: SerializeField] public List<PreStuckKnifeConfig> PreStuckKnives { get; private set; } = new();
 
