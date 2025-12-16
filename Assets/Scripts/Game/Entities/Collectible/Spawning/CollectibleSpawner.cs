@@ -42,34 +42,11 @@ namespace Game.Entities.Collectible.Spawning
 
         private void SpawnSingleCollectible(TargetView target, CollectibleConfig config, CollectibleView defaultPrefab)
         {
-            Vector3 position = CalculatePositionOnTarget(target, config);
-            Quaternion rotation = CalculateRotationOnTarget(config);
-
-            CollectibleView view = Object.Instantiate(defaultPrefab, position, rotation, target.Transform);
+            CollectibleView view = Object.Instantiate(defaultPrefab);
             view.Initialize(config);
             _ObjectResolver.Inject(view);
-        }
-
-        private Vector3 CalculatePositionOnTarget(TargetView target, CollectibleConfig config)
-        {
-            float angleRad = config.AngleOffset * Mathf.Deg2Rad;
-            float parentScale = Mathf.Max(target.transform.lossyScale.x, target.transform.lossyScale.y);
-            parentScale = parentScale > 0.001f ? parentScale : 1f;
             
-            float globalDistance = target.Radius + config.RadiusOffset;
-            
-            float localDistance = globalDistance / parentScale;
-
-            return new Vector3(
-                Mathf.Cos(angleRad) * localDistance,
-                Mathf.Sin(angleRad) * localDistance,
-                0f
-            );
-        }
-
-        private Quaternion CalculateRotationOnTarget(CollectibleConfig config)
-        {
-            return Quaternion.Euler(0f, 0f, config.AngleOffset - 90f);
+            target.PlaceStickable(view, config.AngleOffset);
         }
     }
 }

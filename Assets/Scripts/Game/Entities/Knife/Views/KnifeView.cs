@@ -2,6 +2,7 @@ using System;
 using Common.Collision.Data;
 using Common.Collision.Interfaces;
 using Common.Events;
+using Common.Interfaces;
 using Game.Entities.Knife.Data;
 using Game.Entities.Knife.Interfaces;
 using Game.Entities.Knife.States;
@@ -18,7 +19,7 @@ namespace Game.Entities.Knife.Views
     /// Uses a state machine to manage knife behavior.
     /// Implements IHitable to participate in the collision system.
     /// </summary>
-    public class KnifeView : MonoBehaviour, IKnifeViewContext
+    public class KnifeView : MonoBehaviour, IKnifeViewContext, IStickable
     {
         private static readonly Type CachedType = typeof(KnifeView);
 
@@ -58,6 +59,9 @@ namespace Game.Entities.Knife.Views
 
         public Transform VisualRoot => _VisualRoot != null ? _VisualRoot : transform;
         public SpriteRenderer SpriteRenderer => _SpriteRenderer;
+
+        public float RadiusOffset => _StickPositionData.Offset;
+        public float RotationOffset => _StickPositionData.RotationOffset;
 
         [Inject]
         private void Construct(

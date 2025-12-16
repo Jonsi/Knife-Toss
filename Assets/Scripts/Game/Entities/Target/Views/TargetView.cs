@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using Common.Collision.Interfaces;
+using Common.Interfaces;
 using Game.Entities.Knife.Views;
 using Game.Entities.Target.Data;
 using Game.Entities.Target.Data.Behaviors;
 using Game.Entities.Target.Feedback;
 using Game.Entities.Target.Interfaces;
 using Game.Entities.Target.Logic;
+using Game.Entities.Target.Services;
 using Game.Feedback.Animation;
 using UnityEngine;
 
@@ -19,7 +21,6 @@ namespace Game.Entities.Target.Views
     public class TargetView : MonoBehaviour, ITargetView, IHitable
     {
         private static readonly Type CachedType = typeof(TargetView);
-        private const float KNIFE_ROTATION_FACING_CENTER = 90f;
 
         [SerializeField] private CircleCollider2D _Collider;
         [SerializeField] private TargetHitFeedback _HitFeedback;
@@ -36,7 +37,8 @@ namespace Game.Entities.Target.Views
         private Transform _WorldCenter;
         private Transform StickParent => _StuckObjectsHolder != null ? _StuckObjectsHolder : transform;
         private bool _HasNotifiedDestroyed;
-        private List<KnifeView> _StuckKnives = new();
+        private List<IStickable> _StuckObjects = new();
+        private readonly StickPositionService _StickPositionService = new();
 
         public int KnivesToBreak { get; private set; }
         public int HitsReceived { get; private set; }
@@ -172,19 +174,19 @@ namespace Game.Entities.Target.Views
         }
 
         /// <summary>
-        /// Sticks a knife to this target at the specified position and rotation.
+        /// Sticks an object to this target at the specified position and rotation.
         /// </summary>
-        /// <param name="knife">The knife view to stick to this target.</param>
+        /// <param name="stickable">The object to stick to this target.</param>
         /// <param name="impactPoint">The world position where the impact occurred.</param>
-        public void Stick(KnifeView knife, Vector2 impactPoint)
+        public void Stick(IStickable stickable, Vector2 impactPoint)
         {
-            if (knife == null)
+            if (stickable == null)
                 return;
 
-            AttachKnife(knife);
-            ApplyStickTransform(knife, impactPoint);
-            _StuckKnives.Add(knife);
-
+            AttachStickable(stickable);
+            ApplyStickTransform(stickable, impactPoint);
+            _StuckObjects.Add(stickable);
+            
             RegisterHit();
         }
 
@@ -198,22 +200,33 @@ namespace Game.Entities.Target.Views
         }
 
         /// <summary>
-        /// Places a pre-stuck knife at the specified angle without affecting hit counts.
+        /// Places a stickable object at the specified angle without affecting hit counts.
         /// </summary>
-        /// <param name="knife">Knife view to position.</param>
+        /// <param name="stickable">Object to position.</param>
         /// <param name="angleDegrees">Angle in degrees around the target.</param>
-        public void PlacePreStuckKnife(KnifeView knife, float angleDegrees)
+        public void PlaceStickable(IStickable stickable, float angleDegrees)
         {
-            if (knife == null)
+            if (stickable == null)
                 return;
 
-            AttachKnife(knife);
-            StickPositionData stickData = knife.StickPositionData;
-            Vector2 finalPosition = CalculateStickPosition(stickData.Offset, angleDegrees);
-            float finalRotation = CalculateStickRotation(angleDegrees, stickData.RotationOffset);
+            AttachStickable(stickable);
+            
+            Vector2 finalPosition = _StickPositionService.CalculatePosition(
+                _Collider != null ? _Collider.radius : 1f,
+                Mathf.Max(transform.lossyScale.x, transform.lossyScale.y),
+                angleDegrees,
+                stickable.RadiusOffset
+            );
 
-            knife.transform.localPosition = finalPosition;
-            knife.transform.localRotation = Quaternion.Euler(0f, 0f, finalRotation);
+            Quaternion finalRotation = _StickPositionService.CalculateRotation(
+                angleDegrees,
+                stickable.RotationOffset
+            );
+
+            stickable.Transform.localPosition = finalPosition;
+            stickable.Transform.localRotation = finalRotation;
+            
+            _StuckObjects.Add(stickable);
         }
 
         private void DestroyTarget()
@@ -223,7 +236,7 @@ namespace Game.Entities.Target.Views
 
             PlayStuckKnifeShatters();
             _ShatterController?.PlayShatter();
-            _StuckKnives.Clear();
+            _StuckObjects.Clear();
             FinalizeDestruction();
         }
 
@@ -242,55 +255,42 @@ namespace Game.Entities.Target.Views
             OnDestroyed?.Invoke(this);
         }
 
-        private void AttachKnife(KnifeView knife) => knife.transform.SetParent(StickParent);
+        private void AttachStickable(IStickable stickable) => stickable.Transform.SetParent(StickParent);
 
         private void PlayStuckKnifeShatters()
         {
-            for (int i = 0; i < _StuckKnives.Count; i++)
+            for (int i = 0; i < _StuckObjects.Count; i++)
             {
-                _StuckKnives[i]?.PlayShatterEffect();
+                if (_StuckObjects[i] is KnifeView knife)
+                {
+                    knife.PlayShatterEffect();
+                }
             }
         }
 
-        private void ApplyStickTransform(KnifeView knife, Vector2 impactPoint)
+        private void ApplyStickTransform(IStickable stickable, Vector2 impactPoint)
         {
             Vector2 localPoint = TransformImpactToLocal(impactPoint);
             float angleDegrees = CalculateImpactAngle(localPoint);
-            StickPositionData stickData = knife.StickPositionData;
-            Vector2 finalPosition = CalculateStickPosition(stickData.Offset, angleDegrees);
-            float finalRotation = CalculateStickRotation(angleDegrees, stickData.RotationOffset);
+            
+            Vector2 finalPosition = _StickPositionService.CalculatePosition(
+                _Collider != null ? _Collider.radius : 1f,
+                Mathf.Max(transform.lossyScale.x, transform.lossyScale.y),
+                angleDegrees,
+                stickable.RadiusOffset
+            );
 
-            knife.transform.localPosition = finalPosition;
-            knife.transform.localRotation = Quaternion.Euler(0f, 0f, finalRotation);
+            Quaternion finalRotation = _StickPositionService.CalculateRotation(
+                angleDegrees,
+                stickable.RotationOffset
+            );
+
+            stickable.Transform.localPosition = finalPosition;
+            stickable.Transform.localRotation = finalRotation;
         }
 
         private Vector2 TransformImpactToLocal(Vector2 impactPoint) => transform.InverseTransformPoint(impactPoint);
 
         private static float CalculateImpactAngle(Vector2 localPoint) => Mathf.Atan2(localPoint.y, localPoint.x) * Mathf.Rad2Deg;
-
-        private Vector2 CalculateStickPosition(float offset, float angleDegrees)
-        {
-            float finalRadius = CalculateStickRadius(offset);
-            float angleRadians = angleDegrees * Mathf.Deg2Rad;
-
-            return new Vector2(
-                Mathf.Cos(angleRadians) * finalRadius,
-                Mathf.Sin(angleRadians) * finalRadius
-            );
-        }
-
-        private float CalculateStickRadius(float offset)
-        {
-            if (_Collider == null)
-                return 1f + offset;
-
-            float scaledRadius = _Collider.radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y);
-            return scaledRadius + offset;
-        }
-
-        private static float CalculateStickRotation(float angleDegrees, float rotationOffset)
-        {
-            return angleDegrees + KNIFE_ROTATION_FACING_CENTER + rotationOffset;
-        }
     }
 }

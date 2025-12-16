@@ -41,13 +41,9 @@ namespace Game.Entities.Target.Factories
         }
 
         /// <summary>
-        /// Creates a target instance at the specified parent transform.
+        /// Phase 1: Instantiates and initializes the target view.
         /// </summary>
-        /// <param name="config">Configuration for the target.</param>
-        /// <param name="parent">Parent transform for the target.</param>
-        /// <param name="stageConfig">Stage-level configuration providing defaults.</param>
-        /// <returns>The instantiated TargetView.</returns>
-        public TargetView Create(TargetConfig config, Transform parent, StageConfig stageConfig)
+        public TargetView SpawnTarget(TargetConfig config, Transform parent)
         {
             TargetView prefab = config.PrefabOverride != null
                 ? config.PrefabOverride
@@ -72,6 +68,14 @@ namespace Game.Entities.Target.Factories
 
             _ObjectResolver.Inject(instance);
 
+            return instance;
+        }
+
+        /// <summary>
+        /// Phase 2: Spawns and attaches elements (knives, collectibles) to the target.
+        /// </summary>
+        public void AttachElements(TargetView instance, TargetConfig config, StageConfig stageConfig)
+        {
             var stageKnifePrefab = stageConfig?.DefaultKnifePrefab;
             var stageCollectiblePrefab = stageConfig?.DefaultCollectiblePrefab;
 
@@ -84,10 +88,14 @@ namespace Game.Entities.Target.Factories
             {
                 SpawnPreStuckKnives(config.PreStuckKnives, instance, stageKnifePrefab);
             }
-            
-            instance.PlaySpawnAnimation();
+        }
 
-            return instance;
+        /// <summary>
+        /// Phase 3: Finalizes the target (animations, etc).
+        /// </summary>
+        public void FinalizeTarget(TargetView instance)
+        {
+            instance.PlaySpawnAnimation();
         }
 
         private void SpawnPreStuckKnives(
@@ -106,7 +114,7 @@ namespace Game.Entities.Target.Factories
                     continue;
 
                 knife.StopMovement();
-                target.PlacePreStuckKnife(knife, knifeConfig.Angle);
+                target.PlaceStickable(knife, knifeConfig.Angle);
             }
         }
 

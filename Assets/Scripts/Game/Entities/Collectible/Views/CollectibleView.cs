@@ -1,5 +1,6 @@
 using System;
 using Common.Collision.Interfaces;
+using Common.Interfaces;
 using Game.Entities.Collectible.Data;
 using Game.Feedback.Animation;
 using UnityEngine;
@@ -10,7 +11,7 @@ namespace Game.Entities.Collectible.Views
     /// Visual representation of a collectible item.
     /// Handles hit logic and visual feedback.
     /// </summary>
-    public class CollectibleView : MonoBehaviour, IHitable
+    public class CollectibleView : MonoBehaviour, IHitable, IStickable
     {
         private static readonly Type CachedType = typeof(CollectibleView);
 
@@ -26,6 +27,10 @@ namespace Game.Entities.Collectible.Views
         private bool _IsHit;
         public int Value { get; private set; }
 
+        public Transform Transform => transform;
+        public float RadiusOffset { get; private set; }
+        public float RotationOffset { get; private set; }
+
         public Type HitableType => CachedType;
 
         public void Initialize(CollectibleConfig config)
@@ -33,6 +38,9 @@ namespace Game.Entities.Collectible.Views
             Value = config.Value;
             _IsHit = false;
             
+            RadiusOffset = config.RadiusOffset;
+            RotationOffset = -180f; // Compensate for default +90 rotation in StickPositionService to get -90
+
             if (_Collider != null)
                 _Collider.enabled = true;
         }

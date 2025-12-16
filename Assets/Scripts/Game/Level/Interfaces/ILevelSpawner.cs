@@ -15,11 +15,18 @@ namespace Game.Level.Interfaces
         void ClearLevel();
 
         /// <summary>
-        /// Spawns objects for the specified level configuration.
+        /// Phase 1: Spawns targets for the specified level configuration (without attachments).
         /// </summary>
-        /// <param name="config">The level configuration to spawn.</param>
-        /// <param name="stageConfig">Stage configuration providing defaults for this level.</param>
-        /// <returns>A list of spawned target views.</returns>
-        List<ITargetView> SpawnLevel(LevelConfig config, StageConfig stageConfig);
+        List<ITargetView> SpawnTargets(LevelConfig config);
+
+        /// <summary>
+        /// Phase 2: Spawns and attaches elements to the spawned targets.
+        /// </summary>
+        void AttachElements(List<ITargetView> targets, LevelConfig config, StageConfig stageConfig);
+
+        /// <summary>
+        /// Phase 3: Finalizes the spawned targets (animations, etc.).
+        /// </summary>
+        void FinalizeSpawning(List<ITargetView> targets);
     }
 }
