@@ -34,7 +34,8 @@ namespace Game.Entities.Target.Views
         private readonly List<IWorldTargetBehavior> _WorldBehaviors = new();
 
         private float _CurrentRotation;
-        private Transform _WorldCenter;
+        private Vector3 _InitialWorldPosition;
+        private bool _HasInitialWorldPosition;
         private Transform StickParent => _StuckObjectsHolder != null ? _StuckObjectsHolder : transform;
         private bool _HasNotifiedDestroyed;
         private List<IStickable> _StuckObjects = new();
@@ -92,11 +93,20 @@ namespace Game.Entities.Target.Views
         }
 
         /// <summary>
+        /// Sets the initial world position that world behaviors should use as their anchor.
+        /// </summary>
+        /// <param name="worldPosition">Initial world position.</param>
+        public void SetInitialWorldPosition(Vector3 worldPosition)
+        {
+            _InitialWorldPosition = worldPosition;
+            _HasInitialWorldPosition = true;
+        }
+
+        /// <summary>
         /// Configures the behaviors that drive this target.
         /// </summary>
         /// <param name="behaviorCollection">Runtime behavior set.</param>
-        /// <param name="worldCenter">Optional world center reference.</param>
-        public void ConfigureBehaviors(TargetBehaviorCollection behaviorCollection, Transform worldCenter)
+        public void ConfigureBehaviors(TargetBehaviorCollection behaviorCollection)
         {
             _LocalBehaviors.Clear();
             _WorldBehaviors.Clear();
@@ -109,7 +119,11 @@ namespace Game.Entities.Target.Views
                     _WorldBehaviors.AddRange(behaviorCollection.WorldBehaviors);
             }
 
-            _WorldCenter = worldCenter;
+            if (!_HasInitialWorldPosition)
+            {
+                SetInitialWorldPosition(transform.position);
+            }
+
             TickBehaviors(0f);
         }
 
@@ -143,9 +157,12 @@ namespace Game.Entities.Target.Views
             if (_WorldBehaviors.Count == 0)
                 return;
 
-            bool hasCenter = _WorldCenter != null;
-            Vector3 center = hasCenter ? _WorldCenter.position : Vector3.zero;
-            _WorldBehaviorRuntime.Begin(deltaTime, center, transform.position, hasCenter);
+            if (!_HasInitialWorldPosition)
+            {
+                SetInitialWorldPosition(transform.position);
+            }
+
+            _WorldBehaviorRuntime.Begin(deltaTime, _InitialWorldPosition, transform.position, true);
 
             for (int i = 0; i < _WorldBehaviors.Count; i++)
             {

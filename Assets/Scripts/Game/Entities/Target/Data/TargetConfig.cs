@@ -19,6 +19,9 @@ namespace Game.Entities.Target.Data
         [field: Tooltip("Base scale multiplier for the target.")]
         [field: SerializeField] public float BaseScale { get; private set; } = 1f;
 
+        [field: Tooltip("Initial local position offset applied from the level center (0,0,0).")]
+        [field: SerializeField] public Vector3 InitialOffset { get; private set; } = Vector3.zero;
+
         [field: Header("Gameplay")]
         [field: Tooltip("Number of knife hits required to destroy this target.")]
         [field: SerializeField] public int KnivesToBreak { get; private set; } = 5;

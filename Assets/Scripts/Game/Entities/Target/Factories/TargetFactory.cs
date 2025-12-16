@@ -57,12 +57,13 @@ namespace Game.Entities.Target.Factories
             }
 
             TargetView instance = UnityEngine.Object.Instantiate(prefab, parent);
-            instance.transform.localPosition = Vector3.zero;
+            instance.transform.localPosition = config.InitialOffset;
             instance.transform.localRotation = Quaternion.identity;
             instance.transform.localScale = Vector3.one * config.BaseScale;
+            instance.SetInitialWorldPosition(instance.transform.position);
 
             var behaviors = _TargetBehaviorFactory.Create(config);
-            instance.ConfigureBehaviors(behaviors, parent);
+            instance.ConfigureBehaviors(behaviors);
 
             instance.Initialize(config);
 

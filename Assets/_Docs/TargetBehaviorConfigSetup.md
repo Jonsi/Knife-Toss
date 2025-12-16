@@ -18,7 +18,9 @@ Follow these steps to configure the new designer-friendly target behavior system
 - Add as many entries as you need in each list. Example: one `Orbit` behavior in the world list + two different spin behaviors in the local list for layered motion.
 - World behaviors evaluate first, updating the target position; local behaviors then adjust rotation/scale around that position.
 
-### 4. Initial Rotation and Scale
+### 4. Initial Placement, Rotation, and Scale
+- `InitialOffset` sets the starting local position relative to the stage center (0,0,0), letting you spread targets around before behaviors run.
+- World behaviors operate relative to that spawn point, so orbits/sine motion keep the configured offset.
 - `InitialRotation` still controls the starting local angle before behaviors tick.
 - `BaseScale` and `KnivesToBreak` remain on `TargetConfig` and behave as before.
 
