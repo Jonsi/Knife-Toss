@@ -32,9 +32,15 @@ MonoBehaviour:
           _LocalBehaviors:
           - _Kind: 0
             _Config:
-              rid: 49942386357568484
+              rid: 49942386518000617
           _WorldBehaviors: []
-        <Collectibles>k__BackingField: []
+        <Collectibles>k__BackingField:
+        - <Value>k__BackingField: 1
+          <AngleOffset>k__BackingField: 180
+          <RadiusOffset>k__BackingField: 0
+        - <Value>k__BackingField: 1
+          <AngleOffset>k__BackingField: 250
+          <RadiusOffset>k__BackingField: 0
         <PreStuckKnives>k__BackingField:
         - <Angle>k__BackingField: 0
     - <KnifeCount>k__BackingField: 14
@@ -48,11 +54,11 @@ MonoBehaviour:
           _LocalBehaviors:
           - _Kind: 0
             _Config:
-              rid: 49942386357568485
+              rid: 49942386518000618
           _WorldBehaviors:
           - _Kind: 0
             _Config:
-              rid: 49942386357568486
+              rid: 49942386518000619
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
@@ -63,11 +69,11 @@ MonoBehaviour:
           _LocalBehaviors:
           - _Kind: 0
             _Config:
-              rid: 49942386357568487
+              rid: 49942386518000620
           _WorldBehaviors:
           - _Kind: 0
             _Config:
-              rid: 49942386357568488
+              rid: 49942386518000621
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
     - <KnifeCount>k__BackingField: 12
@@ -81,11 +87,11 @@ MonoBehaviour:
           _LocalBehaviors:
           - _Kind: 0
             _Config:
-              rid: 49942386357568489
+              rid: 49942386518000622
           _WorldBehaviors:
           - _Kind: 0
             _Config:
-              rid: 49942386357568490
+              rid: 49942386518000623
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
@@ -230,35 +236,35 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 49942386357568484
+    - rid: 49942386518000617
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _Speed: 100
-    - rid: 49942386357568485
+    - rid: 49942386518000618
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _Speed: 100
-    - rid: 49942386357568486
+    - rid: 49942386518000619
       type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
       data:
         _StartingAngle: 0
         _DegreesPerSecond: 50
         _DistanceFromCenter: 1
-    - rid: 49942386357568487
+    - rid: 49942386518000620
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _Speed: 100
-    - rid: 49942386357568488
+    - rid: 49942386518000621
       type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
       data:
         _StartingAngle: 180
         _DegreesPerSecond: 50
         _DistanceFromCenter: 1
-    - rid: 49942386357568489
+    - rid: 49942386518000622
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _Speed: 50
-    - rid: 49942386357568490
+    - rid: 49942386518000623
       type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
       data:
         _StartingAngle: 50
