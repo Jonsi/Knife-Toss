@@ -17,5 +17,6 @@ alwaysApply: true
 - If changes inside unity are required, write instructions
 - Avoid using enums
 - Never add the sealed keyword to classes
+- Never use magic numbers
 
 **CRITICAL: NEVER delete XML `<summary>` blocks or other structured documentation comments. Always preserve existing summaries and add summaries to new public members.**
