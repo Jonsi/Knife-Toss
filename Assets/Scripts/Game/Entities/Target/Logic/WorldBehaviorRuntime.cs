@@ -25,15 +25,28 @@ namespace Game.Entities.Target.Logic
         public Vector3 Position => _Position;
 
         /// <summary>
+        /// Gets the initial world position at the beginning of the frame.
+        /// </summary>
+        public Vector3 InitialPosition { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether a world center reference was provided.
+        /// </summary>
+        public bool HasWorldCenter { get; private set; }
+
+        /// <summary>
         /// Initializes the runtime object for a new frame.
         /// </summary>
         /// <param name="deltaTime">Frame delta time.</param>
         /// <param name="worldCenter">Center point provided by the factory.</param>
         /// <param name="currentPosition">Current world position.</param>
-        public void Begin(float deltaTime, Vector3 worldCenter, Vector3 currentPosition)
+        /// <param name="hasWorldCenter">Whether the caller provided a valid center reference.</param>
+        public void Begin(float deltaTime, Vector3 worldCenter, Vector3 currentPosition, bool hasWorldCenter)
         {
             DeltaTime = deltaTime;
             WorldCenter = worldCenter;
+            InitialPosition = currentPosition;
+            HasWorldCenter = hasWorldCenter;
             _Position = currentPosition;
         }
 
@@ -56,4 +69,3 @@ namespace Game.Entities.Target.Logic
         }
     }
 }
-

@@ -24,6 +24,7 @@ namespace Game.Entities.Target.Data.Behaviors
             return kind switch
             {
                 TargetWorldBehaviorKind.Orbit => typeof(World.OrbitBehaviorConfig),
+                TargetWorldBehaviorKind.SinMovement => typeof(World.SinMovementBehaviorConfig),
                 _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null)
             };
         }

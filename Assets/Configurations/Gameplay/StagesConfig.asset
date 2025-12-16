@@ -31,7 +31,7 @@ MonoBehaviour:
           _LocalBehaviors:
           - _Kind: 0
             _Config:
-              rid: 49942386518000617
+              rid: 49942387899499227
           _WorldBehaviors: []
         <Collectibles>k__BackingField:
         - <Value>k__BackingField: 1
@@ -52,11 +52,11 @@ MonoBehaviour:
           _LocalBehaviors:
           - _Kind: 0
             _Config:
-              rid: 49942386518000618
+              rid: 49942387899499228
           _WorldBehaviors:
           - _Kind: 0
             _Config:
-              rid: 49942386518000619
+              rid: 49942387899499229
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
@@ -67,11 +67,11 @@ MonoBehaviour:
           _LocalBehaviors:
           - _Kind: 0
             _Config:
-              rid: 49942386518000620
+              rid: 49942387899499230
           _WorldBehaviors:
           - _Kind: 0
             _Config:
-              rid: 49942386518000621
+              rid: 49942387899499231
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
     - <KnifeCount>k__BackingField: 9
@@ -84,11 +84,11 @@ MonoBehaviour:
           _LocalBehaviors:
           - _Kind: 0
             _Config:
-              rid: 49942386518000622
+              rid: 49942387899499232
           _WorldBehaviors:
           - _Kind: 0
             _Config:
-              rid: 49942386518000623
+              rid: 49942387899499233
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
       - <PrefabOverride>k__BackingField: {fileID: 0}
@@ -96,8 +96,14 @@ MonoBehaviour:
         <KnivesToBreak>k__BackingField: 5
         <InitialRotation>k__BackingField: 180
         <Behaviors>k__BackingField:
-          _LocalBehaviors: []
-          _WorldBehaviors: []
+          _LocalBehaviors:
+          - _Kind: 0
+            _Config:
+              rid: 49942387899499234
+          _WorldBehaviors:
+          - _Kind: 1
+            _Config:
+              rid: 49942387899499235
         <Collectibles>k__BackingField: []
         <PreStuckKnives>k__BackingField: []
     - <KnifeCount>k__BackingField: 11
@@ -228,37 +234,47 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 49942386518000617
+    - rid: 49942387899499227
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _Speed: 100
-    - rid: 49942386518000618
+    - rid: 49942387899499228
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _Speed: 100
-    - rid: 49942386518000619
+    - rid: 49942387899499229
       type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
       data:
         _StartingAngle: 0
         _DegreesPerSecond: 50
         _DistanceFromCenter: 1
-    - rid: 49942386518000620
+    - rid: 49942387899499230
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _Speed: 100
-    - rid: 49942386518000621
+    - rid: 49942387899499231
       type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
       data:
         _StartingAngle: 180
         _DegreesPerSecond: 50
         _DistanceFromCenter: 1
-    - rid: 49942386518000622
+    - rid: 49942387899499232
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _Speed: 50
-    - rid: 49942386518000623
+    - rid: 49942387899499233
       type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
       data:
         _StartingAngle: 50
         _DegreesPerSecond: 0
         _DistanceFromCenter: 1
+    - rid: 49942387899499234
+      type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
+      data:
+        _Speed: 50
+    - rid: 49942387899499235
+      type: {class: SinMovementBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
+      data:
+        _MovementDistance: 2
+        _OscillationsPerSecond: 0.4
+        _PhaseOffsetDegrees: 0

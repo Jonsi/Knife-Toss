@@ -16,7 +16,8 @@ namespace Game.Entities.Target.Data.Behaviors
     /// </summary>
     public enum TargetWorldBehaviorKind
     {
-        Orbit = 0
+        Orbit = 0,
+        SinMovement = 1
     }
 
 }

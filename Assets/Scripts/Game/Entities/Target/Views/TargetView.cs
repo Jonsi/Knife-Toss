@@ -143,8 +143,9 @@ namespace Game.Entities.Target.Views
             if (_WorldBehaviors.Count == 0)
                 return;
 
-            Vector3 center = _WorldCenter != null ? _WorldCenter.position : Vector3.zero;
-            _WorldBehaviorRuntime.Begin(deltaTime, center, transform.position);
+            bool hasCenter = _WorldCenter != null;
+            Vector3 center = hasCenter ? _WorldCenter.position : Vector3.zero;
+            _WorldBehaviorRuntime.Begin(deltaTime, center, transform.position, hasCenter);
 
             for (int i = 0; i < _WorldBehaviors.Count; i++)
             {
