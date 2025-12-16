@@ -82,9 +82,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: KnifeToss.Presentation::Presentation.Gameplay.Knife.KnifeView
   _SpriteRenderer: {fileID: 5543959450069452106}
   _VisualRoot: {fileID: 6845354428870092820}
-  _StickPositionData:
-    Offset: 0
-    RotationOffset: 0
   _Collider: {fileID: 359776916962366960}
   _ShatterController: {fileID: 2931372984952118166}
 --- !u!212 &5543959450069452106
@@ -180,7 +177,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.0031726807, y: -0.03489971}
+  m_Offset: {x: 0.002037689, y: -0.021279871}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -190,7 +187,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.20136502, y: 1.1802006}
+  m_Size: {x: 0.1536955, y: 1.1529609}
   m_EdgeRadius: 0
 --- !u!50 &7574083789125918831
 Rigidbody2D:

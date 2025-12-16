@@ -30,6 +30,9 @@ namespace Game.CollisionHandlers
             if (data.Source is not KnifeView knife || data.Target is not CollectibleView collectible)
                 return;
 
+            if (!knife.IsInFlight)
+                return;
+
             if (!collectible.MarkAsHit())
                 return;
 
