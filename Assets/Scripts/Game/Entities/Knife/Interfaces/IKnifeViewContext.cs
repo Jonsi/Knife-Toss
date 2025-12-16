@@ -10,7 +10,6 @@ namespace Game.Entities.Knife.Interfaces
     public interface IKnifeViewContext : IHitable
     {
         Transform Transform { get; }
-        StickPositionData StickPositionData { get; }
         void SetColliderEnabled(bool enabled);
         void SetActive(bool isActive);
     }

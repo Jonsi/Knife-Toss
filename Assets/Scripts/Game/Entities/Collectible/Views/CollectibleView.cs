@@ -45,6 +45,11 @@ namespace Game.Entities.Collectible.Views
                 _Collider.enabled = true;
         }
 
+        public void OnAttachedToTarget()
+        {
+            // Optional: Logic when attached
+        }
+
         /// <summary>
         /// Marks the collectible as hit to prevent double processing.
         /// </summary>

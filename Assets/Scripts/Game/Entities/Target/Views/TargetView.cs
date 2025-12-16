@@ -186,7 +186,8 @@ namespace Game.Entities.Target.Views
             AttachStickable(stickable);
             ApplyStickTransform(stickable, impactPoint);
             _StuckObjects.Add(stickable);
-            
+            stickable.OnAttachedToTarget();
+
             RegisterHit();
         }
 
@@ -227,6 +228,7 @@ namespace Game.Entities.Target.Views
             stickable.Transform.localRotation = finalRotation;
             
             _StuckObjects.Add(stickable);
+            stickable.OnAttachedToTarget();
         }
 
         private void DestroyTarget()

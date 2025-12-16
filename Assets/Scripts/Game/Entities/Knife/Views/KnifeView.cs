@@ -25,7 +25,6 @@ namespace Game.Entities.Knife.Views
 
         [SerializeField] private SpriteRenderer _SpriteRenderer;
         [SerializeField] private Transform _VisualRoot;
-        [SerializeField] private StickPositionData _StickPositionData;
         [SerializeField] private Collider2D _Collider;
         [SerializeField] private SpriteShatterController _ShatterController;
         
@@ -46,12 +45,7 @@ namespace Game.Entities.Knife.Views
         /// Gets whether the knife is currently in flight.
         /// </summary>
         public bool IsInFlight => _StateMachine?.IsInFlight ?? false;
-
-        /// <summary>
-        /// Gets the stick position data for where the knife should stick.
-        /// </summary>
-        public StickPositionData StickPositionData => _StickPositionData;
-
+        
         /// <summary>
         /// Exposes transform for state consumption.
         /// </summary>
@@ -60,8 +54,13 @@ namespace Game.Entities.Knife.Views
         public Transform VisualRoot => _VisualRoot != null ? _VisualRoot : transform;
         public SpriteRenderer SpriteRenderer => _SpriteRenderer;
 
-        public float RadiusOffset => _StickPositionData.Offset;
-        public float RotationOffset => _StickPositionData.RotationOffset;
+        public float RadiusOffset => 0f;
+        public float RotationOffset => 0f;
+
+        public void OnAttachedToTarget()
+        {
+            // Optional: Logic when attached to target
+        }
 
         [Inject]
         private void Construct(
@@ -77,7 +76,7 @@ namespace Game.Entities.Knife.Views
             InitializeStateMachine();
             _MainCamera = Camera.main;
         }
-
+        
         private void Update()
         {
             _StateMachine?.Update(Time.deltaTime);

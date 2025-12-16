@@ -7,6 +7,7 @@ namespace Common.Interfaces
         Transform Transform { get; }
         float RadiusOffset { get; }
         float RotationOffset { get; }
+        void OnAttachedToTarget();
     }
 }
 
