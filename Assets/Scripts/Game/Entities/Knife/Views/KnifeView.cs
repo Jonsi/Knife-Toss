@@ -56,6 +56,13 @@ namespace Game.Entities.Knife.Views
 
         public float RadiusOffset => 0f;
         public float RotationOffset => 0f;
+        
+        /// <inheritdoc />
+        public void ApplySortingOrder(int sortingOrder)
+        {
+            if (_SpriteRenderer != null)
+                _SpriteRenderer.sortingOrder = sortingOrder;
+        }
 
         public void OnAttachedToTarget()
         {

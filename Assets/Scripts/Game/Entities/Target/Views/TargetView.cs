@@ -27,6 +27,7 @@ namespace Game.Entities.Target.Views
         [SerializeField] private SpriteShatterController _ShatterController;
         [SerializeField] private Transform _StuckObjectsHolder;
         [SerializeField] private TargetSpawnAnimator _SpawnAnimator;
+        [SerializeField] private SpriteRenderer[] _SpriteRenderers = Array.Empty<SpriteRenderer>();
 
         private readonly LocalBehaviorRuntime _LocalBehaviorRuntime = new();
         private readonly WorldBehaviorRuntime _WorldBehaviorRuntime = new();
@@ -39,6 +40,9 @@ namespace Game.Entities.Target.Views
         private Transform StickParent => _StuckObjectsHolder != null ? _StuckObjectsHolder : transform;
         private bool _HasNotifiedDestroyed;
         private List<IStickable> _StuckObjects = new();
+        private const int SortingOrderStride = 10;
+        private const int StickableSortingOffset = 1;
+        private int _BaseSortingOrder;
         private readonly StickPositionService _StickPositionService = new();
 
         public int KnivesToBreak { get; private set; }
@@ -125,6 +129,17 @@ namespace Game.Entities.Target.Views
             }
 
             TickBehaviors(0f);
+        }
+
+        /// <summary>
+        /// Applies the render sorting order derived from the level configuration index.
+        /// </summary>
+        /// <param name="orderIndex">Index within the level target list.</param>
+        public void SetSortingOrder(int orderIndex)
+        {
+            _BaseSortingOrder = Mathf.Max(0, orderIndex) * SortingOrderStride;
+            ApplySortingOrderToRenderers();
+            UpdateStuckObjectsSorting();
         }
 
         public void Initialize(TargetConfig config)
@@ -273,7 +288,11 @@ namespace Game.Entities.Target.Views
             OnDestroyed?.Invoke(this);
         }
 
-        private void AttachStickable(IStickable stickable) => stickable.Transform.SetParent(StickParent);
+        private void AttachStickable(IStickable stickable)
+        {
+            stickable.Transform.SetParent(StickParent);
+            stickable.ApplySortingOrder(_BaseSortingOrder + StickableSortingOffset);
+        }
 
         private void PlayStuckKnifeShatters()
         {
@@ -310,5 +329,25 @@ namespace Game.Entities.Target.Views
         private Vector2 TransformImpactToLocal(Vector2 impactPoint) => transform.InverseTransformPoint(impactPoint);
 
         private static float CalculateImpactAngle(Vector2 localPoint) => Mathf.Atan2(localPoint.y, localPoint.x) * Mathf.Rad2Deg;
+
+        private void ApplySortingOrderToRenderers()
+        {
+            if (_SpriteRenderers == null)
+                return;
+
+            for (int i = 0; i < _SpriteRenderers.Length; i++)
+            {
+                if (_SpriteRenderers[i] != null)
+                    _SpriteRenderers[i].sortingOrder = _BaseSortingOrder;
+            }
+        }
+
+        private void UpdateStuckObjectsSorting()
+        {
+            for (int i = 0; i < _StuckObjects.Count; i++)
+            {
+                _StuckObjects[i]?.ApplySortingOrder(_BaseSortingOrder + StickableSortingOffset);
+            }
+        }
     }
 }

@@ -144,6 +144,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KnifeToss.Presentation.Gameplay.HitableObjectView
   _Collider: {fileID: 1009142160881821546}
   _ShatterController: {fileID: 1620193684696534949}
+  _SpriteRenderer: {fileID: 4184338960856274286}
   _HitParticlesPrefab: {fileID: 4599585174594216639, guid: 20c1ef8e83242c54e9b724b12d0a1d90, type: 3}
 --- !u!114 &1620193684696534949
 MonoBehaviour:

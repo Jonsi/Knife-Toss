@@ -213,6 +213,8 @@ MonoBehaviour:
   _ShatterController: {fileID: 4383808365025300950}
   _StuckObjectsHolder: {fileID: 5579884299155848479}
   _SpawnAnimator: {fileID: 1258234455965085683}
+  _SpriteRenderers:
+  - {fileID: 729744686567893219}
 --- !u!114 &1708567030376354758
 MonoBehaviour:
   m_ObjectHideFlags: 0

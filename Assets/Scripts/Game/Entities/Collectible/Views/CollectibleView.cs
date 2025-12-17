@@ -17,6 +17,7 @@ namespace Game.Entities.Collectible.Views
 
         [SerializeField] private Collider2D _Collider;
         [SerializeField] private SpriteShatterController _ShatterController;
+        [SerializeField] private SpriteRenderer _SpriteRenderer;
         
         /// <summary>
         /// Particle effect to spawn when collected.
@@ -32,6 +33,15 @@ namespace Game.Entities.Collectible.Views
         public float RotationOffset { get; private set; }
 
         public Type HitableType => CachedType;
+        
+        /// <inheritdoc />
+        public void ApplySortingOrder(int sortingOrder)
+        {
+            if (_SpriteRenderer != null)
+            {
+                _SpriteRenderer.sortingOrder = sortingOrder;
+            }
+        }
 
         public void Initialize(CollectibleConfig config)
         {

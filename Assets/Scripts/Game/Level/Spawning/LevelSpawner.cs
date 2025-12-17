@@ -40,10 +40,15 @@ namespace Game.Level.Spawning
         {
             ClearLevel();
 
-            var spawnedTargets = new List<ITargetView>();
-            foreach (var targetConfig in config.Targets)
+            var spawnedTargets = new List<ITargetView>(config.Targets.Count);
+            for (int i = 0; i < config.Targets.Count; i++)
             {
-                var target = _TargetFactory.SpawnTarget(targetConfig, _LevelRoot);
+                var target = _TargetFactory.SpawnTarget(config.Targets[i], _LevelRoot);
+                if (target is TargetView targetView)
+                {
+                    targetView.SetSortingOrder(i);
+                }
+
                 spawnedTargets.Add(target);
             }
 
