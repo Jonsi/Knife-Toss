@@ -23,9 +23,10 @@ namespace Common.Interfaces
         float RotationOffset { get; }
 
         /// <summary>
-        /// Applies a sorting order so the stickable renders in sync with its parent target.
+        /// Applies the sorting layer and order so the stickable renders in sync with its parent target.
         /// </summary>
+        /// <param name="sortingLayerId">Target sorting layer identifier.</param>
         /// <param name="sortingOrder">Calculated sorting order.</param>
-        void ApplySortingOrder(int sortingOrder);
+        void ApplySorting(int sortingLayerId, int sortingOrder);
     }
 }

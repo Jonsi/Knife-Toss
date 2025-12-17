@@ -46,6 +46,15 @@ TagManager:
   - name: Backgroud
     uniqueID: 2598019291
     locked: 0
+  - name: Knife
+    uniqueID: 1336968723
+    locked: 0
+  - name: Target
+    uniqueID: 3095795831
+    locked: 0
+  - name: Collectibles
+    uniqueID: 3865765773
+    locked: 0
   - name: Particles
     uniqueID: 1171499623
     locked: 0

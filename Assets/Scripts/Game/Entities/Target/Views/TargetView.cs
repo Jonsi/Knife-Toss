@@ -41,9 +41,10 @@ namespace Game.Entities.Target.Views
         private bool _HasNotifiedDestroyed;
         private List<IStickable> _StuckObjects = new();
         private const int SortingOrderStride = 10;
-        private const int StickableSortingOffset = 1;
+        private const int StickableSortingOffset = -1;
         private int _BaseSortingOrder;
         private readonly StickPositionService _StickPositionService = new();
+        private int _SortingLayerId;
 
         public int KnivesToBreak { get; private set; }
         public int HitsReceived { get; private set; }
@@ -138,6 +139,7 @@ namespace Game.Entities.Target.Views
         public void SetSortingOrder(int orderIndex)
         {
             _BaseSortingOrder = Mathf.Max(0, orderIndex) * SortingOrderStride;
+            _SortingLayerId = ResolveSortingLayerId();
             ApplySortingOrderToRenderers();
             UpdateStuckObjectsSorting();
         }
@@ -291,7 +293,7 @@ namespace Game.Entities.Target.Views
         private void AttachStickable(IStickable stickable)
         {
             stickable.Transform.SetParent(StickParent);
-            stickable.ApplySortingOrder(_BaseSortingOrder + StickableSortingOffset);
+            stickable.ApplySorting(_SortingLayerId, _BaseSortingOrder + StickableSortingOffset);
         }
 
         private void PlayStuckKnifeShatters()
@@ -346,8 +348,22 @@ namespace Game.Entities.Target.Views
         {
             for (int i = 0; i < _StuckObjects.Count; i++)
             {
-                _StuckObjects[i]?.ApplySortingOrder(_BaseSortingOrder + StickableSortingOffset);
+                _StuckObjects[i]?.ApplySorting(_SortingLayerId, _BaseSortingOrder + StickableSortingOffset);
             }
+        }
+
+        private int ResolveSortingLayerId()
+        {
+            if (_SpriteRenderers == null)
+                return 0;
+
+            for (int i = 0; i < _SpriteRenderers.Length; i++)
+            {
+                if (_SpriteRenderers[i] != null)
+                    return _SpriteRenderers[i].sortingLayerID;
+            }
+
+            return 0;
         }
     }
 }
