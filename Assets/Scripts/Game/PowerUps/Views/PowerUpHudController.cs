@@ -32,6 +32,7 @@ namespace Game.PowerUps.Views
         {
             _PowerUpService = powerUpService;
             _PlayerDataService = playerDataService;
+            RefreshCounts();
         }
 
         private void OnEnable()

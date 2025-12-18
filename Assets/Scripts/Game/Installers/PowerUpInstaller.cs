@@ -1,8 +1,10 @@
 using Common.Events;
 using Game.Entities.Collectible.Events;
+using Game.Entities.Collectible.Data;
 using Game.Flow.Events;
 using Game.PowerUps.Configs;
 using Game.PowerUps.Events;
+using Game.PowerUps.Data;
 using Game.PowerUps.Interfaces;
 using Game.PowerUps.Services;
 using VContainer;

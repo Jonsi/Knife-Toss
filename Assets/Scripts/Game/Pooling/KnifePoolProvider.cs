@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using Game.Entities.Knife.Views;
+using Game.PowerUps.Configs;
 using UnityEngine;
 using UnityEngine.Pool;
 using VContainer;
@@ -12,47 +14,35 @@ namespace Game.Pooling
     /// </summary>
     public class KnifePoolProvider
     {
-        private readonly ObjectPool<KnifeView> _Pool;
+        private readonly ObjectPool<KnifeView> _DefaultPool;
+        private readonly ObjectPool<KnifeView> _SuperKnifePool;
         private readonly IObjectResolver _Resolver;
-        private readonly KnifeView _KnifePrefab;
-        private readonly Transform _poolParent;
+        private readonly Dictionary<KnifeView, ObjectPool<KnifeView>> _KnifePoolLookup = new();
+        private readonly Dictionary<ObjectPool<KnifeView>, Transform> _PoolParents = new();
         private readonly List<KnifeView> _pooledObjects = new();
+        private readonly PrefabsConfiguration _PrefabsConfiguration;
 
         /// <summary>
         /// Initializes a new instance of the knife pool provider.
         /// </summary>
         /// <param name="resolver">Resolver used to inject new knife instances.</param>
-        /// <param name="poolSettings">Pool settings containing knife prefab and configuration.</param>
-        public KnifePoolProvider(IObjectResolver resolver, PoolSettings poolSettings)
+        /// <param name="prefabsConfiguration">Prefab configuration containing knife entries and pooling settings.</param>
+        public KnifePoolProvider(IObjectResolver resolver, PrefabsConfiguration prefabsConfiguration)
         {
             _Resolver = resolver;
-            _KnifePrefab = poolSettings.KnifePrefab;
-            if (_KnifePrefab == null)
+            _PrefabsConfiguration = prefabsConfiguration;
+            if (prefabsConfiguration == null)
             {
-                throw new System.ArgumentException("KnifePrefab cannot be null in pool settings", nameof(poolSettings));
+                throw new ArgumentNullException(nameof(prefabsConfiguration), "Prefabs configuration is required for knife pooling");
             }
 
-            // Create a dedicated parent for pooled objects
-            var poolParent = new GameObject($"KnifePool_{_KnifePrefab.name}").transform;
-            Object.DontDestroyOnLoad(poolParent.gameObject);
-            _poolParent = poolParent;
-            _Pool = new ObjectPool<KnifeView>(
-                createFunc: CreateKnife,
-                actionOnGet: OnKnifeRetrieved,
-                actionOnRelease: OnKnifeReleased,
-                defaultCapacity: poolSettings.KnifePoolWarmupCount,
-                maxSize: poolSettings.KnifePoolMaxSize);
+            var defaultEntry = _PrefabsConfiguration.GetDefaultKnifeEntry();
+            if (defaultEntry == null)
+                throw new ArgumentException("PrefabsConfiguration must include a default KnifePrefabEntry.", nameof(prefabsConfiguration));
 
-            // Pre-warm the pool by creating initial objects
-            var warmupObjects = new KnifeView[poolSettings.KnifePoolWarmupCount];
-            for (int i = 0; i < poolSettings.KnifePoolWarmupCount; i++)
-            {
-                warmupObjects[i] = _Pool.Get();
-            }
-            for (int i = 0; i < poolSettings.KnifePoolWarmupCount; i++)
-            {
-                _Pool.Release(warmupObjects[i]);
-            }
+            _DefaultPool = CreatePool(defaultEntry);
+            var superEntry = _PrefabsConfiguration.GetSuperKnifeEntry();
+            _SuperKnifePool = superEntry != null && superEntry != defaultEntry ? CreatePool(superEntry) : _DefaultPool;
         }
 
         private static void OnKnifeRetrieved(KnifeView knife)
@@ -64,7 +54,12 @@ namespace Game.Pooling
         {
             ResetKnifeForPool(knife);
             knife.gameObject.SetActive(false);
-            knife.transform.SetParent(_poolParent, false);
+            if (_KnifePoolLookup.TryGetValue(knife, out var pool) &&
+                _PoolParents.TryGetValue(pool, out var parent))
+            {
+                knife.transform.SetParent(parent, false);
+            }
+
             _pooledObjects.Add(knife);
         }
 
@@ -77,13 +72,16 @@ namespace Game.Pooling
         /// <summary>
         /// Retrieves a knife from the pool.
         /// </summary>
-        public KnifeView Get()
+        public KnifeView Get(PowerUpConfigBase config = null)
         {
-            var knife = _Pool.Get();
+            var pool = SelectPool(config);
+            var knife = pool.Get();
+            _KnifePoolLookup[knife] = pool;
             _pooledObjects.Remove(knife);
             knife.transform.SetParent(null, false);
             knife.gameObject.SetActive(true);
             knife.ResetKnife();
+            knife.SetSourcePowerUpConfig(config);
             return knife;
         }
 
@@ -96,7 +94,10 @@ namespace Game.Pooling
             if (knife == null)
                 return;
 
-            _Pool.Release(knife);
+            if (!_KnifePoolLookup.TryGetValue(knife, out var pool))
+                pool = _DefaultPool;
+
+            pool.Release(knife);
         }
 
         /// <summary>
@@ -107,12 +108,66 @@ namespace Game.Pooling
             return _pooledObjects;
         }
 
-        private KnifeView CreateKnife()
+        private ObjectPool<KnifeView> CreatePool(KnifePrefabEntry entry)
         {
-            var instance = Object.Instantiate(_KnifePrefab);
+            var prefab = entry.GetKnifePrefab();
+            if (prefab == null)
+                throw new ArgumentException("Knife prefab entry must reference a prefab with a KnifeView component.");
+
+            ObjectPool<KnifeView> pool = null;
+            pool = new ObjectPool<KnifeView>(
+                createFunc: () => CreateKnife(prefab, () => pool),
+                actionOnGet: OnKnifeRetrieved,
+                actionOnRelease: OnKnifeReleased,
+                defaultCapacity: entry.WarmupCount,
+                maxSize: entry.MaxSize);
+
+            var parent = GetOrCreatePoolParent(prefab);
+            _PoolParents[pool] = parent;
+            WarmupPool(pool, entry.WarmupCount);
+            return pool;
+        }
+
+        private void WarmupPool(ObjectPool<KnifeView> pool, int warmupCount)
+        {
+            var warmupObjects = new KnifeView[warmupCount];
+            for (int i = 0; i < warmupCount; i++)
+            {
+                warmupObjects[i] = pool.Get();
+            }
+            for (int i = 0; i < warmupCount; i++)
+            {
+                pool.Release(warmupObjects[i]);
+            }
+        }
+
+        private ObjectPool<KnifeView> SelectPool(PowerUpConfigBase config)
+        {
+            if (config is SuperKnifeConfig)
+                return _SuperKnifePool ?? _DefaultPool;
+
+            return _DefaultPool;
+        }
+
+        private KnifeView CreateKnife(KnifeView prefab, System.Func<ObjectPool<KnifeView>> poolGetter)
+        {
+            var instance = UnityEngine.Object.Instantiate(prefab);
             _Resolver.Inject(instance);
             instance.AssignPoolProvider(this);
+            var pool = poolGetter?.Invoke();
+            if (pool != null)
+            {
+                _KnifePoolLookup[instance] = pool;
+            }
             return instance;
+        }
+
+        private Transform GetOrCreatePoolParent(KnifeView prefab)
+        {
+            string name = prefab != null ? prefab.name : "Knife";
+            var parent = new GameObject($"KnifePool_{name}").transform;
+            UnityEngine.Object.DontDestroyOnLoad(parent.gameObject);
+            return parent;
         }
     }
 }

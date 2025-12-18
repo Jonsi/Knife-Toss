@@ -44,6 +44,7 @@ namespace Game.CollisionHandlers
                 knife.StopMovement();
                 target.ForceDestroy();
                 _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Stuck, data.ImpactPoint));
+                knife.ReturnToPool();
                 return;
             }
 

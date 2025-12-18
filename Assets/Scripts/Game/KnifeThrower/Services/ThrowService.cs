@@ -27,6 +27,8 @@ namespace Game.KnifeThrower.Services
         private readonly IKnifeThrowerView _KnifeThrowerView;
         private readonly KnifePoolProvider _KnifePoolProvider;
         private readonly IPowerUpService _PowerUpService;
+        private readonly IEventChannel<PowerUpActivatedEventData> _PowerUpActivatedChannel;
+        private readonly IEventChannel<PowerUpUsedEventData> _PowerUpUsedChannel;
         private bool _IsRunning;
 
         /// <summary>
@@ -37,13 +39,17 @@ namespace Game.KnifeThrower.Services
             IConfigurationProvider<KnifeThrowConfiguration> knifeThrowConfigurationProvider,
             IKnifeThrowerView knifeThrowerView,
             KnifePoolProvider knifePoolProvider,
-            IPowerUpService powerUpService)
+            IPowerUpService powerUpService,
+            IEventChannel<PowerUpActivatedEventData> powerUpActivatedChannel,
+            IEventChannel<PowerUpUsedEventData> powerUpUsedChannel)
         {
             _PlayerThrowInputListener = playerThrowInputListener;
             _KnifeThrowConfigurationProvider = knifeThrowConfigurationProvider;
             _KnifeThrowerView = knifeThrowerView;
             _KnifePoolProvider = knifePoolProvider;
             _PowerUpService = powerUpService;
+            _PowerUpActivatedChannel = powerUpActivatedChannel;
+            _PowerUpUsedChannel = powerUpUsedChannel;
         }
 
         /// <summary>
@@ -57,6 +63,11 @@ namespace Game.KnifeThrower.Services
 
             _PlayerThrowInputListener.OnThrowRequested += HandleThrowRequested;
             _PlayerThrowInputListener.Initialize();
+
+            _PowerUpActivatedChannel?.Subscribe(OnPowerUpActivated);
+            _PowerUpUsedChannel?.Subscribe(OnPowerUpUsed);
+
+            ReloadLoadedKnifeForActivePowerUp();
             _IsRunning = true;
         }
 
@@ -66,6 +77,7 @@ namespace Game.KnifeThrower.Services
                 return;
 
             var config = _KnifeThrowConfigurationProvider.GetConfiguration();
+            ReloadLoadedKnifeForActivePowerUp();
             _PowerUpService?.PrepareLoadedKnife(_KnifeThrowerView.LoadedKnife);
 
             var context = new PowerUpThrowContext(
@@ -108,8 +120,41 @@ namespace Game.KnifeThrower.Services
                 SpawnOffset = config.SpawnPositionOffset,
                 ThrowSpeed = config.ThrowSpeed
             };
-            var knife = _KnifePoolProvider.Get();
+            var knife = _KnifePoolProvider.Get(_PowerUpService?.ActiveConfig);
             _PowerUpService?.PrepareLoadedKnife(knife);
+            _KnifeThrowerView.LoadKnife(knife, spawnData);
+        }
+
+        private void OnPowerUpActivated(PowerUpActivatedEventData data)
+        {
+            ReloadLoadedKnifeForActivePowerUp();
+        }
+
+        private void OnPowerUpUsed(PowerUpUsedEventData data)
+        {
+            ReloadLoadedKnifeForActivePowerUp();
+        }
+
+        private void ReloadLoadedKnifeForActivePowerUp()
+        {
+            var config = _KnifeThrowConfigurationProvider.GetConfiguration();
+            var activePowerUp = _PowerUpService?.ActiveConfig;
+            var loadedKnife = _KnifeThrowerView.LoadedKnife;
+
+            if (loadedKnife != null && loadedKnife.SourcePowerUpConfig == activePowerUp)
+                return;
+
+            if (loadedKnife != null)
+            {
+                _KnifePoolProvider.Release(loadedKnife);
+            }
+
+            var knife = _KnifePoolProvider.Get(activePowerUp);
+            var spawnData = new KnifeSpawnRequestData
+            {
+                SpawnOffset = config.SpawnPositionOffset,
+                ThrowSpeed = config.ThrowSpeed
+            };
             _KnifeThrowerView.LoadKnife(knife, spawnData);
         }
 
@@ -131,6 +176,9 @@ namespace Game.KnifeThrower.Services
 
             _PlayerThrowInputListener.OnThrowRequested -= HandleThrowRequested;
             _PlayerThrowInputListener.Dispose();
+
+            _PowerUpActivatedChannel?.Unsubscribe(OnPowerUpActivated);
+            _PowerUpUsedChannel?.Unsubscribe(OnPowerUpUsed);
             _IsRunning = false;
         }
     }

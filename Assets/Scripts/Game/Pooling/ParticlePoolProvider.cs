@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -13,33 +14,29 @@ namespace Game.Pooling
         private readonly ObjectPool<ParticleSystem> _Pool;
         private readonly Transform _poolParent;
         private readonly List<ParticleSystem> _pooledObjects = new();
-        private readonly ParticleSystem _prefab;
+        private readonly ParticlePrefabEntry _Entry;
 
         /// <summary>
         /// Initializes a new instance of the particle pool provider.
         /// </summary>
-        /// <param name="poolSettings">Pool settings containing particle prefab and configuration.</param>
-        public ParticlePoolProvider(PoolSettings poolSettings)
+        /// <param name="prefabsConfiguration">Prefab configuration containing particle entries.</param>
+        /// <param name="type">Type of particle prefab to pool.</param>
+        public ParticlePoolProvider(PrefabsConfiguration prefabsConfiguration, ParticlePrefabType type)
         {
-            if (poolSettings == null)
-            {
-                throw new System.ArgumentNullException(nameof(poolSettings), "Pool settings cannot be null");
-            }
+            _Entry = GetEntry(prefabsConfiguration, type);
+            if (_Entry == null)
+                throw new ArgumentException($"No particle prefab entry found for type {type}", nameof(prefabsConfiguration));
 
-            var prefab = poolSettings.KnifeHitTargetParticlesPrefab;
+            var prefab = _Entry.GetParticlePrefab();
             if (prefab == null)
-            {
-                throw new System.ArgumentException("KnifeHitTargetParticlesPrefab cannot be null in pool settings", nameof(poolSettings));
-            }
-
-            _prefab = prefab;
+                throw new ArgumentException($"Particle prefab entry for {type} must reference a prefab with ParticleSystem component.");
 
             // Create a dedicated parent for pooled objects
             var poolParent = new GameObject($"ParticlePool_{prefab.name}").transform;
-            Object.DontDestroyOnLoad(poolParent.gameObject);
+            UnityEngine.Object.DontDestroyOnLoad(poolParent.gameObject);
             _poolParent = poolParent;
             _Pool = new ObjectPool<ParticleSystem>(
-                () => CreateParticle(),
+                () => CreateParticle(prefab),
                 particle =>
                 {
                     particle.transform.SetParent(null, false);
@@ -53,16 +50,16 @@ namespace Game.Pooling
                     particle.transform.SetParent(_poolParent, false);
                     _pooledObjects.Add(particle);
                 },
-                defaultCapacity: poolSettings.ParticlePoolWarmupCount,
-                maxSize: poolSettings.ParticlePoolMaxSize);
+                defaultCapacity: _Entry.WarmupCount,
+                maxSize: _Entry.MaxSize);
 
             // Pre-warm the pool by creating initial objects
-            var warmupObjects = new ParticleSystem[poolSettings.ParticlePoolWarmupCount];
-            for (int i = 0; i < poolSettings.ParticlePoolWarmupCount; i++)
+            var warmupObjects = new ParticleSystem[_Entry.WarmupCount];
+            for (int i = 0; i < _Entry.WarmupCount; i++)
             {
                 warmupObjects[i] = _Pool.Get();
             }
-            for (int i = 0; i < poolSettings.ParticlePoolWarmupCount; i++)
+            for (int i = 0; i < _Entry.WarmupCount; i++)
             {
                 _Pool.Release(warmupObjects[i]);
             }
@@ -102,17 +99,22 @@ namespace Game.Pooling
             Release(particle);
         }
 
-        private ParticleSystem CreateParticle()
+        private static ParticlePrefabEntry GetEntry(PrefabsConfiguration config, ParticlePrefabType type)
         {
-            if (_prefab == null)
+            return type switch
             {
-                throw new System.InvalidOperationException("Particle prefab is null");
-            }
+                ParticlePrefabType.KnifeHitTarget => config?.GetKnifeHitParticles(),
+                ParticlePrefabType.CollectibleHit => config?.GetCollectibleHitParticles(),
+                _ => null
+            };
+        }
 
-            var instance = Object.Instantiate<ParticleSystem>(_prefab);
+        private ParticleSystem CreateParticle(ParticleSystem prefab)
+        {
+            var instance = UnityEngine.Object.Instantiate(prefab);
             if (instance == null)
             {
-                throw new System.InvalidOperationException($"Failed to instantiate particle system from prefab {_prefab}");
+                throw new InvalidOperationException($"Failed to instantiate particle system from prefab {prefab}");
             }
             var main = instance.main;
             main.stopAction = ParticleSystemStopAction.Callback;

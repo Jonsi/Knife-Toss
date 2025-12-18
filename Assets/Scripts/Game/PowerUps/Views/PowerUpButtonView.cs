@@ -1,5 +1,6 @@
 using System;
 using Game.PowerUps.Configs;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,11 +13,15 @@ namespace Game.PowerUps.Views
     {
         [SerializeField] private Button _Button;
         [SerializeField] private Image _Icon;
-        [SerializeField] private Text _CountText;
-        [SerializeField] private GameObject _SelectedMarker;
+        [SerializeField] private TMP_Text _CountText;
+        [SerializeField] private Color _SelectedColor = Color.white;
+        [SerializeField] private Color _UnselectedColor = Color.gray;
+        [SerializeField] private Color _UnavailableColor = new Color(0.3f, 0.3f, 0.3f, 0.5f);
 
         private PowerUpConfigBase _Config;
         private Action<PowerUpConfigBase> _ClickHandler;
+        private int _CurrentCount;
+        private bool _IsSelected;
 
         /// <summary>
         /// Initializes the button with the given configuration.
@@ -27,7 +32,7 @@ namespace Game.PowerUps.Views
             _ClickHandler = clickHandler;
             if (_Icon != null)
             {
-            _Icon.sprite = config.Icon;
+                _Icon.sprite = config.Icon;
             }
 
             UpdateSelected(false);
@@ -36,6 +41,8 @@ namespace Game.PowerUps.Views
             {
                 _Button.onClick.AddListener(HandleClick);
             }
+
+            UpdateVisualState();
         }
 
         /// <summary>
@@ -48,6 +55,7 @@ namespace Game.PowerUps.Views
         /// </summary>
         public void SetCount(int count)
         {
+            _CurrentCount = count;
             if (_CountText != null)
             {
                 _CountText.text = count.ToString();
@@ -57,6 +65,8 @@ namespace Game.PowerUps.Views
             {
                 _Button.interactable = count > 0;
             }
+
+            UpdateVisualState();
         }
 
         /// <summary>
@@ -64,10 +74,8 @@ namespace Game.PowerUps.Views
         /// </summary>
         public void UpdateSelected(bool isSelected)
         {
-            if (_SelectedMarker != null)
-            {
-                _SelectedMarker.SetActive(isSelected);
-            }
+            _IsSelected = isSelected;
+            UpdateVisualState();
         }
 
         private void HandleClick()
@@ -81,6 +89,21 @@ namespace Game.PowerUps.Views
             {
                 _Button.onClick.RemoveListener(HandleClick);
             }
+        }
+
+        private void UpdateVisualState()
+        {
+            var targetGraphic = _Button != null ? _Button.targetGraphic : null;
+            if (targetGraphic == null)
+                return;
+
+            if (_CurrentCount <= 0)
+            {
+                targetGraphic.color = _UnavailableColor;
+                return;
+            }
+
+            targetGraphic.color = _IsSelected ? _SelectedColor : _UnselectedColor;
         }
     }
 }

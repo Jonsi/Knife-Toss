@@ -9,6 +9,7 @@ using Game.Entities.Knife.States;
 using Game.Entities.Target.Data;
 using Game.Feedback.Animation;
 using Game.Pooling;
+using Game.PowerUps.Configs;
 using UnityEngine;
 using VContainer;
 
@@ -32,6 +33,7 @@ namespace Game.Entities.Knife.Views
         private Camera _MainCamera;
         private bool _HasReportedOutOfView;
         private bool _IsSuperKnife;
+        private PowerUpConfigBase _SourcePowerUpConfig;
 
         private IEventChannel<CollisionData> _CollisionChannel;
         private IEventChannel<KnifeImpactEventData> _ImpactChannel;
@@ -81,6 +83,8 @@ namespace Game.Entities.Knife.Views
             get => _IsSuperKnife;
             set => _IsSuperKnife = value;
         }
+
+        public PowerUpConfigBase SourcePowerUpConfig => _SourcePowerUpConfig;
 
         [Inject]
         private void Construct(
@@ -156,6 +160,7 @@ namespace Game.Entities.Knife.Views
         {
             _HasReportedOutOfView = false;
             _IsSuperKnife = false;
+            _SourcePowerUpConfig = null;
             _StateMachine.SetState(_StateMachine.Loaded);
         }
 
@@ -212,7 +217,7 @@ namespace Game.Entities.Knife.Views
             _ShatterController?.PlayShatter();
         }
 
-        private void ReturnToPool()
+        public void ReturnToPool()
         {
             if (_KnifePoolProvider == null)
                 return;
@@ -224,6 +229,11 @@ namespace Game.Entities.Knife.Views
         internal void AssignPoolProvider(KnifePoolProvider poolProvider)
         {
             _KnifePoolProvider = poolProvider;
+        }
+
+        internal void SetSourcePowerUpConfig(PowerUpConfigBase config)
+        {
+            _SourcePowerUpConfig = config;
         }
     }
 }

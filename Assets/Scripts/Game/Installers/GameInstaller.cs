@@ -56,8 +56,8 @@ namespace Game.Installers
         [SerializeField] private PowerUpActivatedEventChannel _PowerUpActivatedEventChannel;
         [SerializeField] private PowerUpUsedEventChannel _PowerUpUsedEventChannel;
 
-        [Header("Pooling")]
-        [SerializeField] private PoolSettings _PoolSettings;
+        [Header("Prefabs / Pooling")]
+        [SerializeField] private PrefabsConfiguration _PrefabsConfiguration;
         
         [Header("Scene References")]
         [SerializeField] private KnifeThrowerView _KnifeThrowerView;
@@ -79,6 +79,11 @@ namespace Game.Installers
             Install(builder, CreateAudioInstaller());
             Install(builder, CreateVFXInstaller());
             Install(builder, CreateUIInstaller());
+
+            if (_PrefabsConfiguration != null)
+            {
+                builder.RegisterInstance(_PrefabsConfiguration).AsSelf();
+            }
         }
 
         private static void Install(IContainerBuilder builder, IInstaller installer)
@@ -88,7 +93,7 @@ namespace Game.Installers
 
         private TargetInstaller CreateTargetInstaller()
         {
-            return new TargetInstaller(_StagesConfig.DefaultTargetPrefab);
+            return new TargetInstaller(_PrefabsConfiguration);
         }
 
         private KnifeInstaller CreateKnifeInstaller()
@@ -96,7 +101,7 @@ namespace Game.Installers
             return new KnifeInstaller(
                 _KnifeThrowConfig,
                 _KnifeThrowerView,
-                _PoolSettings,
+                _PrefabsConfiguration,
                 _KnifeImpactEventChannel,
                 _KnifeThrownEventChannel);
         }
@@ -165,7 +170,7 @@ namespace Game.Installers
 
         private VFXInstaller CreateVFXInstaller()
         {
-            return new VFXInstaller(_PoolSettings, _KnifeImpactEventChannel);
+            return new VFXInstaller(_PrefabsConfiguration, _KnifeImpactEventChannel);
         }
 
         private UIInstaller CreateUIInstaller()

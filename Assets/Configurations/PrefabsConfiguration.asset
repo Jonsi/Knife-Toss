@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1eeb9260d9c52064ead0d2514f49f807, type: 3}
+  m_Name: PrefabsConfiguration
+  m_EditorClassIdentifier: Game::Game.Pooling.PrefabsConfiguration
+  _DefaultKnife:
+    _Prefab: {fileID: 4613744281827678251, guid: d9ae20e742e0c9b4294c6c2a0ecd0920, type: 3}
+    _WarmupCount: 5
+    _MaxSize: 20
+  _SuperKnife:
+    _Prefab: {fileID: 4613744281827678251, guid: d12ee85c52db78b45985da773f5701a3, type: 3}
+    _WarmupCount: 5
+    _MaxSize: 20
+  _Target:
+    _Prefab: {fileID: 5427965671015069626, guid: 0e557c846743ed044bf689812c8bae87, type: 3}
+    _WarmupCount: 5
+    _MaxSize: 20
+  _Collectible:
+    _Prefab: {fileID: 8469477875108916277, guid: d5abd729dc883c14193d9008126a4bf2, type: 3}
+    _WarmupCount: 5
+    _MaxSize: 20
+  _KnifeHitParticles:
+    _Prefab: {fileID: 7210509785069475827, guid: 54a43af0fe26f194dbe98de5fbffa7f8, type: 3}
+    _WarmupCount: 5
+    _MaxSize: 20
+    _Type: 0
+  _CollectibleHitParticles:
+    _Prefab: {fileID: 4599585174594216639, guid: 20c1ef8e83242c54e9b724b12d0a1d90, type: 3}
+    _WarmupCount: 5
+    _MaxSize: 20
+    _Type: 1

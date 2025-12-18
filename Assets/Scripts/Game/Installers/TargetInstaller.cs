@@ -1,5 +1,6 @@
 using Game.Entities.Target.Factories;
 using Game.Entities.Target.Views;
+using Game.Pooling;
 using VContainer;
 using VContainer.Unity;
 
@@ -10,15 +11,15 @@ namespace Game.Installers
     /// </summary>
     public class TargetInstaller : IInstaller
     {
-        private readonly TargetView _DefaultTargetPrefab;
+        private readonly PrefabsConfiguration _PrefabsConfiguration;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TargetInstaller"/> class.
         /// </summary>
-        /// <param name="defaultTargetPrefab">Prefab used as the default target.</param>
-        public TargetInstaller(TargetView defaultTargetPrefab)
+        /// <param name="prefabsConfiguration">Configuration containing target prefab.</param>
+        public TargetInstaller(PrefabsConfiguration prefabsConfiguration)
         {
-            _DefaultTargetPrefab = defaultTargetPrefab;
+            _PrefabsConfiguration = prefabsConfiguration;
         }
 
         /// <summary>
@@ -29,7 +30,7 @@ namespace Game.Installers
         {
             builder.Register<TargetBehaviorFactory>(Lifetime.Singleton);
             builder.Register<TargetFactory>(Lifetime.Singleton)
-                .WithParameter(_DefaultTargetPrefab);
+                .WithParameter(_PrefabsConfiguration);
         }
     }
 }

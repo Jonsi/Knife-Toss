@@ -195,7 +195,7 @@ namespace Game.PowerUps.Services
 
         private void SpawnAdditionalKnife(PowerUpThrowContext context, float angle, float speed)
         {
-            var knife = context.PoolProvider.Get();
+            var knife = context.PoolProvider.Get(_RuntimeState.ActiveConfig);
             knife.IsSuperKnife = false;
 
             Vector3 spawnPosition = context.SpawnPoint.position + (Vector3)context.ThrowConfiguration.SpawnPositionOffset;
@@ -227,7 +227,7 @@ namespace Game.PowerUps.Services
 
                 collectible.PlayHitFeedback();
                 _CollectibleHitChannel?.Raise(new CollectibleHitEventData(collectible.transform.position, collectible.Value));
-                Object.Destroy(collectible.gameObject);
+                UnityEngine.Object.Destroy(collectible.gameObject);
 
                 if (config.TimeBetweenBlades > 0f)
                 {

@@ -19,7 +19,7 @@ namespace Game.Entities.Target.Factories
         private readonly IObjectResolver _ObjectResolver;
         private readonly TargetBehaviorFactory _TargetBehaviorFactory;
         private readonly CollectibleSpawner _CollectibleSpawner;
-        private readonly TargetView _DefaultPrefab;
+        private readonly PrefabsConfiguration _PrefabsConfiguration;
 
         /// <summary>
         /// Initializes a new instance of the TargetFactory.
@@ -27,17 +27,17 @@ namespace Game.Entities.Target.Factories
         /// <param name="objectResolver">DI container.</param>
         /// <param name="targetBehaviorFactory">Factory for behavior collections.</param>
         /// <param name="collectibleSpawner">Spawner for collectibles.</param>
-        /// <param name="defaultPrefab">Default target prefab.</param>
+        /// <param name="prefabsConfiguration">Prefab configuration for entities.</param>
         public TargetFactory(
             IObjectResolver objectResolver,
             TargetBehaviorFactory targetBehaviorFactory,
             CollectibleSpawner collectibleSpawner,
-            TargetView defaultPrefab)
+            PrefabsConfiguration prefabsConfiguration)
         {
             _ObjectResolver = objectResolver;
             _TargetBehaviorFactory = targetBehaviorFactory;
             _CollectibleSpawner = collectibleSpawner;
-            _DefaultPrefab = defaultPrefab;
+            _PrefabsConfiguration = prefabsConfiguration;
         }
 
         /// <summary>
@@ -47,13 +47,14 @@ namespace Game.Entities.Target.Factories
         {
             TargetView prefab = config.PrefabOverride != null
                 ? config.PrefabOverride
-                : _DefaultPrefab;
+                : _PrefabsConfiguration?.GetTargetPrefab();
 
             if (prefab == null)
             {
-                if (_DefaultPrefab == null)
+                var fallback = _PrefabsConfiguration?.GetTargetPrefab();
+                if (fallback == null)
                     throw new InvalidOperationException("No target prefab available for creation.");
-                prefab = _DefaultPrefab;
+                prefab = fallback;
             }
 
             TargetView instance = UnityEngine.Object.Instantiate(prefab, parent);
@@ -77,17 +78,17 @@ namespace Game.Entities.Target.Factories
         /// </summary>
         public void AttachElements(TargetView instance, TargetConfig config, StageConfig stageConfig)
         {
-            var stageKnifePrefab = stageConfig?.DefaultKnifePrefab;
-            var stageCollectiblePrefab = stageConfig?.DefaultCollectiblePrefab;
+            var knifePrefab = _PrefabsConfiguration?.GetDefaultKnifePrefab();
+            var collectiblePrefab = _PrefabsConfiguration?.GetCollectiblePrefab();
 
-            if (stageCollectiblePrefab != null && config.Collectibles != null && config.Collectibles.Count > 0)
+            if (collectiblePrefab != null && config.Collectibles != null && config.Collectibles.Count > 0)
             {
-                _CollectibleSpawner.SpawnCollectibles(instance, config.Collectibles, stageCollectiblePrefab);
+                _CollectibleSpawner.SpawnCollectibles(instance, config.Collectibles, collectiblePrefab);
             }
 
-            if (stageKnifePrefab != null && config.PreStuckKnives != null && config.PreStuckKnives.Count > 0)
+            if (knifePrefab != null && config.PreStuckKnives != null && config.PreStuckKnives.Count > 0)
             {
-                SpawnPreStuckKnives(config.PreStuckKnives, instance, stageKnifePrefab);
+                SpawnPreStuckKnives(config.PreStuckKnives, instance, knifePrefab);
             }
         }
 

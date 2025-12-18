@@ -12,17 +12,17 @@ namespace Game.Installers
     /// </summary>
     public class VFXInstaller : IInstaller
     {
-        private readonly PoolSettings _PoolSettings;
+        private readonly PrefabsConfiguration _PrefabsConfiguration;
         private readonly IEventChannel<KnifeImpactEventData> _KnifeImpactChannel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VFXInstaller"/> class.
         /// </summary>
         public VFXInstaller(
-            PoolSettings poolSettings,
+            PrefabsConfiguration prefabsConfiguration,
             IEventChannel<KnifeImpactEventData> knifeImpactChannel)
         {
-            _PoolSettings = poolSettings;
+            _PrefabsConfiguration = prefabsConfiguration;
             _KnifeImpactChannel = knifeImpactChannel;
         }
 
@@ -32,11 +32,12 @@ namespace Game.Installers
         /// <param name="builder">Container builder instance.</param>
         public void Install(IContainerBuilder builder)
         {
-            // Only register ParticlePoolProvider if the prefab is available
-            if (_PoolSettings?.KnifeHitTargetParticlesPrefab != null)
+            // Only register ParticlePoolProvider if the prefab entry is available
+            if (_PrefabsConfiguration?.GetKnifeHitParticles() != null)
             {
                 builder.Register<ParticlePoolProvider>(Lifetime.Singleton)
-                    .WithParameter(_PoolSettings);
+                    .WithParameter(_PrefabsConfiguration)
+                    .WithParameter(ParticlePrefabType.KnifeHitTarget);
             }
 
             builder.RegisterEntryPoint<VFXFeedbackService>();
