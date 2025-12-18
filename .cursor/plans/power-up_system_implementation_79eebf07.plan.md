@@ -3,7 +3,7 @@ name: Power-Up System Implementation
 overview: Consumable power-up system with SuperKnife, MultipleKnives, and CollectiblesBlade types using ScriptableObject event channels and VContainer DI
 todos:
   - id: data-events
-    content: Create PowerUpInventoryData, event data structs, and ScriptableObject event channels
+    content: Create PowerUpInventoryData, event data structs, and ScriptableObject event channels (no enums/IDs)
     status: pending
   - id: interfaces-configs
     content: Create IPowerUp interface and PowerUpConfigBase abstract ScriptableObject with concrete configs
@@ -20,12 +20,12 @@ todos:
     dependencies:
       - data-events
   - id: throw-integration
-    content: Modify ThrowService to delegate to PowerUpService when power-up is active
+    content: Modify ThrowService to delegate to PowerUpService when power-up is active while preserving existing throw events/counters
     status: pending
     dependencies:
       - service
   - id: collision-handler
-    content: Add SuperKnifeView marker and update KnifeHitTargetHandler for instant-destroy
+    content: Add SuperKnife marker support and update KnifeHitTargetHandler for instant-destroy without GetComponent/Find and still raising KnifeImpactEventData
     status: pending
     dependencies:
       - interfaces-configs
@@ -57,6 +57,7 @@ Based on codebase analysis:
 - **Configuration**: ScriptableObjects with `[CreateAssetMenu]` implementing `IConfigurationProvider<T>` where needed
 - **Interfaces**: Injected via VContainer, concrete types registered with `.As<IInterface>()`
 - **MonoBehaviour Views**: Use `[Inject]` for dependencies, subscribe to event channels in `OnEnable`/`OnDisable`
+- **Avoid Lookups**: Do not use `GetComponent`/`Find*`; pass required references/flags through DI or spawn-time data
 
 ## Architecture
 
@@ -112,7 +113,7 @@ flowchart TB
 
 ### Configuration (ScriptableObjects)
 
-- [`Assets/Scripts/Game/PowerUps/Configs/PowerUpConfigBase.cs`](Assets/Scripts/Game/PowerUps/Configs/PowerUpConfigBase.cs) - Abstract base with `Id`, `Icon`, `Prefab`
+- [`Assets/Scripts/Game/PowerUps/Configs/PowerUpConfigBase.cs`](Assets/Scripts/Game/PowerUps/Configs/PowerUpConfigBase.cs) - Abstract base with `Icon`, `Prefab`
 - [`Assets/Scripts/Game/PowerUps/Configs/SuperKnifeConfig.cs`](Assets/Scripts/Game/PowerUps/Configs/SuperKnifeConfig.cs) - `ThrowSpeed`
 - [`Assets/Scripts/Game/PowerUps/Configs/MultipleKnivesConfig.cs`](Assets/Scripts/Game/PowerUps/Configs/MultipleKnivesConfig.cs) - `Angles[]`, `ThrowSpeed`
 - [`Assets/Scripts/Game/PowerUps/Configs/CollectiblesBladeConfig.cs`](Assets/Scripts/Game/PowerUps/Configs/CollectiblesBladeConfig.cs) - `TimeBetweenBlades`, `BladeSpeed`
@@ -145,14 +146,20 @@ flowchart TB
 ## Files to Modify
 
 - [`Assets/Scripts/Game/Persistence/Data/PlayerData.cs`](Assets/Scripts/Game/Persistence/Data/PlayerData.cs) - Add `PowerUpInventory` field
-- [`Assets/Scripts/Game/Persistence/Data/PlayerProgressData.cs`](Assets/Scripts/Game/Persistence/Data/PlayerProgressData.cs) - Or add inventory here
+- [`Assets/Scripts/Game/Persistence/Services/PlayerDataService.cs`](Assets/Scripts/Game/Persistence/Services/PlayerDataService.cs) - Initialize/persist inventory and keep data non-null
 - [`Assets/Scripts/Game/KnifeThrower/Services/ThrowService.cs`](Assets/Scripts/Game/KnifeThrower/Services/ThrowService.cs) - Check `IPowerUpService.HasActivePowerUp` before normal throw
-- [`Assets/Scripts/Game/CollisionHandlers/KnifeHitTargetHandler.cs`](Assets/Scripts/Game/CollisionHandlers/KnifeHitTargetHandler.cs) - Check for `SuperKnifeView` marker, call `target.ForceDestroy()`
+- [`Assets/Scripts/Game/CollisionHandlers/KnifeHitTargetHandler.cs`](Assets/Scripts/Game/CollisionHandlers/KnifeHitTargetHandler.cs) - Respect SuperKnife marker without runtime lookups; still raise `KnifeImpactEventData`
 - [`Assets/Scripts/Game/Entities/Target/Views/TargetView.cs`](Assets/Scripts/Game/Entities/Target/Views/TargetView.cs) - Add `ForceDestroy()` method
 - [`Assets/Scripts/Game/Installers/GameInstaller.cs`](Assets/Scripts/Game/Installers/GameInstaller.cs) - Add power-up event channels, create `PowerUpInstaller`
-- [`Assets/Scripts/Editor/PlayerData/PlayerDataWindow.cs`](Assets/Scripts/Editor/PlayerData/PlayerDataWindow.cs) - Add power-up inventory section
+- [`Assets/Scripts/Editor/PlayerData/PlayerDataWindow.cs`](Assets/Scripts/Editor/PlayerData/PlayerDataWindow.cs) - Add power-up inventory section (null-safe)
+- [`Assets/Scripts/Game/UI/HUD/KnifeMagazineDisplay.cs`](Assets/Scripts/Game/UI/HUD/KnifeMagazineDisplay.cs) - Ensure knife counts stay accurate with power-up throws
+- [`Assets/Scripts/Game/Flow/Stage/States/StagePlayingState.cs`](Assets/Scripts/Game/Flow/Stage/States/StagePlayingState.cs) - Keep initial knife loading/flow consistent with power-up usage
 
 ## Implementation Details
+
+### No `GetComponent`/`Find` Usage
+
+Pass markers/state through injected data, interfaces, or spawn-time context so collision and power-up logic do not rely on runtime lookups or scene searches.
 
 ### ThrowService Integration
 
@@ -166,19 +173,11 @@ if (_PowerUpService.HasActivePowerUp)
 // ... normal throw logic
 ```
 
+Maintain existing `KnifeThrownEventChannel` raises and knife counters so HUD/audio/level flow remain in sync.
+
 ### SuperKnife Collision Handling
 
-The `SuperKnifeView` component acts as a marker. In `KnifeHitTargetHandler`:
-
-```csharp
-// Check if knife has SuperKnifeView marker
-var superKnife = knife.GetComponent<SuperKnifeView>();
-if (superKnife != null)
-{
-    target.ForceDestroy();
-    return;
-}
-```
+PowerUpService marks the spawned knife (e.g., via an interface/flag on KnifeView passed at spawn time). In `KnifeHitTargetHandler`, branch on that marker, call `target.ForceDestroy()`, and still raise `KnifeImpactEventData` so level completion logic stays correct.
 
 ### CollectiblesBlade Execution
 
@@ -189,6 +188,8 @@ Uses coroutine to spawn blades sequentially:
 3. Calculate direction toward collectible
 4. Launch blade with configured speed
 5. Wait `TimeBetweenBlades` before next
+
+Replace scene-wide searches with maintained collections (e.g., registry from CollectibleSpawner or LevelData) and raise `CollectibleHitEventData` for each auto-collect so `GameData`/persistence stay accurate.
 
 ### PlayerData Structure
 
@@ -201,6 +202,8 @@ public class PowerUpInventoryData
     public int CollectiblesBladeCount;
 }
 ```
+
+Initialize this in `PlayerDataService` load path so inventory is never null and persists with existing data.
 
 ## Unity Setup Required (Post-Implementation)
 
