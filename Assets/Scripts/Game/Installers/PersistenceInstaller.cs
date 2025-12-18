@@ -42,6 +42,7 @@ namespace Game.Installers
                 .WithParameter(_LevelCompletedChannel)
                 .WithParameter(_StageCompletedChannel)
                 .WithParameter(_CollectibleHitChannel)
+                .AsSelf()
                 .As<IInitializable>()
                 .As<IDisposable>();
         }

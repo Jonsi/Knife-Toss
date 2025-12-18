@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Game.Entities.Collectible.Data;
 using Game.Entities.Collectible.Views;
 using Game.Entities.Target.Views;
+using Game.PowerUps.Services;
 using UnityEngine;
 using VContainer;
 
@@ -13,14 +14,18 @@ namespace Game.Entities.Collectible.Spawning
     public class CollectibleSpawner
     {
         private readonly IObjectResolver _ObjectResolver;
+        private readonly CollectibleRegistry _CollectibleRegistry;
 
         /// <summary>
         /// Initializes a new instance of the CollectibleSpawner.
         /// </summary>
         /// <param name="objectResolver">Dependency injection resolver.</param>
-        public CollectibleSpawner(IObjectResolver objectResolver)
+        public CollectibleSpawner(
+            IObjectResolver objectResolver,
+            Game.PowerUps.Services.CollectibleRegistry collectibleRegistry)
         {
             _ObjectResolver = objectResolver;
+            _CollectibleRegistry = collectibleRegistry;
         }
 
         /// <summary>
@@ -45,6 +50,7 @@ namespace Game.Entities.Collectible.Spawning
             CollectibleView view = Object.Instantiate(defaultPrefab);
             view.Initialize(config);
             _ObjectResolver.Inject(view);
+            _CollectibleRegistry?.Register(view);
             
             target.PlaceStickable(view, config.AngleOffset);
         }

@@ -9,6 +9,7 @@ using Game.Flow.Level;
 using Game.Flow.Stage;
 using Game.Persistence.Data;
 using Game.Persistence.Interfaces;
+using Game.PowerUps.Data;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -54,6 +55,11 @@ namespace Game.Persistence.Services
             if (_CachedData.Settings == null)
             {
                 _CachedData.Settings = new PlayerSettingsData();
+            }
+
+            if (_CachedData.PowerUpInventory == null)
+            {
+                _CachedData.PowerUpInventory = new PowerUpInventoryData();
             }
 
             _GameData.CurrentStageIndex = _CachedData.Progress.CurrentStageIndex;
@@ -104,6 +110,27 @@ namespace Game.Persistence.Services
         private void OnCollectibleHit(CollectibleHitEventData data)
         {
             _CachedData.Progress.TotalCollectiblesCollected = _GameData.TotalCollected;
+            ScheduleSave();
+        }
+
+        /// <summary>
+        /// Ensures power-up inventory exists and returns the instance.
+        /// </summary>
+        public PowerUpInventoryData EnsurePowerUpInventory()
+        {
+            if (_CachedData.PowerUpInventory == null)
+            {
+                _CachedData.PowerUpInventory = new PowerUpInventoryData();
+            }
+
+            return _CachedData.PowerUpInventory;
+        }
+
+        /// <summary>
+        /// Schedules a save for updated power-up inventory data.
+        /// </summary>
+        public void SavePowerUpInventory()
+        {
             ScheduleSave();
         }
 

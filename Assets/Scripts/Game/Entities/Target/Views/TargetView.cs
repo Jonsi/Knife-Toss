@@ -264,6 +264,14 @@ namespace Game.Entities.Target.Views
             _StuckObjects.Add(stickable);
         }
 
+        /// <summary>
+        /// Forces destruction of the target regardless of current hit counts.
+        /// </summary>
+        public void ForceDestroy()
+        {
+            DestroyTarget();
+        }
+
         private void DestroyTarget()
         {
             if (_HasNotifiedDestroyed)

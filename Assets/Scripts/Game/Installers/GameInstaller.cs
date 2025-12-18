@@ -16,6 +16,8 @@ using Game.Pooling;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using Game.PowerUps.Configs;
+using Game.PowerUps.Events;
 
 namespace Game.Installers
 {
@@ -49,6 +51,11 @@ namespace Game.Installers
         [SerializeField] private SoundSettings _SoundSettings;
         [SerializeField] private AudioPlayer _AudioPlayer;
 
+        [Header("Power Ups")]
+        [SerializeField] private PowerUpCatalog _PowerUpCatalog;
+        [SerializeField] private PowerUpActivatedEventChannel _PowerUpActivatedEventChannel;
+        [SerializeField] private PowerUpUsedEventChannel _PowerUpUsedEventChannel;
+
         [Header("Pooling")]
         [SerializeField] private PoolSettings _PoolSettings;
         
@@ -63,6 +70,7 @@ namespace Game.Installers
             Install(builder, CreateTargetInstaller());
             Install(builder, CreateKnifeInstaller());
             Install(builder, CreateCollectibleInstaller());
+            Install(builder, CreatePowerUpInstaller());
             Install(builder, CreateLevelInstaller());
             Install(builder, CreateStageInstaller());
             Install(builder, CreateGameFlowInstaller());
@@ -96,6 +104,17 @@ namespace Game.Installers
         private CollectibleInstaller CreateCollectibleInstaller()
         {
             return new CollectibleInstaller(_CollectibleHitEventChannel);
+        }
+
+        private PowerUpInstaller CreatePowerUpInstaller()
+        {
+            return new PowerUpInstaller(
+                _PowerUpCatalog,
+                _PowerUpActivatedEventChannel,
+                _PowerUpUsedEventChannel,
+                _LevelStartedEventChannel,
+                _CollectibleHitEventChannel,
+                _KnifeThrownEventChannel);
         }
 
         private LevelInstaller CreateLevelInstaller()

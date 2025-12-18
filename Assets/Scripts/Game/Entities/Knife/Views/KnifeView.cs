@@ -31,6 +31,7 @@ namespace Game.Entities.Knife.Views
         private KnifeStateMachine _StateMachine;
         private Camera _MainCamera;
         private bool _HasReportedOutOfView;
+        private bool _IsSuperKnife;
 
         private IEventChannel<CollisionData> _CollisionChannel;
         private IEventChannel<KnifeImpactEventData> _ImpactChannel;
@@ -70,6 +71,15 @@ namespace Game.Entities.Knife.Views
         public void OnAttachedToTarget()
         {
             // Optional: Logic when attached to target
+        }
+
+        /// <summary>
+        /// Gets or sets whether this knife should behave as a super knife.
+        /// </summary>
+        public bool IsSuperKnife
+        {
+            get => _IsSuperKnife;
+            set => _IsSuperKnife = value;
         }
 
         [Inject]
@@ -145,6 +155,7 @@ namespace Game.Entities.Knife.Views
         public void ResetKnife()
         {
             _HasReportedOutOfView = false;
+            _IsSuperKnife = false;
             _StateMachine.SetState(_StateMachine.Loaded);
         }
 

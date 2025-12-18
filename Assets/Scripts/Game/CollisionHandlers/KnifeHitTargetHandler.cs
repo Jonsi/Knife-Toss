@@ -39,6 +39,14 @@ namespace Game.CollisionHandlers
             if (!knife.IsInFlight)
                 return;
 
+            if (knife.IsSuperKnife)
+            {
+                knife.StopMovement();
+                target.ForceDestroy();
+                _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Stuck, data.ImpactPoint));
+                return;
+            }
+
             knife.StopMovement();
             target.Stick(knife, data.ImpactPoint);
             target.PlayHitFeedback();

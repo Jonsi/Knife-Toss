@@ -6,6 +6,8 @@ using Game.Entities.Knife.Data;
 using Game.Entities.Knife.Views;
 using Game.KnifeThrower.Configs;
 using Game.KnifeThrower.Interfaces;
+using Game.PowerUps.Data;
+using Game.PowerUps.Interfaces;
 using Game.Pooling;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -24,6 +26,7 @@ namespace Game.KnifeThrower.Services
         private readonly IConfigurationProvider<KnifeThrowConfiguration> _KnifeThrowConfigurationProvider;
         private readonly IKnifeThrowerView _KnifeThrowerView;
         private readonly KnifePoolProvider _KnifePoolProvider;
+        private readonly IPowerUpService _PowerUpService;
         private bool _IsRunning;
 
         /// <summary>
@@ -33,12 +36,14 @@ namespace Game.KnifeThrower.Services
             IPlayerThrowInputListener playerThrowInputListener,
             IConfigurationProvider<KnifeThrowConfiguration> knifeThrowConfigurationProvider,
             IKnifeThrowerView knifeThrowerView,
-            KnifePoolProvider knifePoolProvider)
+            KnifePoolProvider knifePoolProvider,
+            IPowerUpService powerUpService)
         {
             _PlayerThrowInputListener = playerThrowInputListener;
             _KnifeThrowConfigurationProvider = knifeThrowConfigurationProvider;
             _KnifeThrowerView = knifeThrowerView;
             _KnifePoolProvider = knifePoolProvider;
+            _PowerUpService = powerUpService;
         }
 
         /// <summary>
@@ -61,6 +66,20 @@ namespace Game.KnifeThrower.Services
                 return;
 
             var config = _KnifeThrowConfigurationProvider.GetConfiguration();
+            _PowerUpService?.PrepareLoadedKnife(_KnifeThrowerView.LoadedKnife);
+
+            var context = new PowerUpThrowContext(
+                _KnifeThrowerView,
+                _KnifePoolProvider,
+                config,
+                _KnifeThrowerView.SpawnPoint);
+
+            if (_PowerUpService != null && _PowerUpService.TryHandleThrow(context))
+            {
+                LoadKnife(config);
+                return;
+            }
+
             _KnifeThrowerView.ThrowLoadedKnife(config.ThrowSpeed);
             LoadKnife(config);
         }
@@ -90,6 +109,7 @@ namespace Game.KnifeThrower.Services
                 ThrowSpeed = config.ThrowSpeed
             };
             var knife = _KnifePoolProvider.Get();
+            _PowerUpService?.PrepareLoadedKnife(knife);
             _KnifeThrowerView.LoadKnife(knife, spawnData);
         }
 

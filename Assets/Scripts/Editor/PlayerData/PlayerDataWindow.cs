@@ -1,5 +1,6 @@
 using Game.Persistence.Data;
 using Game.Persistence.Storage;
+using Game.PowerUps.Data;
 using UnityEditor;
 using UnityEngine;
 
@@ -47,6 +48,8 @@ namespace Game.EditorTools
             DrawProgressSection();
             EditorGUILayout.Space(10f);
             DrawSettingsSection();
+            EditorGUILayout.Space(10f);
+            DrawPowerUpSection();
         }
 
         private void DrawToolbar()
@@ -112,6 +115,25 @@ namespace Game.EditorTools
             }
         }
 
+        private void DrawPowerUpSection()
+        {
+            EditorGUILayout.LabelField("Power Ups", EditorStyles.boldLabel);
+            var inventory = EnsurePowerUpInventory();
+
+            EditorGUI.BeginChangeCheck();
+            int superKnife = EditorGUILayout.IntField("Super Knife", inventory.SuperKnifeCount);
+            int multipleKnives = EditorGUILayout.IntField("Multiple Knives", inventory.MultipleKnivesCount);
+            int collectiblesBlade = EditorGUILayout.IntField("Collectibles Blade", inventory.CollectiblesBladeCount);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                inventory.SuperKnifeCount = Mathf.Max(0, superKnife);
+                inventory.MultipleKnivesCount = Mathf.Max(0, multipleKnives);
+                inventory.CollectiblesBladeCount = Mathf.Max(0, collectiblesBlade);
+                MarkDirty();
+            }
+        }
+
         private void LoadData()
         {
             if (_Store == null)
@@ -167,6 +189,16 @@ namespace Game.EditorTools
         private void MarkDirty()
         {
             _HasUnsavedChanges = true;
+        }
+
+        private PowerUpInventoryData EnsurePowerUpInventory()
+        {
+            if (_PlayerData.PowerUpInventory == null)
+            {
+                _PlayerData.PowerUpInventory = new PowerUpInventoryData();
+            }
+
+            return _PlayerData.PowerUpInventory;
         }
     }
 }

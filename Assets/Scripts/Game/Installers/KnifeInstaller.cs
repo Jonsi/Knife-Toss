@@ -10,6 +10,7 @@ using Game.KnifeThrower.Interfaces;
 using Game.KnifeThrower.Events;
 using Game.KnifeThrower.Services;
 using Game.Pooling;
+using Game.PowerUps.Interfaces;
 using VContainer;
 using VContainer.Unity;
 

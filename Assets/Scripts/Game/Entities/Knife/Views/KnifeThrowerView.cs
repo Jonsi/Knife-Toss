@@ -61,5 +61,15 @@ namespace Game.Entities.Knife.Views
             _KnifeThrownChannel?.Raise();
             _LoadedKnife = null;
         }
+
+        /// <summary>
+        /// Gets the transform used for spawning knives.
+        /// </summary>
+        public Transform SpawnPoint => _SpawnPoint != null ? _SpawnPoint : transform;
+
+        /// <summary>
+        /// Gets the knife currently loaded into the thrower.
+        /// </summary>
+        public KnifeView LoadedKnife => _LoadedKnife;
     }
 }

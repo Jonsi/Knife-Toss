@@ -2,6 +2,7 @@ using Common.Events;
 using Game.Entities.Collectible.Data;
 using Game.Entities.Collectible.Events;
 using Game.Entities.Collectible.Spawning;
+using Game.PowerUps.Services;
 using VContainer;
 using VContainer.Unity;
 
@@ -29,6 +30,7 @@ namespace Game.Installers
         /// <param name="builder">Container builder instance.</param>
         public void Install(IContainerBuilder builder)
         {
+            builder.Register<CollectibleRegistry>(Lifetime.Singleton);
             builder.Register<CollectibleSpawner>(Lifetime.Singleton);
             builder.RegisterInstance(_HitChannel).As<IEventChannel<CollectibleHitEventData>>();
         }

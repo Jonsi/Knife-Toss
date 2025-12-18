@@ -21,5 +21,15 @@ namespace Game.KnifeThrower.Interfaces
         /// </summary>
         /// <param name="throwSpeed">Launch speed.</param>
         void ThrowLoadedKnife(float throwSpeed);
+
+        /// <summary>
+        /// Gets the transform used for spawning knives.
+        /// </summary>
+        UnityEngine.Transform SpawnPoint { get; }
+
+        /// <summary>
+        /// Gets the currently loaded knife instance.
+        /// </summary>
+        Game.Entities.Knife.Views.KnifeView LoadedKnife { get; }
     }
 }
