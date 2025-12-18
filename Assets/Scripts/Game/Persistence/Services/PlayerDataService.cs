@@ -127,6 +127,32 @@ namespace Game.Persistence.Services
         }
 
         /// <summary>
+        /// Reloads persisted data and returns the power-up inventory.
+        /// Keeps progress/settings in sync with the loaded data.
+        /// </summary>
+        public PowerUpInventoryData ReloadPowerUpInventory()
+        {
+            var loaded = _Store.Load();
+            if (loaded != null)
+            {
+                loaded.Progress ??= new PlayerProgressData();
+                loaded.Settings ??= new PlayerSettingsData();
+                loaded.PowerUpInventory ??= new PowerUpInventoryData();
+
+                _CachedData = loaded;
+                _GameData.CurrentStageIndex = _CachedData.Progress.CurrentStageIndex;
+                _GameData.TotalCollected = _CachedData.Progress.TotalCollectiblesCollected;
+            }
+
+            if (_CachedData.PowerUpInventory == null)
+            {
+                _CachedData.PowerUpInventory = new PowerUpInventoryData();
+            }
+
+            return _CachedData.PowerUpInventory;
+        }
+
+        /// <summary>
         /// Schedules a save for updated power-up inventory data.
         /// </summary>
         public void SavePowerUpInventory()

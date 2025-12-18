@@ -46,11 +46,7 @@ namespace Game.Flow.Stage.States
             _RetryRequestChannel.Subscribe(OnRetryRequested);
             _RestartRequestChannel.Subscribe(OnRestartRequested);
 
-            // Load initial knife for the level
-            LoadKnifeForLevel();
-
-            var config = Machine.LevelCatalog.GetLevelConfig(Context.StageIndex, Context.CurrentLevelIndex);
-            RaiseLevelStarted(config);
+            StartCurrentLevel(reloadLevel: false);
         }
 
         public override void Exit()
@@ -69,7 +65,7 @@ namespace Game.Flow.Stage.States
             {
                 // Advance to next level
                 Context.CurrentLevelIndex++;
-                LoadCurrentLevel();
+                StartCurrentLevel(reloadLevel: true);
             }
             else
             {
@@ -85,7 +81,7 @@ namespace Game.Flow.Stage.States
 
         private void OnRetryRequested()
         {
-            Machine.LevelFlowController.RetryLevel();
+            StartCurrentLevel(reloadLevel: true);
         }
 
         private void OnRestartRequested()
@@ -94,14 +90,19 @@ namespace Game.Flow.Stage.States
             Machine.SetState(Machine.Loading);
         }
 
-        private void LoadCurrentLevel()
+        private void StartCurrentLevel(bool reloadLevel)
         {
             LevelConfig config = Machine.LevelCatalog.GetLevelConfig(Context.StageIndex, Context.CurrentLevelIndex);
             if (config == null)
                 return;
 
             var stageConfig = Machine.LevelCatalog.GetStageConfig(Context.StageIndex);
-            Machine.LevelFlowController.LoadLevel(stageConfig, config);
+            if (reloadLevel)
+            {
+                Machine.LevelFlowController.LoadLevel(stageConfig, config);
+            }
+
+            LoadKnifeForLevel();
             RaiseLevelStarted(config);
         }
 

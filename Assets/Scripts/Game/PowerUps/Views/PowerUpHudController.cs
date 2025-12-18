@@ -39,7 +39,7 @@ namespace Game.PowerUps.Views
         {
             BuildButtons();
             Subscribe();
-            RefreshCounts();
+            RefreshInventoryAndCounts();
             ClearSelection();
         }
 
@@ -136,6 +136,7 @@ namespace Game.PowerUps.Views
         private void OnLevelStarted(LevelStartedEventData data)
         {
             ClearSelection();
+            RefreshInventoryAndCounts();
         }
 
         private void Select(PowerUpConfigBase config)
@@ -167,6 +168,16 @@ namespace Game.PowerUps.Views
 
                 button.UpdateSelected(false);
             }
+        }
+
+        private void RefreshInventoryAndCounts()
+        {
+            if (_PlayerDataService != null)
+            {
+                _PlayerDataService.ReloadPowerUpInventory();
+            }
+
+            RefreshCounts();
         }
     }
 }

@@ -68,6 +68,7 @@ namespace Game.PowerUps.Services
         public void Start()
         {
             _LevelStartedChannel.Subscribe(HandleLevelStarted);
+            ResetState();
         }
 
         /// <summary>
@@ -156,12 +157,17 @@ namespace Game.PowerUps.Services
         /// </summary>
         public void OnLevelStarted()
         {
-            _RuntimeState.Clear();
+            ResetState();
         }
 
         private void HandleLevelStarted(LevelStartedEventData data)
         {
             OnLevelStarted();
+        }
+
+        private void ResetState()
+        {
+            _RuntimeState.Clear();
         }
 
         private bool ExecuteSuperKnife(PowerUpThrowContext context, SuperKnifeConfig config)
