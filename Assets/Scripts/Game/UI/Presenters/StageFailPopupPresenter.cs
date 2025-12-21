@@ -2,6 +2,7 @@ using System;
 using Common.MVP.Core;
 using Game.UI.Popups;
 using R3;
+using Cysharp.Threading.Tasks;
 
 namespace Game.UI.Presenters
 {
@@ -17,7 +18,7 @@ namespace Game.UI.Presenters
             _ReleaseView = releaseView;
 
             View.Initialize(Model);
-            View.Show();
+            View.Show().Forget();
             View.RetryRequested
                 .Subscribe(_ => HandleRetryRequested())
                 .AddTo(Disposable);

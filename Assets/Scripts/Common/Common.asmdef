@@ -1,6 +1,8 @@
 {
     "name": "Common",
-    "references": [],
+    "references": [
+        "UniTask"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
@@ -11,4 +13,3 @@
     "versionDefines": [],
     "noEngineReferences": false
 }
-
