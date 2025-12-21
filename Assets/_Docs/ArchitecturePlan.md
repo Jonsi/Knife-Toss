@@ -47,13 +47,6 @@ public interface IPresenter<out TView, out TModel> : IDisposable
     TModel Model { get; }
 }
 
-public interface IPooledView<TModel> : IView<TModel>
-    where TModel : IModel
-{
-    void OnSpawn();
-    void OnDespawn();
-}
-
 // ==========================================
 // 2. THE LEAN BASE PRESENTER
 // ==========================================
@@ -81,7 +74,7 @@ using UnityEngine;
 using UnityEngine.Pool;
 
 public class ViewPoolProvider<TView, TModel>
-    where TView : MonoBehaviour, IPooledView<TModel>
+    where TView : MonoBehaviour, IView<TModel>
     where TModel : IModel
 {
     private readonly TView _prefab;
@@ -106,13 +99,11 @@ public class ViewPoolProvider<TView, TModel>
     private TView CreateInstance() => Object.Instantiate(_prefab, _root);
 
     private void OnGet(TView view) {
-        view.gameObject.SetActive(true);
-        view.OnSpawn();
+        view.Show();
     }
 
     private void OnRelease(TView view) {
-        view.OnDespawn();
-        view.gameObject.SetActive(false);
+        view.Hide();
     }
 
     private void OnDestroyInstance(TView view) => Object.Destroy(view.gameObject);
@@ -130,8 +121,8 @@ using VContainer;
 using System;
 
 public abstract class BaseMVPFactorySO<TPresenter, TView, TModel> : ScriptableObject
-    where TPresenter : IPresenter
-    where TView : MonoBehaviour, IPooledView<TModel>
+    where TPresenter : IPresenter<TView, TModel>
+    where TView : MonoBehaviour, IView<TModel>
     where TModel : IModel
 {
     [SerializeField] protected TView prefab;
@@ -164,8 +155,8 @@ public abstract class BaseMVPFactorySO<TPresenter, TView, TModel> : ScriptableOb
         _poolRoot = parent;
         _pool = new ObjectPool<TView>(
             createFunc: () => Instantiate(prefab, _poolRoot),
-            actionOnGet: v => { v.gameObject.SetActive(true); v.OnSpawn(); },
-            actionOnRelease: v => { v.OnDespawn(); v.gameObject.SetActive(false); },
+            actionOnGet: v => v.Show(),
+            actionOnRelease: v => v.Hide(),
             actionOnDestroy: v => Destroy(v.gameObject),
             defaultCapacity: defaultPoolSize,
             maxSize: maxPoolSize
@@ -178,28 +169,28 @@ public abstract class BaseMVPFactorySO<TPresenter, TView, TModel> : ScriptableOb
 // public class KnifeFactorySO : BaseMVPFactorySO<KnifePresenter, KnifeView, KnifeModel> { }
 
 // ==========================================
-// 5. UI NAVIGATION SERVICE (WINDOW MANAGER)
+// 5. POPUP NAVIGATION SERVICE (WINDOW MANAGER)
 // ==========================================
 using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
 
-public interface IUINavigationService {
+public interface IPopupNavigationService {
     void OpenPopup<TP, TV, TM>(BaseMVPFactorySO<TP, TV, TM> factory, TM model, Transform parent)
-        where TP : IPresenter where TV : MonoBehaviour, IPooledView<TM> where TM : IModel;
+        where TP : IPresenter<TV, TM> where TV : MonoBehaviour, IView<TM> where TM : IModel;
     void CloseTop();
 }
 
-public class UINavigationService : IUINavigationService {
+public class PopupNavigationService : IPopupNavigationService {
     private readonly IObjectResolver _container;
-    private readonly Stack<IPresenter> _activePresenters = new();
+    private readonly Stack<IDisposable> _activePresenters = new();
 
-    public UINavigationService(IObjectResolver container) {
+    public PopupNavigationService(IObjectResolver container) {
         _container = container;
     }
 
     public void OpenPopup<TP, TV, TM>(BaseMVPFactorySO<TP, TV, TM> factory, TM model, Transform parent)
-        where TP : IPresenter where TV : MonoBehaviour, IPooledView<TM> where TM : IModel
+        where TP : IPresenter<TV, TM> where TV : MonoBehaviour, IView<TM> where TM : IModel 
     {
         TP presenter = factory.Create(model, parent, _container);
         _activePresenters.Push(presenter);
@@ -208,7 +199,7 @@ public class UINavigationService : IUINavigationService {
     public void CloseTop() {
         if (_activePresenters.Count == 0) return;
 
-        IPresenter top = _activePresenters.Pop();
+        IDisposable top = _activePresenters.Pop();
         top.Dispose();
     }
 }
@@ -222,10 +213,10 @@ public class UINavigationService : IUINavigationService {
 
 ### Phase 1: MVP Core + UI Pilot
 - Add MVP core interfaces and `BasePresenter` in `Assets/Scripts/Common/MVP`.
-- Add a minimal UI presenter (start with `StageFailPopup`).
+- Add a minimal UI presenter (start with `StageFailPopupView`).
   - View: only UI references and view events.
   - Presenter: subscribes to events and calls channels/services.
-- Add `UINavigationService` (window manager) as a singleton to manage popup stack.
+- Add `PopupNavigationService` (window manager) as a singleton to manage popup stack.
 - Update `UIInstaller` to register presenter + view.
 
 ### Phase 2: UI View Pooling
@@ -271,12 +262,12 @@ Assets/Scripts/Game
 
 ## Next Actions (Concrete)
 1) Add MVP core types (IModel, IView<TModel>, BasePresenter).
-2) Convert `StageFailPopup` to MVP and register in `UIInstaller`.
+2) Convert `StageFailPopupView` to MVP and register in `UIInstaller`.
 3) Introduce generic view pooling for UI elements.
 4) Convert `TargetFactory` to use pooling.
 5) Add `IPowerUpHandler` strategy pattern.
 
 ## Open Decisions
 - Popup management rules (stacking, blocking, queueing, transitions).
-- `UINavigationService` API surface (close by type, close all, replace top).
+- `PopupNavigationService` API surface (close by type, close all, replace top).
 - Whether to use MVP for gameplay entities or keep for UI only initially.
