@@ -176,9 +176,7 @@ namespace Game.Installers
         {
             return new UIInstaller(
                 _UIController,
-                _StageFailFactory,
-                _RetryLevelClickedChannel,
-                _RestartStageClickedChannel);
+                _StageFailFactory);
         }
     }
 }
