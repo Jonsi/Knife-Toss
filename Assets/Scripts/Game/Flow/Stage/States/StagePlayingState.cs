@@ -1,7 +1,7 @@
 using Common.Events;
 using Game.Entities.Knife.Data;
 using Game.Entities.Knife.Views;
-using Game.Flow.Events;
+using Game.App.Flow.Events;
 using Game.Flow.Level;
 using Game.KnifeThrower.Interfaces;
 using Game.Level.Data;

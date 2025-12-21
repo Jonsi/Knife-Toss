@@ -1,5 +1,5 @@
 using Common.Events;
-using Game.Flow.Events;
+using Game.App.Flow.Events;
 using Game.Flow.Interfaces;
 using Game.Flow.Level;
 using Game.Flow.Level.States;

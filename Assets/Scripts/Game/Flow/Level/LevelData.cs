@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Game.Domain.Level;
 using Game.Entities.Target.Interfaces;
 using Game.Level.Data;
 using Game.Level.Interfaces;
@@ -10,20 +11,45 @@ namespace Game.Flow.Level
     /// </summary>
     public class LevelData
     {
+        public LevelStats Stats { get; } = new LevelStats();
+
         public ILevelSpawner LevelSpawner { get; }
 
         public StageConfig StageConfig { get; internal set; }
         public LevelConfig Config { get; internal set; }
 
-        public int KnifeCount { get; internal set; }
-        public int KnivesThrown { get; internal set; }
-        public int KnivesStuck { get; internal set; }
-        public bool IsThrowingActive { get; internal set; }
+        public int KnifeCount
+        {
+            get => Stats.KnifeCount;
+            internal set => Stats.KnifeCount = value;
+        }
+
+        public int KnivesThrown
+        {
+            get => Stats.KnivesThrown;
+            internal set => Stats.KnivesThrown = value;
+        }
+
+        public int KnivesStuck
+        {
+            get => Stats.KnivesStuck;
+            internal set => Stats.KnivesStuck = value;
+        }
+
+        public bool IsThrowingActive
+        {
+            get => Stats.IsThrowingActive;
+            internal set => Stats.IsThrowingActive = value;
+        }
         
         /// <summary>
         /// Total currency items collected in this level.
         /// </summary>
-        public int CollectedCount { get; internal set; }
+        public int CollectedCount
+        {
+            get => Stats.CollectedCount;
+            internal set => Stats.CollectedCount = value;
+        }
         
         public List<ITargetView> ActiveTargets { get; } = new List<ITargetView>();
 

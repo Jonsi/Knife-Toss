@@ -2,7 +2,7 @@ using Common.Events;
 using Common.Patterns.State;
 using Game.Entities.Collectible.Data;
 using Game.Entities.Knife.Data;
-using Game.Flow.Events;
+using Game.App.Flow.Events;
 using Game.Flow.Game;
 using Game.KnifeThrower.Interfaces;
 using VContainer.Unity;

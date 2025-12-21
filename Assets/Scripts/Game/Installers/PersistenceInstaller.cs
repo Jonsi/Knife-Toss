@@ -1,7 +1,7 @@
 using System;
 using Common.Events;
 using Game.Entities.Collectible.Events;
-using Game.Flow.Events;
+using Game.App.Flow.Events;
 using Game.Persistence.Interfaces;
 using Game.Persistence.Services;
 using Game.Persistence.Storage;

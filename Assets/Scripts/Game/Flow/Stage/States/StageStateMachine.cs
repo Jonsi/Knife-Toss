@@ -1,6 +1,6 @@
 using Common.Events;
 using Common.Patterns.State;
-using Game.Flow.Events;
+using Game.App.Flow.Events;
 using Game.Flow.Interfaces;
 using Game.KnifeThrower.Interfaces;
 using Game.Level.Interfaces;

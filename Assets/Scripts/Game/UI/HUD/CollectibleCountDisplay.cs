@@ -1,7 +1,7 @@
 using Common.Events;
 using Game.Entities.Collectible.Data;
 using Game.Entities.Collectible.Events;
-using Game.Flow.Events;
+using Game.App.Flow.Events;
 using Game.Flow.Game;
 using TMPro;
 using UnityEngine;

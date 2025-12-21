@@ -5,7 +5,7 @@ using Common.Events;
 using Game.Entities.Collectible.Views;
 using Game.Entities.Collectible.Data;
 using Game.Entities.Knife.Views;
-using Game.Flow.Events;
+using Game.App.Flow.Events;
 using Game.KnifeThrower.Configs;
 using Game.PowerUps.Configs;
 using Game.PowerUps.Data;

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Common.Events;
-using Game.Flow.Events;
+using Game.App.Flow.Events;
 using Game.PowerUps.Configs;
 using Game.PowerUps.Data;
 using Game.PowerUps.Events;

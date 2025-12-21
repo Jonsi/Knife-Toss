@@ -3,6 +3,7 @@
     "rootNamespace": "",
     "references": [
         "Common",
+        "Game.Domain",
         "VContainer",
         "Unity.InputSystem",
         "UniTask",

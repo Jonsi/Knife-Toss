@@ -549,7 +549,7 @@ Move ScriptableObject event assets to Infrastructure.
 
 | From | To |
 |------|-----|
-| `Game/Flow/Events/*.cs` | `Game/Application/Flow/Events/` |
+| `Game/Flow/Events/*.cs` | `Game/App/Flow/Events/` |
 | `Game/Entities/*/Events/*.cs` | Keep in entities (entity-specific) |
 
 #### Breaking Changes & Mitigations (Phase 2):
@@ -1046,7 +1046,7 @@ Assets/Configurations/Installers/           # NEW: Installer asset instances
 | `Game/UI/Common/BasePopupView.cs` | `Game/Presentation/Common/` | Presentation layer |
 | `Game/UI/Controllers/UIController.cs` | `Game/Presentation/Controllers/` | Presentation layer |
 | `Game/UI/HUD/*` | `Game/Presentation/HUD/*` | Presentation layer |
-| `Game/Flow/*` | `Game/Application/Flow/*` | Application layer |
+| `Game/Flow/*` | `Game/App/Flow/*` | Application layer |
 
 ### Files to Refactor (In-Place)
 
@@ -1087,7 +1087,7 @@ Assets/Configurations/Installers/           # NEW: Installer asset instances
 | Assembly | Dependencies |
 |----------|--------------|
 | `Game.Domain.asmdef` | None (pure C#) |
-| `Game.Presentation.asmdef` | Common, Game.Domain, Game.Application, R3, UniTask, VContainer |
+| `Game.Presentation.asmdef` | Common, Game.Domain, Game.App, R3, UniTask, VContainer |
 
 ### Updated Assembly References
 
@@ -1166,7 +1166,7 @@ Phases are grouped into **tracks** that can run in parallel. Each micro-phase is
 |-------|------|--------------|
 | **D1** | Create `Game.Domain.asmdef` (no Unity refs, can ref R3) | None |
 | **D2** | Extract `LevelStats`, `StageStats`, `PlayerStats` pure data | D1 |
-| **D3** | Move flow events to `Game/Application/Flow/Events/` | None |
+| **D3** | Move flow events to `Game/App/Flow/Events/` | None |
 | **D4** | Update `LevelData` to reference `LevelStats` | D2 |
 
 ---

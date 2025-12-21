@@ -1,4 +1,4 @@
-using Game.Flow.Events;
+using Game.App.Flow.Events;
 using Game.Flow.Stage;
 
 namespace Game.Flow.Game.States

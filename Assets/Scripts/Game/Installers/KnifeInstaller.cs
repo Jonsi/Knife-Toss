@@ -3,7 +3,7 @@ using Common.Events;
 using Game.Entities.Knife.Data;
 using Game.Entities.Knife.Events;
 using Game.Entities.Knife.Views;
-using Game.Flow.Events;
+using Game.App.Flow.Events;
 using Game.Input;
 using Game.KnifeThrower.Configs;
 using Game.KnifeThrower.Interfaces;

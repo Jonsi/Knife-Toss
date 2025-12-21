@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: StageFailFactory
   m_EditorClassIdentifier: Game::Game.UI.Factories.StageFailFactorySO
   prefab: {fileID: 2041704769911234978, guid: 0004b49238541b14e9a6f5921730a00d, type: 3}
+  _UsePooling: 0
   _DefaultPoolSize: 10
   _MaxPoolSize: 50

@@ -892,6 +892,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: KnifeToss.Presentation::KnifeToss.Presentation.UI.UIController
   _PopupRoot: {fileID: 1230634449}
   _LevelFailedChannel: {fileID: 11400000, guid: 604458cf20b3869489fbff706e752db8, type: 2}
+  _RetryLevelChannel: {fileID: 11400000, guid: a8aafdd4ae42ad145876819d5f37bedb, type: 2}
+  _RestartStageChannel: {fileID: 11400000, guid: eef8d9c482392e74bb97e0df72cf980b, type: 2}
 --- !u!1 &667090674
 GameObject:
   m_ObjectHideFlags: 0
@@ -2101,7 +2103,7 @@ MonoBehaviour:
   _KnifeThrowerView: {fileID: 497239670}
   _LevelRoot: {fileID: 182301541}
   _UIController: {fileID: 633680713}
-  _StageFailFactory: {fileID: 0}
+  _StageFailFactory: {fileID: 11400000, guid: a2fc08ad5ac127e4395ee71d7059aec5, type: 2}
 --- !u!4 &1928512257
 Transform:
   m_ObjectHideFlags: 0

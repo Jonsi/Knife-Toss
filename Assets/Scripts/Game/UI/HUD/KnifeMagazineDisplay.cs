@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Common.Events;
 using Game.Entities.Knife.Events;
-using Game.Flow.Events;
+using Game.App.Flow.Events;
 using Game.KnifeThrower.Events;
 using UnityEngine;
 using UnityEngine.UI;
