@@ -9,7 +9,7 @@ namespace Common.MVP.Core
         public TView View { get; }
         public TModel Model { get; }
 
-        protected CompositeDisposable Disposable { get; } = new CompositeDisposable();
+        protected readonly CompositeDisposable disposables = new CompositeDisposable();
 
         protected BasePresenter(TView view, TModel model)
         {
@@ -19,7 +19,7 @@ namespace Common.MVP.Core
 
         public virtual void Dispose()
         {
-            Disposable.Dispose();
+            disposables.Dispose();
         }
     }
 }

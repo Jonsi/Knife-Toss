@@ -17,7 +17,7 @@ using VContainer;
 using VContainer.Unity;
 using Game.PowerUps.Configs;
 using Game.PowerUps.Events;
-using Game.UI.Factories;
+using Game.Infrastructure.Factories;
 
 namespace Game.Installers
 {

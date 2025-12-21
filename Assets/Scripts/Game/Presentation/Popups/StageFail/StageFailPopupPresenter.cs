@@ -1,10 +1,9 @@
 using System;
 using Common.MVP.Core;
-using Game.UI.Popups;
 using R3;
 using Cysharp.Threading.Tasks;
 
-namespace Game.UI.Presenters
+namespace Game.Presentation.Popups.StageFail
 {
     public class StageFailPopupPresenter : BasePresenter<StageFailPopupView, StageFailPopupModel>
     {
@@ -21,11 +20,11 @@ namespace Game.UI.Presenters
             View.Show().Forget();
             View.RetryRequested
                 .Subscribe(_ => HandleRetryRequested())
-                .AddTo(Disposable);
+                .AddTo(disposables);
 
             View.RestartRequested
                 .Subscribe(_ => HandleRestartRequested())
-                .AddTo(Disposable);
+                .AddTo(disposables);
         }
 
         public override void Dispose()

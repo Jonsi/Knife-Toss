@@ -2,15 +2,17 @@ using Common.MVP.Core;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace Game.UI.Common
+namespace Game.Presentation.Common
 {
     /// <summary>
-    /// Base class for UI popups providing common show/hide functionality.
+    /// Base view implementation for MVP-driven UI.
     /// </summary>
-    public abstract class BasePopupView<TModel> : MonoBehaviour, IView<TModel>
+    public abstract class BaseView<TModel> : MonoBehaviour, IView<TModel>
         where TModel : IModel
     {
-        public virtual void Initialize(TModel model){}
+        public virtual void Initialize(TModel model)
+        {
+        }
 
         public virtual UniTask Show()
         {

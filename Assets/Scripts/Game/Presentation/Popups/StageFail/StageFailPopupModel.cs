@@ -2,7 +2,7 @@ using Common.MVP.Core;
 using Game.Flow.Level;
 using System;
 
-namespace Game.UI.Popups
+namespace Game.Presentation.Popups.StageFail
 {
     public class StageFailPopupModel : IModel
     {

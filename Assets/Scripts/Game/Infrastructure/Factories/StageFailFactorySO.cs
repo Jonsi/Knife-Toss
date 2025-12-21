@@ -1,9 +1,8 @@
 using Common.MVP;
-using Game.UI.Popups;
-using Game.UI.Presenters;
+using Game.Presentation.Popups.StageFail;
 using UnityEngine;
 
-namespace Game.UI.Factories
+namespace Game.Infrastructure.Factories
 {
     [CreateAssetMenu(fileName = "StageFailFactory", menuName = "MVP/Factories/UI/StageFail")]
     public class StageFailFactorySO : BaseMVPFactorySO<StageFailPopupPresenter, StageFailPopupView, StageFailPopupModel>

@@ -1,9 +1,9 @@
-using Game.UI.Common;
+using Game.Presentation.Common;
 using R3;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Game.UI.Popups
+namespace Game.Presentation.Popups.StageFail
 {
     public class StageFailPopupView : BasePopupView<StageFailPopupModel>
     {

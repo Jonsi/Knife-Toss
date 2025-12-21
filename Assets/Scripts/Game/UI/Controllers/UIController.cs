@@ -2,8 +2,8 @@ using Common.Events;
 using Common.MVP.Popup;
 using Game.App.Flow.Events;
 using Game.Flow.Level;
-using Game.UI.Factories;
-using Game.UI.Popups;
+using Game.Infrastructure.Factories;
+using Game.Presentation.Popups.StageFail;
 using UnityEngine;
 using VContainer;
 

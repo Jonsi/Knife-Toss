@@ -1,9 +1,11 @@
-using Common.Events;
 using Common.MVP.Popup;
-using Game.PowerUps.Views;
+using Game.Infrastructure.Factories;
+using Game.Presentation.HUD.Collectibles;
+using Game.Presentation.HUD.KnifeMagazine;
+using Game.Presentation.HUD.MuteButton;
+using Game.Presentation.HUD.PowerUps;
+using Game.Presentation.HUD.StageProgress;
 using Game.UI.Controllers;
-using Game.UI.Factories;
-using Game.UI.HUD;
 using VContainer;
 using VContainer.Unity;
 
@@ -39,8 +41,17 @@ namespace Game.Installers
             builder.RegisterInstance(_StageFailFactory);
             builder.Register<PopupNavigationService>(Lifetime.Singleton).As<IPopupNavigationService>();
             builder.RegisterComponent(_Controller);
-            builder.RegisterComponentInHierarchy<CollectibleCountDisplay>();
-            builder.RegisterComponentInHierarchy<PowerUpHudController>();
+            builder.RegisterComponentInHierarchy<KnifeMagazineView>();
+            builder.RegisterComponentInHierarchy<StageProgressView>();
+            builder.RegisterComponentInHierarchy<CollectibleCountView>();
+            builder.RegisterComponentInHierarchy<MuteButtonView>();
+            builder.RegisterComponentInHierarchy<PowerUpHudView>();
+
+            builder.RegisterEntryPoint<KnifeMagazinePresenter>();
+            builder.RegisterEntryPoint<StageProgressPresenter>();
+            builder.RegisterEntryPoint<CollectibleCountPresenter>();
+            builder.RegisterEntryPoint<MuteButtonPresenter>();
+            builder.RegisterEntryPoint<PowerUpHudPresenter>();
         }
     }
 }
