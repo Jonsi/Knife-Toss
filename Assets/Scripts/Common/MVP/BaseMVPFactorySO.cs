@@ -12,6 +12,7 @@ namespace Common.MVP
         where TModel : IModel
     {
         [SerializeField] protected TView prefab;
+        [SerializeField] private bool _UsePooling = true;
         [SerializeField] private int _DefaultPoolSize = 10;
         [SerializeField] private int _MaxPoolSize = 50;
 
@@ -21,12 +22,26 @@ namespace Common.MVP
         public TPresenter Create(TView prefabOverride, TModel model, Transform parent)
         {
             var prefabToUse = prefabOverride != null ? prefabOverride : prefab;
-            if (_Pool == null || prefabToUse != prefab)
-                InitializePool(parent, prefabToUse);
+            if (_UsePooling)
+            {
+                if (_Pool == null || prefabToUse != prefab)
+                    InitializePool(parent, prefabToUse);
 
-            TView viewInstance = _Pool.Get();
-            var presenter = CreatePresenter(viewInstance, model, _Pool.Release);
-            return presenter;
+                TView viewInstance = _Pool.Get();
+                var presenter = CreatePresenter(viewInstance, model, _Pool.Release);
+                return presenter;
+            }
+
+            TView instance = Instantiate(prefabToUse, parent);
+            var nonPooledPresenter = CreatePresenter(instance, model, v =>
+            {
+                if (v == null)
+                    return;
+
+                v.Hide().Forget();
+                Destroy(v.gameObject);
+            });
+            return nonPooledPresenter;
         }
 
         protected abstract TPresenter CreatePresenter(TView view, TModel model, Action<TView> release);
