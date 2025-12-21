@@ -1,5 +1,6 @@
 using System;
 using Common.MVP.Core;
+using Common.Pooling;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -52,8 +53,18 @@ namespace Common.MVP
             prefab = prefabToUse;
             _Pool = new ObjectPool<TView>(
                 createFunc: () => Instantiate(prefab, _PoolRoot),
-                actionOnGet: v => v.Show().Forget(),
-                actionOnRelease: v => v.Hide().Forget(),
+                actionOnGet: v =>
+                {
+                    v.Show().Forget();
+                    if (v is IPooledView pooledView)
+                        pooledView.OnSpawned();
+                },
+                actionOnRelease: v =>
+                {
+                    if (v is IPooledView pooledView)
+                        pooledView.OnDespawned();
+                    v.Hide().Forget();
+                },
                 actionOnDestroy: v => Destroy(v.gameObject),
                 defaultCapacity: _DefaultPoolSize,
                 maxSize: _MaxPoolSize
