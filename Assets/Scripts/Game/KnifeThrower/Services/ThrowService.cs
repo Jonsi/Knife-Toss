@@ -6,6 +6,7 @@ using Game.Entities.Knife.Data;
 using Game.Entities.Knife.Views;
 using Game.KnifeThrower.Configs;
 using Game.KnifeThrower.Interfaces;
+using Game.PowerUps.Configs;
 using Game.PowerUps.Data;
 using Game.PowerUps.Interfaces;
 using Game.Pooling;
@@ -78,7 +79,7 @@ namespace Game.KnifeThrower.Services
 
             var config = _KnifeThrowConfigurationProvider.GetConfiguration();
             ReloadLoadedKnifeForActivePowerUp();
-            _PowerUpService?.PrepareLoadedKnife(_KnifeThrowerView.LoadedKnife);
+            _PowerUpService?.PrepareLoadedKnives(_KnifeThrowerView.LoadedKnives);
 
             var context = new PowerUpThrowContext(
                 _KnifeThrowerView,
@@ -88,7 +89,10 @@ namespace Game.KnifeThrower.Services
 
             if (_PowerUpService != null && _PowerUpService.TryHandleThrow(context))
             {
-                LoadKnife(config);
+                if (_PowerUpUsedChannel == null)
+                {
+                    LoadKnife(config);
+                }
                 return;
             }
 
@@ -121,7 +125,7 @@ namespace Game.KnifeThrower.Services
                 ThrowSpeed = config.ThrowSpeed
             };
             var knife = _KnifePoolProvider.Get(_PowerUpService?.ActiveConfig);
-            _PowerUpService?.PrepareLoadedKnife(knife);
+            _PowerUpService?.PrepareLoadedKnives(new[] { knife });
             _KnifeThrowerView.LoadKnife(knife, spawnData);
         }
 
@@ -139,23 +143,84 @@ namespace Game.KnifeThrower.Services
         {
             var config = _KnifeThrowConfigurationProvider.GetConfiguration();
             var activePowerUp = _PowerUpService?.ActiveConfig;
-            var loadedKnife = _KnifeThrowerView.LoadedKnife;
+            var loadedKnives = _KnifeThrowerView.LoadedKnives;
+            int desiredCount = GetDesiredKnifeCount(activePowerUp);
 
-            if (loadedKnife != null && loadedKnife.SourcePowerUpConfig == activePowerUp)
+            if (IsAlreadyLoadedForPowerUp(loadedKnives, activePowerUp, desiredCount))
                 return;
 
-            if (loadedKnife != null)
-            {
-                _KnifePoolProvider.Release(loadedKnife);
-            }
+            ReleaseLoadedKnives(loadedKnives);
 
-            var knife = _KnifePoolProvider.Get(activePowerUp);
             var spawnData = new KnifeSpawnRequestData
             {
                 SpawnOffset = config.SpawnPositionOffset,
                 ThrowSpeed = config.ThrowSpeed
             };
-            _KnifeThrowerView.LoadKnife(knife, spawnData);
+
+            if (desiredCount <= 1)
+            {
+                var knife = _KnifePoolProvider.Get(activePowerUp);
+                _PowerUpService?.PrepareLoadedKnives(new[] { knife });
+                _KnifeThrowerView.LoadKnife(knife, spawnData);
+                return;
+            }
+
+            var knives = new List<KnifeView>(desiredCount);
+            for (int i = 0; i < desiredCount; i++)
+            {
+                knives.Add(_KnifePoolProvider.Get(activePowerUp));
+            }
+            _PowerUpService?.PrepareLoadedKnives(knives);
+            _KnifeThrowerView.LoadKnives(knives, spawnData, GetKnifeSpacing(activePowerUp));
+        }
+
+        private static int GetDesiredKnifeCount(PowerUpConfigBase activePowerUp)
+        {
+            if (activePowerUp is MultipleKnivesConfig multipleKnivesConfig)
+            {
+                return Mathf.Max(1, multipleKnivesConfig.KnifeCount);
+            }
+
+            return 1;
+        }
+
+        private static float GetKnifeSpacing(PowerUpConfigBase activePowerUp)
+        {
+            if (activePowerUp is MultipleKnivesConfig multipleKnivesConfig)
+            {
+                return Mathf.Max(0f, multipleKnivesConfig.KnifeSpacing);
+            }
+
+            return 0f;
+        }
+
+        private static bool IsAlreadyLoadedForPowerUp(IReadOnlyList<KnifeView> loadedKnives, PowerUpConfigBase activePowerUp, int desiredCount)
+        {
+            if (loadedKnives == null || loadedKnives.Count == 0)
+                return false;
+
+            if (loadedKnives.Count != desiredCount)
+                return false;
+
+            for (int i = 0; i < loadedKnives.Count; i++)
+            {
+                var knife = loadedKnives[i];
+                if (knife == null || knife.SourcePowerUpConfig != activePowerUp)
+                    return false;
+            }
+
+            return true;
+        }
+
+        private void ReleaseLoadedKnives(IReadOnlyList<KnifeView> loadedKnives)
+        {
+            if (loadedKnives == null)
+                return;
+
+            for (int i = 0; i < loadedKnives.Count; i++)
+            {
+                _KnifePoolProvider.Release(loadedKnives[i]);
+            }
         }
 
         /// <summary>

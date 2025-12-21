@@ -28,7 +28,6 @@ namespace Game.PowerUps.Services
         private readonly PowerUpUsedEventChannel _UsedChannel;
         private readonly LevelStartedEventChannel _LevelStartedChannel;
         private readonly IEventChannel<CollectibleHitEventData> _CollectibleHitChannel;
-        private readonly IEventChannel _KnifeThrownChannel;
         private readonly CollectibleRegistry _CollectibleRegistry;
         private readonly PowerUpRuntimeState _RuntimeState = new PowerUpRuntimeState();
 
@@ -41,7 +40,6 @@ namespace Game.PowerUps.Services
             PowerUpUsedEventChannel usedChannel,
             LevelStartedEventChannel levelStartedChannel,
             IEventChannel<CollectibleHitEventData> collectibleHitChannel,
-            IEventChannel knifeThrownChannel,
             CollectibleRegistry collectibleRegistry)
         {
             _PlayerDataService = playerDataService;
@@ -49,7 +47,6 @@ namespace Game.PowerUps.Services
             _UsedChannel = usedChannel;
             _LevelStartedChannel = levelStartedChannel;
             _CollectibleHitChannel = collectibleHitChannel;
-            _KnifeThrownChannel = knifeThrownChannel;
             _CollectibleRegistry = collectibleRegistry;
         }
 
@@ -108,9 +105,9 @@ namespace Game.PowerUps.Services
         /// <summary>
         /// Prepares the loaded knife based on the active power-up.
         /// </summary>
-        public void PrepareLoadedKnife(KnifeView knife)
+        public void PrepareLoadedKnives(IReadOnlyList<KnifeView> knives)
         {
-            if (knife == null)
+            if (knives == null || knives.Count == 0)
                 return;
 
             if (!HasActivePowerUp)
@@ -118,7 +115,14 @@ namespace Game.PowerUps.Services
 
             if (_RuntimeState.ActiveConfig is SuperKnifeConfig)
             {
-                knife.IsSuperKnife = true;
+                for (int i = 0; i < knives.Count; i++)
+                {
+                    var knife = knives[i];
+                    if (knife == null)
+                        continue;
+
+                    knife.IsSuperKnife = true;
+                }
             }
         }
 
@@ -178,36 +182,8 @@ namespace Game.PowerUps.Services
 
         private bool ExecuteMultipleKnives(PowerUpThrowContext context, MultipleKnivesConfig config)
         {
-            var angles = config.Angles;
-            if (angles == null || angles.Length == 0)
-                return false;
-
-            float baseSpeed = config.ThrowSpeed;
-
-            for (int i = 0; i < angles.Length; i++)
-            {
-                float angle = angles[i];
-                if (i == 0)
-                {
-                    context.ThrowerView.ThrowLoadedKnife(baseSpeed);
-                    continue;
-                }
-
-                SpawnAdditionalKnife(context, angle, baseSpeed);
-            }
-
-            return true;
-        }
-
-        private void SpawnAdditionalKnife(PowerUpThrowContext context, float angle, float speed)
-        {
-            var knife = context.PoolProvider.Get(_RuntimeState.ActiveConfig);
-            knife.IsSuperKnife = false;
-
-            Vector3 spawnPosition = context.SpawnPoint.position + (Vector3)context.ThrowConfiguration.SpawnPositionOffset;
-            knife.transform.SetPositionAndRotation(spawnPosition, Quaternion.identity);
-            knife.Launch(Quaternion.Euler(0f, 0f, angle) * Vector2.up, speed);
-            _KnifeThrownChannel?.Raise();
+            int thrown = context.ThrowerView.ThrowLoadedKnives(config.ThrowSpeed);
+            return thrown > 0;
         }
 
         private bool ExecuteCollectiblesBlade(CollectiblesBladeConfig config)

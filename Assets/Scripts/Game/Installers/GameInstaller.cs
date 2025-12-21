@@ -118,8 +118,7 @@ namespace Game.Installers
                 _PowerUpActivatedEventChannel,
                 _PowerUpUsedEventChannel,
                 _LevelStartedEventChannel,
-                _CollectibleHitEventChannel,
-                _KnifeThrownEventChannel);
+                _CollectibleHitEventChannel);
         }
 
         private LevelInstaller CreateLevelInstaller()

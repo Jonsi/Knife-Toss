@@ -22,22 +22,19 @@ namespace Game.Installers
         private readonly PowerUpUsedEventChannel _UsedChannel;
         private readonly LevelStartedEventChannel _LevelStartedChannel;
         private readonly IEventChannel<CollectibleHitEventData> _CollectibleHitChannel;
-        private readonly IEventChannel _KnifeThrownChannel;
 
         public PowerUpInstaller(
             PowerUpCatalog catalog,
             PowerUpActivatedEventChannel activatedChannel,
             PowerUpUsedEventChannel usedChannel,
             LevelStartedEventChannel levelStartedChannel,
-            IEventChannel<CollectibleHitEventData> collectibleHitChannel,
-            IEventChannel knifeThrownChannel)
+            IEventChannel<CollectibleHitEventData> collectibleHitChannel)
         {
             _Catalog = catalog;
             _ActivatedChannel = activatedChannel;
             _UsedChannel = usedChannel;
             _LevelStartedChannel = levelStartedChannel;
             _CollectibleHitChannel = collectibleHitChannel;
-            _KnifeThrownChannel = knifeThrownChannel;
         }
 
         public void Install(IContainerBuilder builder)
@@ -51,8 +48,7 @@ namespace Game.Installers
                 .WithParameter(_ActivatedChannel)
                 .WithParameter(_UsedChannel)
                 .WithParameter(_LevelStartedChannel)
-                .WithParameter(_CollectibleHitChannel)
-                .WithParameter(_KnifeThrownChannel);
+                .WithParameter(_CollectibleHitChannel);
         }
     }
 }
