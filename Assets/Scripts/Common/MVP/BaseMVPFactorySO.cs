@@ -1,47 +1,46 @@
 using System;
+using Common.MVP.Core;
 using UnityEngine;
 using UnityEngine.Pool;
-using VContainer;
 
 namespace Common.MVP
 {
-    public abstract class BaseMVPFactorySO<TPresenter, TView, TModel> : ScriptableObject
-        where TPresenter : IPresenter<TView, TModel>
+    public abstract class BaseMvpFactorySo<TPresenter, TView, TModel> : ScriptableObject, IFactory<TPresenter, TView, TModel>
+        where TPresenter : BasePresenter<TView, TModel>
         where TView : MonoBehaviour, IView<TModel>
         where TModel : IModel
     {
         [SerializeField] protected TView prefab;
-        [SerializeField] private int defaultPoolSize = 10;
-        [SerializeField] private int maxPoolSize = 50;
+        [SerializeField] private int _DefaultPoolSize = 10;
+        [SerializeField] private int _MaxPoolSize = 50;
 
-        private ObjectPool<TView> _pool;
-        private Transform _poolRoot;
+        private ObjectPool<TView> _Pool;
+        private Transform _PoolRoot;
 
-        public virtual TPresenter Create(TModel model, Transform parent, IObjectResolver container)
+        public TPresenter Create(TView prefabOverride, TModel model, Transform parent)
         {
-            if (_pool == null)
-                InitializePool(parent);
+            var prefabToUse = prefabOverride != null ? prefabOverride : prefab;
+            if (_Pool == null || prefabToUse != prefab)
+                InitializePool(parent, prefabToUse);
 
-            TView viewInstance = _pool.Get();
-
-            return container.Instantiate<TPresenter>(new object[]
-            {
-                viewInstance,
-                model,
-                (Action<TView>)_pool.Release
-            });
+            TView viewInstance = _Pool.Get();
+            var presenter = CreatePresenter(viewInstance, model, _Pool.Release);
+            return presenter;
         }
 
-        private void InitializePool(Transform parent)
+        protected abstract TPresenter CreatePresenter(TView view, TModel model, Action<TView> release);
+
+        private void InitializePool(Transform parent, TView prefabToUse)
         {
-            _poolRoot = parent;
-            _pool = new ObjectPool<TView>(
-                createFunc: () => Instantiate(prefab, _poolRoot),
+            _PoolRoot = parent;
+            prefab = prefabToUse;
+            _Pool = new ObjectPool<TView>(
+                createFunc: () => Instantiate(prefab, _PoolRoot),
                 actionOnGet: v => v.Show(),
                 actionOnRelease: v => v.Hide(),
                 actionOnDestroy: v => Destroy(v.gameObject),
-                defaultCapacity: defaultPoolSize,
-                maxSize: maxPoolSize
+                defaultCapacity: _DefaultPoolSize,
+                maxSize: _MaxPoolSize
             );
         }
     }
