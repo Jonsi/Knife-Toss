@@ -1,141 +1,63 @@
-using Common.Collision.Events;
 using Common.Events;
-using Game.Entities.Collectible.Events;
-using Game.Entities.Knife.Events;
-using Game.Entities.Knife.Views;
-using Game.Flow.Events;
-using Game.KnifeThrower.Configs;
-using Game.KnifeThrower.Events;
-using Game.Level.Catalogs;
-using Game.Settings;
-using Game.UI.Controllers;
-using Game.UI.Popups;
 using Game.Feedback.Audio.Data;
+using Game.Flow.Events;
+using Game.Flow.Game;
+using Game.Flow.Loading;
+using Game.Input;
+using Game.KnifeThrower.Interfaces;
+using Game.Settings;
+using Game.Feedback.Audio.Interfaces;
 using Game.Feedback.Audio.Systems;
-using Game.Pooling;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
-using Game.PowerUps.Configs;
-using Game.PowerUps.Events;
 
 namespace Game.Installers
 {
     /// <summary>
-    /// Main composition root that configures dependency injection for all game systems.
+    /// Main composition root that configures dependency injection for general game systems.
+    /// Persists across scenes.
     /// </summary>
     public class GameInstaller : LifetimeScope
     {
         [SerializeField] private GameSettings _GameSettings;
-        [SerializeField] private KnifeThrowConfigAsset _KnifeThrowConfig;
-        [SerializeField] private StagesConfigAsset _StagesConfig;
         
         [Header("Event Channels")]
-        [SerializeField] private CollisionEventChannel _CollisionEventChannel;
-        [SerializeField] private KnifeImpactEventChannel _KnifeImpactEventChannel;
-        [SerializeField] private KnifeThrownEventChannel _KnifeThrownEventChannel;
-        [SerializeField] private CollectibleHitEventChannel _CollectibleHitEventChannel;
-        
-        [Header("Flow Event Channels")]
-        [SerializeField] private LevelCompletedEventChannel _LevelCompletedEventChannel;
-        [SerializeField] private LevelFailedEventChannel _LevelFailedEventChannel;
-        [SerializeField] private StageCompletedEventChannel _StageCompletedEventChannel;
         [SerializeField] private ReturnToMenuEventChannel _ReturnToMenuEventChannel;
-        [SerializeField] private LevelStartedEventChannel _LevelStartedEventChannel;
-
-        [Header("UI Event Channels")]
-        [SerializeField] private VoidEventChannel _RetryLevelClickedChannel;
-        [SerializeField] private VoidEventChannel _RestartStageClickedChannel;
 
         [Header("Feedback")]
         [SerializeField] private SoundSettings _SoundSettings;
         [SerializeField] private AudioPlayer _AudioPlayer;
 
-        [Header("Power Ups")]
-        [SerializeField] private PowerUpCatalog _PowerUpCatalog;
-        [SerializeField] private PowerUpActivatedEventChannel _PowerUpActivatedEventChannel;
-        [SerializeField] private PowerUpUsedEventChannel _PowerUpUsedEventChannel;
-
-        [Header("Prefabs / Pooling")]
-        [SerializeField] private PrefabsConfiguration _PrefabsConfiguration;
-        
-        [Header("Scene References")]
-        [SerializeField] private KnifeThrowerView _KnifeThrowerView;
-        [SerializeField] private Transform _LevelRoot;
-        [SerializeField] private StageFailPopup _StageFailPopup;
-        [SerializeField] private UIController _UIController;
+        protected override void Awake()
+        {
+            base.Awake();
+            DontDestroyOnLoad(gameObject);
+        }
 
         protected override void Configure(IContainerBuilder builder)
         {
-            Install(builder, CreateTargetInstaller());
-            Install(builder, CreateKnifeInstaller());
-            Install(builder, CreateCollectibleInstaller());
-            Install(builder, CreatePowerUpInstaller());
-            Install(builder, CreateLevelInstaller());
-            Install(builder, CreateStageInstaller());
             Install(builder, CreateGameFlowInstaller());
             Install(builder, CreatePersistenceInstaller());
-            Install(builder, CreateCollisionInstaller());
-            Install(builder, CreateAudioInstaller());
-            Install(builder, CreateVFXInstaller());
-            Install(builder, CreateUIInstaller());
 
-            if (_PrefabsConfiguration != null)
-            {
-                builder.RegisterInstance(_PrefabsConfiguration).AsSelf();
-            }
+            // General Services
+            builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
+            builder.Register<SceneLoaderService>(Lifetime.Singleton);
+
+            // Audio Core (Feedback listeners are in StageInstaller)
+            builder.RegisterInstance(_SoundSettings);
+            builder.RegisterComponent(_AudioPlayer).As<IAudioPlayer>();
+
+            // Register Event Channels (Shared/Persistence)
+            builder.RegisterInstance(_ReturnToMenuEventChannel);
+
+            // Loading flow - transitions to MainMenu after initialization
+            builder.RegisterEntryPoint<LoadingController>();
         }
 
         private static void Install(IContainerBuilder builder, IInstaller installer)
         {
             installer.Install(builder);
-        }
-
-        private TargetInstaller CreateTargetInstaller()
-        {
-            return new TargetInstaller(_PrefabsConfiguration);
-        }
-
-        private KnifeInstaller CreateKnifeInstaller()
-        {
-            return new KnifeInstaller(
-                _KnifeThrowConfig,
-                _KnifeThrowerView,
-                _PrefabsConfiguration,
-                _KnifeImpactEventChannel,
-                _KnifeThrownEventChannel);
-        }
-
-        private CollectibleInstaller CreateCollectibleInstaller()
-        {
-            return new CollectibleInstaller(_CollectibleHitEventChannel);
-        }
-
-        private PowerUpInstaller CreatePowerUpInstaller()
-        {
-            return new PowerUpInstaller(
-                _PowerUpCatalog,
-                _PowerUpActivatedEventChannel,
-                _PowerUpUsedEventChannel,
-                _LevelStartedEventChannel,
-                _CollectibleHitEventChannel,
-                _KnifeThrownEventChannel);
-        }
-
-        private LevelInstaller CreateLevelInstaller()
-        {
-            return new LevelInstaller(_LevelRoot, _LevelCompletedEventChannel, _LevelFailedEventChannel);
-        }
-
-        private StageInstaller CreateStageInstaller()
-        {
-            return new StageInstaller(
-                _StagesConfig,
-                _StageCompletedEventChannel,
-                _ReturnToMenuEventChannel,
-                _RetryLevelClickedChannel,
-                _RestartStageClickedChannel,
-                _LevelStartedEventChannel);
         }
 
         private GameFlowInstaller CreateGameFlowInstaller()
@@ -145,39 +67,7 @@ namespace Game.Installers
 
         private PersistenceInstaller CreatePersistenceInstaller()
         {
-            return new PersistenceInstaller(
-                _LevelCompletedEventChannel,
-                _StageCompletedEventChannel,
-                _CollectibleHitEventChannel);
-        }
-
-        private CollisionInstaller CreateCollisionInstaller()
-        {
-            return new CollisionInstaller(_CollisionEventChannel);
-        }
-
-        private AudioInstaller CreateAudioInstaller()
-        {
-            return new AudioInstaller(
-                _SoundSettings,
-                _AudioPlayer,
-                _KnifeThrownEventChannel,
-                _KnifeImpactEventChannel,
-                _CollectibleHitEventChannel,
-                _LevelCompletedEventChannel,
-                _LevelFailedEventChannel);
-        }
-
-        private VFXInstaller CreateVFXInstaller()
-        {
-            return new VFXInstaller(_PrefabsConfiguration, _KnifeImpactEventChannel);
-        }
-
-        private UIInstaller CreateUIInstaller()
-        {
-            return new UIInstaller(
-                _UIController,
-                _StageFailPopup);
+            return new PersistenceInstaller();
         }
     }
 }

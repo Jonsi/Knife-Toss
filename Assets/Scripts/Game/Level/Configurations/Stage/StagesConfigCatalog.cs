@@ -1,20 +1,21 @@
+using Game.Level.Configurations.Stage;
 using Game.Level.Data;
 using Game.Level.Interfaces;
 
 namespace Game.Level.Catalogs
 {
     /// <summary>
-    /// Implementation of ILevelCatalog using the scriptable object StagesConfigAsset.
+    /// Implementation of ILevelCatalog using the scriptable object StagesCollection.
     /// </summary>
     public class StagesConfigCatalog : ILevelCatalog
     {
-        private readonly StagesConfigAsset _ConfigAsset;
+        private readonly StagesCollection _ConfigAsset;
 
         /// <summary>
         /// Initializes a new instance of the StagesConfigCatalog class.
         /// </summary>
-        /// <param name="configAsset">The StagesConfigAsset containing the game stages data.</param>
-        public StagesConfigCatalog(StagesConfigAsset configAsset)
+        /// <param name="configAsset">The StagesCollection containing the game stages data.</param>
+        public StagesConfigCatalog(StagesCollection configAsset)
         {
             _ConfigAsset = configAsset;
         }
@@ -33,7 +34,12 @@ namespace Game.Level.Catalogs
         {
             if (stageIndex < 0 || stageIndex >= _ConfigAsset.Stages.Count)
                 return 0;
-            return _ConfigAsset.Stages[stageIndex].Levels.Count;
+            
+            // Check for null stage asset
+            var stage = _ConfigAsset.Stages[stageIndex];
+            if (stage == null) return 0;
+
+            return stage.Levels.Count;
         }
 
         /// <summary>
@@ -47,7 +53,10 @@ namespace Game.Level.Catalogs
             if (stageIndex < 0 || stageIndex >= _ConfigAsset.Stages.Count)
                 return null;
             
-            var levels = _ConfigAsset.Stages[stageIndex].Levels;
+            var stage = _ConfigAsset.Stages[stageIndex];
+            if (stage == null) return null;
+
+            var levels = stage.Levels;
             if (levelIndex < 0 || levelIndex >= levels.Count)
                 return null;
 

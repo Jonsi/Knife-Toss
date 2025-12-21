@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Game.Entities.Target.Factories;
 using Game.Entities.Target.Interfaces;
 using Game.Entities.Target.Views;
+using Game.Level.Configurations.Stage;
 using Game.Level.Data;
 using Game.Level.Interfaces;
 using UnityEngine;

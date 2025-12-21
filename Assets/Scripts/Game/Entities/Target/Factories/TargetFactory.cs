@@ -4,6 +4,7 @@ using Game.Entities.Collectible.Spawning;
 using Game.Entities.Knife.Views;
 using Game.Entities.Target.Data;
 using Game.Entities.Target.Views;
+using Game.Level.Configurations.Stage;
 using Game.Level.Data;
 using Game.Pooling;
 using UnityEngine;
@@ -78,6 +79,11 @@ namespace Game.Entities.Target.Factories
         /// </summary>
         public void AttachElements(TargetView instance, TargetConfig config, StageConfig stageConfig)
         {
+            if (stageConfig != null && stageConfig.LayoutSettings != null)
+            {
+                instance.SetSprite(stageConfig.LayoutSettings.TargetSprite);
+            }
+
             var knifePrefab = _PrefabsConfiguration?.GetDefaultKnifePrefab();
             var collectiblePrefab = _PrefabsConfiguration?.GetCollectiblePrefab();
 

@@ -17,7 +17,7 @@ MonoBehaviour:
   <ShakeVibrato>k__BackingField: 20
   <ShakeRandomness>k__BackingField: 45
   <ShakeFadeOut>k__BackingField: 0
-  <TintColor>k__BackingField: {r: 1, g: 0.9, b: 0.7, a: 1}
+  <TintColor>k__BackingField: {r: 1, g: 0.81863487, b: 0.69803923, a: 1}
   <TintFadeIn>k__BackingField: 0.05
   <TintHold>k__BackingField: 0.05
   <TintFadeOut>k__BackingField: 0.2

@@ -8,7 +8,8 @@ namespace Game.PowerUps.Configs
     [CreateAssetMenu(fileName = "MultipleKnivesConfig", menuName = "Knife Toss/Power Ups/Multiple Knives Config")]
     public class MultipleKnivesConfig : PowerUpConfigBase
     {
-        [field: SerializeField] public float[] Angles { get; private set; } = new float[] { -15f, 0f, 15f };
+        [field: SerializeField, Min(1)] public int KnifeCount { get; private set; } = 3;
+        [field: SerializeField, Min(0f)] public float KnifeSpacing { get; private set; } = 0.35f;
         [field: SerializeField] public float ThrowSpeed { get; private set; } = 10f;
     }
 }

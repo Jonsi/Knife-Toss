@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Game.Entities.Target.Interfaces;
+using Game.Level.Configurations.Stage;
 using Game.Level.Data;
 
 namespace Game.Level.Interfaces

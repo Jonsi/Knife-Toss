@@ -56,7 +56,7 @@ namespace Game.Installers
         public void Install(IContainerBuilder builder)
         {
             builder.RegisterInstance(_Config).As<IConfigurationProvider<KnifeThrowConfiguration>>();
-            builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
+            // InputAdapter is now provided by GameInstaller (Parent Scope)
             builder.RegisterEntryPoint<ThrowService>().As<IThrowService>();
             builder.RegisterComponent(_View).As<IKnifeThrowerView>();
             builder.Register<KnifePoolProvider>(Lifetime.Singleton)

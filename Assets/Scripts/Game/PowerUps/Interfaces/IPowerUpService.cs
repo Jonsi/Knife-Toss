@@ -37,6 +37,6 @@ namespace Game.PowerUps.Interfaces
         /// <summary>
         /// Prepares the loaded knife based on the active power-up.
         /// </summary>
-        void PrepareLoadedKnife(KnifeView knife);
+        void PrepareLoadedKnives(System.Collections.Generic.IReadOnlyList<KnifeView> knives);
     }
 }

@@ -5,6 +5,7 @@ using Game.Flow.Interfaces;
 using Game.KnifeThrower.Interfaces;
 using Game.Level.Interfaces;
 using Game.Pooling;
+using Game.UI.Controllers;
 using VContainer.Unity;
 
 namespace Game.Flow.Stage.States
@@ -19,12 +20,14 @@ namespace Game.Flow.Stage.States
 
         public readonly ILevelFlowController LevelFlowController;
         public readonly ILevelCatalog LevelCatalog;
+        public readonly UIController UIController;
         public readonly StageCompletedEventChannel StageCompletedChannel;
 
         public StageStateMachine(
             StageData context,
             ILevelFlowController levelFlowController,
             ILevelCatalog levelCatalog,
+            UIController uiController,
             LevelCompletedEventChannel levelCompletedChannel,
             LevelFailedEventChannel levelFailedChannel,
             StageCompletedEventChannel stageCompletedChannel,
@@ -37,6 +40,7 @@ namespace Game.Flow.Stage.States
             Context = context;
             LevelFlowController = levelFlowController;
             LevelCatalog = levelCatalog;
+            UIController = uiController;
             StageCompletedChannel = stageCompletedChannel;
 
             Loading = new StageLoadingState(this);

@@ -1,7 +1,4 @@
 using System;
-using Common.Events;
-using Game.Entities.Collectible.Events;
-using Game.Flow.Events;
 using Game.Persistence.Interfaces;
 using Game.Persistence.Services;
 using Game.Persistence.Storage;
@@ -15,18 +12,8 @@ namespace Game.Installers
     /// </summary>
     public class PersistenceInstaller : IInstaller
     {
-        private readonly LevelCompletedEventChannel _LevelCompletedChannel;
-        private readonly StageCompletedEventChannel _StageCompletedChannel;
-        private readonly CollectibleHitEventChannel _CollectibleHitChannel;
-
-        public PersistenceInstaller(
-            LevelCompletedEventChannel levelCompletedChannel,
-            StageCompletedEventChannel stageCompletedChannel,
-            CollectibleHitEventChannel collectibleHitChannel)
+        public PersistenceInstaller()
         {
-            _LevelCompletedChannel = levelCompletedChannel;
-            _StageCompletedChannel = stageCompletedChannel;
-            _CollectibleHitChannel = collectibleHitChannel;
         }
 
         /// <summary>
@@ -39,12 +26,8 @@ namespace Game.Installers
                 .As<IPlayerDataStore>();
 
             builder.RegisterEntryPoint<PlayerDataService>()
-                .WithParameter(_LevelCompletedChannel)
-                .WithParameter(_StageCompletedChannel)
-                .WithParameter(_CollectibleHitChannel)
                 .AsSelf()
-                .As<IInitializable>()
-                .As<IDisposable>();
+                .As<IInitializable>();
         }
     }
 }

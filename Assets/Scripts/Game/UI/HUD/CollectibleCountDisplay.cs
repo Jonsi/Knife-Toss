@@ -26,14 +26,7 @@ namespace Game.UI.HUD
         {
             _GameData = gameData;
             _TotalCollectibles = _GameData.TotalCollected;
-        }
-
-        private void Update()
-        {
-            if (_CountText == null)
-                return;
-
-            _CountText.text = _TotalCollectibles.ToString();
+            UpdateCountText();
         }
 
         private void OnEnable()
@@ -62,6 +55,7 @@ namespace Game.UI.HUD
         private void OnCollectibleHit(CollectibleHitEventData data)
         {
             _TotalCollectibles += data.Value;
+            UpdateCountText();
         }
 
         private void SyncFromGameData()
@@ -72,6 +66,17 @@ namespace Game.UI.HUD
             }
 
             _TotalCollectibles = _GameData.TotalCollected;
+            UpdateCountText();
+        }
+
+        private void UpdateCountText()
+        {
+            if (_CountText == null)
+            {
+                return;
+            }
+
+            _CountText.text = _TotalCollectibles.ToString();
         }
     }
 }

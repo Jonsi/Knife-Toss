@@ -1,17 +1,10 @@
 using System;
-using System.Threading.Tasks;
-using Common.Events;
-using Game.Entities.Collectible.Data;
-using Game.Entities.Collectible.Events;
-using Game.Flow.Events;
 using Game.Flow.Game;
-using Game.Flow.Level;
-using Game.Flow.Stage;
 using Game.Persistence.Data;
 using Game.Persistence.Interfaces;
 using Game.PowerUps.Data;
-using UnityEngine;
 using VContainer.Unity;
+using UnityEngine;
 
 namespace Game.Persistence.Services
 {
@@ -22,95 +15,53 @@ namespace Game.Persistence.Services
     {
         private readonly IPlayerDataStore _Store;
         private readonly GameData _GameData;
-        private readonly LevelCompletedEventChannel _LevelCompletedChannel;
-        private readonly StageCompletedEventChannel _StageCompletedChannel;
-        private readonly CollectibleHitEventChannel _CollectibleHitChannel;
 
         private PlayerData _CachedData;
-        private bool _IsSaveScheduled;
 
         public PlayerDataService(
             IPlayerDataStore store,
-            GameData gameData,
-            LevelCompletedEventChannel levelCompletedChannel,
-            StageCompletedEventChannel stageCompletedChannel,
-            CollectibleHitEventChannel collectibleHitChannel)
+            GameData gameData)
         {
             _Store = store;
             _GameData = gameData;
-            _LevelCompletedChannel = levelCompletedChannel;
-            _StageCompletedChannel = stageCompletedChannel;
-            _CollectibleHitChannel = collectibleHitChannel;
         }
 
         public void Initialize()
         {
             _CachedData = _Store.Load() ?? new PlayerData();
-
-            if (_CachedData.Progress == null)
-            {
-                _CachedData.Progress = new PlayerProgressData();
-            }
-
-            if (_CachedData.Settings == null)
-            {
-                _CachedData.Settings = new PlayerSettingsData();
-            }
-
-            if (_CachedData.PowerUpInventory == null)
-            {
-                _CachedData.PowerUpInventory = new PowerUpInventoryData();
-            }
-
-            _GameData.CurrentStageIndex = _CachedData.Progress.CurrentStageIndex;
-            _GameData.TotalCollected = _CachedData.Progress.TotalCollectiblesCollected;
-
-            _LevelCompletedChannel.Subscribe(OnLevelCompleted);
-            _StageCompletedChannel.Subscribe(OnStageCompleted);
-
-            if (_CollectibleHitChannel != null)
-            {
-                _CollectibleHitChannel.Subscribe(OnCollectibleHit);
-            }
+            EnsureDataIntegrity();
+            SyncGameData();
         }
 
         public void Dispose()
         {
-            _LevelCompletedChannel.Unsubscribe(OnLevelCompleted);
-            _StageCompletedChannel.Unsubscribe(OnStageCompleted);
-
-            if (_CollectibleHitChannel != null)
-            {
-                _CollectibleHitChannel.Unsubscribe(OnCollectibleHit);
-            }
+            // No cleanup needed since we removed async scheduling
         }
 
-        private void OnLevelCompleted(LevelData data)
+        /// <summary>
+        /// Requests a save. Useful for frequent updates like collecting items.
+        /// </summary>
+        public void RequestSave()
         {
-            _CachedData.Progress.CurrentStageIndex = _GameData.CurrentStageIndex;
-            _CachedData.Progress.HighestStageIndex = Math.Max(
-                _CachedData.Progress.HighestStageIndex,
-                _GameData.CurrentStageIndex);
-            _CachedData.Progress.TotalCollectiblesCollected = _GameData.TotalCollected;
-
+            UpdateProgress();
             SaveNow();
         }
 
-        private void OnStageCompleted(StageData data)
+        /// <summary>
+        /// Forces an immediate save. Useful for major checkpoints like level completion.
+        /// </summary>
+        public void ForceSave()
         {
-            _CachedData.Progress.CurrentStageIndex = _GameData.CurrentStageIndex;
-            _CachedData.Progress.HighestStageIndex = Math.Max(
-                _CachedData.Progress.HighestStageIndex,
-                _GameData.CurrentStageIndex);
-            _CachedData.Progress.TotalCollectiblesCollected = _GameData.TotalCollected;
-
+            UpdateProgress();
             SaveNow();
         }
 
-        private void OnCollectibleHit(CollectibleHitEventData data)
+        /// <summary>
+        /// Gets the highest stage index the player has reached.
+        /// </summary>
+        public int GetHighestStageIndex()
         {
-            _CachedData.Progress.TotalCollectiblesCollected = _GameData.TotalCollected;
-            ScheduleSave();
+            return _CachedData.Progress.HighestStageIndex;
         }
 
         /// <summary>
@@ -130,26 +81,17 @@ namespace Game.Persistence.Services
         /// Reloads persisted data and returns the power-up inventory.
         /// Keeps progress/settings in sync with the loaded data.
         /// </summary>
-        public PowerUpInventoryData ReloadPowerUpInventory()
+        public void ReloadPowerUpInventory()
         {
             var loaded = _Store.Load();
-            if (loaded != null)
+            if (loaded?.PowerUpInventory == null)
             {
-                loaded.Progress ??= new PlayerProgressData();
-                loaded.Settings ??= new PlayerSettingsData();
-                loaded.PowerUpInventory ??= new PowerUpInventoryData();
-
-                _CachedData = loaded;
-                _GameData.CurrentStageIndex = _CachedData.Progress.CurrentStageIndex;
-                _GameData.TotalCollected = _CachedData.Progress.TotalCollectiblesCollected;
+                return;
             }
 
-            if (_CachedData.PowerUpInventory == null)
-            {
-                _CachedData.PowerUpInventory = new PowerUpInventoryData();
-            }
-
-            return _CachedData.PowerUpInventory;
+            _CachedData ??= new PlayerData();
+            EnsureDataIntegrity();
+            _CachedData.PowerUpInventory = loaded.PowerUpInventory;
         }
 
         /// <summary>
@@ -157,35 +99,40 @@ namespace Game.Persistence.Services
         /// </summary>
         public void SavePowerUpInventory()
         {
-            ScheduleSave();
+            SaveNow();
+        }
+
+        private void UpdateProgress()
+        {
+            _CachedData.Progress.CurrentStageIndex = _GameData.CurrentStageIndex;
+            _CachedData.Progress.HighestStageIndex = Math.Max(
+                _CachedData.Progress.HighestStageIndex,
+                _GameData.CurrentStageIndex);
+            _CachedData.Progress.TotalCollectiblesCollected = _GameData.TotalCollected;
+        }
+
+        private void EnsureDataIntegrity()
+        {
+            _CachedData.Progress ??= new PlayerProgressData();
+            _CachedData.Settings ??= new PlayerSettingsData();
+            _CachedData.PowerUpInventory ??= new PowerUpInventoryData();
+        }
+
+        private void SyncGameData()
+        {
+            _GameData.CurrentStageIndex = _CachedData.Progress.CurrentStageIndex;
+            _GameData.TotalCollected = _CachedData.Progress.TotalCollectiblesCollected;
         }
 
         private void SaveNow()
         {
-            _Store.Save(_CachedData);
-        }
-
-        private void ScheduleSave()
-        {
-            if (_IsSaveScheduled)
-            {
-                return;
-            }
-
-            _IsSaveScheduled = true;
-            _ = SaveAfterDelay();
-        }
-
-        private async Task SaveAfterDelay()
-        {
             try
             {
-                await Task.Delay(TimeSpan.FromSeconds(0.5f));
                 _Store.Save(_CachedData);
             }
-            finally
+            catch (Exception e)
             {
-                _IsSaveScheduled = false;
+                Debug.LogError($"Failed to save player data: {e.Message}");
             }
         }
     }
