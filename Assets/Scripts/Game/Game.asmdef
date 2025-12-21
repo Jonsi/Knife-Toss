@@ -1,13 +1,14 @@
 {
     "name": "Game",
+    "rootNamespace": "",
     "references": [
         "Common",
         "VContainer",
         "Unity.InputSystem",
         "UniTask",
-        "DOTween",
         "DOTween.Modules",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "R3.Unity"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -19,4 +20,3 @@
     "versionDefines": [],
     "noEngineReferences": false
 }
-
