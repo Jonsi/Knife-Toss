@@ -1,3 +1,5 @@
+using R3;
+
 namespace Common.MVP.Core
 {
     public abstract class BasePresenter<TView, TModel> : IPresenter<TView, TModel>
@@ -7,12 +9,17 @@ namespace Common.MVP.Core
         public TView View { get; }
         public TModel Model { get; }
 
+        protected CompositeDisposable disposables { get; } = new CompositeDisposable();
+
         protected BasePresenter(TView view, TModel model)
         {
             View = view;
             Model = model;
         }
 
-        public abstract void Dispose();
+        public virtual void Dispose()
+        {
+            disposables.Dispose();
+        }
     }
 }

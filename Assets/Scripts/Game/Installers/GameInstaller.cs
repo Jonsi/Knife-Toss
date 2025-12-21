@@ -9,7 +9,6 @@ using Game.KnifeThrower.Events;
 using Game.Level.Catalogs;
 using Game.Settings;
 using Game.UI.Controllers;
-using Game.UI.Popups;
 using Game.Feedback.Audio.Data;
 using Game.Feedback.Audio.Systems;
 using Game.Pooling;
@@ -18,6 +17,7 @@ using VContainer;
 using VContainer.Unity;
 using Game.PowerUps.Configs;
 using Game.PowerUps.Events;
+using Game.UI.Factories;
 
 namespace Game.Installers
 {
@@ -62,8 +62,8 @@ namespace Game.Installers
         [Header("Scene References")]
         [SerializeField] private KnifeThrowerView _KnifeThrowerView;
         [SerializeField] private Transform _LevelRoot;
-        [SerializeField] private StageFailPopup _StageFailPopup;
         [SerializeField] private UIController _UIController;
+        [SerializeField] private StageFailFactorySO _StageFailFactory;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -176,7 +176,9 @@ namespace Game.Installers
         {
             return new UIInstaller(
                 _UIController,
-                _StageFailPopup);
+                _StageFailFactory,
+                _RetryLevelClickedChannel,
+                _RestartStageClickedChannel);
         }
     }
 }

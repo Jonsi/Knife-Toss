@@ -5,7 +5,7 @@ using UnityEngine.Pool;
 
 namespace Common.MVP
 {
-    public abstract class BaseMvpFactorySo<TPresenter, TView, TModel> : ScriptableObject, IFactory<TPresenter, TView, TModel>
+    public abstract class BaseMVPFactorySO<TPresenter, TView, TModel> : ScriptableObject, IFactory<TPresenter, TView, TModel>
         where TPresenter : BasePresenter<TView, TModel>
         where TView : MonoBehaviour, IView<TModel>
         where TModel : IModel
