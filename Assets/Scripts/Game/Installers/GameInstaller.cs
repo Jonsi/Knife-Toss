@@ -10,7 +10,7 @@ namespace Game.Installers
     public class GameInstaller : LifetimeScope
     {
         [Header("Scene References")]
-        [SerializeField] private SceneReferenceInstaller _SceneReferenceInstaller;
+        [SerializeField] private LevelSceneReferenceInstaller _LevelSceneReferenceInstaller;
 
         [Header("Installers")]
         [SerializeField] private TargetInstallerSO _TargetInstaller;
@@ -28,7 +28,7 @@ namespace Game.Installers
 
         protected override void Configure(IContainerBuilder builder)
         {
-            _SceneReferenceInstaller?.Install(builder);
+            _LevelSceneReferenceInstaller?.Install(builder);
             InstallCore(builder);
             InstallFlow(builder);
             InstallGameplay(builder);

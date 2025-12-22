@@ -10,7 +10,7 @@ namespace Game.Installers
     /// <summary>
     /// Registers scene-bound components explicitly to avoid hierarchy scans.
     /// </summary>
-    public class SceneReferenceInstaller : MonoBehaviour, IInstaller
+    public class LevelSceneReferenceInstaller : MonoBehaviour, IInstaller
     {
         [Header("Scene References")]
         [SerializeField] private SceneReferences _SceneReferences;
