@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Game.Presentation.Popups.StageFail
 {
-    public class StageFailPopupView : BasePopupView<StageFailPopupModel>
+    public class StageFailPopupView : BaseView<StageFailPopupModel>
     {
         [Header("UI References")]
         [SerializeField] private Button _RetryButton;
