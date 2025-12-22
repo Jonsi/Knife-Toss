@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game.Configs.Prefabs;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -14,22 +15,21 @@ namespace Game.Pooling
         private readonly ObjectPool<ParticleSystem> _Pool;
         private readonly Transform _poolParent;
         private readonly List<ParticleSystem> _pooledObjects = new();
-        private readonly ParticlePrefabEntry _Entry;
+        private readonly FactoryPrefabEntry<ParticleSystem> _Entry;
 
         /// <summary>
         /// Initializes a new instance of the particle pool provider.
         /// </summary>
         /// <param name="prefabsConfiguration">Prefab configuration containing particle entries.</param>
-        /// <param name="type">Type of particle prefab to pool.</param>
-        public ParticlePoolProvider(PrefabsConfiguration prefabsConfiguration, ParticlePrefabType type)
+        public ParticlePoolProvider(PrefabsConfiguration prefabsConfiguration)
         {
-            _Entry = GetEntry(prefabsConfiguration, type);
+            _Entry = prefabsConfiguration?.GetKnifeHitParticles();
             if (_Entry == null)
-                throw new ArgumentException($"No particle prefab entry found for type {type}", nameof(prefabsConfiguration));
+                throw new ArgumentException("No particle prefab entry found for knife hit particles.", nameof(prefabsConfiguration));
 
-            var prefab = _Entry.GetParticlePrefab();
+            var prefab = _Entry.Prefab;
             if (prefab == null)
-                throw new ArgumentException($"Particle prefab entry for {type} must reference a prefab with ParticleSystem component.");
+                throw new ArgumentException("Particle prefab entry must reference a prefab with ParticleSystem component.");
 
             // Create a dedicated parent for pooled objects
             var poolParent = new GameObject($"ParticlePool_{prefab.name}").transform;
@@ -99,16 +99,6 @@ namespace Game.Pooling
             Release(particle);
         }
 
-        private static ParticlePrefabEntry GetEntry(PrefabsConfiguration config, ParticlePrefabType type)
-        {
-            return type switch
-            {
-                ParticlePrefabType.KnifeHitTarget => config?.GetKnifeHitParticles(),
-                ParticlePrefabType.CollectibleHit => config?.GetCollectibleHitParticles(),
-                _ => null
-            };
-        }
-
         private ParticleSystem CreateParticle(ParticleSystem prefab)
         {
             var instance = UnityEngine.Object.Instantiate(prefab);
@@ -119,7 +109,7 @@ namespace Game.Pooling
             var main = instance.main;
             main.stopAction = ParticleSystemStopAction.Callback;
             var handler = instance.gameObject.AddComponent<ParticleReturnHandler>();
-            handler.Initialize(this);
+            handler.Initialize(this, instance);
             instance.gameObject.SetActive(false);
             instance.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             return instance;

@@ -64,6 +64,7 @@ namespace Game.CollisionHandlers
             int hits = Physics2D.OverlapCircle(impactPoint, CollectibleOverlapRadius, CollectibleOverlapFilter, _CollectibleOverlapBuffer);
             for (int i = 0; i < hits; i++)
             {
+                // TODO: Replace GetComponent lookup with collider registry (Phase 9).
                 var collectible = _CollectibleOverlapBuffer[i].GetComponent<CollectibleView>();
                 if (collectible == null)
                     continue;

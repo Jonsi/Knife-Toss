@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game.Configs.Prefabs;
 using Game.Entities.Knife.Views;
 using Game.PowerUps.Configs;
 using UnityEngine;
@@ -38,7 +39,7 @@ namespace Game.Pooling
 
             var defaultEntry = _PrefabsConfiguration.GetDefaultKnifeEntry();
             if (defaultEntry == null)
-                throw new ArgumentException("PrefabsConfiguration must include a default KnifePrefabEntry.", nameof(prefabsConfiguration));
+                throw new ArgumentException("PrefabsConfiguration must include a default knife entry.", nameof(prefabsConfiguration));
 
             _DefaultPool = CreatePool(defaultEntry);
             var superEntry = _PrefabsConfiguration.GetSuperKnifeEntry();
@@ -108,9 +109,9 @@ namespace Game.Pooling
             return _pooledObjects;
         }
 
-        private ObjectPool<KnifeView> CreatePool(KnifePrefabEntry entry)
+        private ObjectPool<KnifeView> CreatePool(FactoryPrefabEntry<KnifeView> entry)
         {
-            var prefab = entry.GetKnifePrefab();
+            var prefab = entry?.Prefab;
             if (prefab == null)
                 throw new ArgumentException("Knife prefab entry must reference a prefab with a KnifeView component.");
 

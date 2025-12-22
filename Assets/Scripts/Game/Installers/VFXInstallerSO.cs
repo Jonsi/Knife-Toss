@@ -26,8 +26,7 @@ namespace Game.Installers
             if (_PrefabsConfiguration?.GetKnifeHitParticles() != null)
             {
                 builder.Register<ParticlePoolProvider>(Lifetime.Singleton)
-                    .WithParameter(_PrefabsConfiguration)
-                    .WithParameter(ParticlePrefabType.KnifeHitTarget);
+                    .WithParameter(_PrefabsConfiguration);
             }
 
             builder.Register<VFXFeedbackService>(Lifetime.Singleton).AsImplementedInterfaces();

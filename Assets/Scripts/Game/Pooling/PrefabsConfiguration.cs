@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using Game.PowerUps.Configs;
+using Game.Configs.Prefabs;
 using Game.Entities.Target.Views;
 using Game.Entities.Collectible.Views;
 using Game.Entities.Knife.Views;
@@ -15,25 +16,25 @@ namespace Game.Pooling
     public class PrefabsConfiguration : ScriptableObject
     {
         [Header("Knives")]
-        [SerializeField] private KnifePrefabEntry _DefaultKnife;
-        [SerializeField] private KnifePrefabEntry _SuperKnife;
+        [SerializeField] private FactoryPrefabEntry<KnifeView> _DefaultKnife;
+        [SerializeField] private FactoryPrefabEntry<KnifeView> _SuperKnife;
 
         [Header("Targets")]
-        [SerializeField] private PrefabEntry _Target;
+        [SerializeField] private FactoryPrefabEntry<TargetView> _Target;
 
         [Header("Collectibles")]
-        [SerializeField] private PrefabEntry _Collectible;
+        [SerializeField] private FactoryPrefabEntry<CollectibleView> _Collectible;
 
         [Header("Particles")]
-        [SerializeField] private ParticlePrefabEntry _KnifeHitParticles;
-        [SerializeField] private ParticlePrefabEntry _CollectibleHitParticles;
+        [SerializeField] private FactoryPrefabEntry<ParticleSystem> _KnifeHitParticles;
+        [SerializeField] private FactoryPrefabEntry<ParticleSystem> _CollectibleHitParticles;
 
-        public KnifePrefabEntry GetDefaultKnifeEntry() => _DefaultKnife;
-        public KnifePrefabEntry GetSuperKnifeEntry() => _SuperKnife != null ? _SuperKnife : _DefaultKnife;
-        public PrefabEntry GetTargetEntry() => _Target;
-        public PrefabEntry GetCollectibleEntry() => _Collectible;
+        public FactoryPrefabEntry<KnifeView> GetDefaultKnifeEntry() => _DefaultKnife;
+        public FactoryPrefabEntry<KnifeView> GetSuperKnifeEntry() => _SuperKnife != null ? _SuperKnife : _DefaultKnife;
+        public FactoryPrefabEntry<TargetView> GetTargetEntry() => _Target;
+        public FactoryPrefabEntry<CollectibleView> GetCollectibleEntry() => _Collectible;
 
-        public KnifePrefabEntry GetKnifeForPowerUp(PowerUpConfigBase config)
+        public FactoryPrefabEntry<KnifeView> GetKnifeForPowerUp(PowerUpConfigBase config)
         {
             if (config is SuperKnifeConfig)
                 return GetSuperKnifeEntry();
@@ -41,12 +42,12 @@ namespace Game.Pooling
             return GetDefaultKnifeEntry();
         }
 
-        public ParticlePrefabEntry GetKnifeHitParticles() => _KnifeHitParticles;
-        public ParticlePrefabEntry GetCollectibleHitParticles() => _CollectibleHitParticles;
+        public FactoryPrefabEntry<ParticleSystem> GetKnifeHitParticles() => _KnifeHitParticles;
+        public FactoryPrefabEntry<ParticleSystem> GetCollectibleHitParticles() => _CollectibleHitParticles;
 
-        public TargetView GetTargetPrefab() => _Target?.Prefab != null ? _Target.Prefab.GetComponent<TargetView>() : null;
-        public CollectibleView GetCollectiblePrefab() => _Collectible?.Prefab != null ? _Collectible.Prefab.GetComponent<CollectibleView>() : null;
-        public KnifeView GetDefaultKnifePrefab() => _DefaultKnife?.GetKnifePrefab();
-        public KnifeView GetSuperKnifePrefab() => _SuperKnife?.GetKnifePrefab() ?? GetDefaultKnifePrefab();
+        public TargetView GetTargetPrefab() => _Target?.Prefab;
+        public CollectibleView GetCollectiblePrefab() => _Collectible?.Prefab;
+        public KnifeView GetDefaultKnifePrefab() => _DefaultKnife?.Prefab;
+        public KnifeView GetSuperKnifePrefab() => _SuperKnife?.Prefab ?? GetDefaultKnifePrefab();
     }
 }
