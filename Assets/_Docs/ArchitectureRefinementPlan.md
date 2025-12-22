@@ -6,9 +6,9 @@ This document provides a comprehensive plan to refactor **all scripts** in `Asse
 
 ### Core Principles
 
-1. **Domain Layer**: Pure C# interfaces, value objects, domain events - **NO Unity dependencies**
+1. **Domain Layer**: Interfaces, value objects, domain events - **NO Unity lifecycle dependencies** (math types like Vector2/Vector3 are allowed)
 2. **App Layer**: Services, use cases, flow controllers - depend only on Domain interfaces
-3. **Infrastructure Layer**: Unity implementations, configs, factories, adapters
+3. **Infrastructure Layer**: Unity implementations, configs, factories, adapters (ScriptableObjects, serialization)
 4. **Presentation Layer**: Passive Views + Presenters (MVP pattern)
 5. **Persistence Layer**: Data storage implementations
 
@@ -20,23 +20,24 @@ This document provides a comprehensive plan to refactor **all scripts** in `Asse
 
 **Current State:**
 ```csharp
-// TargetConfig.cs - Has BOTH domain data AND Unity serialization
+// TargetConfig.cs - Has domain data mixed with Unity serialization/prefab refs
 [Serializable]
 public class TargetConfig : ISerializationCallbackReceiver
 {
-    [field: SerializeField] public TargetView PrefabOverride { get; }  // Unity ref
-    [field: SerializeField] public float BaseScale { get; }             // Pure data
-    [field: SerializeField] public Vector3 InitialOffset { get; }       // Unity type
-    [field: SerializeField] public int KnivesToBreak { get; }           // Pure data
+    [field: SerializeField] public TargetView PrefabOverride { get; }  // Prefab ref - NOT allowed in Domain
+    [field: SerializeField] public float BaseScale { get; }             // Data
+    [field: SerializeField] public Vector3 InitialOffset { get; }       // Data (Vector3 is allowed)
+    [field: SerializeField] public int KnivesToBreak { get; }           // Data
 }
 ```
 
 **Solution:** Create domain interfaces + infrastructure implementations
 ```csharp
-// Domain: ITargetConfig.cs - Pure interface
+// Domain: ITargetConfig.cs - Interface (Vector3 is allowed in Domain)
 public interface ITargetConfig
 {
     float BaseScale { get; }
+    Vector3 InitialOffset { get; }  // Vector3 is fine in Domain
     int KnivesToBreak { get; }
     float InitialRotation { get; }
     IReadOnlyList<ICollectibleConfig> Collectibles { get; }
@@ -142,7 +143,7 @@ public class PowerUpService : IPowerUpService
 ┌─────────────────────────────────────────────────────────────┐
 │                        DOMAIN                                │
 │  (Interfaces, Value Objects, Domain Events)                 │
-│  Depends on: NOTHING                                        │
+│  Depends on: UnityEngine (math types only)                  │
 └─────────────────────────────────────────────────────────────┘
                               ▲
                               │
@@ -154,11 +155,31 @@ public class PowerUpService : IPowerUpService
 └─────────────────────────────────────────────────────────────┘
 ```
 
+### Unity Types in Domain - Pragmatic Approach
+
+The Domain layer CAN reference `UnityEngine.dll` for **math types only**. These are just data structs with no Unity lifecycle dependencies.
+
+**ALLOWED in Domain** (pure data/math, no side effects):
+- `Vector2`, `Vector3`, `Vector4` - Math structs
+- `Quaternion` - Rotation data
+- `Color`, `Color32` - Color values
+- `Mathf` - Static math utilities
+- `Rect`, `Bounds` - Geometry primitives
+
+**NOT ALLOWED in Domain** (engine lifecycle/serialization):
+- `MonoBehaviour`, `ScriptableObject` - Engine objects
+- `Transform`, `GameObject` - Scene objects
+- `[SerializeField]`, `[Header]` - Serialization attributes
+- Prefab references - Unity asset system
+- Coroutines, `UnityWebRequest` - Async Unity APIs
+
+> **Why this is fine:** Vector2/Vector3/etc are testable without Unity Test Runner. They work in regular unit tests. The real isolation goal is avoiding engine lifecycle, not math types.
+
 ### Assembly Definitions
 
 | Assembly | Allowed Dependencies | Contains |
 |----------|---------------------|----------|
-| `Game.Domain` | None | Interfaces, pure data, value objects |
+| `Game.Domain` | UnityEngine (math types only) | Interfaces, pure data, value objects |
 | `Game.App` | Game.Domain | Services, flow controllers |
 | `Game.Infrastructure` | Game.Domain, Game.App, UnityEngine | Factories, configs, adapters |
 | `Game.Presentation` | Game.Domain, Game.App, UnityEngine | Views, presenters |
@@ -177,7 +198,7 @@ public class PowerUpService : IPowerUpService
 
 ---
 
-## Phase 1: Domain Layer - Create Interfaces & Pure Types
+## Phase 1: Domain Layer - Create Interfaces & Organize Data
 
 ### 1.1 Create Domain Interfaces for Configs
 
@@ -228,20 +249,22 @@ namespace Game.Domain.Configs
 | `Domain/Views/ICollectibleView.cs` | Passive collectible view contract | `CollectibleView` |
 | `Domain/Views/IKnifeThrowerView.cs` | Already exists, move | `KnifeThrowerView` |
 
-### 1.4 Create Domain Value Objects & Events
+### 1.4 Move Existing Pure Data & Events to Domain
+
+Since Domain can use Unity math types (Vector2, Vector3, etc.), existing event data can move directly without modification.
 
 | File | Purpose | Action |
 |------|---------|--------|
-| `Domain/Events/KnifeImpactEvent.cs` | Knife impact data | 🆕 Create pure version |
-| `Domain/Events/CollectibleHitEvent.cs` | Collectible hit data | 🆕 Create pure version |
-| `Domain/Events/LevelCompletedEvent.cs` | Level completed data | 🆕 Create pure version |
-| `Domain/Events/LevelFailedEvent.cs` | Level failed data | 🆕 Create pure version |
-| `Domain/Values/Position2D.cs` | Pure 2D position (float X, Y) | 🆕 Create |
-| `Domain/Values/Position3D.cs` | Pure 3D position (float X, Y, Z) | 🆕 Create |
-| `Domain/PowerUp/PowerUpInventoryData.cs` | Already pure | 🔄 Move |
+| `Entities/Knife/Data/KnifeImpactEventData.cs` | Knife impact data (uses Vector2) | 🔄 Move to `Domain/Knife/` |
+| `Entities/Knife/Data/KnifeSpawnRequestData.cs` | Spawn request data | 🔄 Move to `Domain/Knife/` |
+| `Entities/Collectible/Data/CollectibleHitEventData.cs` | Collectible hit data (uses Vector2) | 🔄 Move to `Domain/Collectible/` |
+| `PowerUps/Data/PowerUpInventoryData.cs` | Already pure | 🔄 Move to `Domain/PowerUp/` |
+| `PowerUps/Data/PowerUpRuntimeState.cs` | Runtime state | 🔄 Move to `Domain/PowerUp/` |
 | `Domain/Level/LevelStats.cs` | Already pure | ✅ Keep |
 | `Domain/Stage/StageStats.cs` | Already pure | ✅ Keep |
 | `Domain/Player/PlayerStats.cs` | Already pure | ✅ Keep |
+
+> **Note**: No need to create Position2D/Position3D wrappers - just use Vector2/Vector3 directly.
 
 ### 1.5 Replace Enums with Static Classes (per workspace rules)
 
@@ -736,7 +759,7 @@ Game/UI/                       # Moved to Presentation/
 
 ### New Files to Create
 
-**Domain Layer (17 files):**
+**Domain Layer (15 files):**
 ```
 Domain/
 ├── Configs/
@@ -753,12 +776,11 @@ Domain/
 │   └── IParticlePoolProvider.cs
 ├── Views/
 │   └── IKnifeView.cs
-├── Values/
-│   ├── Position2D.cs
-│   └── Position3D.cs
 └── Knife/
     └── KnifeImpactTypes.cs (replaces enum)
 ```
+
+> **Note**: No Position2D/Position3D - use Unity's Vector2/Vector3 directly in Domain.
 
 **Presentation Layer - MVP (12 files):**
 ```
@@ -786,8 +808,8 @@ Presentation/Entities/
 - [ ] Create all config interfaces
 - [ ] Create service interfaces
 - [ ] Create view interfaces
-- [ ] Create value objects
-- [ ] Create KnifeImpactTypes static class
+- [ ] Move existing pure data (event data, stats)
+- [ ] Create KnifeImpactTypes static class (replaces enum)
 
 ### Phase 2: Infrastructure
 - [ ] Update configs to implement interfaces
