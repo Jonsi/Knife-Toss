@@ -522,57 +522,8 @@ After verification:
 
 ---
 
-## PHASE 5: Replace Enums with Static Classes
-**Est. Time**: 30 minutes
-
-### Step 5.1: Replace KnifeImpactType
-
-**Current**: `Assets/Scripts/Game/Entities/Knife/Data/KnifeImpactType.cs`
-
-**Replace with**:
-```csharp
-namespace Game.Entities.Knife.Data
-{
-    /// <summary>
-    /// Defines knife impact outcome types.
-    /// </summary>
-    public static class KnifeImpactType
-    {
-        public const int Stuck = 0;
-        public const int Bounced = 1;
-        public const int OutOfView = 2;
-    }
-}
-```
-
-Update all usages from `KnifeImpactType.Stuck` (works same way).
-
-### Step 5.2: Replace ParticlePrefabType
-
-**Current**: In `ParticlePrefabEntry.cs`
-
-**Replace with**:
-```csharp
-namespace Game.Pooling
-{
-    /// <summary>
-    /// Defines particle prefab types.
-    /// </summary>
-    public static class ParticlePrefabType
-    {
-        public const int KnifeHitTarget = 0;
-        public const int CollectibleHit = 1;
-    }
-}
-```
-
-Update `ParticlePoolProvider.cs` to use `int` instead of enum.
-
-**Verification**:
-- [ ] Replace KnifeImpactType
-- [ ] Replace ParticlePrefabType
-- [ ] Unity compiles
-- [ ] Play game - impacts still work
+## PHASE 5: Replace Enums with Static Classes (Reverted)
+**Status**: Keep existing enums (no conversion to static int classes). Remove or ignore this phase going forward.
 
 ---
 
