@@ -1,723 +1,834 @@
-# Architecture Refinement Plan
+# Architecture Refinement Plan - Complete Refactoring Guide
 
 ## Executive Summary
 
-This document provides a comprehensive plan to reorganize the existing scripts in `Assets/Scripts/Game/` to follow the Clean Architecture structure with proper MVP patterns for all entities.
+This document provides a comprehensive plan to refactor **all scripts** in `Assets/Scripts/Game/` to properly follow Clean Architecture with MVP patterns. This is not just file relocation—it involves splitting mixed-concern classes, creating proper abstractions, and implementing full MVP for entities.
 
-### Target Layer Structure
+### Core Principles
 
-| Layer | Purpose | Dependencies |
-|-------|---------|--------------|
-| **Domain** | Pure C# data models, value objects, domain events | None (no Unity) |
-| **App** | Application services, flow controllers, use cases | Domain |
-| **Infrastructure** | Factories, repositories, external system adapters | Domain, App |
-| **Presentation** | Views, Presenters, UI components (MVP) | Domain, App, Infrastructure |
-| **Persistence** | Data storage, serialization | Domain |
+1. **Domain Layer**: Pure C# interfaces, value objects, domain events - **NO Unity dependencies**
+2. **App Layer**: Services, use cases, flow controllers - depend only on Domain interfaces
+3. **Infrastructure Layer**: Unity implementations, configs, factories, adapters
+4. **Presentation Layer**: Passive Views + Presenters (MVP pattern)
+5. **Persistence Layer**: Data storage implementations
 
 ---
 
-## Current State Analysis
+## Current Architecture Problems
 
-### Scripts by Current Location
+### Problem 1: Configs Have Mixed Concerns
 
-```
-Game/
-├── App/                    # ⚠️ Incomplete - only has Flow/Events
-├── CollisionHandlers/      # ✗ Should be in App or Infrastructure
-├── DI/                     # ✓ OK (BaseInstallerSO)
-├── Domain/                 # ⚠️ Incomplete - only stats classes
-├── Entities/               # ✗ Not following MVP pattern
-├── Feedback/               # ✗ Should be split between App/Infrastructure
-├── Flow/                   # ✗ Should be in App/Flow
-├── Infrastructure/         # ⚠️ Incomplete - only StageFailFactorySO
-├── Input/                  # ✗ Should be in Infrastructure
-├── Installers/             # ✓ OK
-├── KnifeThrower/           # ✗ Mixed concerns - should be split
-├── Level/                  # ✗ Mixed concerns - should be split
-├── Persistence/            # ✓ OK structure, needs minor adjustments
-├── Pooling/                # ✗ Should be in Infrastructure
-├── PowerUps/               # ✗ Mixed concerns - should be split
-├── Presentation/           # ✓ Good structure for UI
-├── Settings/               # ✗ Should be in Domain/Infrastructure
-└── UI/                     # ✗ Legacy - should merge into Presentation
-```
-
----
-
-## Target Folder Structure
-
-```
-Game/
-├── Domain/                           # Pure C# - NO Unity dependencies
-│   ├── Knife/
-│   │   ├── KnifeState.cs             # State constants
-│   │   └── KnifeImpactType.cs        # (move from Entities)
-│   ├── Target/
-│   │   └── TargetState.cs            # State constants
-│   ├── Collectible/
-│   │   └── CollectibleState.cs       # State constants
-│   ├── Level/
-│   │   ├── LevelStats.cs             # ✓ EXISTS
-│   │   └── LevelConfig.cs            # (pure data portion)
-│   ├── Stage/
-│   │   ├── StageStats.cs             # ✓ EXISTS
-│   │   └── StageConfig.cs            # (pure data portion)
-│   ├── Player/
-│   │   └── PlayerStats.cs            # ✓ EXISTS
-│   ├── PowerUp/
-│   │   └── PowerUpInventoryData.cs   # (move from PowerUps/Data)
-│   └── Settings/
-│       └── GameSettingsData.cs       # Pure settings data
-│
-├── App/                              # Application Layer
-│   ├── Flow/
-│   │   ├── Events/                   # ✓ EXISTS
-│   │   ├── Game/
-│   │   │   ├── GameData.cs
-│   │   │   ├── GameStateMachine.cs
-│   │   │   └── States/
-│   │   ├── Level/
-│   │   │   ├── LevelData.cs
-│   │   │   ├── LevelFlowController.cs
-│   │   │   ├── LevelStateMachine.cs
-│   │   │   └── States/
-│   │   ├── Stage/
-│   │   │   ├── StageData.cs
-│   │   │   ├── StageFlowController.cs
-│   │   │   ├── StageStateMachine.cs
-│   │   │   └── States/
-│   │   └── Interfaces/
-│   ├── Services/
-│   │   ├── Throwing/
-│   │   │   ├── IThrowService.cs
-│   │   │   └── ThrowService.cs
-│   │   ├── PowerUp/
-│   │   │   ├── IPowerUpService.cs
-│   │   │   └── PowerUpService.cs
-│   │   ├── Collision/
-│   │   │   ├── CollisionHandlerRegistrar.cs
-│   │   │   ├── KnifeHitTargetHandler.cs
-│   │   │   ├── KnifeHitKnifeHandler.cs
-│   │   │   └── KnifeHitCollectibleHandler.cs
-│   │   ├── Level/
-│   │   │   └── LevelSpawner.cs
-│   │   └── Settings/
-│   │       └── SettingsService.cs
-│   └── UseCases/
-│       └── (future use case classes)
-│
-├── Infrastructure/                   # External systems & factories
-│   ├── Input/
-│   │   ├── InputAdapter.cs
-│   │   └── InputSystem_Actions.cs
-│   ├── Audio/
-│   │   ├── AudioPlayer.cs
-│   │   └── SoundSettings.cs          # SO Configuration
-│   ├── Feedback/
-│   │   ├── KnifeAudioFeedbackService.cs
-│   │   ├── CollectibleAudioFeedbackService.cs
-│   │   ├── LevelAudioFeedbackService.cs
-│   │   └── VFXFeedbackService.cs
-│   ├── Pooling/
-│   │   ├── KnifePoolProvider.cs
-│   │   ├── KnifePoolService.cs
-│   │   ├── ParticlePoolProvider.cs
-│   │   ├── PrefabsConfiguration.cs
-│   │   └── PrefabEntry.cs
-│   ├── Factories/
-│   │   ├── TargetFactory.cs
-│   │   ├── TargetBehaviorFactory.cs
-│   │   ├── StageFailFactorySO.cs     # ✓ EXISTS
-│   │   └── CollectibleSpawner.cs
-│   ├── Events/
-│   │   ├── Knife/
-│   │   │   ├── KnifeImpactEventChannel.cs
-│   │   │   └── KnifeThrownEventChannel.cs
-│   │   ├── Collectible/
-│   │   │   └── CollectibleHitEventChannel.cs
-│   │   └── PowerUp/
-│   │       ├── PowerUpActivatedEventChannel.cs
-│   │       └── PowerUpUsedEventChannel.cs
-│   ├── Configs/
-│   │   ├── KnifeThrowConfigAsset.cs
-│   │   ├── PowerUpCatalog.cs
-│   │   ├── PowerUpConfigBase.cs
-│   │   ├── SuperKnifeConfig.cs
-│   │   ├── MultipleKnivesConfig.cs
-│   │   ├── CollectiblesBladeConfig.cs
-│   │   ├── StagesConfigAsset.cs
-│   │   └── StagesConfigCatalog.cs
-│   └── Animation/
-│       ├── KnifeLoadAnimationConfig.cs
-│       ├── TargetHitAnimationConfig.cs
-│       ├── TargetSpawnAnimationConfig.cs
-│       └── SpriteShatterAnimationConfig.cs
-│
-├── Presentation/                     # UI & Entity Views (MVP)
-│   ├── Common/
-│   │   ├── BasePopupView.cs          # ✓ EXISTS
-│   │   └── BaseView.cs               # ✓ EXISTS
-│   ├── HUD/                          # ✓ EXISTS (properly structured)
-│   │   ├── Collectibles/
-│   │   ├── KnifeMagazine/
-│   │   ├── MuteButton/
-│   │   ├── PowerUps/
-│   │   └── StageProgress/
-│   ├── Popups/                       # ✓ EXISTS
-│   │   └── StageFail/
-│   ├── Controllers/
-│   │   └── UIController.cs           # (move from UI/Controllers)
-│   └── Entities/                     # NEW: MVP for game entities
-│       ├── Knife/
-│       │   ├── Interfaces/
-│       │   │   └── IKnifeView.cs
-│       │   ├── Models/
-│       │   │   └── KnifeModel.cs
-│       │   ├── Views/
-│       │   │   ├── KnifeView.cs
-│       │   │   └── KnifeThrowerView.cs
-│       │   ├── Presenters/
-│       │   │   └── KnifePresenter.cs
-│       │   ├── States/               # State machine stays with presentation
-│       │   └── Feedback/
-│       │       └── KnifeLoadAnimator.cs
-│       ├── Target/
-│       │   ├── Interfaces/
-│       │   │   └── ITargetView.cs
-│       │   ├── Models/
-│       │   │   └── TargetModel.cs
-│       │   ├── Views/
-│       │   │   └── TargetView.cs
-│       │   ├── Presenters/
-│       │   │   └── TargetPresenter.cs
-│       │   ├── Behaviors/            # Runtime behaviors
-│       │   │   ├── LocalBehaviorRuntime.cs
-│       │   │   ├── WorldBehaviorRuntime.cs
-│       │   │   └── RotationBehaviors/
-│       │   └── Feedback/
-│       │       ├── TargetHitFeedback.cs
-│       │       ├── TargetSpawnAnimator.cs
-│       │       └── SpriteShatter/
-│       └── Collectible/
-│           ├── Interfaces/
-│           │   └── ICollectibleView.cs
-│           ├── Models/
-│           │   └── CollectibleModel.cs
-│           ├── Views/
-│           │   └── CollectibleView.cs
-│           └── Presenters/
-│               └── CollectiblePresenter.cs
-│
-├── Persistence/                      # ✓ EXISTS (properly structured)
-│   ├── Data/
-│   │   ├── PlayerData.cs
-│   │   ├── PlayerProgressData.cs
-│   │   └── PlayerSettingsData.cs
-│   ├── Interfaces/
-│   │   └── IPlayerDataStore.cs
-│   ├── Services/
-│   │   └── PlayerDataService.cs
-│   └── Storage/
-│       └── FilePlayerDataStore.cs
-│
-├── DI/                               # ✓ EXISTS
-│   └── BaseInstallerSO.cs
-│
-└── Installers/                       # ✓ EXISTS
-    └── (all installer SOs)
-```
-
----
-
-## Migration Tasks by Script
-
-### Phase 1: Domain Layer Population
-
-#### 1.1 Move Pure Data Classes to Domain
-
-| Current Path | Target Path | Action |
-|-------------|-------------|--------|
-| `Entities/Knife/Data/KnifeImpactType.cs` | `Domain/Knife/KnifeImpactType.cs` | Move |
-| `Entities/Knife/Data/KnifeImpactEventData.cs` | `Domain/Knife/KnifeImpactEventData.cs` | Move |
-| `Entities/Knife/Data/KnifeSpawnRequestData.cs` | `Domain/Knife/KnifeSpawnRequestData.cs` | Move |
-| `Entities/Collectible/Data/CollectibleConfig.cs` | `Domain/Collectible/CollectibleConfig.cs` | Move |
-| `Entities/Collectible/Data/CollectibleHitEventData.cs` | `Domain/Collectible/CollectibleHitEventData.cs` | Move |
-| `Entities/Target/Data/TargetConfig.cs` | `Domain/Target/TargetConfig.cs` | Move |
-| `Entities/Target/Data/PreStuckKnifeConfig.cs` | `Domain/Target/PreStuckKnifeConfig.cs` | Move |
-| `PowerUps/Data/PowerUpInventoryData.cs` | `Domain/PowerUp/PowerUpInventoryData.cs` | Move |
-| `PowerUps/Data/PowerUpActivatedEventData.cs` | `Domain/PowerUp/PowerUpActivatedEventData.cs` | Move |
-| `PowerUps/Data/PowerUpUsedEventData.cs` | `Domain/PowerUp/PowerUpUsedEventData.cs` | Move |
-| `PowerUps/Data/PowerUpRuntimeState.cs` | `Domain/PowerUp/PowerUpRuntimeState.cs` | Move |
-| `PowerUps/Data/PowerUpThrowContext.cs` | `Domain/PowerUp/PowerUpThrowContext.cs` | Move |
-| `KnifeThrower/Configs/KnifeThrowConfiguration.cs` | `Domain/Knife/KnifeThrowConfiguration.cs` | Move (pure data) |
-
-#### 1.2 Create New Domain Files
-
-| File | Purpose |
-|------|---------|
-| `Domain/Knife/KnifeState.cs` | State constants for knife |
-| `Domain/Target/TargetState.cs` | State constants for target |
-| `Domain/Collectible/CollectibleState.cs` | State constants for collectible |
-
----
-
-### Phase 2: App Layer Migration
-
-#### 2.1 Move Flow Controllers
-
-| Current Path | Target Path | Action |
-|-------------|-------------|--------|
-| `Flow/Game/GameData.cs` | `App/Flow/Game/GameData.cs` | Move |
-| `Flow/Game/GameStateMachine.cs` | `App/Flow/Game/GameStateMachine.cs` | Move |
-| `Flow/Game/States/*` | `App/Flow/Game/States/*` | Move all |
-| `Flow/Level/LevelData.cs` | `App/Flow/Level/LevelData.cs` | Move |
-| `Flow/Level/LevelFlowController.cs` | `App/Flow/Level/LevelFlowController.cs` | Move |
-| `Flow/Level/States/*` | `App/Flow/Level/States/*` | Move all |
-| `Flow/Stage/StageData.cs` | `App/Flow/Stage/StageData.cs` | Move |
-| `Flow/Stage/StageFlowController.cs` | `App/Flow/Stage/StageFlowController.cs` | Move |
-| `Flow/Stage/States/*` | `App/Flow/Stage/States/*` | Move all |
-| `Flow/Interfaces/*` | `App/Flow/Interfaces/*` | Move all |
-| `GameFlowController.cs` | `App/Flow/GameFlowController.cs` | Move |
-
-#### 2.2 Move Services
-
-| Current Path | Target Path | Action |
-|-------------|-------------|--------|
-| `KnifeThrower/Services/ThrowService.cs` | `App/Services/Throwing/ThrowService.cs` | Move |
-| `KnifeThrower/Interfaces/IThrowService.cs` | `App/Services/Throwing/IThrowService.cs` | Move |
-| `KnifeThrower/Interfaces/IPlayerThrowInputListener.cs` | `App/Services/Throwing/IPlayerThrowInputListener.cs` | Move |
-| `KnifeThrower/Interfaces/IKnifeThrowerView.cs` | `Presentation/Entities/Knife/Interfaces/IKnifeThrowerView.cs` | Move |
-| `PowerUps/Services/PowerUpService.cs` | `App/Services/PowerUp/PowerUpService.cs` | Move |
-| `PowerUps/Services/CollectibleRegistry.cs` | `App/Services/Collectible/CollectibleRegistry.cs` | Move |
-| `PowerUps/Interfaces/IPowerUpService.cs` | `App/Services/PowerUp/IPowerUpService.cs` | Move |
-| `PowerUps/Interfaces/IPowerUp.cs` | `Domain/PowerUp/IPowerUp.cs` | Move (interface) |
-| `CollisionHandlers/CollisionHandlerRegistrar.cs` | `App/Services/Collision/CollisionHandlerRegistrar.cs` | Move |
-| `CollisionHandlers/KnifeHitTargetHandler.cs` | `App/Services/Collision/KnifeHitTargetHandler.cs` | Move |
-| `CollisionHandlers/KnifeHitKnifeHandler.cs` | `App/Services/Collision/KnifeHitKnifeHandler.cs` | Move |
-| `CollisionHandlers/KnifeHitCollectibleHandler.cs` | `App/Services/Collision/KnifeHitCollectibleHandler.cs` | Move |
-| `Level/Spawning/LevelSpawner.cs` | `App/Services/Level/LevelSpawner.cs` | Move |
-| `Level/Interfaces/ILevelSpawner.cs` | `App/Services/Level/ILevelSpawner.cs` | Move |
-| `Level/Interfaces/ILevelCatalog.cs` | `App/Services/Level/ILevelCatalog.cs` | Move |
-| `UI/Services/SettingsService.cs` | `App/Services/Settings/SettingsService.cs` | Move |
-
----
-
-### Phase 3: Infrastructure Layer Migration
-
-#### 3.1 Move Input System
-
-| Current Path | Target Path | Action |
-|-------------|-------------|--------|
-| `Input/InputAdapter.cs` | `Infrastructure/Input/InputAdapter.cs` | Move |
-| `Input/InputSystem_Actions.cs` | `Infrastructure/Input/InputSystem_Actions.cs` | Move |
-
-#### 3.2 Move Audio Infrastructure
-
-| Current Path | Target Path | Action |
-|-------------|-------------|--------|
-| `Feedback/Audio/Systems/AudioPlayer.cs` | `Infrastructure/Audio/AudioPlayer.cs` | Move |
-| `Feedback/Audio/Data/SoundSettings.cs` | `Infrastructure/Audio/SoundSettings.cs` | Move |
-| `Feedback/Audio/Interfaces/IAudioPlayer.cs` | `Infrastructure/Audio/IAudioPlayer.cs` | Move |
-
-#### 3.3 Move Feedback Services
-
-| Current Path | Target Path | Action |
-|-------------|-------------|--------|
-| `Feedback/Audio/Services/KnifeAudioFeedbackService.cs` | `Infrastructure/Feedback/KnifeAudioFeedbackService.cs` | Move |
-| `Feedback/Audio/Services/CollectibleAudioFeedbackService.cs` | `Infrastructure/Feedback/CollectibleAudioFeedbackService.cs` | Move |
-| `Feedback/Audio/Services/LevelAudioFeedbackService.cs` | `Infrastructure/Feedback/LevelAudioFeedbackService.cs` | Move |
-| `Feedback/VFX/Services/VFXFeedbackService.cs` | `Infrastructure/Feedback/VFXFeedbackService.cs` | Move |
-
-#### 3.4 Move Pooling
-
-| Current Path | Target Path | Action |
-|-------------|-------------|--------|
-| `Pooling/KnifePoolProvider.cs` | `Infrastructure/Pooling/KnifePoolProvider.cs` | Move |
-| `Pooling/KnifePoolService.cs` | `Infrastructure/Pooling/KnifePoolService.cs` | Move |
-| `Pooling/KnifePrefabEntry.cs` | `Infrastructure/Pooling/KnifePrefabEntry.cs` | Move |
-| `Pooling/ParticlePoolProvider.cs` | `Infrastructure/Pooling/ParticlePoolProvider.cs` | Move |
-| `Pooling/ParticlePrefabEntry.cs` | `Infrastructure/Pooling/ParticlePrefabEntry.cs` | Move |
-| `Pooling/ParticleReturnHandler.cs` | `Infrastructure/Pooling/ParticleReturnHandler.cs` | Move |
-| `Pooling/PrefabEntry.cs` | `Infrastructure/Pooling/PrefabEntry.cs` | Move |
-| `Pooling/PrefabsConfiguration.cs` | `Infrastructure/Pooling/PrefabsConfiguration.cs` | Move |
-
-#### 3.5 Move Factories
-
-| Current Path | Target Path | Action |
-|-------------|-------------|--------|
-| `Entities/Target/Factories/TargetFactory.cs` | `Infrastructure/Factories/TargetFactory.cs` | Move |
-| `Entities/Target/Factories/TargetBehaviorFactory.cs` | `Infrastructure/Factories/TargetBehaviorFactory.cs` | Move |
-| `Entities/Collectible/Spawning/CollectibleSpawner.cs` | `Infrastructure/Factories/CollectibleSpawner.cs` | Move |
-
-#### 3.6 Move Event Channels
-
-| Current Path | Target Path | Action |
-|-------------|-------------|--------|
-| `Entities/Knife/Events/KnifeImpactEventChannel.cs` | `Infrastructure/Events/Knife/KnifeImpactEventChannel.cs` | Move |
-| `KnifeThrower/Events/KnifeThrownEventChannel.cs` | `Infrastructure/Events/Knife/KnifeThrownEventChannel.cs` | Move |
-| `Entities/Collectible/Events/CollectibleHitEventChannel.cs` | `Infrastructure/Events/Collectible/CollectibleHitEventChannel.cs` | Move |
-| `PowerUps/Events/PowerUpActivatedEventChannel.cs` | `Infrastructure/Events/PowerUp/PowerUpActivatedEventChannel.cs` | Move |
-| `PowerUps/Events/PowerUpUsedEventChannel.cs` | `Infrastructure/Events/PowerUp/PowerUpUsedEventChannel.cs` | Move |
-
-#### 3.7 Move Configurations (SO Assets)
-
-| Current Path | Target Path | Action |
-|-------------|-------------|--------|
-| `KnifeThrower/Configs/KnifeThrowConfigAsset.cs` | `Infrastructure/Configs/KnifeThrowConfigAsset.cs` | Move |
-| `PowerUps/Configs/PowerUpCatalog.cs` | `Infrastructure/Configs/PowerUpCatalog.cs` | Move |
-| `PowerUps/Configs/PowerUpConfigBase.cs` | `Infrastructure/Configs/PowerUpConfigBase.cs` | Move |
-| `PowerUps/Configs/SuperKnifeConfig.cs` | `Infrastructure/Configs/SuperKnifeConfig.cs` | Move |
-| `PowerUps/Configs/MultipleKnivesConfig.cs` | `Infrastructure/Configs/MultipleKnivesConfig.cs` | Move |
-| `PowerUps/Configs/CollectiblesBladeConfig.cs` | `Infrastructure/Configs/CollectiblesBladeConfig.cs` | Move |
-| `Level/Configurations/Stage/StagesConfigAsset.cs` | `Infrastructure/Configs/StagesConfigAsset.cs` | Move |
-| `Level/Configurations/Stage/StagesConfigCatalog.cs` | `Infrastructure/Configs/StagesConfigCatalog.cs` | Move |
-| `Level/Configurations/Stage/StageConfig.cs` | `Infrastructure/Configs/StageConfig.cs` | Move (SO portion) |
-| `Level/Configurations/Stage/StageLayoutSettings.cs` | `Infrastructure/Configs/StageLayoutSettings.cs` | Move |
-| `Level/Configurations/Level/LevelConfig.cs` | `Infrastructure/Configs/LevelConfig.cs` | Move (SO portion) |
-| `Settings/GameSettings.cs` | `Infrastructure/Configs/GameSettings.cs` | Move |
-
-#### 3.8 Move Animation Configs
-
-| Current Path | Target Path | Action |
-|-------------|-------------|--------|
-| `Feedback/Animation/Data/KnifeLoadAnimationConfig.cs` | `Infrastructure/Animation/KnifeLoadAnimationConfig.cs` | Move |
-| `Feedback/Animation/Data/SpriteShatterAnimationConfig.cs` | `Infrastructure/Animation/SpriteShatterAnimationConfig.cs` | Move |
-| `Feedback/Animation/Data/TargetHitAnimationConfig.cs` | `Infrastructure/Animation/TargetHitAnimationConfig.cs` | Move |
-| `Feedback/Animation/Data/TargetSpawnAnimationConfig.cs` | `Infrastructure/Animation/TargetSpawnAnimationConfig.cs` | Move |
-
----
-
-### Phase 4: Presentation Layer - Entity MVP Refactoring
-
-#### 4.1 Move Entity Views to Presentation
-
-| Current Path | Target Path | Action |
-|-------------|-------------|--------|
-| `Entities/Knife/Views/KnifeView.cs` | `Presentation/Entities/Knife/Views/KnifeView.cs` | Move + Refactor to passive |
-| `Entities/Knife/Views/KnifeThrowerView.cs` | `Presentation/Entities/Knife/Views/KnifeThrowerView.cs` | Move |
-| `Entities/Knife/Interfaces/IKnifeViewContext.cs` | `Presentation/Entities/Knife/Interfaces/IKnifeViewContext.cs` | Move |
-| `Entities/Knife/States/*` | `Presentation/Entities/Knife/States/*` | Move all |
-| `Entities/Knife/Feedback/KnifeLoadAnimator.cs` | `Presentation/Entities/Knife/Feedback/KnifeLoadAnimator.cs` | Move |
-| `Entities/Target/Views/TargetView.cs` | `Presentation/Entities/Target/Views/TargetView.cs` | Move + Refactor to passive |
-| `Entities/Target/Interfaces/ITargetView.cs` | `Presentation/Entities/Target/Interfaces/ITargetView.cs` | Move |
-| `Entities/Target/Interfaces/ITargetHitFeedback.cs` | `Presentation/Entities/Target/Interfaces/ITargetHitFeedback.cs` | Move |
-| `Entities/Target/Interfaces/ILocalTargetBehavior.cs` | `Presentation/Entities/Target/Behaviors/ILocalTargetBehavior.cs` | Move |
-| `Entities/Target/Interfaces/IWorldTargetBehavior.cs` | `Presentation/Entities/Target/Behaviors/IWorldTargetBehavior.cs` | Move |
-| `Entities/Target/Logic/*` | `Presentation/Entities/Target/Behaviors/*` | Move all |
-| `Entities/Target/RotationBehaviors/*` | `Presentation/Entities/Target/Behaviors/Rotation/*` | Move all |
-| `Entities/Target/WorldBehaviors/*` | `Presentation/Entities/Target/Behaviors/World/*` | Move all |
-| `Entities/Target/Services/StickPositionService.cs` | `Presentation/Entities/Target/Services/StickPositionService.cs` | Move |
-| `Entities/Target/Feedback/*` | `Presentation/Entities/Target/Feedback/*` | Move all |
-| `Entities/Target/Data/Behaviors/*` | `Presentation/Entities/Target/Behaviors/Data/*` | Move all |
-| `Entities/Collectible/Views/CollectibleView.cs` | `Presentation/Entities/Collectible/Views/CollectibleView.cs` | Move + Refactor to passive |
-| `PowerUps/Views/PowerUpButtonView.cs` | `Presentation/HUD/PowerUps/PowerUpButtonView.cs` | Move |
-
-#### 4.2 Move Legacy UI to Presentation
-
-| Current Path | Target Path | Action |
-|-------------|-------------|--------|
-| `UI/Controllers/UIController.cs` | `Presentation/Controllers/UIController.cs` | Move |
-| `UI/Interfaces/ILevelHudData.cs` | `Presentation/HUD/Interfaces/ILevelHudData.cs` | Move |
-| `UI/ViewModels/LevelHudViewModel.cs` | `Presentation/HUD/ViewModels/LevelHudViewModel.cs` | Move |
-
-#### 4.3 Create New MVP Components for Entities
-
-**Knife MVP:**
-
-| File | Purpose |
-|------|---------|
-| `Presentation/Entities/Knife/Interfaces/IKnifeView.cs` | Passive view interface |
-| `Presentation/Entities/Knife/Models/KnifeModel.cs` | Reactive model with state |
-| `Presentation/Entities/Knife/Presenters/KnifePresenter.cs` | Logic coordinator |
-
-**Target MVP:**
-
-| File | Purpose |
-|------|---------|
-| `Presentation/Entities/Target/Models/TargetModel.cs` | Reactive model with hits, state |
-| `Presentation/Entities/Target/Presenters/TargetPresenter.cs` | Logic coordinator |
-
-**Collectible MVP:**
-
-| File | Purpose |
-|------|---------|
-| `Presentation/Entities/Collectible/Interfaces/ICollectibleView.cs` | Passive view interface |
-| `Presentation/Entities/Collectible/Models/CollectibleModel.cs` | Reactive model |
-| `Presentation/Entities/Collectible/Presenters/CollectiblePresenter.cs` | Logic coordinator |
-
----
-
-### Phase 5: Cleanup
-
-#### 5.1 Delete Empty/Redundant Folders
-
-After migration, delete these folders:
-
-```
-Game/CollisionHandlers/     # All moved to App/Services/Collision/
-Game/Entities/              # All moved to Presentation/Entities/ and Domain/
-Game/Feedback/              # All moved to Infrastructure/
-Game/Flow/                  # All moved to App/Flow/
-Game/Input/                 # All moved to Infrastructure/Input/
-Game/KnifeThrower/          # All split between App/, Domain/, Infrastructure/
-Game/Level/                 # All split between App/, Domain/, Infrastructure/
-Game/Pooling/               # All moved to Infrastructure/Pooling/
-Game/PowerUps/              # All split between App/, Domain/, Infrastructure/
-Game/Settings/              # All moved to Infrastructure/Configs/
-Game/UI/                    # All moved to Presentation/
-```
-
----
-
-## Assembly Definition Updates
-
-### New/Updated Assembly Definitions
-
-| Assembly | Purpose | References |
-|----------|---------|------------|
-| `Game.Domain` | Pure domain models | None (no Unity refs) |
-| `Game.App` | Application services | Game.Domain, Common, VContainer |
-| `Game.Infrastructure` | External systems | Game.Domain, Game.App, Common, Unity, VContainer |
-| `Game.Presentation` | Views & presenters | Game.Domain, Game.App, Game.Infrastructure, Common, R3, UniTask, VContainer |
-| `Game.Persistence` | Data storage | Game.Domain, Common |
-
-### Assembly Reference Map
-
-```
-                    ┌─────────────────┐
-                    │   Game.Domain   │
-                    │   (Pure C#)     │
-                    └────────┬────────┘
-                             │
-              ┌──────────────┼──────────────┐
-              │              │              │
-              ▼              ▼              ▼
-      ┌───────────┐  ┌─────────────┐  ┌─────────────┐
-      │ Game.App  │  │  Game.      │  │ Game.       │
-      │           │  │ Persistence │  │Presentation │
-      └─────┬─────┘  └─────────────┘  └──────┬──────┘
-            │                                │
-            └──────────────┬─────────────────┘
-                           │
-                    ┌──────▼──────┐
-                    │   Game.     │
-                    │Infrastructure│
-                    └─────────────┘
-```
-
----
-
-## Entity MVP Refactoring Details
-
-### Current KnifeView Problems
-
-1. Contains state machine logic
-2. Handles collision detection and routing
-3. Manages its own out-of-view detection
-4. Contains power-up awareness (IsSuperKnife)
-5. Directly communicates with event channels
-
-### Target KnifeView (Passive)
-
+**Current State:**
 ```csharp
-public interface IKnifeView : IPooledView
+// TargetConfig.cs - Has BOTH domain data AND Unity serialization
+[Serializable]
+public class TargetConfig : ISerializationCallbackReceiver
 {
-    Transform Transform { get; }
-    Rigidbody2D Rigidbody { get; }
-    SpriteRenderer SpriteRenderer { get; }
-    Observable<Collision2D> OnTriggerEnter { get; }
-    
-    void SetActive(bool isActive);
-    void SetSuperKnifeVisual(bool isSuper);
-    void PlayStickAnimation();
-    void PlayBounceAnimation();
-    void PlayShatterEffect();
-    void SetColliderEnabled(bool enabled);
-    void SetVelocity(Vector2 velocity);
-    void SetPosition(Vector3 position);
-    void SetRotation(Quaternion rotation);
-    void SetParent(Transform parent);
+    [field: SerializeField] public TargetView PrefabOverride { get; }  // Unity ref
+    [field: SerializeField] public float BaseScale { get; }             // Pure data
+    [field: SerializeField] public Vector3 InitialOffset { get; }       // Unity type
+    [field: SerializeField] public int KnivesToBreak { get; }           // Pure data
 }
 ```
 
-### Target KnifeModel (Reactive State)
-
+**Solution:** Create domain interfaces + infrastructure implementations
 ```csharp
-public class KnifeModel : IModel
+// Domain: ITargetConfig.cs - Pure interface
+public interface ITargetConfig
 {
-    public ReactiveProperty<int> State { get; } = new(KnifeState.Idle);
-    public ReactiveProperty<bool> IsSuperKnife { get; } = new(false);
-    public ReactiveProperty<float> ThrowSpeed { get; } = new(0f);
-    public ReactiveProperty<bool> IsInFlight { get; } = new(false);
+    float BaseScale { get; }
+    int KnivesToBreak { get; }
+    float InitialRotation { get; }
+    IReadOnlyList<ICollectibleConfig> Collectibles { get; }
+}
+
+// Infrastructure: TargetConfig.cs - Unity serialization (unchanged, but implements interface)
+[Serializable]
+public class TargetConfig : ISerializationCallbackReceiver, ITargetConfig { ... }
+```
+
+### Problem 2: Views Contain Business Logic
+
+**Current State (KnifeView.cs):**
+```csharp
+public class KnifeView : MonoBehaviour
+{
+    private KnifeStateMachine _StateMachine;  // Logic in view!
     
-    public void Reset()
+    private void Update()
     {
-        State.Value = KnifeState.Idle;
-        IsSuperKnife.Value = false;
-        ThrowSpeed.Value = 0f;
-        IsInFlight.Value = false;
+        _StateMachine?.Update(Time.deltaTime);  // Logic in view!
+        CheckOutOfView();                        // Logic in view!
+    }
+    
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // Collision routing logic in view!
     }
 }
 ```
 
-### Target KnifePresenter (Logic)
-
+**Solution:** Extract logic to Presenter, View becomes passive
 ```csharp
-public class KnifePresenter : BasePresenter<IKnifeView, KnifeModel>
+// Passive View
+public class KnifeView : MonoBehaviour, IKnifeView
 {
-    private readonly KnifeStateMachine _StateMachine;
-    private readonly IEventChannel<CollisionData> _CollisionChannel;
-    private readonly IEventChannel<KnifeImpactEventData> _ImpactChannel;
+    public Observable<Collider2D> OnTriggerEnter2D { get; }  // Expose as observable
+    public void SetVelocity(Vector2 velocity) { ... }        // Just execute commands
+    public void PlayAnimation(string name) { ... }           // Just execute commands
+}
+
+// Presenter handles all logic
+public class KnifePresenter : IDisposable
+{
+    private readonly IKnifeView _view;
+    private readonly KnifeModel _model;
+    private readonly KnifeStateMachine _stateMachine;
     
-    public KnifePresenter(
-        IKnifeView view,
-        KnifeModel model,
-        IEventChannel<CollisionData> collisionChannel,
-        IEventChannel<KnifeImpactEventData> impactChannel) : base(view, model)
+    public void Update(float deltaTime)
     {
-        _CollisionChannel = collisionChannel;
-        _ImpactChannel = impactChannel;
+        _stateMachine.Update(deltaTime);
+        CheckOutOfView();
+    }
+}
+```
+
+### Problem 3: Services Depend on Concrete Types
+
+**Current State (PowerUpService.cs):**
+```csharp
+public class PowerUpService
+{
+    private readonly KnifePoolProvider _KnifePoolProvider;  // Concrete dependency
+    private readonly PlayerDataService _PlayerDataService;  // Concrete dependency
+}
+```
+
+**Solution:** Depend on interfaces from Domain
+```csharp
+// Domain interfaces
+public interface IKnifePoolProvider { ... }
+public interface IPlayerDataService { ... }
+
+// App service depends on abstractions
+public class PowerUpService : IPowerUpService
+{
+    private readonly IKnifePoolProvider _knifePoolProvider;
+    private readonly IPlayerDataService _playerDataService;
+}
+```
+
+---
+
+## Target Architecture
+
+### Layer Dependency Rules
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      PRESENTATION                           │
+│  (Views, Presenters, UI Components)                         │
+│  Depends on: Domain, App                                    │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                          APP                                 │
+│  (Services, Flow Controllers, Use Cases)                    │
+│  Depends on: Domain only                                    │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                        DOMAIN                                │
+│  (Interfaces, Value Objects, Domain Events)                 │
+│  Depends on: NOTHING                                        │
+└─────────────────────────────────────────────────────────────┘
+                              ▲
+                              │
+┌─────────────────────────────────────────────────────────────┐
+│                    INFRASTRUCTURE                            │
+│  (Configs, Factories, Unity Adapters, Event Channels)       │
+│  Depends on: Domain, App                                    │
+│  IMPLEMENTS: Domain interfaces                               │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Assembly Definitions
+
+| Assembly | Allowed Dependencies | Contains |
+|----------|---------------------|----------|
+| `Game.Domain` | None | Interfaces, pure data, value objects |
+| `Game.App` | Game.Domain | Services, flow controllers |
+| `Game.Infrastructure` | Game.Domain, Game.App, UnityEngine | Factories, configs, adapters |
+| `Game.Presentation` | Game.Domain, Game.App, UnityEngine | Views, presenters |
+| `Game.Persistence` | Game.Domain | Storage implementations |
+
+---
+
+## Complete Script Inventory & Refactoring Plan
+
+### Legend
+- ✅ **Keep**: No changes needed
+- 🔄 **Move**: Relocate to correct layer
+- ✂️ **Split**: Extract interface/implementation
+- 🔨 **Refactor**: Significant logic changes (MVP)
+- 🆕 **Create**: New file needed
+
+---
+
+## Phase 1: Domain Layer - Create Interfaces & Pure Types
+
+### 1.1 Create Domain Interfaces for Configs
+
+| New Interface | Purpose | Implemented By |
+|---------------|---------|----------------|
+| `Domain/Configs/ITargetConfig.cs` | Target configuration contract | `TargetConfig` |
+| `Domain/Configs/ICollectibleConfig.cs` | Collectible configuration contract | `CollectibleConfig` |
+| `Domain/Configs/ILevelConfig.cs` | Level configuration contract | `LevelConfig` |
+| `Domain/Configs/IStageConfig.cs` | Stage configuration contract | `StageConfig` |
+| `Domain/Configs/IPowerUpConfig.cs` | Power-up configuration contract | `PowerUpConfigBase` |
+| `Domain/Configs/IKnifeThrowConfig.cs` | Throw configuration contract | `KnifeThrowConfiguration` |
+
+**Example - ITargetConfig.cs:**
+```csharp
+namespace Game.Domain.Configs
+{
+    /// <summary>
+    /// Contract for target configuration data.
+    /// </summary>
+    public interface ITargetConfig
+    {
+        float BaseScale { get; }
+        int KnivesToBreak { get; }
+        float InitialRotation { get; }
+        IReadOnlyList<ICollectibleConfig> Collectibles { get; }
+        IReadOnlyList<IPreStuckKnifeConfig> PreStuckKnives { get; }
+        ITargetBehaviorSet Behaviors { get; }
+    }
+}
+```
+
+### 1.2 Create Domain Interfaces for Services
+
+| New Interface | Purpose | Implemented By |
+|---------------|---------|----------------|
+| `Domain/Services/IKnifePoolProvider.cs` | Knife pooling contract | `KnifePoolProvider` |
+| `Domain/Services/IParticlePoolProvider.cs` | Particle pooling contract | `ParticlePoolProvider` |
+| `Domain/Services/IAudioPlayer.cs` | Audio playback contract | Already exists, move |
+| `Domain/Services/IPlayerDataService.cs` | Player data contract | `PlayerDataService` |
+| `Domain/Services/IPlayerDataStore.cs` | Storage contract | Already exists, move |
+
+### 1.3 Create Domain Interfaces for Views
+
+| New Interface | Purpose | Implemented By |
+|---------------|---------|----------------|
+| `Domain/Views/IKnifeView.cs` | Passive knife view contract | `KnifeView` |
+| `Domain/Views/ITargetView.cs` | Already exists, enhance | `TargetView` |
+| `Domain/Views/ICollectibleView.cs` | Passive collectible view contract | `CollectibleView` |
+| `Domain/Views/IKnifeThrowerView.cs` | Already exists, move | `KnifeThrowerView` |
+
+### 1.4 Create Domain Value Objects & Events
+
+| File | Purpose | Action |
+|------|---------|--------|
+| `Domain/Events/KnifeImpactEvent.cs` | Knife impact data | 🆕 Create pure version |
+| `Domain/Events/CollectibleHitEvent.cs` | Collectible hit data | 🆕 Create pure version |
+| `Domain/Events/LevelCompletedEvent.cs` | Level completed data | 🆕 Create pure version |
+| `Domain/Events/LevelFailedEvent.cs` | Level failed data | 🆕 Create pure version |
+| `Domain/Values/Position2D.cs` | Pure 2D position (float X, Y) | 🆕 Create |
+| `Domain/Values/Position3D.cs` | Pure 3D position (float X, Y, Z) | 🆕 Create |
+| `Domain/PowerUp/PowerUpInventoryData.cs` | Already pure | 🔄 Move |
+| `Domain/Level/LevelStats.cs` | Already pure | ✅ Keep |
+| `Domain/Stage/StageStats.cs` | Already pure | ✅ Keep |
+| `Domain/Player/PlayerStats.cs` | Already pure | ✅ Keep |
+
+### 1.5 Replace Enums with Static Classes (per workspace rules)
+
+| Current Enum | New Static Class | Location |
+|--------------|------------------|----------|
+| `KnifeImpactType` | `KnifeImpactTypes` | `Domain/Knife/KnifeImpactTypes.cs` |
+
+**Example - KnifeImpactTypes.cs:**
+```csharp
+namespace Game.Domain.Knife
+{
+    /// <summary>
+    /// Types of knife impact outcomes.
+    /// </summary>
+    public static class KnifeImpactTypes
+    {
+        public const int Stuck = 0;
+        public const int Bounced = 1;
+        public const int OutOfView = 2;
+    }
+}
+```
+
+---
+
+## Phase 2: Infrastructure Layer - Implement Interfaces & Organize
+
+### 2.1 Update Configs to Implement Domain Interfaces
+
+| File | Action |
+|------|--------|
+| `Entities/Target/Data/TargetConfig.cs` | ✂️ Add `: ITargetConfig`, move to `Infrastructure/Configs/` |
+| `Entities/Collectible/Data/CollectibleConfig.cs` | ✂️ Add `: ICollectibleConfig`, move to `Infrastructure/Configs/` |
+| `Level/Configurations/Level/LevelConfig.cs` | ✂️ Add `: ILevelConfig`, move to `Infrastructure/Configs/` |
+| `Level/Configurations/Stage/StageConfig.cs` | ✂️ Add `: IStageConfig`, move to `Infrastructure/Configs/` |
+| `PowerUps/Configs/PowerUpConfigBase.cs` | ✂️ Add `: IPowerUpConfig`, move to `Infrastructure/Configs/` |
+| `KnifeThrower/Configs/KnifeThrowConfigAsset.cs` | 🔄 Move to `Infrastructure/Configs/` |
+
+### 2.2 Move Pooling to Infrastructure
+
+| Current Path | Target Path | Action |
+|-------------|-------------|--------|
+| `Pooling/KnifePoolProvider.cs` | `Infrastructure/Pooling/KnifePoolProvider.cs` | ✂️ Implement `IKnifePoolProvider` |
+| `Pooling/ParticlePoolProvider.cs` | `Infrastructure/Pooling/ParticlePoolProvider.cs` | ✂️ Implement `IParticlePoolProvider` |
+| `Pooling/PrefabsConfiguration.cs` | `Infrastructure/Pooling/PrefabsConfiguration.cs` | 🔄 Move |
+| `Pooling/KnifePoolService.cs` | `Infrastructure/Pooling/KnifePoolService.cs` | 🔄 Move |
+| `Pooling/*.cs` | `Infrastructure/Pooling/` | 🔄 Move all remaining |
+
+### 2.3 Move Factories to Infrastructure
+
+| Current Path | Target Path | Action |
+|-------------|-------------|--------|
+| `Entities/Target/Factories/TargetFactory.cs` | `Infrastructure/Factories/TargetFactory.cs` | 🔄 Move |
+| `Entities/Target/Factories/TargetBehaviorFactory.cs` | `Infrastructure/Factories/TargetBehaviorFactory.cs` | 🔄 Move |
+| `Entities/Collectible/Spawning/CollectibleSpawner.cs` | `Infrastructure/Factories/CollectibleSpawner.cs` | 🔄 Move |
+| `Infrastructure/Factories/StageFailFactorySO.cs` | ✅ Keep | Already correct |
+
+### 2.4 Move Event Channels to Infrastructure
+
+| Current Path | Target Path | Action |
+|-------------|-------------|--------|
+| `Entities/Knife/Events/KnifeImpactEventChannel.cs` | `Infrastructure/Events/KnifeImpactEventChannel.cs` | 🔄 Move |
+| `KnifeThrower/Events/KnifeThrownEventChannel.cs` | `Infrastructure/Events/KnifeThrownEventChannel.cs` | 🔄 Move |
+| `Entities/Collectible/Events/CollectibleHitEventChannel.cs` | `Infrastructure/Events/CollectibleHitEventChannel.cs` | 🔄 Move |
+| `PowerUps/Events/*.cs` | `Infrastructure/Events/` | 🔄 Move all |
+| `App/Flow/Events/*.cs` | ✅ Keep | Already correct location |
+
+### 2.5 Move Input Adapters to Infrastructure
+
+| Current Path | Target Path | Action |
+|-------------|-------------|--------|
+| `Input/InputAdapter.cs` | `Infrastructure/Input/InputAdapter.cs` | 🔄 Move |
+| `Input/InputSystem_Actions.cs` | `Infrastructure/Input/InputSystem_Actions.cs` | 🔄 Move |
+
+### 2.6 Move Audio Infrastructure
+
+| Current Path | Target Path | Action |
+|-------------|-------------|--------|
+| `Feedback/Audio/Systems/AudioPlayer.cs` | `Infrastructure/Audio/AudioPlayer.cs` | ✂️ Implement `IAudioPlayer` |
+| `Feedback/Audio/Data/SoundSettings.cs` | `Infrastructure/Audio/SoundSettings.cs` | 🔄 Move |
+
+### 2.7 Move Animation Configs
+
+| Current Path | Target Path | Action |
+|-------------|-------------|--------|
+| `Feedback/Animation/Data/*.cs` | `Infrastructure/Animation/` | 🔄 Move all |
+
+### 2.8 Move Game Settings
+
+| Current Path | Target Path | Action |
+|-------------|-------------|--------|
+| `Settings/GameSettings.cs` | `Infrastructure/Configs/GameSettings.cs` | 🔄 Move |
+
+---
+
+## Phase 3: App Layer - Consolidate Services & Flow
+
+### 3.1 Move Flow Controllers
+
+| Current Path | Target Path | Action |
+|-------------|-------------|--------|
+| `Flow/Game/GameData.cs` | `App/Flow/Game/GameData.cs` | 🔄 Move |
+| `Flow/Game/GameStateMachine.cs` | `App/Flow/Game/GameStateMachine.cs` | 🔄 Move |
+| `Flow/Game/States/*.cs` | `App/Flow/Game/States/` | 🔄 Move all |
+| `Flow/Level/LevelData.cs` | `App/Flow/Level/LevelData.cs` | 🔄 Move |
+| `Flow/Level/LevelFlowController.cs` | `App/Flow/Level/LevelFlowController.cs` | 🔄 Move |
+| `Flow/Level/States/*.cs` | `App/Flow/Level/States/` | 🔄 Move all |
+| `Flow/Stage/StageData.cs` | `App/Flow/Stage/StageData.cs` | 🔄 Move |
+| `Flow/Stage/StageFlowController.cs` | `App/Flow/Stage/StageFlowController.cs` | 🔄 Move |
+| `Flow/Stage/States/*.cs` | `App/Flow/Stage/States/` | 🔄 Move all |
+| `Flow/Interfaces/*.cs` | `App/Flow/Interfaces/` | 🔄 Move all |
+| `GameFlowController.cs` | `App/Flow/GameFlowController.cs` | 🔄 Move |
+
+### 3.2 Move & Refactor Services
+
+| Current Path | Target Path | Action |
+|-------------|-------------|--------|
+| `KnifeThrower/Services/ThrowService.cs` | `App/Services/ThrowService.cs` | ✂️ Depend on interfaces |
+| `PowerUps/Services/PowerUpService.cs` | `App/Services/PowerUpService.cs` | ✂️ Depend on interfaces |
+| `PowerUps/Services/CollectibleRegistry.cs` | `App/Services/CollectibleRegistry.cs` | 🔄 Move |
+| `Level/Spawning/LevelSpawner.cs` | `App/Services/LevelSpawner.cs` | ✂️ Depend on interfaces |
+| `UI/Services/SettingsService.cs` | `App/Services/SettingsService.cs` | 🔄 Move |
+
+### 3.3 Move Collision Handlers to App
+
+| Current Path | Target Path | Action |
+|-------------|-------------|--------|
+| `CollisionHandlers/CollisionHandlerRegistrar.cs` | `App/Collision/CollisionHandlerRegistrar.cs` | 🔄 Move |
+| `CollisionHandlers/KnifeHitTargetHandler.cs` | `App/Collision/KnifeHitTargetHandler.cs` | 🔄 Move |
+| `CollisionHandlers/KnifeHitKnifeHandler.cs` | `App/Collision/KnifeHitKnifeHandler.cs` | 🔄 Move |
+| `CollisionHandlers/KnifeHitCollectibleHandler.cs` | `App/Collision/KnifeHitCollectibleHandler.cs` | 🔄 Move |
+
+### 3.4 Move Service Interfaces
+
+| Current Path | Target Path | Action |
+|-------------|-------------|--------|
+| `KnifeThrower/Interfaces/IThrowService.cs` | `App/Services/Interfaces/IThrowService.cs` | 🔄 Move |
+| `KnifeThrower/Interfaces/IPlayerThrowInputListener.cs` | `App/Services/Interfaces/IPlayerThrowInputListener.cs` | 🔄 Move |
+| `PowerUps/Interfaces/IPowerUpService.cs` | `App/Services/Interfaces/IPowerUpService.cs` | 🔄 Move |
+| `Level/Interfaces/ILevelSpawner.cs` | `App/Services/Interfaces/ILevelSpawner.cs` | 🔄 Move |
+| `Level/Interfaces/ILevelCatalog.cs` | `App/Services/Interfaces/ILevelCatalog.cs` | 🔄 Move |
+
+### 3.5 Move Feedback Services to App (they're application logic)
+
+| Current Path | Target Path | Action |
+|-------------|-------------|--------|
+| `Feedback/Audio/Services/KnifeAudioFeedbackService.cs` | `App/Services/Feedback/KnifeAudioFeedbackService.cs` | ✂️ Depend on `IAudioPlayer` |
+| `Feedback/Audio/Services/CollectibleAudioFeedbackService.cs` | `App/Services/Feedback/CollectibleAudioFeedbackService.cs` | ✂️ Depend on `IAudioPlayer` |
+| `Feedback/Audio/Services/LevelAudioFeedbackService.cs` | `App/Services/Feedback/LevelAudioFeedbackService.cs` | ✂️ Depend on `IAudioPlayer` |
+| `Feedback/VFX/Services/VFXFeedbackService.cs` | `App/Services/Feedback/VFXFeedbackService.cs` | 🔄 Move |
+
+---
+
+## Phase 4: Presentation Layer - Implement Full MVP
+
+### 4.1 Knife MVP Refactoring
+
+**Current Structure:**
+```
+Entities/Knife/
+├── Views/KnifeView.cs         # Contains logic + visuals
+├── States/                    # State machine
+└── Feedback/                  # Animations
+```
+
+**Target Structure:**
+```
+Presentation/Entities/Knife/
+├── Interfaces/
+│   └── IKnifeView.cs          # 🆕 Passive view interface
+├── Models/
+│   └── KnifeModel.cs          # 🆕 Reactive state
+├── Views/
+│   └── KnifeView.cs           # 🔨 Refactor to passive
+├── Presenters/
+│   └── KnifePresenter.cs      # 🆕 All logic here
+├── States/                    # 🔄 Move, used by presenter
+└── Feedback/                  # 🔄 Move
+```
+
+**KnifeView Refactoring Details:**
+
+| Remove from KnifeView | Move to KnifePresenter |
+|-----------------------|------------------------|
+| `_StateMachine` field | Presenter owns state machine |
+| `Update()` logic | `Presenter.Tick(deltaTime)` |
+| `CheckOutOfView()` | Presenter handles |
+| `OnTriggerEnter2D` logic | Expose as `Observable<Collider2D>` |
+| Collision channel communication | Presenter subscribes/raises |
+| Pool return logic | Presenter handles |
+
+**New IKnifeView.cs:**
+```csharp
+namespace Game.Presentation.Entities.Knife.Interfaces
+{
+    public interface IKnifeView
+    {
+        Transform Transform { get; }
+        SpriteRenderer SpriteRenderer { get; }
         
-        InitializeStateMachine();
-        BindModelToView();
-        BindViewToPresenter();
-    }
-    
-    private void BindModelToView()
-    {
-        Model.IsSuperKnife
-            .Subscribe(isSuper => View.SetSuperKnifeVisual(isSuper))
-            .AddTo(Disposable);
-            
-        Model.State
-            .Where(s => s == KnifeState.Stuck)
-            .Subscribe(_ => View.PlayStickAnimation())
-            .AddTo(Disposable);
-    }
-    
-    private void BindViewToPresenter()
-    {
-        View.OnTriggerEnter
-            .Subscribe(HandleCollision)
-            .AddTo(Disposable);
-    }
-    
-    public void Launch(Vector2 direction, float speed)
-    {
-        Model.ThrowSpeed.Value = speed;
-        Model.IsInFlight.Value = true;
-        Model.State.Value = KnifeState.Flying;
-        View.SetVelocity(direction * speed);
+        Observable<Collider2D> OnTriggerEntered { get; }
+        
+        void SetActive(bool isActive);
+        void SetColliderEnabled(bool enabled);
+        void SetParent(Transform parent);
+        void SetLocalPosition(Vector3 position);
+        void SetLocalRotation(Quaternion rotation);
+        void SetVelocity(Vector2 velocity);
+        void PlayShatterEffect();
+        void ResetVisuals();
     }
 }
 ```
 
+**New KnifeModel.cs:**
+```csharp
+namespace Game.Presentation.Entities.Knife.Models
+{
+    public class KnifeModel
+    {
+        public ReactiveProperty<int> State { get; } = new(KnifeStates.Pooled);
+        public ReactiveProperty<bool> IsSuperKnife { get; } = new(false);
+        public ReactiveProperty<float> ThrowSpeed { get; } = new(0f);
+        
+        public void Reset()
+        {
+            State.Value = KnifeStates.Pooled;
+            IsSuperKnife.Value = false;
+            ThrowSpeed.Value = 0f;
+        }
+    }
+}
+```
+
+**New KnifePresenter.cs:**
+```csharp
+namespace Game.Presentation.Entities.Knife.Presenters
+{
+    public class KnifePresenter : IDisposable
+    {
+        private readonly IKnifeView _view;
+        private readonly KnifeModel _model;
+        private readonly KnifeStateMachine _stateMachine;
+        private readonly IEventChannel<CollisionData> _collisionChannel;
+        private readonly CompositeDisposable _disposables = new();
+        
+        public KnifePresenter(
+            IKnifeView view,
+            KnifeModel model,
+            IEventChannel<CollisionData> collisionChannel)
+        {
+            _view = view;
+            _model = model;
+            _collisionChannel = collisionChannel;
+            
+            InitializeStateMachine();
+            BindView();
+            BindModel();
+        }
+        
+        private void BindView()
+        {
+            _view.OnTriggerEntered
+                .Subscribe(HandleTriggerEnter)
+                .AddTo(_disposables);
+        }
+        
+        private void BindModel()
+        {
+            _model.IsSuperKnife
+                .Subscribe(UpdateSuperKnifeVisuals)
+                .AddTo(_disposables);
+        }
+        
+        public void Tick(float deltaTime)
+        {
+            _stateMachine.Update(deltaTime);
+            CheckOutOfView();
+        }
+        
+        public void Dispose()
+        {
+            _disposables.Dispose();
+        }
+    }
+}
+```
+
+### 4.2 Target MVP Refactoring
+
+**Current Structure:**
+```
+Entities/Target/
+├── Views/TargetView.cs        # Contains hit logic, destruction logic
+├── Logic/                     # Behavior runtimes
+├── RotationBehaviors/         # Rotation implementations
+├── WorldBehaviors/            # World movement implementations
+├── Feedback/                  # Visual feedback
+└── Services/StickPositionService.cs
+```
+
+**Target Structure:**
+```
+Presentation/Entities/Target/
+├── Interfaces/
+│   └── ITargetView.cs         # ✅ Already exists, enhance
+├── Models/
+│   └── TargetModel.cs         # 🆕 Reactive state
+├── Views/
+│   └── TargetView.cs          # 🔨 Refactor to passive
+├── Presenters/
+│   └── TargetPresenter.cs     # 🆕 All logic here
+├── Behaviors/                 # 🔄 Move
+│   ├── LocalBehaviorRuntime.cs
+│   ├── WorldBehaviorRuntime.cs
+│   ├── Rotation/
+│   └── World/
+├── Feedback/                  # 🔄 Move
+└── Services/                  # 🔄 Move
+```
+
+**TargetView Refactoring Details:**
+
+| Remove from TargetView | Move to TargetPresenter |
+|------------------------|------------------------|
+| `HitsReceived` tracking | `TargetModel.HitsReceived` |
+| `KnivesToBreak` logic | Presenter checks |
+| `RegisterHit()` | Presenter handles |
+| `DestroyTarget()` decision | Presenter decides, view executes |
+| Behavior tick logic | Presenter owns runtimes |
+| `OnDestroyed` event | Presenter raises domain event |
+
+**New TargetModel.cs:**
+```csharp
+namespace Game.Presentation.Entities.Target.Models
+{
+    public class TargetModel
+    {
+        public ReactiveProperty<int> HitsReceived { get; } = new(0);
+        public ReactiveProperty<int> KnivesToBreak { get; } = new(5);
+        public ReactiveProperty<float> Rotation { get; } = new(0f);
+        public ReactiveProperty<bool> IsDestroyed { get; } = new(false);
+        
+        public bool ShouldDestroy => HitsReceived.Value >= KnivesToBreak.Value;
+        
+        public void RegisterHit()
+        {
+            HitsReceived.Value++;
+        }
+        
+        public void Reset(int knivesToBreak, float initialRotation)
+        {
+            HitsReceived.Value = 0;
+            KnivesToBreak.Value = knivesToBreak;
+            Rotation.Value = initialRotation;
+            IsDestroyed.Value = false;
+        }
+    }
+}
+```
+
+### 4.3 Collectible MVP Refactoring
+
+**Current Structure:**
+```
+Entities/Collectible/
+├── Views/CollectibleView.cs   # Contains hit logic
+└── Data/                      # Configs
+```
+
+**Target Structure:**
+```
+Presentation/Entities/Collectible/
+├── Interfaces/
+│   └── ICollectibleView.cs    # 🆕 Passive view interface
+├── Models/
+│   └── CollectibleModel.cs    # 🆕 Reactive state
+├── Views/
+│   └── CollectibleView.cs     # 🔨 Refactor to passive
+└── Presenters/
+    └── CollectiblePresenter.cs # 🆕 All logic here
+```
+
+**CollectibleView Refactoring Details:**
+
+| Remove from CollectibleView | Move to CollectiblePresenter |
+|-----------------------------|------------------------------|
+| `_IsHit` flag | `CollectibleModel.IsHit` |
+| `MarkAsHit()` logic | Presenter handles |
+| `Value` property logic | Model holds value |
+| Registry interaction | Presenter handles |
+
+### 4.4 KnifeThrower MVP Refactoring
+
+**Current Structure:**
+```
+Entities/Knife/Views/KnifeThrowerView.cs  # In wrong location
+KnifeThrower/                              # Scattered
+```
+
+**Target Structure:**
+```
+Presentation/Entities/KnifeThrower/
+├── Interfaces/
+│   └── IKnifeThrowerView.cs   # 🔄 Move from KnifeThrower/Interfaces
+├── Models/
+│   └── KnifeThrowerModel.cs   # 🆕 Loaded knives state
+├── Views/
+│   └── KnifeThrowerView.cs    # 🔄 Move + refactor
+└── Presenters/
+    └── KnifeThrowerPresenter.cs # 🆕 Loading/throwing logic
+```
+
+### 4.5 Move UI Components to Presentation
+
+| Current Path | Target Path | Action |
+|-------------|-------------|--------|
+| `UI/Controllers/UIController.cs` | `Presentation/Controllers/UIController.cs` | 🔄 Move |
+| `UI/Interfaces/ILevelHudData.cs` | `Presentation/HUD/Interfaces/ILevelHudData.cs` | 🔄 Move |
+| `UI/ViewModels/LevelHudViewModel.cs` | `Presentation/HUD/ViewModels/LevelHudViewModel.cs` | 🔄 Move |
+| `PowerUps/Views/PowerUpButtonView.cs` | `Presentation/HUD/PowerUps/PowerUpButtonView.cs` | 🔄 Move |
+
 ---
 
-## Migration Priority Order
+## Phase 5: Persistence Layer Organization
 
-### Batch 1: Foundation (No Breaking Changes)
-1. Create new folders in Domain/, App/, Infrastructure/
-2. Create assembly definitions
-3. Create new interfaces and models
+| Current Path | Target Path | Action |
+|-------------|-------------|--------|
+| `Persistence/Data/*.cs` | ✅ Keep | Already correct |
+| `Persistence/Interfaces/*.cs` | ✅ Keep | Already correct |
+| `Persistence/Services/PlayerDataService.cs` | ✂️ Implement `IPlayerDataService` | Add interface |
+| `Persistence/Storage/*.cs` | ✅ Keep | Already correct |
 
-### Batch 2: Domain Migration
-1. Move pure data classes to Domain/
-2. Update namespaces
-3. Update assembly references
+---
 
-### Batch 3: App Migration
-1. Move Flow/ to App/Flow/
-2. Move services to App/Services/
-3. Update namespaces
+## Phase 6: Cleanup & Deletion
 
-### Batch 4: Infrastructure Migration
-1. Move Input/, Pooling/, Audio/
-2. Move Factories/, Events/, Configs/
-3. Update namespaces
+### Delete Empty Folders After Migration
 
-### Batch 5: Presentation Migration
-1. Move Entity views
-2. Create MVP components
-3. Refactor views to passive
-4. Update namespaces
+```
+Game/CollisionHandlers/        # Moved to App/Collision/
+Game/Entities/                 # Moved to Presentation/Entities/
+Game/Feedback/                 # Split to App/Services/ and Infrastructure/
+Game/Flow/                     # Moved to App/Flow/
+Game/Input/                    # Moved to Infrastructure/Input/
+Game/KnifeThrower/             # Split between App/ and Presentation/
+Game/Level/                    # Split between App/ and Infrastructure/
+Game/Pooling/                  # Moved to Infrastructure/Pooling/
+Game/PowerUps/                 # Split between App/, Domain/, Infrastructure/
+Game/Settings/                 # Moved to Infrastructure/Configs/
+Game/UI/                       # Moved to Presentation/
+```
 
-### Batch 6: Cleanup
-1. Delete empty folders
-2. Verify all references
-3. Update installers if needed
+---
+
+## Execution Order
+
+### Recommended Sequence
+
+```
+1. FOUNDATION (Week 1)
+   ├── Create folder structure
+   ├── Create assembly definitions
+   └── Create Domain interfaces (no breaking changes)
+
+2. INFRASTRUCTURE (Week 2)
+   ├── Add interface implementations to configs
+   ├── Move pooling, factories, events
+   └── Move input, audio adapters
+
+3. APP LAYER (Week 3)
+   ├── Move flow controllers
+   ├── Move & refactor services
+   └── Update service dependencies to use interfaces
+
+4. PRESENTATION - MVP (Week 4-5)
+   ├── Create Knife MVP (Model, Presenter, refactor View)
+   ├── Create Target MVP (Model, Presenter, refactor View)
+   ├── Create Collectible MVP (Model, Presenter, refactor View)
+   ├── Create KnifeThrower MVP
+   └── Move UI components
+
+5. CLEANUP (Week 6)
+   ├── Delete empty folders
+   ├── Update all installers
+   └── Full testing
+```
+
+---
+
+## File Creation Summary
+
+### New Files to Create
+
+**Domain Layer (17 files):**
+```
+Domain/
+├── Configs/
+│   ├── ITargetConfig.cs
+│   ├── ICollectibleConfig.cs
+│   ├── ILevelConfig.cs
+│   ├── IStageConfig.cs
+│   ├── IPowerUpConfig.cs
+│   ├── IKnifeThrowConfig.cs
+│   ├── IPreStuckKnifeConfig.cs
+│   └── ITargetBehaviorSet.cs
+├── Services/
+│   ├── IKnifePoolProvider.cs
+│   └── IParticlePoolProvider.cs
+├── Views/
+│   └── IKnifeView.cs
+├── Values/
+│   ├── Position2D.cs
+│   └── Position3D.cs
+└── Knife/
+    └── KnifeImpactTypes.cs (replaces enum)
+```
+
+**Presentation Layer - MVP (12 files):**
+```
+Presentation/Entities/
+├── Knife/
+│   ├── Models/KnifeModel.cs
+│   └── Presenters/KnifePresenter.cs
+├── Target/
+│   ├── Models/TargetModel.cs
+│   └── Presenters/TargetPresenter.cs
+├── Collectible/
+│   ├── Interfaces/ICollectibleView.cs
+│   ├── Models/CollectibleModel.cs
+│   └── Presenters/CollectiblePresenter.cs
+└── KnifeThrower/
+    ├── Models/KnifeThrowerModel.cs
+    └── Presenters/KnifeThrowerPresenter.cs
+```
 
 ---
 
 ## Checklist
 
-### Domain Layer
-- [ ] Move KnifeImpactType, KnifeImpactEventData, KnifeSpawnRequestData
-- [ ] Move CollectibleConfig, CollectibleHitEventData
-- [ ] Move TargetConfig, PreStuckKnifeConfig
-- [ ] Move PowerUp data classes
-- [ ] Create KnifeState, TargetState, CollectibleState constants
+### Phase 1: Domain Interfaces
+- [ ] Create all config interfaces
+- [ ] Create service interfaces
+- [ ] Create view interfaces
+- [ ] Create value objects
+- [ ] Create KnifeImpactTypes static class
 
-### App Layer
-- [ ] Move all Flow/ contents to App/Flow/
-- [ ] Move ThrowService and interfaces
-- [ ] Move PowerUpService and interfaces
-- [ ] Move CollisionHandlers
-- [ ] Move LevelSpawner
-- [ ] Move SettingsService
+### Phase 2: Infrastructure
+- [ ] Update configs to implement interfaces
+- [ ] Move pooling with interface implementations
+- [ ] Move factories
+- [ ] Move event channels
+- [ ] Move input adapters
+- [ ] Move audio infrastructure
 
-### Infrastructure Layer
-- [ ] Move InputAdapter
-- [ ] Move AudioPlayer and SoundSettings
-- [ ] Move all Feedback services
-- [ ] Move all Pooling classes
-- [ ] Move all Factories
-- [ ] Move all Event Channels
-- [ ] Move all Configuration SOs
+### Phase 3: App Layer
+- [ ] Move all flow controllers
+- [ ] Move all services
+- [ ] Update services to depend on interfaces
+- [ ] Move collision handlers
+- [ ] Move feedback services
 
-### Presentation Layer
-- [ ] Move KnifeView and create MVP triad
-- [ ] Move TargetView and create MVP triad
-- [ ] Move CollectibleView and create MVP triad
-- [ ] Move UIController
-- [ ] Move PowerUpButtonView to HUD
+### Phase 4: Presentation MVP
+- [ ] Create KnifeModel, KnifePresenter, refactor KnifeView
+- [ ] Create TargetModel, TargetPresenter, refactor TargetView
+- [ ] Create CollectibleModel, CollectiblePresenter, refactor CollectibleView
+- [ ] Create KnifeThrower MVP
+- [ ] Move UI components
 
-### Assembly Definitions
-- [ ] Update Game.Domain.asmdef
-- [ ] Create Game.App.asmdef
-- [ ] Create Game.Infrastructure.asmdef
-- [ ] Update Game.Presentation.asmdef (if exists) or create
-- [ ] Update Game.asmdef main references
-
-### Cleanup
+### Phase 5: Cleanup
 - [ ] Delete empty folders
-- [ ] Verify no broken references
-- [ ] Update installers
-
----
-
-## Risk Mitigation
-
-| Risk | Mitigation |
-|------|------------|
-| Prefab references break | Move files via Unity Editor, not file system |
-| Assembly reference errors | Update asmdef files BEFORE moving code |
-| Namespace conflicts | Use IDE refactoring tools |
-| Missing DI registrations | Update installers alongside file moves |
-| Runtime null references | Test after each batch |
+- [ ] Update all installers
+- [ ] Update assembly references
+- [ ] Full integration testing
 
 ---
 
 ## Notes
 
-1. **Preserve XML summaries** - Do not delete any existing documentation
-2. **Move via Unity Editor** - To preserve GUID references
-3. **Batch updates** - Make changes in small testable batches
-4. **Assembly boundaries** - Ensure Domain has NO Unity dependencies
-5. **Interface segregation** - Views should only expose rendering methods
+1. **DO NOT change namespaces** during moves - keeps existing references working
+2. **DO NOT move meta files** - Unity handles them automatically
+3. **Preserve XML summaries** - Do not delete any existing documentation
+4. **Test after each phase** - Don't batch multiple phases
+5. **Update installers** - DI registrations must reflect new interface types
 
 ---
 
-*Document Version: 1.0*
+*Document Version: 2.0*
 *Created: December 2024*
-
+*Complete refactoring with proper interface separation and MVP implementation*
