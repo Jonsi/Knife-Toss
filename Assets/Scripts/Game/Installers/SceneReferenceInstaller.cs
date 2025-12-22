@@ -1,13 +1,6 @@
-using Game.Entities.Knife.Views;
 using Game.KnifeThrower.Interfaces;
 using Game.Feedback.Audio.Interfaces;
 using Game.Feedback.Audio.Systems;
-using Game.Presentation.HUD.Collectibles;
-using Game.Presentation.HUD.KnifeMagazine;
-using Game.Presentation.HUD.MuteButton;
-using Game.Presentation.HUD.PowerUps;
-using Game.Presentation.HUD.StageProgress;
-using Game.UI.Controllers;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -17,26 +10,15 @@ namespace Game.Installers
     /// <summary>
     /// Registers scene-bound components explicitly to avoid hierarchy scans.
     /// </summary>
-    public class SceneReferencesInstaller : MonoBehaviour, IInstaller
+    public class SceneReferenceInstaller : MonoBehaviour, IInstaller
     {
         [Header("Scene References")]
-        [SerializeField] private UISceneReferences _UISceneReferences;
-        [SerializeField] private LevelSceneReferences _LevelSceneReferences;
+        [SerializeField] private SceneReferences _SceneReferences;
         [SerializeField] private AudioPlayer _AudioPlayer;
 
         public void Install(IContainerBuilder builder)
         {
-            if (_UISceneReferences != null)
-            {
-                builder.RegisterComponent(_UISceneReferences);
-                RegisterUI(builder, _UISceneReferences);
-            }
-
-            if (_LevelSceneReferences != null)
-            {
-                builder.RegisterComponent(_LevelSceneReferences);
-                RegisterLevel(builder, _LevelSceneReferences);
-            }
+            RegisterScene(builder, _SceneReferences);
 
             if (_AudioPlayer != null)
             {
@@ -44,18 +26,18 @@ namespace Game.Installers
             }
         }
 
-        private static void RegisterUI(IContainerBuilder builder, UISceneReferences refs)
+        private static void RegisterScene(IContainerBuilder builder, SceneReferences refs)
         {
-            RegisterComponent(builder, refs.Controller);
+            if (refs == null)
+                return;
+
+            builder.RegisterComponent(refs);
+            RegisterComponent(builder, refs.UIController);
             RegisterComponent(builder, refs.KnifeMagazineView);
             RegisterComponent(builder, refs.StageProgressView);
             RegisterComponent(builder, refs.CollectibleCountView);
             RegisterComponent(builder, refs.MuteButtonView);
             RegisterComponent(builder, refs.PowerUpHudView);
-        }
-
-        private static void RegisterLevel(IContainerBuilder builder, LevelSceneReferences refs)
-        {
             if (refs.KnifeThrowerView != null)
             {
                 builder.RegisterComponent(refs.KnifeThrowerView).As<IKnifeThrowerView>();

@@ -30,7 +30,7 @@ namespace Game.Installers
         public override void Install(IContainerBuilder builder)
         {
             builder.Register<LevelSpawner>(Lifetime.Singleton)
-                .WithParameter<Transform>(resolver => resolver.Resolve<LevelSceneReferences>().LevelRoot)
+                .WithParameter<Transform>(resolver => resolver.Resolve<SceneReferences>().LevelRoot)
                 .As<ILevelSpawner>();
             builder.Register<LevelData>(Lifetime.Singleton);
             builder.Register<LevelStateMachine>(Lifetime.Singleton);
