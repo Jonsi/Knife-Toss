@@ -25,9 +25,7 @@ namespace Game.Installers
         public override void Install(IContainerBuilder builder)
         {
             builder.RegisterInstance(_SoundSettings);
-            builder.Register<KnifeAudioFeedbackService>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<CollectibleAudioFeedbackService>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<LevelAudioFeedbackService>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<AudioFeedbackService>(Lifetime.Singleton).AsImplementedInterfaces();
         }
     }
 }
