@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74324e271039b474a881f379ff90d366, type: 3}
+  m_Name: PersistenceInstaller
+  m_EditorClassIdentifier: Game::Game.Installers.PersistenceInstallerSO
+  _LevelCompletedChannel: {fileID: 11400000, guid: 974f3462f6e1f6e4d9645afc67160fff, type: 2}
+  _StageCompletedChannel: {fileID: 11400000, guid: 24f3aae2e2417e2478e9677f5f8a8825, type: 2}
+  _CollectibleHitChannel: {fileID: 11400000, guid: d09bfa9eabb3b3d4a82eb07099a20991, type: 2}

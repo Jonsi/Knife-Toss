@@ -9,6 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a918fe9f67cfb744acf39c45239724c, type: 3}
-  m_Name: CommandEventChannel
-  m_EditorClassIdentifier: KnifeToss.Infrastructure::Infrastructure.Events.CommandEventChannel
+  m_Script: {fileID: 11500000, guid: 53700ff9e008d914abaade1f2d7378f0, type: 3}
+  m_Name: CollisionInstaller
+  m_EditorClassIdentifier: Game::Game.Installers.CollisionInstallerSO
+  _CollisionChannel: {fileID: 11400000, guid: 550df89ae380ec743af103ed588ae1b1, type: 2}

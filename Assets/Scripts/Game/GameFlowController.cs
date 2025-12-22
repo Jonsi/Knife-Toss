@@ -7,7 +7,7 @@ namespace Game
     /// Top-level flow controller.
     /// Manages the GameStateMachine.
     /// </summary>
-    public class GameFlowController : IStartable
+    public class GameFlowController : IPostStartable
     {
         private readonly IGameStateMachine _StateMachine;
 
@@ -20,7 +20,7 @@ namespace Game
             _StateMachine = stateMachine;
         }
 
-        public void Start()
+        public void PostStart()
         {
             _StateMachine.SetState(_StateMachine.Playing);
         }

@@ -1,7 +1,7 @@
-using Common.Events;
-using Game.Entities.Knife.Data;
+using Game.DI;
 using Game.Feedback.VFX.Services;
 using Game.Pooling;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
@@ -10,27 +10,17 @@ namespace Game.Installers
     /// <summary>
     /// Installs visual feedback systems.
     /// </summary>
-    public class VFXInstaller : IInstaller
+    [CreateAssetMenu(fileName = "VFXInstaller", menuName = "Knife Toss/Installers/VFX")]
+    public class VFXInstallerSO : BaseInstallerSO
     {
-        private readonly PrefabsConfiguration _PrefabsConfiguration;
-        private readonly IEventChannel<KnifeImpactEventData> _KnifeImpactChannel;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="VFXInstaller"/> class.
-        /// </summary>
-        public VFXInstaller(
-            PrefabsConfiguration prefabsConfiguration,
-            IEventChannel<KnifeImpactEventData> knifeImpactChannel)
-        {
-            _PrefabsConfiguration = prefabsConfiguration;
-            _KnifeImpactChannel = knifeImpactChannel;
-        }
+        [Header("Prefabs / Pooling")]
+        [SerializeField] private PrefabsConfiguration _PrefabsConfiguration;
 
         /// <summary>
         /// Registers visual feedback services.
         /// </summary>
         /// <param name="builder">Container builder instance.</param>
-        public void Install(IContainerBuilder builder)
+        public override void Install(IContainerBuilder builder)
         {
             // Only register ParticlePoolProvider if the prefab entry is available
             if (_PrefabsConfiguration?.GetKnifeHitParticles() != null)
@@ -40,7 +30,7 @@ namespace Game.Installers
                     .WithParameter(ParticlePrefabType.KnifeHitTarget);
             }
 
-            builder.RegisterEntryPoint<VFXFeedbackService>();
+            builder.Register<VFXFeedbackService>(Lifetime.Singleton).AsImplementedInterfaces();
         }
     }
 }
