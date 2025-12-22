@@ -15,28 +15,6 @@ This document is based on a comprehensive audit of every script in the codebase.
 | `Game/Pooling/KnifePoolService.cs` | 46 | **Empty** - Start() sets a bool, Dispose() clears it. No actual work. |
 | `Game/Presentation/Common/BasePopupView.cs` | 12 | **Empty wrapper** - Just inherits BaseView<T>, adds nothing. |
 
-### Empty Folders to DELETE
-
-```
-Game/Entities/Collectible/Interfaces/    (empty)
-Game/Entities/Collectible/Services/      (empty)
-Game/Level/Data/                         (empty)
-Game/Level/Events/                       (empty)
-Game/Level/States/                       (empty)
-Game/DI/                                 (only BaseInstallerSO - move it)
-Game/Pooling/Editor/                     (empty)
-Game/Feedback/VFX/Data/                  (empty)
-Game/Feedback/VFX/Systems/               (empty)
-Game/Flow/Events/                        (empty)
-Game/Infrastructure/DI/                  (empty)
-Game/UI/Common/                          (empty)
-Game/UI/Events/                          (empty)
-Game/UI/Factories/                       (empty)
-Game/UI/HUD/                             (empty)
-Game/UI/Popups/                          (empty)
-Game/UI/Presenters/                      (empty)
-Common/DI/                               (empty)
-```
 
 ### Scripts That MUST STAY (Essential)
 
