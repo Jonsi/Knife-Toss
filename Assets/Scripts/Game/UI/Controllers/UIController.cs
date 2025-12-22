@@ -4,6 +4,7 @@ using Game.App.Flow.Events;
 using Game.Flow.Level;
 using Game.Infrastructure.Factories;
 using Game.Presentation.Popups.StageFail;
+using R3;
 using UnityEngine;
 using VContainer;
 
@@ -21,6 +22,7 @@ namespace Game.UI.Controllers
 
         private IPopupNavigationService _NavigationService;
         private StageFailFactorySO _StageFailFactory;
+        private readonly CompositeDisposable _disposables = new();
 
         [Inject]
         private void Construct(
@@ -31,16 +33,22 @@ namespace Game.UI.Controllers
             _StageFailFactory = stageFailFactory;
         }
 
-        private void OnEnable()
+        private void Start()
         {
-            if (_LevelFailedChannel != null)
-                _LevelFailedChannel.Subscribe(OnLevelFailed);
+            if (_LevelFailedChannel == null)
+            {
+                return;
+            }
+
+            _LevelFailedChannel
+                .AsObservable()
+                .Subscribe(OnLevelFailed)
+                .AddTo(_disposables);
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
-            if (_LevelFailedChannel != null)
-                _LevelFailedChannel.Unsubscribe(OnLevelFailed);
+            _disposables.Dispose();
         }
 
         private void OnLevelFailed(LevelData data)
