@@ -1,5 +1,6 @@
 using Game.Flow.Interfaces;
 using Game.Flow.Level.States;
+using Game.Level.Configurations.Stage;
 using Game.Level.Data;
 using VContainer.Unity;
 

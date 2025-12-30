@@ -17,7 +17,7 @@ namespace Game.Installers
     /// </summary>
     public class StageInstaller : IInstaller
     {
-        private readonly StagesConfigAsset _StagesConfig;
+        private readonly StagesCollection _StagesConfig;
         private readonly StageCompletedEventChannel _StageCompletedChannel;
         private readonly ReturnToMenuEventChannel _ReturnToMenuChannel;
         private readonly VoidEventChannel _RetryChannel;
@@ -34,7 +34,7 @@ namespace Game.Installers
         /// <param name="restartChannel">Restart stage request channel.</param>
         /// <param name="levelStartedChannel">Level started event channel.</param>
         public StageInstaller(
-            StagesConfigAsset stagesConfig,
+            StagesCollection stagesConfig,
             StageCompletedEventChannel stageCompletedChannel,
             ReturnToMenuEventChannel returnToMenuChannel,
             VoidEventChannel retryChannel,

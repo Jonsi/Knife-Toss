@@ -28,7 +28,7 @@ namespace Game.Installers
     {
         [SerializeField] private GameSettings _GameSettings;
         [SerializeField] private KnifeThrowConfigAsset _KnifeThrowConfig;
-        [SerializeField] private StagesConfigAsset _StagesConfig;
+        [SerializeField] private StagesCollection _StagesConfig;
         
         [Header("Event Channels")]
         [SerializeField] private CollisionEventChannel _CollisionEventChannel;

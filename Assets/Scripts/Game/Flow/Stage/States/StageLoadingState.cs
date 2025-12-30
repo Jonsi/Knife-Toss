@@ -1,3 +1,4 @@
+using Game.Level.Configurations.Stage;
 using Game.Level.Data;
 
 namespace Game.Flow.Stage.States
@@ -24,4 +25,3 @@ namespace Game.Flow.Stage.States
         }
     }
 }
-

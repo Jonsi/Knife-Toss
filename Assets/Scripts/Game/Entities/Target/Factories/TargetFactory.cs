@@ -4,6 +4,7 @@ using Game.Entities.Collectible.Spawning;
 using Game.Entities.Knife.Views;
 using Game.Entities.Target.Data;
 using Game.Entities.Target.Views;
+using Game.Level.Configurations.Stage;
 using Game.Level.Data;
 using Game.Pooling;
 using UnityEngine;
