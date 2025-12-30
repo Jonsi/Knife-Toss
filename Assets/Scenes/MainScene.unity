@@ -2988,7 +2988,7 @@ MonoBehaviour:
   autoInjectGameObjects: []
   _GameSettings: {fileID: 11400000, guid: 067b2b4cb241a1c47942f156372a8db5, type: 2}
   _KnifeThrowConfig: {fileID: 11400000, guid: 5255f097d202e7341b60016482ff9511, type: 2}
-  _StagesConfig: {fileID: 11400000, guid: c091c675af0d74a4d8fceb913beecb2f, type: 2}
+  _StagesConfig: {fileID: 11400000, guid: d7b76ea65780b0f4e890085754f0d6bf, type: 2}
   _CollisionEventChannel: {fileID: 11400000, guid: 550df89ae380ec743af103ed588ae1b1, type: 2}
   _KnifeImpactEventChannel: {fileID: 11400000, guid: f05ddbed278f4b14cac948a5951b4fe9, type: 2}
   _KnifeThrownEventChannel: {fileID: 11400000, guid: 80b1350cead05974f808ed72efda1384, type: 2}
