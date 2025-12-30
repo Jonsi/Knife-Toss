@@ -3,11 +3,15 @@ using Game.Flow.Events;
 using Game.Flow.Level;
 using Game.UI.Popups;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game.UI.Controllers
 {
     public class UIController : MonoBehaviour
     {
+        [Header("Background")]
+        [SerializeField] private Image _BackgroundImage;
+
         [Header("Popups")]
         [SerializeField] private StageFailPopup _StageFailPopup;
 
@@ -15,6 +19,14 @@ namespace Game.UI.Controllers
         [SerializeField] private LevelFailedEventChannel _LevelFailedChannel;
         [SerializeField] private VoidEventChannel _RetryLevelChannel;
         [SerializeField] private VoidEventChannel _RestartStageChannel;
+
+        public void SetBackground(Sprite sprite)
+        {
+            if (_BackgroundImage != null && sprite != null)
+            {
+                _BackgroundImage.sprite = sprite;
+            }
+        }
 
         private void OnEnable()
         {

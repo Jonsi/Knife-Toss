@@ -144,6 +144,19 @@ namespace Game.Entities.Target.Views
             UpdateStuckObjectsSorting();
         }
 
+        public void SetSprite(Sprite sprite)
+        {
+            if (sprite == null) return;
+            
+            foreach (var renderer in _SpriteRenderers)
+            {
+                if (renderer != null)
+                {
+                    renderer.sprite = sprite;
+                }
+            }
+        }
+
         public void Initialize(TargetConfig config)
         {
             KnivesToBreak = config.KnivesToBreak;

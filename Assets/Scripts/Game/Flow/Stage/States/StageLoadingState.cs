@@ -20,6 +20,12 @@ namespace Game.Flow.Stage.States
                 return;
 
             StageConfig stageConfig = Machine.LevelCatalog.GetStageConfig(Context.StageIndex);
+            
+            if (stageConfig != null && stageConfig.LayoutSettings != null)
+            {
+                Machine.UIController?.SetBackground(stageConfig.LayoutSettings.BackgroundSprite);
+            }
+
             Machine.LevelFlowController.LoadLevel(stageConfig, config);
             Machine.SetState(Machine.Playing);
         }

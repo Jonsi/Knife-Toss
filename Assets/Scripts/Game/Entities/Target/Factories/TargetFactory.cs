@@ -79,6 +79,11 @@ namespace Game.Entities.Target.Factories
         /// </summary>
         public void AttachElements(TargetView instance, TargetConfig config, StageConfig stageConfig)
         {
+            if (stageConfig != null && stageConfig.LayoutSettings != null)
+            {
+                instance.SetSprite(stageConfig.LayoutSettings.TargetSprite);
+            }
+
             var knifePrefab = _PrefabsConfiguration?.GetDefaultKnifePrefab();
             var collectiblePrefab = _PrefabsConfiguration?.GetCollectiblePrefab();
 

@@ -71,6 +71,7 @@ namespace Game.Installers
                 resolver.Resolve<StageData>(),
                 resolver.Resolve<ILevelFlowController>(),
                 resolver.Resolve<ILevelCatalog>(),
+                resolver.Resolve<Game.UI.Controllers.UIController>(),
                 resolver.Resolve<LevelCompletedEventChannel>(),
                 resolver.Resolve<LevelFailedEventChannel>(),
                 _StageCompletedChannel,
