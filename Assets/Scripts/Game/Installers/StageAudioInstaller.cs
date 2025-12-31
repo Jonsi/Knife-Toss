@@ -12,12 +12,11 @@ using VContainer.Unity;
 namespace Game.Installers
 {
     /// <summary>
-    /// Installs audio feedback systems.
+    /// Installs stage-specific audio feedback systems.
+    /// Expects IAudioPlayer and SoundSettings to be provided by the parent scope (GameInstaller).
     /// </summary>
-    public class AudioInstaller : IInstaller
+    public class StageAudioInstaller : IInstaller
     {
-        private readonly SoundSettings _SoundSettings;
-        private readonly AudioPlayer _AudioPlayer;
         private readonly IEventChannel _KnifeThrownChannel;
         private readonly IEventChannel<KnifeImpactEventData> _KnifeImpactChannel;
         private readonly IEventChannel<CollectibleHitEventData> _CollectibleHitChannel;
@@ -25,19 +24,15 @@ namespace Game.Installers
         private readonly IEventChannel<LevelData> _LevelFailedChannel;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AudioInstaller"/> class.
+        /// Initializes a new instance of the <see cref="StageAudioInstaller"/> class.
         /// </summary>
-        public AudioInstaller(
-            SoundSettings soundSettings,
-            AudioPlayer audioPlayer,
+        public StageAudioInstaller(
             IEventChannel knifeThrownChannel,
             IEventChannel<KnifeImpactEventData> knifeImpactChannel,
             IEventChannel<CollectibleHitEventData> collectibleHitChannel,
             IEventChannel<LevelData> levelCompletedChannel,
             IEventChannel<LevelData> levelFailedChannel)
         {
-            _SoundSettings = soundSettings;
-            _AudioPlayer = audioPlayer;
             _KnifeThrownChannel = knifeThrownChannel;
             _KnifeImpactChannel = knifeImpactChannel;
             _CollectibleHitChannel = collectibleHitChannel;
@@ -51,9 +46,6 @@ namespace Game.Installers
         /// <param name="builder">Container builder instance.</param>
         public void Install(IContainerBuilder builder)
         {
-            builder.RegisterInstance(_SoundSettings);
-            builder.RegisterComponent(_AudioPlayer).As<IAudioPlayer>();
-
             builder.RegisterEntryPoint<KnifeAudioFeedbackService>();
             builder.RegisterEntryPoint<CollectibleAudioFeedbackService>();
             builder.RegisterEntryPoint<LevelAudioFeedbackService>();

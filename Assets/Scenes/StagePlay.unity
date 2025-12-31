@@ -2966,54 +2966,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1928512257}
-  - component: {fileID: 1928512256}
+  - component: {fileID: 1928512258}
   m_Layer: 0
-  m_Name: GameInstaller
+  m_Name: StageInstaller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1928512256
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1928512255}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bba1f60f6472c5c49b57be5865aa0765, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: KnifeToss.Bootstrapper::Bootstrapper.GameInstaller
-  parentReference:
-    TypeName: 
-  autoRun: 1
-  autoInjectGameObjects: []
-  _GameSettings: {fileID: 11400000, guid: 067b2b4cb241a1c47942f156372a8db5, type: 2}
-  _KnifeThrowConfig: {fileID: 11400000, guid: 5255f097d202e7341b60016482ff9511, type: 2}
-  _StagesConfig: {fileID: 11400000, guid: d7b76ea65780b0f4e890085754f0d6bf, type: 2}
-  _CollisionEventChannel: {fileID: 11400000, guid: 550df89ae380ec743af103ed588ae1b1, type: 2}
-  _KnifeImpactEventChannel: {fileID: 11400000, guid: f05ddbed278f4b14cac948a5951b4fe9, type: 2}
-  _KnifeThrownEventChannel: {fileID: 11400000, guid: 80b1350cead05974f808ed72efda1384, type: 2}
-  _CollectibleHitEventChannel: {fileID: 11400000, guid: d09bfa9eabb3b3d4a82eb07099a20991, type: 2}
-  _LevelCompletedEventChannel: {fileID: 11400000, guid: 974f3462f6e1f6e4d9645afc67160fff, type: 2}
-  _LevelFailedEventChannel: {fileID: 11400000, guid: 604458cf20b3869489fbff706e752db8, type: 2}
-  _StageCompletedEventChannel: {fileID: 11400000, guid: 24f3aae2e2417e2478e9677f5f8a8825, type: 2}
-  _ReturnToMenuEventChannel: {fileID: 11400000, guid: 67ee024458bba644abb8a2f664ce3204, type: 2}
-  _LevelStartedEventChannel: {fileID: 11400000, guid: 8016f38368e175c479eb37bb6b1726fd, type: 2}
-  _RetryLevelClickedChannel: {fileID: 11400000, guid: a8aafdd4ae42ad145876819d5f37bedb, type: 2}
-  _RestartStageClickedChannel: {fileID: 11400000, guid: eef8d9c482392e74bb97e0df72cf980b, type: 2}
-  _SoundSettings: {fileID: 11400000, guid: 189e658594fd4ea4d8b64463039ef584, type: 2}
-  _AudioPlayer: {fileID: 1238877331}
-  _PowerUpCatalog: {fileID: 11400000, guid: e5d29e583c76d9547a0b6378b8cece49, type: 2}
-  _PowerUpActivatedEventChannel: {fileID: 11400000, guid: 2b6171f146e7b7940afb3c72048ac1d0, type: 2}
-  _PowerUpUsedEventChannel: {fileID: 11400000, guid: c87d83ddea622ce42a7261a62f7c9c00, type: 2}
-  _PrefabsConfiguration: {fileID: 11400000, guid: 89c8339ac5c03a8469b04f345c441a2f, type: 2}
-  _KnifeThrowerView: {fileID: 497239670}
-  _LevelRoot: {fileID: 182301541}
-  _StageFailPopup: {fileID: 1957040492}
-  _UIController: {fileID: 633680713}
 --- !u!4 &1928512257
 Transform:
   m_ObjectHideFlags: 0
@@ -3029,6 +2989,43 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1928512258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928512255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53cdc5605f4161548975db6645ca1b5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.Installers.StageInstaller
+  parentReference:
+    TypeName: 
+  autoRun: 1
+  autoInjectGameObjects: []
+  _KnifeThrowConfig: {fileID: 0}
+  _StagesConfig: {fileID: 0}
+  _PrefabsConfiguration: {fileID: 0}
+  _PowerUpCatalog: {fileID: 0}
+  _KnifeThrowerView: {fileID: 0}
+  _LevelRoot: {fileID: 0}
+  _StageFailPopup: {fileID: 0}
+  _UIController: {fileID: 0}
+  _CollisionEventChannel: {fileID: 11400000, guid: 550df89ae380ec743af103ed588ae1b1, type: 2}
+  _KnifeImpactEventChannel: {fileID: 11400000, guid: f05ddbed278f4b14cac948a5951b4fe9, type: 2}
+  _KnifeThrownEventChannel: {fileID: 11400000, guid: 80b1350cead05974f808ed72efda1384, type: 2}
+  _CollectibleHitEventChannel: {fileID: 11400000, guid: d09bfa9eabb3b3d4a82eb07099a20991, type: 2}
+  _LevelCompletedEventChannel: {fileID: 11400000, guid: 974f3462f6e1f6e4d9645afc67160fff, type: 2}
+  _LevelFailedEventChannel: {fileID: 11400000, guid: 604458cf20b3869489fbff706e752db8, type: 2}
+  _StageCompletedEventChannel: {fileID: 11400000, guid: 24f3aae2e2417e2478e9677f5f8a8825, type: 2}
+  _ReturnToMenuEventChannel: {fileID: 11400000, guid: 67ee024458bba644abb8a2f664ce3204, type: 2}
+  _LevelStartedEventChannel: {fileID: 11400000, guid: 8016f38368e175c479eb37bb6b1726fd, type: 2}
+  _RetryLevelClickedChannel: {fileID: 11400000, guid: a8aafdd4ae42ad145876819d5f37bedb, type: 2}
+  _RestartStageClickedChannel: {fileID: 11400000, guid: eef8d9c482392e74bb97e0df72cf980b, type: 2}
+  _PowerUpActivatedEventChannel: {fileID: 11400000, guid: 2b6171f146e7b7940afb3c72048ac1d0, type: 2}
+  _PowerUpUsedEventChannel: {fileID: 11400000, guid: c87d83ddea622ce42a7261a62f7c9c00, type: 2}
 --- !u!1 &1957040490
 GameObject:
   m_ObjectHideFlags: 0
