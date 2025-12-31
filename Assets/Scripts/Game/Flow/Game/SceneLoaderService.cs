@@ -8,15 +8,24 @@ namespace Game.Flow.Game
     /// </summary>
     public class SceneLoaderService
     {
-        private const string MENU_SCENE = "StagesMenu";
+        private const string MAIN_MENU_SCENE = "MainMenu";
+        private const string STAGES_MENU_SCENE = "StagesMenu";
         private const string GAME_SCENE = "StagePlay";
 
         /// <summary>
         /// Loads the main menu scene.
         /// </summary>
-        public async UniTask LoadMenu()
+        public async UniTask LoadMainMenu()
         {
-            await SceneManager.LoadSceneAsync(MENU_SCENE, LoadSceneMode.Single).ToUniTask();
+            await SceneManager.LoadSceneAsync(MAIN_MENU_SCENE, LoadSceneMode.Single).ToUniTask();
+        }
+
+        /// <summary>
+        /// Loads the stages selection menu scene.
+        /// </summary>
+        public async UniTask LoadStagesMenu()
+        {
+            await SceneManager.LoadSceneAsync(STAGES_MENU_SCENE, LoadSceneMode.Single).ToUniTask();
         }
 
         /// <summary>

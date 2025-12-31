@@ -1,8 +1,9 @@
-using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using Game.Flow.Game;
 using Game.Level.Catalogs;
 using Game.Level.Configurations.Stage;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Game.UI.Stages
 {
@@ -12,19 +13,22 @@ namespace Game.UI.Stages
     public class StagesMenuController : MonoBehaviour
     {
         [Header("Configuration")]
-        [Tooltip("Collection of all stages.")]
         [SerializeField] private StagesCollection _StagesCollection;
         
         [Header("UI References")]
-        [Tooltip("Prefab for the stage item.")]
         [SerializeField] private UiStageItem _StageItemPrefab;
-
-        [Tooltip("Root container for stage items.")]
         [SerializeField] private Transform _ContentRoot;
+        [SerializeField] private Button _BackButton;
 
-        [Header("Scene Management")]
-        [Tooltip("Name of the game scene to load.")]
-        [SerializeField] private string _GameSceneName = "MainScene";
+        private SceneLoaderService _SceneLoaderService;
+
+        /// <summary>
+        /// Injects required dependencies from the DI container.
+        /// </summary>
+        public void Construct(SceneLoaderService sceneLoaderService)
+        {
+            _SceneLoaderService = sceneLoaderService;
+        }
 
         private void Start()
         {
@@ -35,11 +39,23 @@ namespace Game.UI.Stages
             }
 
             InitializeList();
+
+            if (_BackButton != null)
+            {
+                _BackButton.onClick.AddListener(OnBackClicked);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (_BackButton != null)
+            {
+                _BackButton.onClick.RemoveListener(OnBackClicked);
+            }
         }
 
         private void InitializeList()
         {
-            // Clear existing items if any (optional, useful if re-initializing)
             foreach (Transform child in _ContentRoot)
             {
                 Destroy(child.gameObject);
@@ -53,7 +69,6 @@ namespace Game.UI.Stages
 
                 var item = Instantiate(_StageItemPrefab, _ContentRoot);
                 
-                // Get icon from LayoutSettings
                 Sprite icon = null;
                 if (stageConfig.LayoutSettings != null)
                 {
@@ -66,14 +81,15 @@ namespace Game.UI.Stages
 
         private void OnStageSelected(int stageIndex)
         {
-            Debug.Log($"Selected Stage Index: {stageIndex}");
-            
-            // Save selected stage index so the game scene can read it
             PlayerPrefs.SetInt("SelectedStageIndex", stageIndex);
             PlayerPrefs.Save();
 
-            // Load the game scene
-            SceneManager.LoadScene(_GameSceneName);
+            _SceneLoaderService.LoadGame().Forget();
+        }
+
+        private void OnBackClicked()
+        {
+            _SceneLoaderService.LoadMainMenu().Forget();
         }
     }
 }

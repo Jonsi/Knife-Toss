@@ -1,5 +1,4 @@
 using System;
-using Common.Events;
 using Game.Entities.Collectible.Data;
 using Game.Entities.Collectible.Events;
 using Game.Flow.Events;

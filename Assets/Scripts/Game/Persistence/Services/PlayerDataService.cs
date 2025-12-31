@@ -59,6 +59,14 @@ namespace Game.Persistence.Services
         }
 
         /// <summary>
+        /// Gets the highest stage index the player has reached.
+        /// </summary>
+        public int GetHighestStageIndex()
+        {
+            return _CachedData.Progress.HighestStageIndex;
+        }
+
+        /// <summary>
         /// Ensures power-up inventory exists and returns the instance.
         /// </summary>
         public PowerUpInventoryData EnsurePowerUpInventory()
