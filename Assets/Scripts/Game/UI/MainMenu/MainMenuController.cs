@@ -3,6 +3,7 @@ using Game.Flow.Game;
 using Game.Persistence.Services;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 namespace Game.UI.MainMenu
 {
@@ -15,19 +16,9 @@ namespace Game.UI.MainMenu
         [SerializeField] private Button _PlayButton;
         [SerializeField] private Button _StagesButton;
 
-        private PlayerDataService _PlayerDataService;
-        private SceneLoaderService _SceneLoaderService;
-        private GameData _GameData;
-
-        /// <summary>
-        /// Injects required dependencies from the DI container.
-        /// </summary>
-        public void Construct(PlayerDataService playerDataService, SceneLoaderService sceneLoaderService, GameData gameData)
-        {
-            _PlayerDataService = playerDataService;
-            _SceneLoaderService = sceneLoaderService;
-            _GameData = gameData;
-        }
+        [Inject] private PlayerDataService _PlayerDataService;
+        [Inject] private SceneLoaderService _SceneLoaderService;
+        [Inject] private GameData _GameData;
 
         private void Start()
         {

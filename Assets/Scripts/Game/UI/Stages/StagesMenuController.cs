@@ -4,6 +4,7 @@ using Game.Level.Catalogs;
 using Game.Level.Configurations.Stage;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 namespace Game.UI.Stages
 {
@@ -20,17 +21,8 @@ namespace Game.UI.Stages
         [SerializeField] private Transform _ContentRoot;
         [SerializeField] private Button _BackButton;
 
-        private SceneLoaderService _SceneLoaderService;
-        private GameData _GameData;
-
-        /// <summary>
-        /// Injects required dependencies from the DI container.
-        /// </summary>
-        public void Construct(SceneLoaderService sceneLoaderService, GameData gameData)
-        {
-            _SceneLoaderService = sceneLoaderService;
-            _GameData = gameData;
-        }
+        [Inject] private SceneLoaderService _SceneLoaderService;
+        [Inject] private GameData _GameData;
 
         private void Start()
         {

@@ -18,13 +18,6 @@ namespace Game.Installers
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterComponent(_StagesMenuController);
-
-            builder.RegisterBuildCallback(container =>
-            {
-                var sceneLoaderService = container.Resolve<SceneLoaderService>();
-                var gameData = container.Resolve<GameData>();
-                _StagesMenuController.Construct(sceneLoaderService, gameData);
-            });
         }
     }
 }

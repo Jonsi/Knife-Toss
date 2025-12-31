@@ -19,14 +19,6 @@ namespace Game.Installers
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterComponent(_MainMenuController);
-
-            builder.RegisterBuildCallback(container =>
-            {
-                var playerDataService = container.Resolve<PlayerDataService>();
-                var sceneLoaderService = container.Resolve<SceneLoaderService>();
-                var gameData = container.Resolve<GameData>();
-                _MainMenuController.Construct(playerDataService, sceneLoaderService, gameData);
-            });
         }
     }
 }
