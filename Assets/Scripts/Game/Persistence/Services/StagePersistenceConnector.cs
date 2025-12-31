@@ -48,17 +48,17 @@ namespace Game.Persistence.Services
 
         private void OnLevelCompleted(LevelData data)
         {
-            _PlayerDataService.OnLevelCompleted(data);
+            _PlayerDataService.ForceSave();
         }
 
         private void OnStageCompleted(StageData data)
         {
-            _PlayerDataService.OnStageCompleted(data);
+            _PlayerDataService.ForceSave();
         }
 
         private void OnCollectibleHit(CollectibleHitEventData data)
         {
-            _PlayerDataService.OnCollectibleHit(data);
+            _PlayerDataService.RequestSave();
         }
     }
 }
