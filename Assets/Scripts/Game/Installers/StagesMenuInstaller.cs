@@ -22,7 +22,8 @@ namespace Game.Installers
             builder.RegisterBuildCallback(container =>
             {
                 var sceneLoaderService = container.Resolve<SceneLoaderService>();
-                _StagesMenuController.Construct(sceneLoaderService);
+                var gameData = container.Resolve<GameData>();
+                _StagesMenuController.Construct(sceneLoaderService, gameData);
             });
         }
     }

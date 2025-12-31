@@ -17,14 +17,16 @@ namespace Game.UI.MainMenu
 
         private PlayerDataService _PlayerDataService;
         private SceneLoaderService _SceneLoaderService;
+        private GameData _GameData;
 
         /// <summary>
         /// Injects required dependencies from the DI container.
         /// </summary>
-        public void Construct(PlayerDataService playerDataService, SceneLoaderService sceneLoaderService)
+        public void Construct(PlayerDataService playerDataService, SceneLoaderService sceneLoaderService, GameData gameData)
         {
             _PlayerDataService = playerDataService;
             _SceneLoaderService = sceneLoaderService;
+            _GameData = gameData;
         }
 
         private void Start()
@@ -42,8 +44,10 @@ namespace Game.UI.MainMenu
         private void OnPlayClicked()
         {
             int highestStage = _PlayerDataService.GetHighestStageIndex();
-            PlayerPrefs.SetInt("SelectedStageIndex", highestStage);
-            PlayerPrefs.Save();
+            if (_GameData != null)
+            {
+                _GameData.CurrentStageIndex = highestStage;
+            }
 
             _SceneLoaderService.LoadGame().Forget();
         }

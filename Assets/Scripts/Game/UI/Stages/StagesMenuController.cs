@@ -21,13 +21,15 @@ namespace Game.UI.Stages
         [SerializeField] private Button _BackButton;
 
         private SceneLoaderService _SceneLoaderService;
+        private GameData _GameData;
 
         /// <summary>
         /// Injects required dependencies from the DI container.
         /// </summary>
-        public void Construct(SceneLoaderService sceneLoaderService)
+        public void Construct(SceneLoaderService sceneLoaderService, GameData gameData)
         {
             _SceneLoaderService = sceneLoaderService;
+            _GameData = gameData;
         }
 
         private void Start()
@@ -81,8 +83,10 @@ namespace Game.UI.Stages
 
         private void OnStageSelected(int stageIndex)
         {
-            PlayerPrefs.SetInt("SelectedStageIndex", stageIndex);
-            PlayerPrefs.Save();
+            if (_GameData != null)
+            {
+                _GameData.CurrentStageIndex = stageIndex;
+            }
 
             _SceneLoaderService.LoadGame().Forget();
         }

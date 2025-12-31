@@ -1,6 +1,4 @@
 using System;
-using System.Threading;
-using Cysharp.Threading.Tasks;
 using Game.Flow.Game;
 using Game.Persistence.Data;
 using Game.Persistence.Interfaces;
@@ -86,12 +84,14 @@ namespace Game.Persistence.Services
         public void ReloadPowerUpInventory()
         {
             var loaded = _Store.Load();
-            if (loaded != null)
+            if (loaded?.PowerUpInventory == null)
             {
-                _CachedData = loaded;
-                EnsureDataIntegrity();
-                SyncGameData();
+                return;
             }
+
+            _CachedData ??= new PlayerData();
+            EnsureDataIntegrity();
+            _CachedData.PowerUpInventory = loaded.PowerUpInventory;
         }
 
         /// <summary>

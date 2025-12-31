@@ -53,7 +53,7 @@ namespace Game.Installers
         {
             builder.RegisterInstance(_StagesConfig);
             builder.Register<StagesConfigCatalog>(Lifetime.Singleton).As<ILevelCatalog>().AsSelf();
-            builder.Register<StageData>(Lifetime.Singleton).WithParameter(UnityEngine.PlayerPrefs.GetInt("SelectedStageIndex", 0));
+            builder.Register<StageData>(Lifetime.Singleton).WithParameter(0);
             builder.Register(CreateStageStateMachine, Lifetime.Singleton);
             builder.RegisterEntryPoint<StageFlowController>().As<IStageFlowController>();
             builder.RegisterInstance(_StageCompletedChannel);

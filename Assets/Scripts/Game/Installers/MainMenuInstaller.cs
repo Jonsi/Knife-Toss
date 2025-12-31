@@ -24,7 +24,8 @@ namespace Game.Installers
             {
                 var playerDataService = container.Resolve<PlayerDataService>();
                 var sceneLoaderService = container.Resolve<SceneLoaderService>();
-                _MainMenuController.Construct(playerDataService, sceneLoaderService);
+                var gameData = container.Resolve<GameData>();
+                _MainMenuController.Construct(playerDataService, sceneLoaderService, gameData);
             });
         }
     }
