@@ -14,6 +14,9 @@ namespace Game.Level.Data
         
         [Tooltip("Sprite used for targets in this stage.")]
         [field: SerializeField] public Sprite TargetSprite { get; private set; }
+
+        [Tooltip("Icon to display for this stage.")]
+        [field: SerializeField] public Sprite StageIcon { get; private set; }
     }
 }
 

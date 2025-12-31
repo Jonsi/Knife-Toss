@@ -85,6 +85,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8663207051361375414}
+  - component: {fileID: 8112384512892005357}
   m_Layer: 5
   m_Name: UiStageItem
   m_TagString: Untagged
@@ -113,6 +114,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 558.735, y: 558.735}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &8112384512892005357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 752248319790475556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eed928fc6ca32645bd747175c021f14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Stages.UiStageItem
+  _StageIconImage: {fileID: 2309942620806289392}
+  _StageNumberText: {fileID: 6217863927284700816}
+  _StageNameText: {fileID: 5566958235998418442}
 --- !u!1 &1990837211172779653
 GameObject:
   m_ObjectHideFlags: 0
