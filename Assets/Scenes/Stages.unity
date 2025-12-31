@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 85313486}
   - component: {fileID: 85313485}
   m_Layer: 5
-  m_Name: TargetImage
+  m_Name: StageIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -358,7 +358,7 @@ GameObject:
   - component: {fileID: 311736663}
   - component: {fileID: 311736662}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: NumberText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -493,7 +493,7 @@ GameObject:
   m_Component:
   - component: {fileID: 335169551}
   m_Layer: 5
-  m_Name: LevelItemUI
+  m_Name: UiStageItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -610,7 +610,7 @@ GameObject:
   - component: {fileID: 621382818}
   - component: {fileID: 621382817}
   m_Layer: 5
-  m_Name: Image
+  m_Name: NumberBack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
