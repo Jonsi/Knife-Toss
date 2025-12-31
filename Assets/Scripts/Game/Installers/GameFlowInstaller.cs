@@ -1,6 +1,5 @@
 using Common.Logging;
 using Game.Flow.Game;
-using Game.Flow.Interfaces;
 using Game.Settings;
 using UnityEngine;
 using VContainer;
@@ -9,7 +8,8 @@ using VContainer.Unity;
 namespace Game.Installers
 {
     /// <summary>
-    /// Installs game-level flow services and logging.
+    /// Installs global services that persist across all scenes.
+    /// Does not include gameplay-specific services.
     /// </summary>
     public class GameFlowInstaller : IInstaller
     {
@@ -25,7 +25,7 @@ namespace Game.Installers
         }
 
         /// <summary>
-        /// Registers game-level flow services.
+        /// Registers global services.
         /// </summary>
         /// <param name="builder">Container builder instance.</param>
         public void Install(IContainerBuilder builder)
@@ -33,13 +33,6 @@ namespace Game.Installers
             builder.RegisterInstance(_Settings);
             builder.RegisterInstance(CreateLogger()).As<ILogger>();
             builder.Register<GameData>(Lifetime.Singleton);
-            builder.Register<GameStateMachine>(Lifetime.Singleton).As<IGameStateMachine>();
-            builder.Register(CreateGameFlowController, Lifetime.Singleton).AsImplementedInterfaces();
-        }
-
-        private GameFlowController CreateGameFlowController(IObjectResolver resolver)
-        {
-            return new GameFlowController(resolver.Resolve<IGameStateMachine>());
         }
 
         private ILogger CreateLogger()

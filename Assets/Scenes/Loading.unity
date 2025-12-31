@@ -446,21 +446,9 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   _GameSettings: {fileID: 11400000, guid: 067b2b4cb241a1c47942f156372a8db5, type: 2}
-  _CollisionEventChannel: {fileID: 11400000, guid: 550df89ae380ec743af103ed588ae1b1, type: 2}
-  _KnifeImpactEventChannel: {fileID: 11400000, guid: f05ddbed278f4b14cac948a5951b4fe9, type: 2}
-  _KnifeThrownEventChannel: {fileID: 11400000, guid: 80b1350cead05974f808ed72efda1384, type: 2}
-  _CollectibleHitEventChannel: {fileID: 11400000, guid: d09bfa9eabb3b3d4a82eb07099a20991, type: 2}
-  _LevelCompletedEventChannel: {fileID: 11400000, guid: 974f3462f6e1f6e4d9645afc67160fff, type: 2}
-  _LevelFailedEventChannel: {fileID: 11400000, guid: 604458cf20b3869489fbff706e752db8, type: 2}
-  _StageCompletedEventChannel: {fileID: 11400000, guid: 24f3aae2e2417e2478e9677f5f8a8825, type: 2}
   _ReturnToMenuEventChannel: {fileID: 11400000, guid: 67ee024458bba644abb8a2f664ce3204, type: 2}
-  _LevelStartedEventChannel: {fileID: 11400000, guid: 8016f38368e175c479eb37bb6b1726fd, type: 2}
-  _RetryLevelClickedChannel: {fileID: 11400000, guid: a8aafdd4ae42ad145876819d5f37bedb, type: 2}
-  _RestartStageClickedChannel: {fileID: 11400000, guid: eef8d9c482392e74bb97e0df72cf980b, type: 2}
   _SoundSettings: {fileID: 11400000, guid: 189e658594fd4ea4d8b64463039ef584, type: 2}
   _AudioPlayer: {fileID: 1827805915}
-  _PowerUpActivatedEventChannel: {fileID: 11400000, guid: 2b6171f146e7b7940afb3c72048ac1d0, type: 2}
-  _PowerUpUsedEventChannel: {fileID: 11400000, guid: c87d83ddea622ce42a7261a62f7c9c00, type: 2}
 --- !u!4 &941924514
 Transform:
   m_ObjectHideFlags: 0
@@ -631,7 +619,6 @@ GameObject:
   - component: {fileID: 1965329573}
   - component: {fileID: 1965329572}
   - component: {fileID: 1965329571}
-  - component: {fileID: 1965329575}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -723,22 +710,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1965329575
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1965329570}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f549d571f61b5948abb6f2f76bde127, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game::Game.UI.Stages.StagesMenuController
-  _StagesCollection: {fileID: 11400000, guid: d7b76ea65780b0f4e890085754f0d6bf, type: 2}
-  _StageItemPrefab: {fileID: 8112384512892005357, guid: e122e9ef826bc5549a185e0f031bf1fd, type: 3}
-  _ContentRoot: {fileID: 0}
-  _GameSceneName: MainScene
 --- !u!1 &1979444084
 GameObject:
   m_ObjectHideFlags: 0

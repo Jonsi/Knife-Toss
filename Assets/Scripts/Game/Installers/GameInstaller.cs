@@ -1,7 +1,8 @@
 using Common.Events;
 using Game.Feedback.Audio.Data;
 using Game.Flow.Events;
-using Game.Flow.Game; // For SceneLoaderService
+using Game.Flow.Game;
+using Game.Flow.Loading;
 using Game.Input;
 using Game.KnifeThrower.Interfaces;
 using Game.Settings;
@@ -49,6 +50,9 @@ namespace Game.Installers
 
             // Register Event Channels (Shared/Persistence)
             builder.RegisterInstance(_ReturnToMenuEventChannel);
+
+            // Loading flow - transitions to MainMenu after initialization
+            builder.RegisterEntryPoint<LoadingController>();
         }
 
         private static void Install(IContainerBuilder builder, IInstaller installer)

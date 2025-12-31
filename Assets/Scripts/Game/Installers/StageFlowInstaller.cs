@@ -1,5 +1,6 @@
 using Common.Events;
 using Game.Flow.Events;
+using Game.Flow.Game;
 using Game.Flow.Interfaces;
 using Game.Flow.Stage;
 using Game.Flow.Stage.States;
@@ -9,11 +10,13 @@ using Game.Level.Interfaces;
 using Game.Pooling;
 using VContainer;
 using VContainer.Unity;
+using GameFlowController = Game.GameFlowController;
 
 namespace Game.Installers
 {
     /// <summary>
-    /// Installs stage feature services.
+    /// Installs stage and gameplay flow services.
+    /// Includes GameStateMachine which depends on stage-specific services.
     /// </summary>
     public class StageFlowInstaller : IInstaller
     {
@@ -27,12 +30,6 @@ namespace Game.Installers
         /// <summary>
         /// Initializes a new instance of the <see cref="StageFlowInstaller"/> class.
         /// </summary>
-        /// <param name="stagesConfig">Stages configuration asset.</param>
-        /// <param name="stageCompletedChannel">Stage completed event channel.</param>
-        /// <param name="returnToMenuChannel">Return to menu event channel.</param>
-        /// <param name="retryChannel">Retry level request channel.</param>
-        /// <param name="restartChannel">Restart stage request channel.</param>
-        /// <param name="levelStartedChannel">Level started event channel.</param>
         public StageFlowInstaller(
             StagesCollection stagesConfig,
             StageCompletedEventChannel stageCompletedChannel,
@@ -50,9 +47,8 @@ namespace Game.Installers
         }
 
         /// <summary>
-        /// Registers stage feature services.
+        /// Registers stage and gameplay flow services.
         /// </summary>
-        /// <param name="builder">Container builder instance.</param>
         public void Install(IContainerBuilder builder)
         {
             builder.RegisterInstance(_StagesConfig);
@@ -63,6 +59,9 @@ namespace Game.Installers
             builder.RegisterInstance(_StageCompletedChannel);
             builder.RegisterInstance(_ReturnToMenuChannel);
             builder.RegisterInstance(_LevelStartedChannel).As<IEventChannel<LevelStartedEventData>>();
+
+            builder.Register<GameStateMachine>(Lifetime.Singleton).As<IGameStateMachine>();
+            builder.RegisterEntryPoint<GameFlowController>();
         }
 
         private StageStateMachine CreateStageStateMachine(IObjectResolver resolver)
