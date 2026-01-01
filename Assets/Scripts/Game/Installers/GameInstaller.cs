@@ -29,12 +29,6 @@ namespace Game.Installers
         [SerializeField] private SoundSettings _SoundSettings;
         [SerializeField] private AudioPlayer _AudioPlayer;
 
-        protected override void Awake()
-        {
-            base.Awake();
-            DontDestroyOnLoad(gameObject);
-        }
-
         protected override void Configure(IContainerBuilder builder)
         {
             Install(builder, CreateGameFlowInstaller());
@@ -51,8 +45,6 @@ namespace Game.Installers
             // Register Event Channels (Shared/Persistence)
             builder.RegisterInstance(_ReturnToMenuEventChannel);
 
-            // Loading flow - transitions to MainMenu after initialization
-            builder.RegisterEntryPoint<LoadingController>();
         }
 
         private static void Install(IContainerBuilder builder, IInstaller installer)
