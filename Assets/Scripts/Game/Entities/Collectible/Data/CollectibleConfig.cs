@@ -16,7 +16,7 @@ namespace Game.Entities.Collectible.Data
         [field: SerializeField] public float AngleOffset { get; private set; }
 
         [Tooltip("Additional distance offset from the target's radius.")]
-        [field: SerializeField] public float RadiusOffset { get; private set; } = 0.5f;
+        [field: SerializeField] public float RadiusOffset { get; private set; }
     }
 }
 
