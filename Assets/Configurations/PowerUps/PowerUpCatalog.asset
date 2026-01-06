@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game::Game.PowerUps.Configs.PowerUpCatalog
   <Entries>k__BackingField:
   - {fileID: 11400000, guid: 3a7a84bba57c2384b9d72d20c044fcc8, type: 2}
+  - {fileID: 11400000, guid: 1876321fac7032f4686bc75a7d13d80e, type: 2}
