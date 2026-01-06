@@ -11,6 +11,7 @@ using Game.Entities.Target.Logic;
 using Game.Entities.Target.Services;
 using Game.Feedback.Animation;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game.Entities.Target.Views
 {
@@ -73,7 +74,7 @@ namespace Game.Entities.Target.Views
             {
                 if (_Collider != null)
                 {
-                    return _Collider.radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y);
+                    return _Collider.radius * GetEffectiveScale();
                 }
                 return 1f;
             }
@@ -174,7 +175,10 @@ namespace Game.Entities.Target.Views
             _SpawnAnimator?.PlaySpawnAnimation();
         }
 
-        private void Update() => TickBehaviors(Time.deltaTime);
+        private void Update()
+        {
+            TickBehaviors(Time.deltaTime);
+        }
 
         private void TickBehaviors(float deltaTime)
         {
@@ -259,12 +263,19 @@ namespace Game.Entities.Target.Views
 
             AttachStickable(stickable);
             
+            float effectiveScale = GetEffectiveScale();
+            float colliderRadius = _Collider != null ? _Collider.radius : 1f;
+            
             Vector2 finalPosition = _StickPositionService.CalculatePosition(
-                _Collider != null ? _Collider.radius : 1f,
-                Mathf.Max(transform.lossyScale.x, transform.lossyScale.y),
+                colliderRadius,
+                effectiveScale,
                 angleDegrees,
                 stickable.RadiusOffset
             );
+
+            // Log initial placement
+            Debug.Log($"[TargetView] PlaceStickable: Placing '{stickable.Transform.name}' at {finalPosition}. " +
+                      $"EffScale={effectiveScale}, Radius={colliderRadius}, Angle={angleDegrees}");
 
             Quaternion finalRotation = _StickPositionService.CalculateRotation(
                 angleDegrees,
@@ -274,6 +285,23 @@ namespace Game.Entities.Target.Views
             stickable.Transform.localPosition = finalPosition;
             stickable.Transform.localRotation = finalRotation;
             
+            // Check for layout group interference
+            var layoutGroup = StickParent.GetComponent<LayoutGroup>();
+            if (layoutGroup != null)
+            {
+                Debug.LogWarning($"[TargetView] StickParent '{StickParent.name}' has a LayoutGroup! This may override knife positions.");
+            }
+
+            // Disable physics simulation for stuck knives to prevent physics engine from moving them
+            var rb = stickable.Transform.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.simulated = false;
+                rb.linearVelocity = Vector2.zero;
+                rb.angularVelocity = 0f;
+                rb.position = stickable.Transform.position; // Force sync
+            }
+
             _StuckObjects.Add(stickable);
         }
 
@@ -335,7 +363,7 @@ namespace Game.Entities.Target.Views
             
             Vector2 finalPosition = _StickPositionService.CalculatePosition(
                 _Collider != null ? _Collider.radius : 1f,
-                Mathf.Max(transform.lossyScale.x, transform.lossyScale.y),
+                GetEffectiveScale(),
                 angleDegrees,
                 stickable.RadiusOffset
             );
@@ -347,6 +375,20 @@ namespace Game.Entities.Target.Views
 
             stickable.Transform.localPosition = finalPosition;
             stickable.Transform.localRotation = finalRotation;
+        }
+
+        private float GetEffectiveScale()
+        {
+            float scale = Mathf.Max(transform.lossyScale.x, transform.lossyScale.y);
+            if (scale < 0.001f)
+            {
+                scale = Mathf.Max(transform.localScale.x, transform.localScale.y);
+            }
+            if (scale < 0.001f)
+            {
+                scale = 1f;
+            }
+            return scale;
         }
 
         private Vector2 TransformImpactToLocal(Vector2 impactPoint) => transform.InverseTransformPoint(impactPoint);
