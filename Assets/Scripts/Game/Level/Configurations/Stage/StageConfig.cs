@@ -36,9 +36,8 @@ namespace Game.Level.Configurations.Stage
                             required += target.KnivesToBreak;
                     }
                 }
-                level.KnifeCount = required;
+                level.KnifeCount = required + level.ExtraKnives;
             }
         }
     }
 }
-
