@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using Game.Feedback.Animation.Data;
 using UnityEngine;
@@ -11,6 +12,8 @@ namespace Game.Entities.Target.Feedback
     {
         [SerializeField] private TargetSpawnAnimationConfig _Config;
         [SerializeField] private Transform _AnimatedRoot;
+
+        public event Action OnAnimationComplete;
 
         private Sequence _ActiveSequence;
         private Vector3 _FinalScale = Vector3.one;
@@ -38,6 +41,7 @@ namespace Game.Entities.Target.Feedback
         {
             if (_Config == null)
             {
+                OnAnimationComplete?.Invoke();
                 return;
             }
 
@@ -50,6 +54,7 @@ namespace Game.Entities.Target.Feedback
 
             Sequence sequence = DOTween.Sequence();
             AppendScale(sequence);
+            sequence.OnComplete(() => OnAnimationComplete?.Invoke());
             _ActiveSequence = sequence;
         }
 

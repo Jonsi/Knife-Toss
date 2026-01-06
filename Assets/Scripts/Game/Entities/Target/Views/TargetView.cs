@@ -175,6 +175,22 @@ namespace Game.Entities.Target.Views
             _SpawnAnimator?.PlaySpawnAnimation();
         }
 
+        private void OnEnable()
+        {
+            if (_SpawnAnimator != null)
+            {
+                _SpawnAnimator.OnAnimationComplete += EnableStuckObjectsPhysics;
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (_SpawnAnimator != null)
+            {
+                _SpawnAnimator.OnAnimationComplete -= EnableStuckObjectsPhysics;
+            }
+        }
+
         private void Update()
         {
             TickBehaviors(Time.deltaTime);
@@ -292,7 +308,7 @@ namespace Game.Entities.Target.Views
                 Debug.LogWarning($"[TargetView] StickParent '{StickParent.name}' has a LayoutGroup! This may override knife positions.");
             }
 
-            // Disable physics simulation for stuck knives to prevent physics engine from moving them
+            // Disable physics simulation initially to prevent "stuck in middle" bug during spawn animation
             var rb = stickable.Transform.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
@@ -303,6 +319,22 @@ namespace Game.Entities.Target.Views
             }
 
             _StuckObjects.Add(stickable);
+        }
+
+        private void EnableStuckObjectsPhysics()
+        {
+            for (int i = 0; i < _StuckObjects.Count; i++)
+            {
+                var stickable = _StuckObjects[i];
+                if (stickable == null || stickable.Transform == null) continue;
+
+                var rb = stickable.Transform.GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    rb.bodyType = RigidbodyType2D.Kinematic;
+                    rb.simulated = true;
+                }
+            }
         }
 
         /// <summary>
