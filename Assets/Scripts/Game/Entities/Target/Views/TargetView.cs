@@ -179,7 +179,7 @@ namespace Game.Entities.Target.Views
         {
             if (_SpawnAnimator != null)
             {
-                _SpawnAnimator.OnAnimationComplete += EnableStuckObjectsPhysics;
+                _SpawnAnimator.OnAnimationComplete += EnablePhysicsAfterSpawn;
             }
         }
 
@@ -187,7 +187,7 @@ namespace Game.Entities.Target.Views
         {
             if (_SpawnAnimator != null)
             {
-                _SpawnAnimator.OnAnimationComplete -= EnableStuckObjectsPhysics;
+                _SpawnAnimator.OnAnimationComplete -= EnablePhysicsAfterSpawn;
             }
         }
 
@@ -279,6 +279,15 @@ namespace Game.Entities.Target.Views
 
             AttachStickable(stickable);
             
+            ApplyPlacementTransform(stickable, angleDegrees);
+            CheckForLayoutGroupInterference();
+            DisablePhysicsForSpawn(stickable);
+
+            _StuckObjects.Add(stickable);
+        }
+
+        private void ApplyPlacementTransform(IStickable stickable, float angleDegrees)
+        {
             float effectiveScale = GetEffectiveScale();
             float colliderRadius = _Collider != null ? _Collider.radius : 1f;
             
@@ -289,10 +298,6 @@ namespace Game.Entities.Target.Views
                 stickable.RadiusOffset
             );
 
-            // Log initial placement
-            Debug.Log($"[TargetView] PlaceStickable: Placing '{stickable.Transform.name}' at {finalPosition}. " +
-                      $"EffScale={effectiveScale}, Radius={colliderRadius}, Angle={angleDegrees}");
-
             Quaternion finalRotation = _StickPositionService.CalculateRotation(
                 angleDegrees,
                 stickable.RotationOffset
@@ -300,15 +305,19 @@ namespace Game.Entities.Target.Views
 
             stickable.Transform.localPosition = finalPosition;
             stickable.Transform.localRotation = finalRotation;
-            
-            // Check for layout group interference
+        }
+
+        private void CheckForLayoutGroupInterference()
+        {
             var layoutGroup = StickParent.GetComponent<LayoutGroup>();
             if (layoutGroup != null)
             {
                 Debug.LogWarning($"[TargetView] StickParent '{StickParent.name}' has a LayoutGroup! This may override knife positions.");
             }
+        }
 
-            // Disable physics simulation initially to prevent "stuck in middle" bug during spawn animation
+        private void DisablePhysicsForSpawn(IStickable stickable)
+        {
             var rb = stickable.Transform.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
@@ -317,11 +326,9 @@ namespace Game.Entities.Target.Views
                 rb.angularVelocity = 0f;
                 rb.position = stickable.Transform.position; // Force sync
             }
-
-            _StuckObjects.Add(stickable);
         }
 
-        private void EnableStuckObjectsPhysics()
+        private void EnablePhysicsAfterSpawn()
         {
             for (int i = 0; i < _StuckObjects.Count; i++)
             {
