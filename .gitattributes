@@ -1,2 +1,4 @@
-# Auto detect text files and perform LF normalization
+# Set default behavior for text files
 * text=auto
+# Enforce LF for all files in the repository
+* text eol=lf
