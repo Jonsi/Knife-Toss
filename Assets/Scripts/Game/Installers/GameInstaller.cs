@@ -29,6 +29,14 @@ namespace Game.Installers
         [SerializeField] private SoundSettings _SoundSettings;
         [SerializeField] private AudioPlayer _AudioPlayer;
 
+        protected override void Awake()
+        {
+            base.Awake();
+#if UNITY_ANDROID
+            Application.targetFrameRate = 60;
+#endif
+        }
+
         protected override void Configure(IContainerBuilder builder)
         {
             Install(builder, CreateGameFlowInstaller());
