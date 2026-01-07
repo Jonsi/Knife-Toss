@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
 
@@ -28,4 +29,4 @@ namespace Common.Attributes.Editor
         }
     }
 }
-
+#endif
