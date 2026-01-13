@@ -17,7 +17,7 @@ namespace Game.Level.Data
         [field: SerializeField] public int KnifeCount { get; set; }
 
         [Tooltip("Additional knives to grant the player for this level.")]
-        [field: SerializeField] public int ExtraKnives { get; private set; }
+        [field: SerializeField] public int ExtraKnives { get; set; }
 
         [Tooltip("List of targets to spawn in this level.")]
         [field: SerializeField] public List<TargetConfig> Targets { get; private set; } = new();

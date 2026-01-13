@@ -13,5 +13,12 @@ namespace Game.Entities.Target.Data
         /// Gets the angle on the target where the knife is placed.
         /// </summary>
         [field: SerializeField] public float Angle { get; private set; }
+
+        public PreStuckKnifeConfig() { }
+
+        public PreStuckKnifeConfig(float angle)
+        {
+            Angle = angle;
+        }
     }
 }

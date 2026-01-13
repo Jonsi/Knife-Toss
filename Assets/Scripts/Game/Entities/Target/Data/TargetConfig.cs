@@ -17,17 +17,17 @@ namespace Game.Entities.Target.Data
         [field: SerializeField] public TargetView PrefabOverride { get; private set; }
 
         [field: Tooltip("Base scale multiplier for the target.")]
-        [field: SerializeField] public float BaseScale { get; private set; } = 1f;
+        [field: SerializeField] public float BaseScale { get; set; } = 1f;
 
         [field: Tooltip("Initial local position offset applied from the level center (0,0,0).")]
-        [field: SerializeField] public Vector3 InitialOffset { get; private set; } = Vector3.zero;
+        [field: SerializeField] public Vector3 InitialOffset { get; set; } = Vector3.zero;
 
         [field: Header("Gameplay")]
         [field: Tooltip("Number of knife hits required to destroy this target.")]
-        [field: SerializeField] public int KnivesToBreak { get; private set; } = 5;
+        [field: SerializeField] public int KnivesToBreak { get; set; } = 5;
 
         [field: Tooltip("Initial local rotation offset in degrees.")]
-        [field: SerializeField] public float InitialRotation { get; private set; }
+        [field: SerializeField] public float InitialRotation { get; set; }
 
         [field: Tooltip("Local and world behaviors applied to this target.")]
         [field: SerializeField] public TargetBehaviorSet Behaviors { get; private set; } = new();

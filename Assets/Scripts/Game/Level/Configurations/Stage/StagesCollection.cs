@@ -15,7 +15,7 @@ namespace Game.Level.Catalogs
         [field: SerializeField] public TargetView DefaultTargetPrefab { get; private set; }
         
         [Tooltip("List of all game stages.")]
-        [field: SerializeField] public List<StageConfig> Stages { get; private set; } = new();
+        [field: SerializeField] public List<StageConfig> Stages { get; set; } = new();
     }
 }
 

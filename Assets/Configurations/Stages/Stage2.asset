@@ -11,410 +11,224 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2d2f729ad4c3b84b90c5881f53389a7, type: 3}
   m_Name: Stage2
-  m_EditorClassIdentifier: 
-  <StageName>k__BackingField: Tidal Tricks
+  m_EditorClassIdentifier: Game::Game.Level.Configurations.Stage.StageConfig
+  <StageName>k__BackingField: Stage 2
   <LayoutSettings>k__BackingField:
-    <BackgroundSprite>k__BackingField: {fileID: -1925746257, guid: dd2c3b018d51850408d547201766789f, type: 3}
-    <TargetSprite>k__BackingField: {fileID: 2075353348834590344, guid: 71a4056639fb0e8419a32add1f30fbdb, type: 3}
-    <StageIcon>k__BackingField: {fileID: 21300000, guid: 9673b5117a4660c499d6ec1c67f5b230, type: 2}
+    <BackgroundSprite>k__BackingField: {fileID: 0}
+    <TargetSprite>k__BackingField: {fileID: 0}
+    <StageIcon>k__BackingField: {fileID: 0}
   <Levels>k__BackingField:
-  - <KnifeCount>k__BackingField: 8
+  - <KnifeCount>k__BackingField: 6
     <ExtraKnives>k__BackingField: 0
     <Targets>k__BackingField:
     - <PrefabOverride>k__BackingField: {fileID: 0}
-      <BaseScale>k__BackingField: 0.95
-      <InitialOffset>k__BackingField: {x: -0.3, y: 0, z: 0}
-      <KnivesToBreak>k__BackingField: 4
-      <InitialRotation>k__BackingField: 30
-      <Behaviors>k__BackingField:
-        _LocalBehaviors:
-        - _Kind: 2
-          _Config:
-            rid: 3169372262608930471
-        _WorldBehaviors:
-        - _Kind: 1
-          _Config:
-            rid: 3169372262608930472
-      <Collectibles>k__BackingField:
-      - <Value>k__BackingField: 2
-        <AngleOffset>k__BackingField: 140
-        <RadiusOffset>k__BackingField: 0.1
-      <PreStuckKnives>k__BackingField: []
-    - <PrefabOverride>k__BackingField: {fileID: 0}
-      <BaseScale>k__BackingField: 0.95
-      <InitialOffset>k__BackingField: {x: 0.3, y: 0, z: 0}
-      <KnivesToBreak>k__BackingField: 4
-      <InitialRotation>k__BackingField: 210
-      <Behaviors>k__BackingField:
-        _LocalBehaviors:
-        - _Kind: 0
-          _Config:
-            rid: 3169372262608930473
-        _WorldBehaviors:
-        - _Kind: 0
-          _Config:
-            rid: 3169372262608930474
-      <Collectibles>k__BackingField:
-      - <Value>k__BackingField: 1
-        <AngleOffset>k__BackingField: 320
-        <RadiusOffset>k__BackingField: 0.15
-      <PreStuckKnives>k__BackingField:
-      - <Angle>k__BackingField: 40
-  - <KnifeCount>k__BackingField: 12
-    <ExtraKnives>k__BackingField: 0
-    <Targets>k__BackingField:
-    - <PrefabOverride>k__BackingField: {fileID: 0}
-      <BaseScale>k__BackingField: 1.05
-      <InitialOffset>k__BackingField: {x: 0, y: 0.2, z: 0}
-      <KnivesToBreak>k__BackingField: 5
-      <InitialRotation>k__BackingField: 15
-      <Behaviors>k__BackingField:
-        _LocalBehaviors:
-        - _Kind: 0
-          _Config:
-            rid: 3169372262608930475
-        - _Kind: 1
-          _Config:
-            rid: 3169372262608930476
-        _WorldBehaviors:
-        - _Kind: 0
-          _Config:
-            rid: 3169372262608930477
-      <Collectibles>k__BackingField:
-      - <Value>k__BackingField: 3
-        <AngleOffset>k__BackingField: 90
-        <RadiusOffset>k__BackingField: 0.2
-      <PreStuckKnives>k__BackingField: []
-    - <PrefabOverride>k__BackingField: {fileID: 0}
-      <BaseScale>k__BackingField: 0.85
-      <InitialOffset>k__BackingField: {x: -0.55, y: -0.05, z: 0}
-      <KnivesToBreak>k__BackingField: 4
-      <InitialRotation>k__BackingField: 190
-      <Behaviors>k__BackingField:
-        _LocalBehaviors:
-        - _Kind: 2
-          _Config:
-            rid: 3169372262608930478
-        _WorldBehaviors:
-        - _Kind: 1
-          _Config:
-            rid: 3169372262608930479
-      <Collectibles>k__BackingField:
-      - <Value>k__BackingField: 2
-        <AngleOffset>k__BackingField: 250
-        <RadiusOffset>k__BackingField: 0.05
-      <PreStuckKnives>k__BackingField: []
-    - <PrefabOverride>k__BackingField: {fileID: 0}
-      <BaseScale>k__BackingField: 0.75
-      <InitialOffset>k__BackingField: {x: 0.6, y: 0.15, z: 0}
-      <KnivesToBreak>k__BackingField: 3
-      <InitialRotation>k__BackingField: 300
-      <Behaviors>k__BackingField:
-        _LocalBehaviors:
-        - _Kind: 1
-          _Config:
-            rid: 3169372262608930480
-        _WorldBehaviors:
-        - _Kind: 1
-          _Config:
-            rid: 3169372262608930481
-      <Collectibles>k__BackingField:
-      - <Value>k__BackingField: 1
-        <AngleOffset>k__BackingField: 20
-        <RadiusOffset>k__BackingField: 0.1
-      <PreStuckKnives>k__BackingField: []
-  - <KnifeCount>k__BackingField: 14
-    <ExtraKnives>k__BackingField: 0
-    <Targets>k__BackingField:
-    - <PrefabOverride>k__BackingField: {fileID: 0}
-      <BaseScale>k__BackingField: 1.1
-      <InitialOffset>k__BackingField: {x: 0, y: 0, z: 0}
+      <BaseScale>k__BackingField: 1
+      <InitialOffset>k__BackingField: {x: 0, y: 1.5, z: 0}
       <KnivesToBreak>k__BackingField: 6
       <InitialRotation>k__BackingField: 0
       <Behaviors>k__BackingField:
         _LocalBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372262608930482
-        - _Kind: 1
-          _Config:
-            rid: 3169372262608930483
-        _WorldBehaviors:
-        - _Kind: 0
-          _Config:
-            rid: 3169372262608930484
-      <Collectibles>k__BackingField:
-      - <Value>k__BackingField: 3
-        <AngleOffset>k__BackingField: 270
-        <RadiusOffset>k__BackingField: 0.25
-      <PreStuckKnives>k__BackingField:
-      - <Angle>k__BackingField: 45
-      - <Angle>k__BackingField: 180
-    - <PrefabOverride>k__BackingField: {fileID: 0}
-      <BaseScale>k__BackingField: 0.9
-      <InitialOffset>k__BackingField: {x: -0.5, y: 0.2, z: 0}
-      <KnivesToBreak>k__BackingField: 4
-      <InitialRotation>k__BackingField: 150
-      <Behaviors>k__BackingField:
-        _LocalBehaviors:
-        - _Kind: 2
-          _Config:
-            rid: 3169372262608930485
-        _WorldBehaviors:
-        - _Kind: 1
-          _Config:
-            rid: 3169372262608930486
-      <Collectibles>k__BackingField:
-      - <Value>k__BackingField: 2
-        <AngleOffset>k__BackingField: 230
-        <RadiusOffset>k__BackingField: 0.1
+            rid: 3169372265082781720
+        _WorldBehaviors: []
+      <Collectibles>k__BackingField: []
       <PreStuckKnives>k__BackingField: []
-    - <PrefabOverride>k__BackingField: {fileID: 0}
-      <BaseScale>k__BackingField: 0.85
-      <InitialOffset>k__BackingField: {x: 0.55, y: -0.15, z: 0}
-      <KnivesToBreak>k__BackingField: 4
-      <InitialRotation>k__BackingField: 315
-      <Behaviors>k__BackingField:
-        _LocalBehaviors:
-        - _Kind: 1
-          _Config:
-            rid: 3169372262608930487
-        _WorldBehaviors:
-        - _Kind: 0
-          _Config:
-            rid: 3169372262608930488
-      <Collectibles>k__BackingField:
-      - <Value>k__BackingField: 1
-        <AngleOffset>k__BackingField: 45
-        <RadiusOffset>k__BackingField: 0.05
-      <PreStuckKnives>k__BackingField: []
-  - <KnifeCount>k__BackingField: 16
+  - <KnifeCount>k__BackingField: 6
     <ExtraKnives>k__BackingField: 0
     <Targets>k__BackingField:
     - <PrefabOverride>k__BackingField: {fileID: 0}
       <BaseScale>k__BackingField: 1
-      <InitialOffset>k__BackingField: {x: 0, y: 0.25, z: 0}
-      <KnivesToBreak>k__BackingField: 5
-      <InitialRotation>k__BackingField: 45
+      <InitialOffset>k__BackingField: {x: 0, y: 1.5, z: 0}
+      <KnivesToBreak>k__BackingField: 6
+      <InitialRotation>k__BackingField: 0
       <Behaviors>k__BackingField:
         _LocalBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372262608930489
-        _WorldBehaviors:
-        - _Kind: 0
-          _Config:
-            rid: 3169372262608930490
-      <Collectibles>k__BackingField:
-      - <Value>k__BackingField: 2
-        <AngleOffset>k__BackingField: 0
-        <RadiusOffset>k__BackingField: 0.15
+            rid: 3169372265082781721
+        _WorldBehaviors: []
+      <Collectibles>k__BackingField: []
       <PreStuckKnives>k__BackingField: []
+  - <KnifeCount>k__BackingField: 7
+    <ExtraKnives>k__BackingField: 0
+    <Targets>k__BackingField:
     - <PrefabOverride>k__BackingField: {fileID: 0}
-      <BaseScale>k__BackingField: 0.85
-      <InitialOffset>k__BackingField: {x: -0.7, y: 0, z: 0}
-      <KnivesToBreak>k__BackingField: 4
-      <InitialRotation>k__BackingField: 180
+      <BaseScale>k__BackingField: 1
+      <InitialOffset>k__BackingField: {x: 0, y: 1.5, z: 0}
+      <KnivesToBreak>k__BackingField: 7
+      <InitialRotation>k__BackingField: 0
       <Behaviors>k__BackingField:
         _LocalBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372262608930491
-        _WorldBehaviors:
-        - _Kind: 1
-          _Config:
-            rid: 3169372262608930492
-      <Collectibles>k__BackingField:
-      - <Value>k__BackingField: 1
-        <AngleOffset>k__BackingField: 260
-        <RadiusOffset>k__BackingField: 0.05
+            rid: 3169372265082781722
+        _WorldBehaviors: []
+      <Collectibles>k__BackingField: []
       <PreStuckKnives>k__BackingField:
-      - <Angle>k__BackingField: -120
-      - <Angle>k__BackingField: 60
+      - <Angle>k__BackingField: 61.89238
+      - <Angle>k__BackingField: 119.98068
+  - <KnifeCount>k__BackingField: 7
+    <ExtraKnives>k__BackingField: 0
+    <Targets>k__BackingField:
     - <PrefabOverride>k__BackingField: {fileID: 0}
-      <BaseScale>k__BackingField: 0.75
-      <InitialOffset>k__BackingField: {x: 0.7, y: 0, z: 0}
-      <KnivesToBreak>k__BackingField: 3
-      <InitialRotation>k__BackingField: 300
+      <BaseScale>k__BackingField: 1
+      <InitialOffset>k__BackingField: {x: 0, y: 1.5, z: 0}
+      <KnivesToBreak>k__BackingField: 7
+      <InitialRotation>k__BackingField: 0
       <Behaviors>k__BackingField:
         _LocalBehaviors:
-        - _Kind: 2
-          _Config:
-            rid: 3169372262608930493
-        _WorldBehaviors:
-        - _Kind: 1
-          _Config:
-            rid: 3169372262608930494
-      <Collectibles>k__BackingField:
-      - <Value>k__BackingField: 2
-        <AngleOffset>k__BackingField: 30
-        <RadiusOffset>k__BackingField: 0.05
-      <PreStuckKnives>k__BackingField: []
-    - <PrefabOverride>k__BackingField: {fileID: 0}
-      <BaseScale>k__BackingField: 0.7
-      <InitialOffset>k__BackingField: {x: 0, y: -0.35, z: 0}
-      <KnivesToBreak>k__BackingField: 4
-      <InitialRotation>k__BackingField: 90
-      <Behaviors>k__BackingField:
-        _LocalBehaviors:
-        - _Kind: 1
-          _Config:
-            rid: 3169372262608930495
-        _WorldBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372262608930496
-      <Collectibles>k__BackingField:
-      - <Value>k__BackingField: 1
-        <AngleOffset>k__BackingField: 120
-        <RadiusOffset>k__BackingField: 0.2
+            rid: 3169372265082781723
+        _WorldBehaviors: []
+      <Collectibles>k__BackingField: []
+      <PreStuckKnives>k__BackingField:
+      - <Angle>k__BackingField: 120.747665
+  - <KnifeCount>k__BackingField: 7
+    <ExtraKnives>k__BackingField: 0
+    <Targets>k__BackingField:
+    - <PrefabOverride>k__BackingField: {fileID: 0}
+      <BaseScale>k__BackingField: 1
+      <InitialOffset>k__BackingField: {x: 0, y: 1.5, z: 0}
+      <KnivesToBreak>k__BackingField: 7
+      <InitialRotation>k__BackingField: 0
+      <Behaviors>k__BackingField:
+        _LocalBehaviors:
+        - _Kind: 0
+          _Config:
+            rid: 3169372265082781724
+        _WorldBehaviors: []
+      <Collectibles>k__BackingField: []
+      <PreStuckKnives>k__BackingField:
+      - <Angle>k__BackingField: 43.04615
+  - <KnifeCount>k__BackingField: 7
+    <ExtraKnives>k__BackingField: 0
+    <Targets>k__BackingField:
+    - <PrefabOverride>k__BackingField: {fileID: 0}
+      <BaseScale>k__BackingField: 1
+      <InitialOffset>k__BackingField: {x: 0, y: 1.5, z: 0}
+      <KnivesToBreak>k__BackingField: 7
+      <InitialRotation>k__BackingField: 0
+      <Behaviors>k__BackingField:
+        _LocalBehaviors:
+        - _Kind: 0
+          _Config:
+            rid: 3169372265082781725
+        _WorldBehaviors: []
+      <Collectibles>k__BackingField: []
+      <PreStuckKnives>k__BackingField:
+      - <Angle>k__BackingField: 61.509403
+      - <Angle>k__BackingField: 93.64989
+  - <KnifeCount>k__BackingField: 7
+    <ExtraKnives>k__BackingField: 0
+    <Targets>k__BackingField:
+    - <PrefabOverride>k__BackingField: {fileID: 0}
+      <BaseScale>k__BackingField: 1
+      <InitialOffset>k__BackingField: {x: 0, y: 1.5, z: 0}
+      <KnivesToBreak>k__BackingField: 7
+      <InitialRotation>k__BackingField: 0
+      <Behaviors>k__BackingField:
+        _LocalBehaviors:
+        - _Kind: 0
+          _Config:
+            rid: 3169372265082781726
+        _WorldBehaviors: []
+      <Collectibles>k__BackingField: []
+      <PreStuckKnives>k__BackingField:
+      - <Angle>k__BackingField: 183.08203
+  - <KnifeCount>k__BackingField: 8
+    <ExtraKnives>k__BackingField: 0
+    <Targets>k__BackingField:
+    - <PrefabOverride>k__BackingField: {fileID: 0}
+      <BaseScale>k__BackingField: 1
+      <InitialOffset>k__BackingField: {x: 0, y: 1.5, z: 0}
+      <KnivesToBreak>k__BackingField: 8
+      <InitialRotation>k__BackingField: 0
+      <Behaviors>k__BackingField:
+        _LocalBehaviors:
+        - _Kind: 0
+          _Config:
+            rid: 3169372265082781727
+        _WorldBehaviors: []
+      <Collectibles>k__BackingField: []
+      <PreStuckKnives>k__BackingField:
+      - <Angle>k__BackingField: 312.89856
+      - <Angle>k__BackingField: 174.63196
+  - <KnifeCount>k__BackingField: 8
+    <ExtraKnives>k__BackingField: 0
+    <Targets>k__BackingField:
+    - <PrefabOverride>k__BackingField: {fileID: 0}
+      <BaseScale>k__BackingField: 1
+      <InitialOffset>k__BackingField: {x: 0, y: 1.5, z: 0}
+      <KnivesToBreak>k__BackingField: 8
+      <InitialRotation>k__BackingField: 0
+      <Behaviors>k__BackingField:
+        _LocalBehaviors:
+        - _Kind: 0
+          _Config:
+            rid: 3169372265082781728
+        _WorldBehaviors: []
+      <Collectibles>k__BackingField: []
       <PreStuckKnives>k__BackingField: []
+  - <KnifeCount>k__BackingField: 8
+    <ExtraKnives>k__BackingField: 0
+    <Targets>k__BackingField:
+    - <PrefabOverride>k__BackingField: {fileID: 0}
+      <BaseScale>k__BackingField: 1
+      <InitialOffset>k__BackingField: {x: 0, y: 1.5, z: 0}
+      <KnivesToBreak>k__BackingField: 8
+      <InitialRotation>k__BackingField: 0
+      <Behaviors>k__BackingField:
+        _LocalBehaviors:
+        - _Kind: 0
+          _Config:
+            rid: 3169372265082781729
+        _WorldBehaviors: []
+      <Collectibles>k__BackingField: []
+      <PreStuckKnives>k__BackingField:
+      - <Angle>k__BackingField: 305.1117
+      - <Angle>k__BackingField: 137.23462
   references:
     version: 2
     RefIds:
-    - rid: 3169372262608930471
-      type: {class: FlippingSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
-      data:
-        _BaseSpeed: 80
-        _MinInterval: 0.8
-        _MaxInterval: 1.6
-    - rid: 3169372262608930472
-      type: {class: SinMovementBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
-      data:
-        _MovementDistance: 1.6
-        _OscillationsPerSecond: 0.95
-        _PhaseOffsetDegrees: 90
-    - rid: 3169372262608930473
+    - rid: 3169372265082781720
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
-        _Speed: 110
-    - rid: 3169372262608930474
-      type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
-      data:
-        _StartingAngle: 120
-        _DegreesPerSecond: 60
-        _DistanceFromCenter: 1.15
-    - rid: 3169372262608930475
+        _Speed: -72.42002
+    - rid: 3169372265082781721
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
-        _Speed: 130
-    - rid: 3169372262608930476
-      type: {class: PulsatingSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
-      data:
-        _BaseSpeed: 95
-        _Amplitude: 35
-        _Frequency: 1.1
-    - rid: 3169372262608930477
-      type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
-      data:
-        _StartingAngle: 220
-        _DegreesPerSecond: 80
-        _DistanceFromCenter: 1.5
-    - rid: 3169372262608930478
-      type: {class: FlippingSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
-      data:
-        _BaseSpeed: 80
-        _MinInterval: 0.8
-        _MaxInterval: 1.6
-    - rid: 3169372262608930479
-      type: {class: SinMovementBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
-      data:
-        _MovementDistance: 1.4
-        _OscillationsPerSecond: 0.75
-        _PhaseOffsetDegrees: 45
-    - rid: 3169372262608930480
-      type: {class: PulsatingSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
-      data:
-        _BaseSpeed: 70
-        _Amplitude: 20
-        _Frequency: 0.6
-    - rid: 3169372262608930481
-      type: {class: SinMovementBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
-      data:
-        _MovementDistance: 1.6
-        _OscillationsPerSecond: 0.95
-        _PhaseOffsetDegrees: 90
-    - rid: 3169372262608930482
+        _Speed: 73.597305
+    - rid: 3169372265082781722
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
-        _Speed: 90
-    - rid: 3169372262608930483
-      type: {class: PulsatingSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
-      data:
-        _BaseSpeed: 95
-        _Amplitude: 35
-        _Frequency: 1.1
-    - rid: 3169372262608930484
-      type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
-      data:
-        _StartingAngle: 300
-        _DegreesPerSecond: 110
-        _DistanceFromCenter: 1.8
-    - rid: 3169372262608930485
-      type: {class: FlippingSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
-      data:
-        _BaseSpeed: 80
-        _MinInterval: 0.8
-        _MaxInterval: 1.6
-    - rid: 3169372262608930486
-      type: {class: SinMovementBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
-      data:
-        _MovementDistance: 1.1
-        _OscillationsPerSecond: 0.55
-        _PhaseOffsetDegrees: 0
-    - rid: 3169372262608930487
-      type: {class: PulsatingSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
-      data:
-        _BaseSpeed: 70
-        _Amplitude: 20
-        _Frequency: 0.6
-    - rid: 3169372262608930488
-      type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
-      data:
-        _StartingAngle: 120
-        _DegreesPerSecond: 60
-        _DistanceFromCenter: 1.15
-    - rid: 3169372262608930489
+        _Speed: -57.798214
+    - rid: 3169372265082781723
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
-        _Speed: 130
-    - rid: 3169372262608930490
-      type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
-      data:
-        _StartingAngle: 220
-        _DegreesPerSecond: 80
-        _DistanceFromCenter: 1.5
-    - rid: 3169372262608930491
+        _Speed: 81.22386
+    - rid: 3169372265082781724
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
-        _Speed: 110
-    - rid: 3169372262608930492
-      type: {class: SinMovementBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
+        _Speed: -72.633026
+    - rid: 3169372265082781725
+      type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
-        _MovementDistance: 1.6
-        _OscillationsPerSecond: 0.95
-        _PhaseOffsetDegrees: 90
-    - rid: 3169372262608930493
-      type: {class: FlippingSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
+        _Speed: -60.414505
+    - rid: 3169372265082781726
+      type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
-        _BaseSpeed: 80
-        _MinInterval: 0.8
-        _MaxInterval: 1.6
-    - rid: 3169372262608930494
-      type: {class: SinMovementBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
+        _Speed: 50.220596
+    - rid: 3169372265082781727
+      type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
-        _MovementDistance: 1.4
-        _OscillationsPerSecond: 0.75
-        _PhaseOffsetDegrees: 45
-    - rid: 3169372262608930495
-      type: {class: PulsatingSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
+        _Speed: -68.90104
+    - rid: 3169372265082781728
+      type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
-        _BaseSpeed: 70
-        _Amplitude: 20
-        _Frequency: 0.6
-    - rid: 3169372262608930496
-      type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
+        _Speed: -82.160675
+    - rid: 3169372265082781729
+      type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
-        _StartingAngle: -30
-        _DegreesPerSecond: 45
-        _DistanceFromCenter: 0.75
+        _Speed: 117.62567
