@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c07a64c8330acf94d9da3dd7a799eaf4, type: 3}
   m_Name: KnifeThrowConfig
   m_EditorClassIdentifier: KnifeToss.Infrastructure::Infrastructure.Leveling.KnifeThrowConfigAsset
-  <ThrowSpeed>k__BackingField: 20
+  <ThrowSpeed>k__BackingField: 30
   <SpawnPositionOffset>k__BackingField: {x: 0, y: 0}
