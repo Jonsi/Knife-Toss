@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using Game.Flow.Game;
 using Game.Persistence.Services;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -15,6 +16,7 @@ namespace Game.UI.MainMenu
         [Header("UI References")]
         [SerializeField] private Button _PlayButton;
         [SerializeField] private Button _StagesButton;
+        [SerializeField] private TMP_Text _CurrentStageText;
 
         [Inject] private PlayerDataService _PlayerDataService;
         [Inject] private SceneLoaderService _SceneLoaderService;
@@ -24,6 +26,16 @@ namespace Game.UI.MainMenu
         {
             _PlayButton.onClick.AddListener(OnPlayClicked);
             _StagesButton.onClick.AddListener(OnStagesClicked);
+            UpdateCurrentStageText();
+        }
+
+        private void UpdateCurrentStageText()
+        {
+            if (_CurrentStageText != null && _GameData != null)
+            {
+                int stageNumber = _GameData.CurrentStageIndex + 1;
+                _CurrentStageText.text = $"Stage {stageNumber}";
+            }
         }
 
         private void OnDestroy()
