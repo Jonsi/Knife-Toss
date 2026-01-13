@@ -135,10 +135,10 @@ TextureImporter:
       name: progress_bar_full_0
       rect:
         serializedVersion: 2
-        x: 70
-        y: 796
-        width: 879
-        height: 213
+        x: 76
+        y: 797
+        width: 867
+        height: 209
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
