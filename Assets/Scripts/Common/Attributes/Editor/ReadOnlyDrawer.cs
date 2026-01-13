@@ -15,9 +15,10 @@ namespace Common.Attributes.Editor
         /// </summary>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            GUI.enabled = false;
-            EditorGUI.PropertyField(position, property, label, true);
-            GUI.enabled = true;
+            using (new EditorGUI.DisabledScope(true))
+            {
+                EditorGUI.PropertyField(position, property, label, true);
+            }
         }
 
         /// <summary>

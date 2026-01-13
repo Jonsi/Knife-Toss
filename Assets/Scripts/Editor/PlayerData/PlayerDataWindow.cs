@@ -15,6 +15,23 @@ namespace Game.EditorTools
         private PlayerData _PlayerData;
         private bool _HasUnsavedChanges;
 
+        private static class Styles
+        {
+            public static readonly GUIContent LoadButton = new GUIContent("Load");
+            public static readonly GUIContent SaveButton = new GUIContent("Save");
+            public static readonly GUIContent ResetButton = new GUIContent("Reset");
+            public static readonly GUIContent ProgressHeader = new GUIContent("Progress");
+            public static readonly GUIContent CurrentStage = new GUIContent("Current Stage");
+            public static readonly GUIContent HighestStage = new GUIContent("Highest Stage");
+            public static readonly GUIContent TomatoCount = new GUIContent("Tomatoes Collected");
+            public static readonly GUIContent SettingsHeader = new GUIContent("Settings");
+            public static readonly GUIContent Muted = new GUIContent("Muted");
+            public static readonly GUIContent PowerUpsHeader = new GUIContent("Power Ups");
+            public static readonly GUIContent SuperKnife = new GUIContent("Super Knife");
+            public static readonly GUIContent MultipleKnives = new GUIContent("Multiple Knives");
+            public static readonly GUIContent CollectiblesBlade = new GUIContent("Collectibles Blade");
+        }
+
         [MenuItem("Tools/Player Data")]
         public static void ShowWindow()
         {
@@ -56,14 +73,14 @@ namespace Game.EditorTools
         {
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
 
-            if (GUILayout.Button("Load", EditorStyles.toolbarButton))
+            if (GUILayout.Button(Styles.LoadButton, EditorStyles.toolbarButton))
             {
                 LoadData();
             }
 
             using (new EditorGUI.DisabledScope(!_HasUnsavedChanges || _PlayerData == null))
             {
-                if (GUILayout.Button("Save", EditorStyles.toolbarButton))
+                if (GUILayout.Button(Styles.SaveButton, EditorStyles.toolbarButton))
                 {
                     SaveData();
                 }
@@ -71,7 +88,7 @@ namespace Game.EditorTools
 
             using (new EditorGUI.DisabledScope(_PlayerData == null))
             {
-                if (GUILayout.Button("Reset", EditorStyles.toolbarButton))
+                if (GUILayout.Button(Styles.ResetButton, EditorStyles.toolbarButton))
                 {
                     ResetData();
                 }
@@ -83,13 +100,13 @@ namespace Game.EditorTools
 
         private void DrawProgressSection()
         {
-            EditorGUILayout.LabelField("Progress", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(Styles.ProgressHeader, EditorStyles.boldLabel);
             var progress = EnsureProgressData();
 
             EditorGUI.BeginChangeCheck();
-            int currentStage = EditorGUILayout.IntField("Current Stage", progress.CurrentStageIndex);
-            int highestStage = EditorGUILayout.IntField("Highest Stage", progress.HighestStageIndex);
-            int tomatoCount = EditorGUILayout.IntField("Tomatoes Collected", progress.TotalCollectiblesCollected);
+            int currentStage = EditorGUILayout.IntField(Styles.CurrentStage, progress.CurrentStageIndex);
+            int highestStage = EditorGUILayout.IntField(Styles.HighestStage, progress.HighestStageIndex);
+            int tomatoCount = EditorGUILayout.IntField(Styles.TomatoCount, progress.TotalCollectiblesCollected);
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -102,11 +119,11 @@ namespace Game.EditorTools
 
         private void DrawSettingsSection()
         {
-            EditorGUILayout.LabelField("Settings", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(Styles.SettingsHeader, EditorStyles.boldLabel);
             var settings = EnsureSettingsData();
 
             EditorGUI.BeginChangeCheck();
-            bool isMuted = EditorGUILayout.Toggle("Muted", settings.IsMuted);
+            bool isMuted = EditorGUILayout.Toggle(Styles.Muted, settings.IsMuted);
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -117,13 +134,13 @@ namespace Game.EditorTools
 
         private void DrawPowerUpSection()
         {
-            EditorGUILayout.LabelField("Power Ups", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(Styles.PowerUpsHeader, EditorStyles.boldLabel);
             var inventory = EnsurePowerUpInventory();
 
             EditorGUI.BeginChangeCheck();
-            int superKnife = EditorGUILayout.IntField("Super Knife", inventory.SuperKnifeCount);
-            int multipleKnives = EditorGUILayout.IntField("Multiple Knives", inventory.MultipleKnivesCount);
-            int collectiblesBlade = EditorGUILayout.IntField("Collectibles Blade", inventory.CollectiblesBladeCount);
+            int superKnife = EditorGUILayout.IntField(Styles.SuperKnife, inventory.SuperKnifeCount);
+            int multipleKnives = EditorGUILayout.IntField(Styles.MultipleKnives, inventory.MultipleKnivesCount);
+            int collectiblesBlade = EditorGUILayout.IntField(Styles.CollectiblesBlade, inventory.CollectiblesBladeCount);
 
             if (EditorGUI.EndChangeCheck())
             {

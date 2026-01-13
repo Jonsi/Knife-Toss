@@ -22,6 +22,18 @@ namespace Game.EditorTools
 
         private KnifeImpactEventChannel _SubscribedImpactChannel;
 
+        private static class Styles
+        {
+            public static readonly GUIContent EventChannelsHeader = new GUIContent("Event Channels");
+            public static readonly GUIContent RetryLevelChannel = new GUIContent("Retry Level Channel");
+            public static readonly GUIContent RestartStageChannel = new GUIContent("Restart Stage Channel");
+            public static readonly GUIContent KnifeImpactChannel = new GUIContent("Knife Impact Channel");
+            public static readonly GUIContent RuntimeActionsHeader = new GUIContent("Runtime Actions");
+            public static readonly GUIContent RestartLevelButton = new GUIContent("Restart Level");
+            public static readonly GUIContent RestartStageButton = new GUIContent("Restart Stage");
+            public static readonly GUIContent PauseOnCollision = new GUIContent("Pause On Knife Collision");
+        }
+
         [MenuItem("Tools/Cheats")]
         public static void ShowWindow()
         {
@@ -52,20 +64,20 @@ namespace Game.EditorTools
 
         private void DrawChannelAssignments()
         {
-            EditorGUILayout.LabelField("Event Channels", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(Styles.EventChannelsHeader, EditorStyles.boldLabel);
             _RetryLevelChannel = (VoidEventChannel)EditorGUILayout.ObjectField(
-                "Retry Level Channel",
+                Styles.RetryLevelChannel,
                 _RetryLevelChannel,
                 typeof(VoidEventChannel),
                 false);
             _RestartStageChannel = (VoidEventChannel)EditorGUILayout.ObjectField(
-                "Restart Stage Channel",
+                Styles.RestartStageChannel,
                 _RestartStageChannel,
                 typeof(VoidEventChannel),
                 false);
 
             var impactChannel = (KnifeImpactEventChannel)EditorGUILayout.ObjectField(
-                "Knife Impact Channel",
+                Styles.KnifeImpactChannel,
                 _KnifeImpactChannel,
                 typeof(KnifeImpactEventChannel),
                 false);
@@ -78,7 +90,7 @@ namespace Game.EditorTools
 
         private void DrawCheatActions()
         {
-            EditorGUILayout.LabelField("Runtime Actions", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(Styles.RuntimeActionsHeader, EditorStyles.boldLabel);
             using (new EditorGUI.DisabledScope(!EditorApplication.isPlaying))
             {
                 if (!EditorApplication.isPlaying)
@@ -86,12 +98,12 @@ namespace Game.EditorTools
                     EditorGUILayout.HelpBox("Enter Play Mode to trigger cheats.", MessageType.Info);
                 }
 
-                if (GUILayout.Button("Restart Level"))
+                if (GUILayout.Button(Styles.RestartLevelButton))
                 {
                     RaiseChannel(_RetryLevelChannel, "Retry Level");
                 }
 
-                if (GUILayout.Button("Restart Stage"))
+                if (GUILayout.Button(Styles.RestartStageButton))
                 {
                     RaiseChannel(_RestartStageChannel, "Restart Stage");
                 }
@@ -100,7 +112,7 @@ namespace Game.EditorTools
 
         private void DrawPauseOnCollisionToggle()
         {
-            bool pauseOnCollision = EditorGUILayout.Toggle("Pause On Knife Collision", _PauseOnCollision);
+            bool pauseOnCollision = EditorGUILayout.Toggle(Styles.PauseOnCollision, _PauseOnCollision);
             if (pauseOnCollision != _PauseOnCollision)
             {
                 _PauseOnCollision = pauseOnCollision;
