@@ -15,9 +15,14 @@ namespace Game.Entities.Target.Logic
         public float DeltaTime { get; private set; }
 
         /// <summary>
+        /// Gets or sets the speed multiplier applied to rotation.
+        /// </summary>
+        public float SpeedMultiplier { get; set; } = 1f;
+
+        /// <summary>
         /// Gets the accumulated rotation delta.
         /// </summary>
-        public float RotationDelta => _RotationDelta;
+        public float RotationDelta => _RotationDelta * SpeedMultiplier;
 
         /// <summary>
         /// Gets a value indicating whether a rotation change was applied.
@@ -28,9 +33,11 @@ namespace Game.Entities.Target.Logic
         /// Prepares the runtime object for a new frame.
         /// </summary>
         /// <param name="deltaTime">Frame delta time.</param>
-        public void Begin(float deltaTime)
+        /// <param name="speedMultiplier">Speed multiplier for rotation.</param>
+        public void Begin(float deltaTime, float speedMultiplier = 1f)
         {
             DeltaTime = deltaTime;
+            SpeedMultiplier = speedMultiplier;
             _RotationDelta = 0f;
         }
 
@@ -44,4 +51,3 @@ namespace Game.Entities.Target.Logic
         }
     }
 }
-

@@ -4,37 +4,37 @@ overview: "Refactor the power-up system to replace type-switching with polymorph
 todos:
   - id: inventory-refactor
     content: Refactor PowerUpInventoryData to use dictionary-based counts instead of hard-coded fields
-    status: pending
+    status: completed
   - id: config-base-refactor
     content: Add InventoryKey property and execution interface to PowerUpConfigBase
-    status: pending
+    status: completed
   - id: existing-configs-update
     content: Update SuperKnifeConfig, MultipleKnivesConfig, CollectiblesBladeConfig with InventoryKey and execution logic
-    status: pending
+    status: completed
   - id: service-refactor
     content: Refactor PowerUpService to remove switch statements, delegate to config execution
-    status: pending
+    status: completed
   - id: hud-refactor
     content: Update PowerUpHudController to use InventoryKey for count lookups
-    status: pending
+    status: completed
   - id: target-modifiers
     content: Add SpeedMultiplier and IsDirectionLocked modifiers to LocalBehaviorRuntime and TargetView
-    status: pending
+    status: completed
   - id: flipping-behavior-update
     content: Update FlippingRotationBehavior to respect direction lock modifier
-    status: pending
+    status: completed
   - id: effect-service
     content: Create PowerUpEffectService to manage timed effects on all active targets
-    status: pending
+    status: completed
   - id: time-dilator
     content: Create TimeDilatorConfig power-up
-    status: pending
+    status: completed
   - id: direction-lock
     content: Create DirectionLockConfig power-up
-    status: pending
+    status: completed
   - id: installer-update
     content: Update PowerUpInstaller to register new effect service
-    status: pending
+    status: completed
 ---
 
 # Enhance Power-Up System

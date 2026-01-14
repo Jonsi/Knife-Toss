@@ -36,13 +36,16 @@ namespace Game.Entities.Target.Views
         private readonly List<IWorldTargetBehavior> _WorldBehaviors = new();
 
         private float _CurrentRotation;
+        private float _SpeedMultiplier = 1f;
+        private float _LastRotationDelta;
         private Vector3 _InitialWorldPosition;
         private bool _HasInitialWorldPosition;
         private Transform StickParent => _StuckObjectsHolder != null ? _StuckObjectsHolder : transform;
         private bool _HasNotifiedDestroyed;
         private List<IStickable> _StuckObjects = new();
         private const int SortingOrderStride = 10;
-        private const int StickableSortingOffset = -1;
+        [Tooltip("Sorting order offset for stuck objects relative to the target. Set to 1 to render on top.")]
+        [SerializeField] private int _StickableSortingOffset = -1;
         private int _BaseSortingOrder;
         private readonly StickPositionService _StickPositionService = new();
         private int _SortingLayerId;
@@ -227,7 +230,7 @@ namespace Game.Entities.Target.Views
             if (_LocalBehaviors.Count == 0)
                 return;
 
-            _LocalBehaviorRuntime.Begin(deltaTime);
+            _LocalBehaviorRuntime.Begin(deltaTime, _SpeedMultiplier);
             for (int i = 0; i < _LocalBehaviors.Count; i++)
             {
                 _LocalBehaviors[i].Tick(_LocalBehaviorRuntime);
@@ -236,9 +239,26 @@ namespace Game.Entities.Target.Views
             if (!_LocalBehaviorRuntime.HasRotationDelta)
                 return;
 
-            _CurrentRotation += _LocalBehaviorRuntime.RotationDelta;
+            _LastRotationDelta = _LocalBehaviorRuntime.RotationDelta;
+            _CurrentRotation += _LastRotationDelta;
             _CurrentRotation %= 360f;
             transform.localRotation = Quaternion.Euler(0f, 0f, _CurrentRotation);
+        }
+
+        /// <summary>
+        /// Applies a speed multiplier to rotation.
+        /// </summary>
+        public void SetSpeedMultiplier(float multiplier)
+        {
+            _SpeedMultiplier = Mathf.Max(0f, multiplier);
+        }
+
+        /// <summary>
+        /// Clears all rotation modifiers.
+        /// </summary>
+        public void ClearRotationModifiers()
+        {
+            _SpeedMultiplier = 1f;
         }
 
         /// <summary>
@@ -381,7 +401,7 @@ namespace Game.Entities.Target.Views
         private void AttachStickable(IStickable stickable)
         {
             stickable.Transform.SetParent(StickParent);
-            stickable.ApplySorting(_SortingLayerId, _BaseSortingOrder + StickableSortingOffset);
+            stickable.ApplySorting(_SortingLayerId, _BaseSortingOrder + _StickableSortingOffset);
         }
 
         private void PlayStuckKnifeShatters()
@@ -450,7 +470,7 @@ namespace Game.Entities.Target.Views
         {
             for (int i = 0; i < _StuckObjects.Count; i++)
             {
-                _StuckObjects[i]?.ApplySorting(_SortingLayerId, _BaseSortingOrder + StickableSortingOffset);
+                _StuckObjects[i]?.ApplySorting(_SortingLayerId, _BaseSortingOrder + _StickableSortingOffset);
             }
         }
 

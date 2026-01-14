@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: MultipleKnivesConfig
   m_EditorClassIdentifier: Game::Game.PowerUps.Configs.MultipleKnivesConfig
   <Icon>k__BackingField: {fileID: 2408068179679165655, guid: dd46967cc8ce59446b460b317b580da7, type: 3}
+  <InventoryKey>k__BackingField: MultipleKnives
   <KnifeCount>k__BackingField: 3
   <KnifeSpacing>k__BackingField: 0.35
   <ThrowSpeed>k__BackingField: 10

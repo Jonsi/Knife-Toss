@@ -17,9 +17,14 @@ namespace Game.Input
         private CancellationTokenSource _CancellationTokenSource;
 
         /// <summary>
-        /// Event raised when the player requests a knife throw.
+        /// Event raised when the player starts a throw action.
         /// </summary>
         public event Action OnThrowRequested;
+
+        /// <summary>
+        /// Event raised when the player completes a throw action.
+        /// </summary>
+        public event Action OnThrowReleased;
 
         /// <summary>
         /// Initializes the input system and begins listening for throw input.
@@ -30,15 +35,14 @@ namespace Game.Input
                 return;
 
             _InputActions = new InputSystem_Actions();
+            _InputActions.Player.Throw.started += OnThrowStarted;
             _InputActions.Player.Throw.performed += OnThrowPerformed;
+            _InputActions.Player.Throw.canceled += OnThrowCanceledInternal;
             _InputActions.Player.Throw.Enable();
             _CancellationTokenSource = new CancellationTokenSource();
             _IsInitialized = true;
         }
 
-        /// <summary>
-        /// Disposes of resources and stops listening for input.
-        /// </summary>
         public void Dispose()
         {
             if (!_IsInitialized)
@@ -50,7 +54,9 @@ namespace Game.Input
 
             if (_InputActions != null)
             {
+                _InputActions.Player.Throw.started -= OnThrowStarted;
                 _InputActions.Player.Throw.performed -= OnThrowPerformed;
+                _InputActions.Player.Throw.canceled -= OnThrowCanceledInternal;
                 _InputActions.Player.Throw.Disable();
                 _InputActions.Dispose();
                 _InputActions = null;
@@ -59,12 +65,21 @@ namespace Game.Input
             _IsInitialized = false;
         }
 
+        private void OnThrowStarted(InputAction.CallbackContext context)
+        {
+            // started can also be used for press if performed is busy
+        }
+
         private void OnThrowPerformed(InputAction.CallbackContext context)
         {
-            if (context.performed)
-            {
-                OnThrowRequested?.Invoke();
-            }
+            // With "Press" interaction, performed triggers on down-stroke
+            OnThrowRequested?.Invoke();
+        }
+
+        private void OnThrowCanceledInternal(InputAction.CallbackContext context)
+        {
+            // With "Press" interaction, canceled triggers on up-stroke (release)
+            OnThrowReleased?.Invoke();
         }
     }
 }

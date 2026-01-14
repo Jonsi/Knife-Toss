@@ -80,6 +80,24 @@ namespace Game.Entities.Knife.Views
 
         public int ThrowLoadedKnives(float throwSpeed)
         {
+            return ThrowLoadedKnivesWithDirectionInternal(Vector2.up, throwSpeed);
+        }
+
+        /// <summary>
+        /// Launches the currently loaded knife with the given direction and speed.
+        /// </summary>
+        /// <param name="direction">Launch direction.</param>
+        /// <param name="throwSpeed">Launch speed.</param>
+        public void ThrowLoadedKnifeWithDirection(Vector2 direction, float throwSpeed)
+        {
+            if (_LoadedKnives.Count == 0)
+                return;
+
+            _ = ThrowLoadedKnivesWithDirectionInternal(direction, throwSpeed);
+        }
+
+        private int ThrowLoadedKnivesWithDirectionInternal(Vector2 direction, float throwSpeed)
+        {
             if (_LoadedKnives.Count == 0)
                 return 0;
 
@@ -90,7 +108,7 @@ namespace Game.Entities.Knife.Views
                 if (knife == null)
                     continue;
 
-                knife.Launch(Vector2.up, throwSpeed);
+                knife.Launch(direction, throwSpeed);
                 _KnifeThrownChannel?.Raise();
                 thrownCount++;
             }
