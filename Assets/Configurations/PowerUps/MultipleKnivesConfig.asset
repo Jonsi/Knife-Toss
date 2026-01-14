@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 155e2f69bb8da2b44880d5bf4169d744, type: 3}
   m_Name: MultipleKnivesConfig
   m_EditorClassIdentifier: Game::Game.PowerUps.Configs.MultipleKnivesConfig
-  <Icon>k__BackingField: {fileID: -8191739510646017925, guid: cbb99ac174ee80b4aa2130f2640805ef, type: 3}
+  <Icon>k__BackingField: {fileID: 2408068179679165655, guid: dd46967cc8ce59446b460b317b580da7, type: 3}
   <KnifeCount>k__BackingField: 3
   <KnifeSpacing>k__BackingField: 0.35
   <ThrowSpeed>k__BackingField: 10
