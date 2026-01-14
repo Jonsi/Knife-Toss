@@ -38,6 +38,13 @@ namespace Game.KnifeThrower.Interfaces
         int ThrowLoadedKnives(float throwSpeed);
 
         /// <summary>
+        /// Launches the currently loaded knife with the given direction and speed.
+        /// </summary>
+        /// <param name="direction">Launch direction.</param>
+        /// <param name="throwSpeed">Launch speed.</param>
+        void ThrowLoadedKnifeWithDirection(UnityEngine.Vector2 direction, float throwSpeed);
+
+        /// <summary>
         /// Gets the transform used for spawning knives.
         /// </summary>
         UnityEngine.Transform SpawnPoint { get; }

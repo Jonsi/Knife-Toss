@@ -102,23 +102,20 @@ namespace Game.PowerUps.Views
             for (int i = 0; i < _Buttons.Count; i++)
             {
                 var button = _Buttons[i];
-                if (button == null)
+                if (button == null || button.Config == null)
                     continue;
 
-                int count = GetCount(inventory, button);
+                int count = GetCount(inventory, button.Config);
                 button.SetCount(count);
             }
         }
 
-        private static int GetCount(PowerUpInventoryData inventory, PowerUpButtonView button)
+        private static int GetCount(PowerUpInventoryData inventory, PowerUpConfigBase config)
         {
-            return button.Config switch
-            {
-                SuperKnifeConfig => inventory.SuperKnifeCount,
-                MultipleKnivesConfig => inventory.MultipleKnivesCount,
-                CollectiblesBladeConfig => inventory.CollectiblesBladeCount,
-                _ => 0
-            };
+            if (config == null || string.IsNullOrEmpty(config.InventoryKey))
+                return 0;
+
+            return inventory.GetCount(config.InventoryKey);
         }
 
         private void OnActivated(PowerUpActivatedEventData data)

@@ -1,6 +1,4 @@
 using Common.Events;
-using Game.Entities.Collectible.Events;
-using Game.Entities.Collectible.Data;
 using Game.Flow.Events;
 using Game.PowerUps.Configs;
 using Game.PowerUps.Events;
@@ -21,20 +19,17 @@ namespace Game.Installers
         private readonly PowerUpActivatedEventChannel _ActivatedChannel;
         private readonly PowerUpUsedEventChannel _UsedChannel;
         private readonly LevelStartedEventChannel _LevelStartedChannel;
-        private readonly IEventChannel<CollectibleHitEventData> _CollectibleHitChannel;
 
         public PowerUpInstaller(
             PowerUpCatalog catalog,
             PowerUpActivatedEventChannel activatedChannel,
             PowerUpUsedEventChannel usedChannel,
-            LevelStartedEventChannel levelStartedChannel,
-            IEventChannel<CollectibleHitEventData> collectibleHitChannel)
+            LevelStartedEventChannel levelStartedChannel)
         {
             _Catalog = catalog;
             _ActivatedChannel = activatedChannel;
             _UsedChannel = usedChannel;
             _LevelStartedChannel = levelStartedChannel;
-            _CollectibleHitChannel = collectibleHitChannel;
         }
 
         public void Install(IContainerBuilder builder)
@@ -47,8 +42,8 @@ namespace Game.Installers
                 .AsSelf()
                 .WithParameter(_ActivatedChannel)
                 .WithParameter(_UsedChannel)
-                .WithParameter(_LevelStartedChannel)
-                .WithParameter(_CollectibleHitChannel);
+                .WithParameter(_LevelStartedChannel);
+            builder.RegisterEntryPoint<PowerUpEffectService>().AsSelf();
         }
     }
 }

@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: SuperKnifeConfig
   m_EditorClassIdentifier: Game::Game.PowerUps.Configs.SuperKnifeConfig
   <Icon>k__BackingField: {fileID: 1929295679122730106, guid: dd46967cc8ce59446b460b317b580da7, type: 3}
+  <InventoryKey>k__BackingField: SuperKnife
   <ThrowSpeed>k__BackingField: 20

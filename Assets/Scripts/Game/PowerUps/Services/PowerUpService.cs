@@ -1,19 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Common.Events;
-using Game.Entities.Collectible.Views;
-using Game.Entities.Collectible.Data;
 using Game.Entities.Knife.Views;
 using Game.Flow.Events;
-using Game.KnifeThrower.Configs;
 using Game.PowerUps.Configs;
 using Game.PowerUps.Data;
 using Game.PowerUps.Events;
 using Game.PowerUps.Interfaces;
 using Game.Persistence.Services;
-using Game.Pooling;
-using UnityEngine;
 using VContainer.Unity;
 
 namespace Game.PowerUps.Services
@@ -27,8 +19,7 @@ namespace Game.PowerUps.Services
         private readonly PowerUpActivatedEventChannel _ActivatedChannel;
         private readonly PowerUpUsedEventChannel _UsedChannel;
         private readonly LevelStartedEventChannel _LevelStartedChannel;
-        private readonly IEventChannel<CollectibleHitEventData> _CollectibleHitChannel;
-        private readonly CollectibleRegistry _CollectibleRegistry;
+        private readonly PowerUpEffectService _EffectService;
         private readonly PowerUpRuntimeState _RuntimeState = new PowerUpRuntimeState();
 
         /// <summary>
@@ -39,15 +30,13 @@ namespace Game.PowerUps.Services
             PowerUpActivatedEventChannel activatedChannel,
             PowerUpUsedEventChannel usedChannel,
             LevelStartedEventChannel levelStartedChannel,
-            IEventChannel<CollectibleHitEventData> collectibleHitChannel,
-            CollectibleRegistry collectibleRegistry)
+            PowerUpEffectService effectService)
         {
             _PlayerDataService = playerDataService;
             _ActivatedChannel = activatedChannel;
             _UsedChannel = usedChannel;
             _LevelStartedChannel = levelStartedChannel;
-            _CollectibleHitChannel = collectibleHitChannel;
-            _CollectibleRegistry = collectibleRegistry;
+            _EffectService = effectService;
         }
 
         /// <summary>
@@ -81,12 +70,23 @@ namespace Game.PowerUps.Services
         /// </summary>
         public bool TryActivate(PowerUpConfigBase config)
         {
-            if (config == null)
+            if (config == null || string.IsNullOrEmpty(config.InventoryKey))
                 return false;
 
             var inventory = _PlayerDataService.EnsurePowerUpInventory();
             if (!HasInventory(inventory, config))
                 return false;
+
+            if (config is IPowerUpEffect effectConfig)
+            {
+                if (config is TimeDilatorConfig timeDilator)
+                {
+                    _EffectService?.ApplyEffect(effectConfig, timeDilator.Duration);
+                    ConsumeInventory(inventory, config);
+                    _UsedChannel?.Raise(new PowerUpUsedEventData(config, GetRemainingCount(inventory, config)));
+                    return true;
+                }
+            }
 
             _RuntimeState.HasActivePowerUp = true;
             _RuntimeState.ActiveConfig = config;
@@ -105,7 +105,7 @@ namespace Game.PowerUps.Services
         /// <summary>
         /// Prepares the loaded knife based on the active power-up.
         /// </summary>
-        public void PrepareLoadedKnives(IReadOnlyList<KnifeView> knives)
+        public void PrepareLoadedKnives(System.Collections.Generic.IReadOnlyList<KnifeView> knives)
         {
             if (knives == null || knives.Count == 0)
                 return;
@@ -134,19 +134,8 @@ namespace Game.PowerUps.Services
             if (!HasActivePowerUp || context == null)
                 return false;
 
-            bool handled = false;
-            switch (_RuntimeState.ActiveConfig)
-            {
-                case SuperKnifeConfig superKnifeConfig:
-                    handled = ExecuteSuperKnife(context, superKnifeConfig);
-                    break;
-                case MultipleKnivesConfig multipleKnivesConfig:
-                    handled = ExecuteMultipleKnives(context, multipleKnivesConfig);
-                    break;
-                case CollectiblesBladeConfig collectiblesBladeConfig:
-                    handled = ExecuteCollectiblesBlade(collectiblesBladeConfig);
-                    break;
-            }
+            var executionContext = new PowerUpExecutionContext(context);
+            bool handled = _RuntimeState.ActiveConfig.Execute(executionContext);
 
             if (handled)
             {
@@ -174,58 +163,18 @@ namespace Game.PowerUps.Services
             _RuntimeState.Clear();
         }
 
-        private bool ExecuteSuperKnife(PowerUpThrowContext context, SuperKnifeConfig config)
-        {
-            context.ThrowerView.ThrowLoadedKnife(config.ThrowSpeed);
-            return true;
-        }
-
-        private bool ExecuteMultipleKnives(PowerUpThrowContext context, MultipleKnivesConfig config)
-        {
-            int thrown = context.ThrowerView.ThrowLoadedKnives(config.ThrowSpeed);
-            return thrown > 0;
-        }
-
-        private bool ExecuteCollectiblesBlade(CollectiblesBladeConfig config)
-        {
-            _ = CollectAllCollectibles(config);
-            return true;
-        }
-
-        private async Task CollectAllCollectibles(CollectiblesBladeConfig config)
-        {
-            if (_CollectibleRegistry == null)
-                return;
-
-            var items = new List<CollectibleView>(_CollectibleRegistry.GetAll());
-            for (int i = 0; i < items.Count; i++)
-            {
-                var collectible = items[i];
-                if (collectible == null)
-                    continue;
-
-                if (!collectible.MarkAsHit())
-                    continue;
-
-                collectible.PlayHitFeedback();
-                _CollectibleHitChannel?.Raise(new CollectibleHitEventData(collectible.transform.position, collectible.Value));
-                UnityEngine.Object.Destroy(collectible.gameObject);
-
-                if (config.TimeBetweenBlades > 0f)
-                {
-                    await Task.Delay((int)(config.TimeBetweenBlades * 1000f));
-                }
-            }
-        }
-
         private void ConsumeActive()
         {
             var inventory = _PlayerDataService.EnsurePowerUpInventory();
-            DecrementInventory(inventory, _RuntimeState.ActiveConfig);
-            _PlayerDataService.SavePowerUpInventory();
-
+            ConsumeInventory(inventory, _RuntimeState.ActiveConfig);
             _UsedChannel?.Raise(new PowerUpUsedEventData(_RuntimeState.ActiveConfig, GetRemainingCount(inventory, _RuntimeState.ActiveConfig)));
             _RuntimeState.Clear();
+        }
+
+        private void ConsumeInventory(PowerUpInventoryData inventory, PowerUpConfigBase config)
+        {
+            DecrementInventory(inventory, config);
+            _PlayerDataService.SavePowerUpInventory();
         }
 
         private static bool HasInventory(PowerUpInventoryData inventory, PowerUpConfigBase config)
@@ -235,29 +184,18 @@ namespace Game.PowerUps.Services
 
         private static int GetRemainingCount(PowerUpInventoryData inventory, PowerUpConfigBase config)
         {
-            return config switch
-            {
-                SuperKnifeConfig => inventory.SuperKnifeCount,
-                MultipleKnivesConfig => inventory.MultipleKnivesCount,
-                CollectiblesBladeConfig => inventory.CollectiblesBladeCount,
-                _ => 0
-            };
+            if (config == null || string.IsNullOrEmpty(config.InventoryKey))
+                return 0;
+
+            return inventory.GetCount(config.InventoryKey);
         }
 
         private static void DecrementInventory(PowerUpInventoryData inventory, PowerUpConfigBase config)
         {
-            switch (config)
-            {
-                case SuperKnifeConfig:
-                    inventory.SuperKnifeCount = Mathf.Max(0, inventory.SuperKnifeCount - 1);
-                    break;
-                case MultipleKnivesConfig:
-                    inventory.MultipleKnivesCount = Mathf.Max(0, inventory.MultipleKnivesCount - 1);
-                    break;
-                case CollectiblesBladeConfig:
-                    inventory.CollectiblesBladeCount = Mathf.Max(0, inventory.CollectiblesBladeCount - 1);
-                    break;
-            }
+            if (config == null || string.IsNullOrEmpty(config.InventoryKey))
+                return;
+
+            inventory.DecrementCount(config.InventoryKey, 1);
         }
     }
 }

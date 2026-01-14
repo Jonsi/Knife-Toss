@@ -1,5 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
 using Game.Persistence.Data;
 using Game.Persistence.Storage;
+using Game.PowerUps.Configs;
 using Game.PowerUps.Data;
 using UnityEditor;
 using UnityEngine;
@@ -14,6 +17,8 @@ namespace Game.EditorTools
         private FilePlayerDataStore _Store;
         private PlayerData _PlayerData;
         private bool _HasUnsavedChanges;
+        private PowerUpCatalog _Catalog;
+        private List<PowerUpConfigBase> _PowerUpConfigs = new List<PowerUpConfigBase>();
 
         private static class Styles
         {
@@ -27,9 +32,6 @@ namespace Game.EditorTools
             public static readonly GUIContent SettingsHeader = new GUIContent("Settings");
             public static readonly GUIContent Muted = new GUIContent("Muted");
             public static readonly GUIContent PowerUpsHeader = new GUIContent("Power Ups");
-            public static readonly GUIContent SuperKnife = new GUIContent("Super Knife");
-            public static readonly GUIContent MultipleKnives = new GUIContent("Multiple Knives");
-            public static readonly GUIContent CollectiblesBlade = new GUIContent("Collectibles Blade");
         }
 
         [MenuItem("Tools/Player Data")]
@@ -43,7 +45,22 @@ namespace Game.EditorTools
         {
             titleContent = new GUIContent("Player Data");
             _Store ??= new FilePlayerDataStore();
+            LoadCatalog();
             LoadData();
+        }
+
+        private void LoadCatalog()
+        {
+            string[] guids = AssetDatabase.FindAssets($"t:{typeof(PowerUpCatalog).Name}");
+            if (guids.Length > 0)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guids[0]);
+                _Catalog = AssetDatabase.LoadAssetAtPath<PowerUpCatalog>(path);
+                if (_Catalog != null)
+                {
+                    _PowerUpConfigs = _Catalog.Entries.Where(config => config != null && !string.IsNullOrEmpty(config.InventoryKey)).ToList();
+                }
+            }
         }
 
         private void OnGUI()
@@ -137,16 +154,40 @@ namespace Game.EditorTools
             EditorGUILayout.LabelField(Styles.PowerUpsHeader, EditorStyles.boldLabel);
             var inventory = EnsurePowerUpInventory();
 
-            EditorGUI.BeginChangeCheck();
-            int superKnife = EditorGUILayout.IntField(Styles.SuperKnife, inventory.SuperKnifeCount);
-            int multipleKnives = EditorGUILayout.IntField(Styles.MultipleKnives, inventory.MultipleKnivesCount);
-            int collectiblesBlade = EditorGUILayout.IntField(Styles.CollectiblesBlade, inventory.CollectiblesBladeCount);
-
-            if (EditorGUI.EndChangeCheck())
+            if (_Catalog == null || _PowerUpConfigs.Count == 0)
             {
-                inventory.SuperKnifeCount = Mathf.Max(0, superKnife);
-                inventory.MultipleKnivesCount = Mathf.Max(0, multipleKnives);
-                inventory.CollectiblesBladeCount = Mathf.Max(0, collectiblesBlade);
+                EditorGUILayout.HelpBox("No PowerUpCatalog found or no power-ups configured. Please ensure a PowerUpCatalog asset exists in the project.", MessageType.Warning);
+                if (GUILayout.Button("Reload Catalog"))
+                {
+                    LoadCatalog();
+                }
+                return;
+            }
+
+            bool hasChanges = false;
+
+            for (int i = 0; i < _PowerUpConfigs.Count; i++)
+            {
+                var config = _PowerUpConfigs[i];
+                if (config == null || string.IsNullOrEmpty(config.InventoryKey))
+                    continue;
+
+                string displayName = string.IsNullOrEmpty(config.name) ? config.InventoryKey : config.name;
+                GUIContent label = new GUIContent(displayName);
+                int currentCount = inventory.GetCount(config.InventoryKey);
+                
+                EditorGUI.BeginChangeCheck();
+                int newCount = EditorGUILayout.IntField(label, currentCount);
+                
+                if (EditorGUI.EndChangeCheck())
+                {
+                    inventory.SetCount(config.InventoryKey, Mathf.Max(0, newCount));
+                    hasChanges = true;
+                }
+            }
+
+            if (hasChanges)
+            {
                 MarkDirty();
             }
         }

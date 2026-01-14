@@ -112,8 +112,7 @@ namespace Game.Installers
                 _PowerUpCatalog,
                 _PowerUpActivatedEventChannel,
                 _PowerUpUsedEventChannel,
-                _LevelStartedEventChannel,
-                _CollectibleHitEventChannel);
+                _LevelStartedEventChannel);
         }
 
         private LevelInstaller CreateLevelInstaller()
