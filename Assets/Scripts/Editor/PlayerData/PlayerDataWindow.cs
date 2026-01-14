@@ -19,6 +19,7 @@ namespace Game.EditorTools
         private bool _HasUnsavedChanges;
         private PowerUpCatalog _Catalog;
         private List<PowerUpConfigBase> _PowerUpConfigs = new List<PowerUpConfigBase>();
+        private Vector2 _ScrollPosition;
 
         private static class Styles
         {
@@ -67,9 +68,12 @@ namespace Game.EditorTools
         {
             DrawToolbar();
 
+            _ScrollPosition = EditorGUILayout.BeginScrollView(_ScrollPosition);
+
             if (_PlayerData == null)
             {
                 EditorGUILayout.HelpBox("No player data could be loaded.", MessageType.Warning);
+                EditorGUILayout.EndScrollView();
                 return;
             }
 
@@ -84,6 +88,8 @@ namespace Game.EditorTools
             DrawSettingsSection();
             EditorGUILayout.Space(10f);
             DrawPowerUpSection();
+
+            EditorGUILayout.EndScrollView();
         }
 
         private void DrawToolbar()
