@@ -21,6 +21,17 @@ namespace Game.Entities.Knife.States
             // Ensure collider is active while in flight
             KnifeView.SetColliderEnabled(true);
         }
+
+        public override void Update(float deltaTime)
+        {
+            base.Update(deltaTime);
+
+            if (Velocity.sqrMagnitude > 0.01f)
+            {
+                float angle = Mathf.Atan2(Velocity.y, Velocity.x) * Mathf.Rad2Deg - 90f;
+                KnifeView.Transform.rotation = Quaternion.Euler(0, 0, angle);
+            }
+        }
     }
 }
 

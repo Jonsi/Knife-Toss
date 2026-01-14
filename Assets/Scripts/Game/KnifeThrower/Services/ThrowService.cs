@@ -21,7 +21,7 @@ namespace Game.KnifeThrower.Services
     /// Service that coordinates knife throwing actions based on player input.
     /// Manages knife lifecycle through pooling and view coordination.
     /// </summary>
-    public class ThrowService : IThrowService, IStartable, IDisposable
+    public class ThrowService : IThrowService, IStartable, IDisposable, ITickable
     {
         private readonly IPlayerThrowInputListener _PlayerThrowInputListener;
         private readonly IConfigurationProvider<KnifeThrowConfiguration> _KnifeThrowConfigurationProvider;
@@ -31,6 +31,7 @@ namespace Game.KnifeThrower.Services
         private readonly IEventChannel<PowerUpActivatedEventData> _PowerUpActivatedChannel;
         private readonly IEventChannel<PowerUpUsedEventData> _PowerUpUsedChannel;
         private bool _IsRunning;
+        private bool _IsPointerDown;
 
         /// <summary>
         /// Initializes a new instance of the ThrowService.
@@ -63,6 +64,7 @@ namespace Game.KnifeThrower.Services
                 return;
 
             _PlayerThrowInputListener.OnThrowRequested += HandleThrowRequested;
+            _PlayerThrowInputListener.OnThrowReleased += HandleThrowReleased;
             _PlayerThrowInputListener.Initialize();
 
             _PowerUpActivatedChannel?.Subscribe(OnPowerUpActivated);
@@ -72,11 +74,85 @@ namespace Game.KnifeThrower.Services
             _IsRunning = true;
         }
 
+        public void Tick()
+        {
+            if (!_IsRunning || !_IsPointerDown)
+                return;
+
+            if (_PowerUpService?.ActiveConfig is KnifeAimConfig)
+            {
+                UpdateKnifeAiming();
+            }
+        }
+
+        private void UpdateKnifeAiming()
+        {
+            var loadedKnives = _KnifeThrowerView.LoadedKnives;
+            if (loadedKnives == null || loadedKnives.Count == 0)
+                return;
+
+            var pointer = UnityEngine.InputSystem.Pointer.current;
+            if (pointer == null)
+                return;
+
+            Vector2 screenPosition = pointer.position.ReadValue();
+            Camera mainCamera = Camera.main;
+            if (mainCamera == null)
+                return;
+
+            // Use the spawn point's Z distance from the camera for accurate world point calculation
+            float distance = Mathf.Abs(mainCamera.transform.position.z - _KnifeThrowerView.SpawnPoint.position.z);
+            Vector3 screenPosWithZ = new Vector3(screenPosition.x, screenPosition.y, distance);
+            Vector3 worldPosition = mainCamera.ScreenToWorldPoint(screenPosWithZ);
+
+            foreach (var knife in loadedKnives)
+            {
+                if (knife == null) continue;
+                
+                // Vector pointing from knife to cursor
+                Vector2 direction = ((Vector2)worldPosition - (Vector2)knife.transform.position).normalized;
+                if (direction.sqrMagnitude > 0.001f)
+                {
+                    // Assuming knife sprite points UP (+Y) by default.
+                    // Atan2 returns angle from +X axis. We subtract 90 to align +Y with the direction.
+                    float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+                    knife.transform.rotation = Quaternion.Euler(0, 0, angle);
+                }
+            }
+        }
+
         private void HandleThrowRequested()
         {
             if (IsPointerOverUI())
                 return;
 
+            _IsPointerDown = true;
+            
+            // If KnifeAim is NOT active, we might want to throw immediately or prepare.
+            // Requirement says: "after activating the knife aim power up... knife should only be thrown on release".
+            // For other powerups/normal state, it seems they currently throw on "performed" (which was "press").
+            
+            if (!(_PowerUpService?.ActiveConfig is KnifeAimConfig))
+            {
+                PerformThrow();
+            }
+        }
+
+        private void HandleThrowReleased()
+        {
+            if (!_IsPointerDown)
+                return;
+
+            if (_PowerUpService?.ActiveConfig is KnifeAimConfig)
+            {
+                PerformThrow();
+            }
+
+            _IsPointerDown = false;
+        }
+
+        private void PerformThrow()
+        {
             var config = _KnifeThrowConfigurationProvider.GetConfiguration();
             ReloadLoadedKnifeForActivePowerUp();
             _PowerUpService?.PrepareLoadedKnives(_KnifeThrowerView.LoadedKnives);
@@ -240,6 +316,7 @@ namespace Game.KnifeThrower.Services
                 return;
 
             _PlayerThrowInputListener.OnThrowRequested -= HandleThrowRequested;
+            _PlayerThrowInputListener.OnThrowReleased -= HandleThrowReleased;
             _PlayerThrowInputListener.Dispose();
 
             _PowerUpActivatedChannel?.Unsubscribe(OnPowerUpActivated);

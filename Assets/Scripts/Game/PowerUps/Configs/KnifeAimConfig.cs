@@ -28,24 +28,14 @@ namespace Game.PowerUps.Configs
 
         private Vector2 CalculateAimDirection(PowerUpThrowContext throwContext)
         {
-            var pointer = UnityEngine.InputSystem.Pointer.current;
-            if (pointer == null)
-                return Vector2.up;
+            var loadedKnives = throwContext.ThrowerView.LoadedKnives;
+            if (loadedKnives != null && loadedKnives.Count > 0 && loadedKnives[0] != null)
+            {
+                // Use the current rotation of the knife which was set during Tick in ThrowService
+                return loadedKnives[0].transform.up;
+            }
 
-            Vector2 screenPosition = pointer.position.ReadValue();
-            Camera mainCamera = Camera.main;
-            if (mainCamera == null)
-                return Vector2.up;
-
-            Vector3 screenPosWithZ = new Vector3(screenPosition.x, screenPosition.y, mainCamera.transform.position.z);
-            Vector3 worldPosition = mainCamera.ScreenToWorldPoint(screenPosWithZ);
-            Vector2 spawnPosition = throwContext.SpawnPoint.position;
-            Vector2 direction = ((Vector2)worldPosition - spawnPosition).normalized;
-
-            if (direction.sqrMagnitude < 0.01f)
-                return Vector2.up;
-
-            return direction;
+            return Vector2.up;
         }
     }
 }

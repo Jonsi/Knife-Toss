@@ -80,7 +80,7 @@ namespace Game.Entities.Knife.Views
 
         public int ThrowLoadedKnives(float throwSpeed)
         {
-            return ThrowLoadedKnivesWithDirection(Vector2.up, throwSpeed);
+            return ThrowLoadedKnivesWithDirectionInternal(Vector2.up, throwSpeed);
         }
 
         /// <summary>
@@ -93,10 +93,10 @@ namespace Game.Entities.Knife.Views
             if (_LoadedKnives.Count == 0)
                 return;
 
-            ThrowLoadedKnivesWithDirection(direction, throwSpeed);
+            _ = ThrowLoadedKnivesWithDirectionInternal(direction, throwSpeed);
         }
 
-        private int ThrowLoadedKnivesWithDirection(Vector2 direction, float throwSpeed)
+        private int ThrowLoadedKnivesWithDirectionInternal(Vector2 direction, float throwSpeed)
         {
             if (_LoadedKnives.Count == 0)
                 return 0;
