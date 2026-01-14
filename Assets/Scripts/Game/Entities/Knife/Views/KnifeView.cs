@@ -27,6 +27,7 @@ namespace Game.Entities.Knife.Views
         [SerializeField] private SpriteRenderer _SpriteRenderer;
         [SerializeField] private Transform _VisualRoot;
         [SerializeField] private Collider2D _Collider;
+        [SerializeField] private Collider2D _HitCollider;
         [SerializeField] private SpriteShatterController _ShatterController;
         
         private KnifeStateMachine _StateMachine;
@@ -182,8 +183,32 @@ namespace Game.Entities.Knife.Views
         
         public void SetColliderEnabled(bool enabled)
         {
-            if (_Collider != null)
-                _Collider.enabled = enabled;
+            // Determine if we are in the Stuck state
+            bool isStuck = _StateMachine != null && _StateMachine.Current == _StateMachine.Stuck;
+
+            if (isStuck)
+            {
+                // In stuck state, we use the HitCollider (if assigned)
+                if (_HitCollider != null)
+                {
+                    _HitCollider.enabled = enabled;
+                    // Ensure the main collider is disabled
+                    if (_Collider != null) _Collider.enabled = false;
+                }
+                else
+                {
+                    // Fallback if HitCollider is missing: use main collider
+                    if (_Collider != null) _Collider.enabled = enabled;
+                }
+            }
+            else
+            {
+                // In other states (Loaded, InFlight, etc.), use the main collider
+                if (_Collider != null) _Collider.enabled = enabled;
+
+                // Ensure HitCollider is disabled
+                if (_HitCollider != null) _HitCollider.enabled = false;
+            }
         }
 
         private void CheckOutOfView()
