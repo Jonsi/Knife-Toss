@@ -166,9 +166,10 @@ namespace Game.PowerUps.Services
         private void ConsumeActive()
         {
             var inventory = _PlayerDataService.EnsurePowerUpInventory();
-            ConsumeInventory(inventory, _RuntimeState.ActiveConfig);
-            _UsedChannel?.Raise(new PowerUpUsedEventData(_RuntimeState.ActiveConfig, GetRemainingCount(inventory, _RuntimeState.ActiveConfig)));
+            var activeConfig = _RuntimeState.ActiveConfig;
+            ConsumeInventory(inventory, activeConfig);
             _RuntimeState.Clear();
+            _UsedChannel?.Raise(new PowerUpUsedEventData(activeConfig, GetRemainingCount(inventory, activeConfig)));
         }
 
         private void ConsumeInventory(PowerUpInventoryData inventory, PowerUpConfigBase config)
