@@ -79,8 +79,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1199171465
-  m_SortingLayer: 4
-  m_SortingOrder: 1
+  m_SortingLayer: 3
+  m_SortingOrder: 2
   m_MaskInteraction: 0
   m_Sprite: {fileID: 5458087489775065936, guid: 8483d29b1c07b644595f55e48fce7c8c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -215,6 +215,7 @@ MonoBehaviour:
   _SpawnAnimator: {fileID: 1258234455965085683}
   _SpriteRenderers:
   - {fileID: 729744686567893219}
+  _StickableSortingOffset: -1
 --- !u!114 &1708567030376354758
 MonoBehaviour:
   m_ObjectHideFlags: 0

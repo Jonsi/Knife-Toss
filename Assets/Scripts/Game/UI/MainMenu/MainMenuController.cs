@@ -16,6 +16,7 @@ namespace Game.UI.MainMenu
         [Header("UI References")]
         [SerializeField] private Button _PlayButton;
         [SerializeField] private Button _StagesButton;
+        [SerializeField] private Button _PvpButton;
         [SerializeField] private TMP_Text _CurrentStageText;
 
         [Inject] private PlayerDataService _PlayerDataService;
@@ -26,6 +27,10 @@ namespace Game.UI.MainMenu
         {
             _PlayButton.onClick.AddListener(OnPlayClicked);
             _StagesButton.onClick.AddListener(OnStagesClicked);
+            
+            if (_PvpButton != null)
+                _PvpButton.onClick.AddListener(OnPvpClicked);
+
             UpdateCurrentStageText();
         }
 
@@ -42,6 +47,9 @@ namespace Game.UI.MainMenu
         {
             _PlayButton.onClick.RemoveListener(OnPlayClicked);
             _StagesButton.onClick.RemoveListener(OnStagesClicked);
+            
+            if (_PvpButton != null)
+                _PvpButton.onClick.RemoveListener(OnPvpClicked);
         }
 
         private void OnPlayClicked()
@@ -58,6 +66,11 @@ namespace Game.UI.MainMenu
         private void OnStagesClicked()
         {
             _SceneLoaderService.LoadStagesMenu().Forget();
+        }
+
+        private void OnPvpClicked()
+        {
+            _SceneLoaderService.LoadPVP().Forget();
         }
     }
 }

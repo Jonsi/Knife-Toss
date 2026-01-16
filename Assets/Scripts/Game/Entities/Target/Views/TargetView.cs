@@ -44,7 +44,8 @@ namespace Game.Entities.Target.Views
         private bool _HasNotifiedDestroyed;
         private List<IStickable> _StuckObjects = new();
         private const int SortingOrderStride = 10;
-        private const int StickableSortingOffset = -1;
+        [Tooltip("Sorting order offset for stuck objects relative to the target. Set to 1 to render on top.")]
+        [SerializeField] private int _StickableSortingOffset = -1;
         private int _BaseSortingOrder;
         private readonly StickPositionService _StickPositionService = new();
         private int _SortingLayerId;
@@ -400,7 +401,7 @@ namespace Game.Entities.Target.Views
         private void AttachStickable(IStickable stickable)
         {
             stickable.Transform.SetParent(StickParent);
-            stickable.ApplySorting(_SortingLayerId, _BaseSortingOrder + StickableSortingOffset);
+            stickable.ApplySorting(_SortingLayerId, _BaseSortingOrder + _StickableSortingOffset);
         }
 
         private void PlayStuckKnifeShatters()
@@ -469,7 +470,7 @@ namespace Game.Entities.Target.Views
         {
             for (int i = 0; i < _StuckObjects.Count; i++)
             {
-                _StuckObjects[i]?.ApplySorting(_SortingLayerId, _BaseSortingOrder + StickableSortingOffset);
+                _StuckObjects[i]?.ApplySorting(_SortingLayerId, _BaseSortingOrder + _StickableSortingOffset);
             }
         }
 
