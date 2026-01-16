@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 256246fab7288244abfeea599abe5ea1
+guid: 6cb8e5ba15dde624ca5bb41f4987b2a9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8471196546758874033
-    second: pvp button(1) 1_0
+      213: -2330976470168729710
+    second: pvp button(1)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: pvp button(1) 1_0
+      name: pvp button(1)_0
       rect:
         serializedVersion: 2
         x: 5
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1b31410806cbf8570800000000000000
-      internalID: 8471196546758874033
+      spriteID: 2978ccb1045b6afd0800000000000000
+      internalID: -2330976470168729710
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      pvp button(1) 1_0: 8471196546758874033
+      pvp button(1)_0: -2330976470168729710
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
