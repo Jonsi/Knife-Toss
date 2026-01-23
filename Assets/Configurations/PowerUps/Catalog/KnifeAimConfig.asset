@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb3f6fe1f540ee24e8334e035ffa1a55, type: 3}
   m_Name: KnifeAimConfig
   m_EditorClassIdentifier: Game::Game.PowerUps.Configs.KnifeAimConfig
+  <DisplayName>k__BackingField: Dead Eye
+  <Description>k__BackingField: Unlocks manual aim, letting you adjust your angle
+    to strike exactly where you want
   <Icon>k__BackingField: {fileID: -1696153379757533951, guid: dd46967cc8ce59446b460b317b580da7, type: 3}
   <InventoryKey>k__BackingField: KnifeAim
   <ThrowSpeed>k__BackingField: 30

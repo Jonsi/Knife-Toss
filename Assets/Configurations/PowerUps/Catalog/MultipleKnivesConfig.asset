@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 155e2f69bb8da2b44880d5bf4169d744, type: 3}
   m_Name: MultipleKnivesConfig
   m_EditorClassIdentifier: Game::Game.PowerUps.Configs.MultipleKnivesConfig
+  <DisplayName>k__BackingField: Tri-Barrage
+  <Description>k__BackingField: Launches 3 knives simultaneously to quickly reduce
+    your required hit count
   <Icon>k__BackingField: {fileID: 2408068179679165655, guid: dd46967cc8ce59446b460b317b580da7, type: 3}
   <InventoryKey>k__BackingField: MultipleKnives
   <KnifeCount>k__BackingField: 3

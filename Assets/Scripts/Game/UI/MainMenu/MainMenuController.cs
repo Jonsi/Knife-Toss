@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using Game.Flow.Game;
 using Game.Persistence.Services;
+using Game.UI.PowerUps;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +18,7 @@ namespace Game.UI.MainMenu
         [SerializeField] private Button _PlayButton;
         [SerializeField] private Button _StagesButton;
         [SerializeField] private Button _PvpButton;
+        [SerializeField] private Button _PowerUpsButton;
         [SerializeField] private TMP_Text _CurrentStageText;
 
         [Inject] private PlayerDataService _PlayerDataService;
@@ -30,6 +32,9 @@ namespace Game.UI.MainMenu
             
             if (_PvpButton != null)
                 _PvpButton.onClick.AddListener(OnPvpClicked);
+
+            if (_PowerUpsButton != null)
+                _PowerUpsButton.onClick.AddListener(OnPowerUpsClicked);
 
             UpdateCurrentStageText();
         }
@@ -50,6 +55,9 @@ namespace Game.UI.MainMenu
             
             if (_PvpButton != null)
                 _PvpButton.onClick.RemoveListener(OnPvpClicked);
+
+            if (_PowerUpsButton != null)
+                _PowerUpsButton.onClick.RemoveListener(OnPowerUpsClicked);
         }
 
         private void OnPlayClicked()
@@ -71,6 +79,11 @@ namespace Game.UI.MainMenu
         private void OnPvpClicked()
         {
             _SceneLoaderService.LoadPVP().Forget();
+        }
+
+        private void OnPowerUpsClicked()
+        {
+            _SceneLoaderService.LoadPowerUps().Forget();
         }
     }
 }

@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dd4ec57c3e9d434aa96d76e56e335fe, type: 3}
   m_Name: TimeDilatorConfig
   m_EditorClassIdentifier: Game::Game.PowerUps.Configs.TimeDilatorConfig
+  <DisplayName>k__BackingField: Chrono Shift
+  <Description>k__BackingField: Temporarily slows down the target's rotation speed
+    for easier timing
   <Icon>k__BackingField: {fileID: -7220246044999029831, guid: dd46967cc8ce59446b460b317b580da7, type: 3}
   <InventoryKey>k__BackingField: TimeDilator
   <Duration>k__BackingField: 5

@@ -10,6 +10,7 @@ namespace Game.Flow.Game
     {
         private const string MAIN_MENU_SCENE = "MainMenu";
         private const string STAGES_MENU_SCENE = "StagesMenu";
+        private const string POWER_UPS_SCENE = "PowerUpsMenu";
         private const string GAME_SCENE = "StagePlay";
         private const string PVP_SCENE = "PVPPlay";
 
@@ -27,6 +28,14 @@ namespace Game.Flow.Game
         public async UniTask LoadStagesMenu()
         {
             await SceneManager.LoadSceneAsync(STAGES_MENU_SCENE, LoadSceneMode.Single).ToUniTask();
+        }
+
+        /// <summary>
+        /// Loads the power-ups menu scene.
+        /// </summary>
+        public async UniTask LoadPowerUps()
+        {
+            await SceneManager.LoadSceneAsync(POWER_UPS_SCENE, LoadSceneMode.Single).ToUniTask();
         }
 
         /// <summary>

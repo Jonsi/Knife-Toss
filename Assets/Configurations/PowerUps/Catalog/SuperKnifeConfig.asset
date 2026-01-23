@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 052c21724c65fdc44ba870205ab568da, type: 3}
   m_Name: SuperKnifeConfig
   m_EditorClassIdentifier: Game::Game.PowerUps.Configs.SuperKnifeConfig
+  <DisplayName>k__BackingField: Shatter Strike
+  <Description>k__BackingField: ' Instantly destroys the target with a single hit,
+    skipping the remaining knives'
   <Icon>k__BackingField: {fileID: 1929295679122730106, guid: dd46967cc8ce59446b460b317b580da7, type: 3}
   <InventoryKey>k__BackingField: SuperKnife
   <ThrowSpeed>k__BackingField: 20
