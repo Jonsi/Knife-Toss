@@ -11,6 +11,14 @@ namespace Game.Feedback.Audio.Systems
     {
         [SerializeField] private AudioSource _AudioSource;
 
+        private void Awake()
+        {
+            if (_AudioSource == null)
+            {
+                _AudioSource = GetComponent<AudioSource>();
+            }
+        }
+
         /// <summary>
         /// Plays the provided audio clip once using the configured output settings.
         /// </summary>

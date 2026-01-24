@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SoundSettings
   m_EditorClassIdentifier: Game::Game.Feedback.Audio.Data.SoundSettings
   <KnifeThrowClip>k__BackingField: {fileID: 8300000, guid: fe0b1f9aeb45b41b089175aeeabd5d95, type: 3}
-  <KnifeLoadClip>k__BackingField: {fileID: 0}
+  <KnifeLoadClip>k__BackingField: {fileID: 8300000, guid: 699b912cc46ba4f4fad8fa38e997e232, type: 3}
   <HitTargetClip>k__BackingField: {fileID: 8300000, guid: ad885cbd16cd0064a8d674e1c70497f7, type: 3}
   <HitKnifeClip>k__BackingField: {fileID: 8300000, guid: 2f79b76c4d829fb439462ad242183257, type: 3}
   <HitCollectibleClip>k__BackingField: {fileID: 8300000, guid: 22eab4df0bfb76b439118c30d20e43b9, type: 3}
