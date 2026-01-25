@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf8f9f085214c24faa23ddcc7a1a993, type: 3}
+  m_Name: PrivacyPolicyContent
+  m_EditorClassIdentifier: Game::Game.UI.Data.PrivacyPolicyContent
+  PolicyText: "MOCK: Privacy Policy for [Game Name]: By installing and playing this
+    application, you acknowledge and agree to the collection and use of information
+    as outlined in this policy. We, [Developer Name], along with our trusted third-party
+    service providers (such as Unity Analytics and advertising networks), automatically
+    collect and process certain technical data\u2014including your unique device
+    identifier, IP address, system logs, and gameplay statistics (e.g., high scores,
+    unlocked items)\u2014solely for the purposes of improving game stability, optimizing
+    user experience, and delivering relevant advertisements. We generally do not
+    collect personally identifiable information (such as your name or address) unless
+    voluntarily provided for support purposes, and you retain the right to request
+    data deletion or opt-out of targeted advertising through your device settings
+    at any time; for further inquiries, please contact us at [Support Email]."

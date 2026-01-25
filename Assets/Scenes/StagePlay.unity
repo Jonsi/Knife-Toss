@@ -1412,7 +1412,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30d409cdf73d59b4ab4df4d5217a9e62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game::Game.UI.Popups.ReportErrorPopup
-  _ErrorDescriptionInput: {fileID: 0}
+  _ErrorDescriptionInput: {fileID: 2010836870}
   _SubmitButton: {fileID: 489228694}
   _CancelButton: {fileID: 1345969169}
   _StatusText: {fileID: 0}
@@ -5228,13 +5228,13 @@ MonoBehaviour:
   _StagesConfig: {fileID: 11400000, guid: d7b76ea65780b0f4e890085754f0d6bf, type: 2}
   _PrefabsConfiguration: {fileID: 11400000, guid: 89c8339ac5c03a8469b04f345c441a2f, type: 2}
   _PowerUpCatalog: {fileID: 11400000, guid: e5d29e583c76d9547a0b6378b8cece49, type: 2}
-  _PrivacyPolicyContent: {fileID: 0}
+  _PrivacyPolicyContent: {fileID: 11400000, guid: b773414e95f06b147a8f9172cdbe40e8, type: 2}
   _KnifeThrowerView: {fileID: 497239670}
   _LevelRoot: {fileID: 182301541}
   _StageFailPopup: {fileID: 1957040492}
   _SettingsPopup: {fileID: 8633855206658701134}
   _PrivacyPopup: {fileID: 66447402}
-  _ReportErrorPopup: {fileID: 0}
+  _ReportErrorPopup: {fileID: 521085517}
   _UIController: {fileID: 633680713}
   _CollisionEventChannel: {fileID: 11400000, guid: 550df89ae380ec743af103ed588ae1b1, type: 2}
   _KnifeImpactEventChannel: {fileID: 11400000, guid: f05ddbed278f4b14cac948a5951b4fe9, type: 2}

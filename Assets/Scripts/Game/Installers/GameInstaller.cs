@@ -47,7 +47,7 @@ namespace Game.Installers
             builder.Register<SceneLoaderService>(Lifetime.Singleton);
             
             // Settings & Feedback
-            builder.RegisterEntryPoint<SettingsService>();
+            builder.RegisterEntryPoint<SettingsService>().AsSelf();
 
             // Audio Core (Feedback listeners are in StageInstaller)
             builder.RegisterInstance(_SoundSettings);
