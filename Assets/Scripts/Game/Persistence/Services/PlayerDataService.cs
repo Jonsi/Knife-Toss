@@ -95,6 +95,21 @@ namespace Game.Persistence.Services
         }
 
         /// <summary>
+        /// Gets the player settings, ensuring they exist.
+        /// </summary>
+        public PlayerSettingsData Settings
+        {
+            get
+            {
+                if (_CachedData.Settings == null)
+                {
+                    _CachedData.Settings = new PlayerSettingsData();
+                }
+                return _CachedData.Settings;
+            }
+        }
+
+        /// <summary>
         /// Schedules a save for updated power-up inventory data.
         /// </summary>
         public void SavePowerUpInventory()

@@ -9,6 +9,7 @@ using Game.KnifeThrower.Events;
 using Game.Level.Catalogs;
 using Game.Settings;
 using Game.UI.Controllers;
+using Game.UI.Data;
 using Game.UI.Popups;
 using Game.Persistence.Services;
 using Game.Pooling;
@@ -31,11 +32,15 @@ namespace Game.Installers
         [SerializeField] private StagesCollection _StagesConfig;
         [SerializeField] private PrefabsConfiguration _PrefabsConfiguration;
         [SerializeField] private PowerUpCatalog _PowerUpCatalog;
+        [SerializeField] private PrivacyPolicyContent _PrivacyPolicyContent;
         
         [Header("Scene References")]
         [SerializeField] private KnifeThrowerView _KnifeThrowerView;
         [SerializeField] private Transform _LevelRoot;
         [SerializeField] private StageFailPopup _StageFailPopup;
+        [SerializeField] private SettingsPopup _SettingsPopup;
+        [SerializeField] private PrivacyPolicyPopup _PrivacyPopup;
+        [SerializeField] private ReportErrorPopup _ReportErrorPopup;
         [SerializeField] private UIController _UIController;
 
         [Header("Event Channels (Must match GameInstaller)")]
@@ -145,7 +150,11 @@ namespace Game.Installers
         {
             return new UIInstaller(
                 _UIController,
-                _StageFailPopup);
+                _StageFailPopup,
+                _SettingsPopup,
+                _PrivacyPopup,
+                _ReportErrorPopup,
+                _PrivacyPolicyContent);
         }
 
         private StageAudioInstaller CreateStageAudioInstaller()

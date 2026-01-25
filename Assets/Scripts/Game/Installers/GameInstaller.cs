@@ -6,6 +6,7 @@ using Game.Flow.Loading;
 using Game.Input;
 using Game.KnifeThrower.Interfaces;
 using Game.Settings;
+using Game.UI.Services;
 using Game.Feedback.Audio.Interfaces;
 using Game.Feedback.Audio.Systems;
 using UnityEngine;
@@ -42,9 +43,11 @@ namespace Game.Installers
             Install(builder, CreateGameFlowInstaller());
             Install(builder, CreatePersistenceInstaller());
 
-            // General Services
             builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
             builder.Register<SceneLoaderService>(Lifetime.Singleton);
+            
+            // Settings & Feedback
+            builder.RegisterEntryPoint<SettingsService>();
 
             // Audio Core (Feedback listeners are in StageInstaller)
             builder.RegisterInstance(_SoundSettings);
@@ -52,7 +55,6 @@ namespace Game.Installers
 
             // Register Event Channels (Shared/Persistence)
             builder.RegisterInstance(_ReturnToMenuEventChannel);
-
         }
 
         private static void Install(IContainerBuilder builder, IInstaller installer)

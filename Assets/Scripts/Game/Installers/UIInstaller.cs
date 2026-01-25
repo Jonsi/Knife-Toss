@@ -1,6 +1,7 @@
 using Game.UI.Controllers;
 using Game.UI.HUD;
 using Game.UI.Popups;
+using Game.UI.Data;
 using Game.PowerUps.Views;
 using VContainer;
 using VContainer.Unity;
@@ -14,6 +15,10 @@ namespace Game.Installers
     {
         private readonly UIController _Controller;
         private readonly StageFailPopup _FailPopup;
+        private readonly SettingsPopup _SettingsPopup;
+        private readonly PrivacyPolicyPopup _PrivacyPopup;
+        private readonly ReportErrorPopup _ReportErrorPopup;
+        private readonly PrivacyPolicyContent _PrivacyPolicyContent;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UIInstaller"/> class.
@@ -22,10 +27,18 @@ namespace Game.Installers
         /// <param name="failPopup">Stage fail popup component.</param>
         public UIInstaller(
             UIController controller,
-            StageFailPopup failPopup)
+            StageFailPopup failPopup,
+            SettingsPopup settingsPopup,
+            PrivacyPolicyPopup privacyPopup,
+            ReportErrorPopup reportErrorPopup,
+            PrivacyPolicyContent privacyPolicyContent)
         {
             _Controller = controller;
             _FailPopup = failPopup;
+            _SettingsPopup = settingsPopup;
+            _PrivacyPopup = privacyPopup;
+            _ReportErrorPopup = reportErrorPopup;
+            _PrivacyPolicyContent = privacyPolicyContent;
         }
 
         /// <summary>
@@ -36,8 +49,18 @@ namespace Game.Installers
         {
             builder.RegisterComponent(_Controller);
             builder.RegisterComponent(_FailPopup);
+            builder.RegisterComponent(_SettingsPopup);
+            builder.RegisterComponent(_PrivacyPopup);
+            builder.RegisterComponent(_ReportErrorPopup);
+
+            if (_PrivacyPolicyContent != null)
+                builder.RegisterInstance(_PrivacyPolicyContent);
+            
+            builder.Register<SettingsPopupController>(Lifetime.Singleton);
+            
             builder.RegisterComponentInHierarchy<CollectibleCountDisplay>();
             builder.RegisterComponentInHierarchy<PowerUpHudController>();
+            builder.RegisterComponentInHierarchy<SettingsButtonView>();
         }
     }
 }
