@@ -32,7 +32,9 @@ namespace Game.UI.HUD
         private void OnClicked()
         {
             if (_UIController != null)
-                _UIController.OpenSettings();
+            {
+                _UIController.ToggleSettings();
+            }
         }
     }
 }

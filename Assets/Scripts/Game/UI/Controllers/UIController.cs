@@ -28,10 +28,12 @@ namespace Game.UI.Controllers
             _SettingsPopupController = settingsPopupController;
         }
 
-        public void OpenSettings()
+        public void ToggleSettings()
         {
             if (_SettingsPopupController != null)
-                _SettingsPopupController.ShowSettings();
+            {
+                _SettingsPopupController.ToggleSettings();
+            }
         }
 
         public void SetBackground(Sprite sprite)

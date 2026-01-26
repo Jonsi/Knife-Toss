@@ -44,6 +44,18 @@ namespace Game.UI.Controllers
             _SettingsPopup.Show();
         }
 
+        public void ToggleSettings()
+        {
+            if (_SettingsPopup.gameObject.activeSelf)
+            {
+                HideSettings();
+            }
+            else
+            {
+                ShowSettings();
+            }
+        }
+
         public void HideSettings()
         {
             _SettingsPopup.Hide();
