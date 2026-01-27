@@ -30,46 +30,63 @@ isProject: false
 
 ## Architecture Overview
 
-The implementation follows the **Adapter Pattern** to decouple game logic from backend providers. The system will support asynchronous configuration fetching with fallback to local Inspector values.
+The implementation follows the **existing `IConfigurationProvider` pattern** used throughout your codebase. The system will transparently inject remote config values without changing any flow controller logic.
 
 ### Component Architecture
 
 ```mermaid
 graph TB
-    subgraph coreInterface [Core Interface Layer]
+    subgraph coreInterface [Core Interfaces]
         IRemoteConfigService[IRemoteConfigService]
+        IConfigProvider[IConfigurationProvider]
+        ILevelCatalog[ILevelCatalog]
     end
     
-    subgraph implementations [Implementation Layer]
+    subgraph implementations [Remote Config Implementations]
         MockService[MockRemoteConfigService]
         FirebaseService[FirebaseRemoteConfigService Future]
-        AWSService[AWSRemoteConfigService Future]
+    end
+    
+    subgraph catalogLayer [Catalog Layer - Transparent Wrapping]
+        StagesConfigCatalog[StagesConfigCatalog Existing]
+        RemoteConfigCatalog[RemoteConfigLevelCatalog NEW]
     end
     
     subgraph storage [Mock Storage]
         EditorWindow[MockRemoteConfigEditor]
-        ScriptableObject[RemoteConfigDataAsset]
+        MockDataAsset[MockRemoteConfigDataAsset]
     end
     
-    subgraph gameConfig [Game Configuration]
-        StageConfig[StageConfig]
-        LevelConfig[LevelConfig]
+    subgraph providers [Configuration Providers NEW]
+        LevelConfigProvider[LevelConfigProvider]
+        StageConfigProvider[StageConfigProvider]
     end
     
-    subgraph di [Dependency Injection]
-        GameInstaller[GameInstaller VContainer]
+    subgraph flowControllers [Flow Controllers - No Changes]
+        StageFlow[StageFlowController]
+        LevelFlow[LevelFlowController]
     end
     
     IRemoteConfigService -.implements.-> MockService
     IRemoteConfigService -.implements.-> FirebaseService
-    IRemoteConfigService -.implements.-> AWSService
+    MockService -->|reads from| MockDataAsset
+    EditorWindow -->|edits| MockDataAsset
     
-    MockService -->|reads from| ScriptableObject
-    EditorWindow -->|edits| ScriptableObject
+    RemoteConfigCatalog -->|wraps| StagesConfigCatalog
+    RemoteConfigCatalog -->|uses| IRemoteConfigService
+    RemoteConfigCatalog -.implements.-> ILevelCatalog
     
-    GameInstaller -->|registers| IRemoteConfigService
-    StageConfig -->|uses| IRemoteConfigService
-    LevelConfig -->|uses| IRemoteConfigService
+    LevelConfigProvider -->|uses| RemoteConfigCatalog
+    StageConfigProvider -->|uses| RemoteConfigCatalog
+    LevelConfigProvider -.implements.-> IConfigProvider
+    StageConfigProvider -.implements.-> IConfigProvider
+    
+    StageFlow -->|receives| IConfigProvider
+    LevelFlow -->|receives| IConfigProvider
+    
+    style RemoteConfigCatalog fill:#90EE90
+    style LevelConfigProvider fill:#90EE90
+    style StageConfigProvider fill:#90EE90
 ```
 
 ### Runtime Fetch & Override Flow
@@ -77,38 +94,79 @@ graph TB
 ```mermaid
 sequenceDiagram
     participant GameStart as Game Startup
-    participant Service as IRemoteConfigService
-    participant StageFlow as StageFlowController
-    participant LevelFlow as LevelFlowController
-    participant StageConfig as StageConfig SO
-    participant LevelConfig as LevelConfig Data
-    participant LevelSpawner as LevelSpawner
+    participant RemoteService as IRemoteConfigService
+    participant DI as GameInstaller DI
+    participant CatalogWrapper as RemoteConfigLevelCatalog
+    participant BaseCatalog as StagesConfigCatalog
+    participant StageFlow as Stage/LevelFlow
     
-    Note over GameStart,Service: Phase 1: Initialization
-    GameStart->>Service: Initialize via GameInstaller DI
-    Service->>Service: FetchAndActivateAsync()
+    Note over GameStart,RemoteService: Phase 1: Initialization at Startup
+    GameStart->>RemoteService: FetchAndActivateAsync() with 2s timeout
     alt Fetch Success
-        Service-->>Service: Cache remote values
-    else Fetch Failed
-        Service-->>Service: Mark as uninitialized
+        RemoteService-->>RemoteService: Cache all remote key-values
+    else Fetch Failed/Timeout
+        RemoteService-->>RemoteService: Mark uninitialized, use defaults
     end
     
-    Note over StageFlow,LevelConfig: Phase 2: Stage/Level Load
-    StageFlow->>LevelFlow: LoadLevel(stageConfig, levelConfig)
-    LevelFlow->>LevelConfig: Create runtime copy
+    Note over DI,CatalogWrapper: Phase 2: DI Container Setup
+    DI->>CatalogWrapper: Register RemoteConfigLevelCatalog as ILevelCatalog
+    DI->>CatalogWrapper: Inject: BaseCatalog + RemoteService
+    
+    Note over StageFlow,BaseCatalog: Phase 3: Runtime Level Load
+    StageFlow->>CatalogWrapper: GetLevelConfig(stageIdx, levelIdx)
+    CatalogWrapper->>BaseCatalog: GetLevelConfig(stageIdx, levelIdx)
+    BaseCatalog-->>CatalogWrapper: Return LevelConfig from ScriptableObject
+    
+    Note over CatalogWrapper: Create runtime copy (never mutate SO asset)
+    CatalogWrapper->>CatalogWrapper: DeepCopy(levelConfig)
     
     alt Remote Config Available
-        LevelFlow->>Service: GetValueAsync("level_X_Y_extraKnives", default)
-        Service-->>LevelFlow: Return remote value or default
-        LevelFlow->>LevelConfig: Apply to runtime copy only
-        Note over LevelConfig,StageConfig: ScriptableObject assets unchanged
+        CatalogWrapper->>RemoteService: GetValueAsync("level_X_Y_extraKnives", default)
+        RemoteService-->>CatalogWrapper: Return cached remote value or default
+        CatalogWrapper->>CatalogWrapper: Apply to runtime copy
     else Remote Config Unavailable
-        Note over LevelFlow,LevelConfig: Use ScriptableObject values as-is
+        Note over CatalogWrapper: Use ScriptableObject values as-is
     end
     
-    LevelFlow->>LevelSpawner: SpawnLevel(runtime config)
-    Note over LevelSpawner: Game uses runtime values, assets preserved
+    CatalogWrapper-->>StageFlow: Return runtime copy with overrides
+    StageFlow->>LevelFlow: LoadLevel(stageConfig, levelConfig)
+    
+    Note over BaseCatalog: ScriptableObject assets never modified
 ```
+
+## Existing Pattern Analysis
+
+### How `IConfigurationProvider<T>` is Currently Used
+
+**Example: KnifeThrowConfigAsset**
+
+```csharp
+// ScriptableObject implements IConfigurationProvider
+public class KnifeThrowConfigAsset : ScriptableObject, IConfigurationProvider<KnifeThrowConfiguration>
+{
+    [SerializeField] public float ThrowSpeed { get; private set; } = 10f;
+    
+    public KnifeThrowConfiguration GetConfiguration()
+    {
+        return new KnifeThrowConfiguration
+        {
+            ThrowSpeed = ThrowSpeed,
+            SpawnPositionOffset = SpawnPositionOffset
+        };
+    }
+}
+
+// Registration in KnifeInstaller
+builder.RegisterInstance(_Config).As<IConfigurationProvider<KnifeThrowConfiguration>>();
+
+// Usage in ThrowService (injected)
+public ThrowService(IConfigurationProvider<KnifeThrowConfiguration> configProvider)
+{
+    var config = configProvider.GetConfiguration(); // Returns a data object
+}
+```
+
+**Key insight:** Services receive `IConfigurationProvider<T>` and call `GetConfiguration()` to get a **data object**, not the ScriptableObject itself.
 
 ## Phase 1: Core Architecture
 
@@ -118,44 +176,79 @@ sequenceDiagram
 
 **Contract:**
 
-- `Task<T> GetValueAsync<T>(string key, T defaultValue)` - Fetch config value with type safety
-- `Task<bool> FetchAndActivateAsync()` - Fetch latest config from backend
-- `bool IsInitialized { get; }` - Check if service is ready
+```csharp
+namespace Common.Services.RemoteConfig
+{
+    /// <summary>
+    /// Interface for remote configuration services that fetch and provide configuration values.
+    /// </summary>
+    public interface IRemoteConfigService
+    {
+        /// <summary>
+        /// Gets whether the service has successfully initialized and fetched config.
+        /// </summary>
+        bool IsInitialized { get; }
+        
+        /// <summary>
+        /// Fetches and activates the latest configuration from the remote source.
+        /// </summary>
+        /// <returns>True if fetch succeeded, false otherwise.</returns>
+        Task<bool> FetchAndActivateAsync();
+        
+        /// <summary>
+        /// Gets a configuration value with type inference and fallback.
+        /// </summary>
+        /// <typeparam name="T">The type to parse the value as (int, float, bool, string).</typeparam>
+        /// <param name="key">The configuration key.</param>
+        /// <param name="defaultValue">The fallback value if key not found or parse fails.</param>
+        /// <returns>The remote value or the default value.</returns>
+        Task<T> GetValueAsync<T>(string key, T defaultValue);
+    }
+}
+```
 
-**Design rationale:** Generic method supports primitives (int, float, bool, string) with automatic type conversion and fallback behavior.
+**Design rationale:** Generic method supports primitives with automatic type conversion. No enums needed - type is inferred from generic parameter.
 
-### 1.2 New Directory Structure
+### 1.2 RemoteConfigEntry
 
-Create `Assets/Scripts/Common/Services/RemoteConfig/` for all remote config related code to maintain separation of concerns.
-
-## Phase 2: Mock Implementation & Tooling
-
-### 2.1 RemoteConfigDataAsset (ScriptableObject)
-
-**Location:** `Assets/Scripts/Common/Services/RemoteConfig/MockRemoteConfigDataAsset.cs`
-
-**Purpose:** Persistent storage for mock configuration key-value pairs.
-
-**Structure:**
+**Location:** `Assets/Scripts/Common/Services/RemoteConfig/RemoteConfigEntry.cs`
 
 ```csharp
 [Serializable]
 public class RemoteConfigEntry
 {
     public string Key;
-    public string Value;  // stored as string, parsed at runtime based on type inference
-}
-
-[CreateAssetMenu(...)]
-public class MockRemoteConfigDataAsset : ScriptableObject
-{
-    public List<RemoteConfigEntry> Entries;
+    public string Value;  // stored as string, parsed at runtime via GetValueAsync<T>
 }
 ```
 
-**Type Handling:** Values are stored as strings and automatically parsed to the requested type via `GetValueAsync<T>()`. No enum needed - type is inferred from the generic parameter.
+### 1.3 Directory Structure
 
-**Storage:** Create default asset at `Assets/Configurations/RemoteConfig/MockRemoteConfigData.asset`
+Create `Assets/Scripts/Common/Services/RemoteConfig/` for all remote config code.
+
+## Phase 2: Mock Implementation & Tooling
+
+### 2.1 MockRemoteConfigDataAsset (ScriptableObject)
+
+**Location:** `Assets/Scripts/Common/Services/RemoteConfig/MockRemoteConfigDataAsset.cs`
+
+**Purpose:** Persistent storage for mock configuration key-value pairs (editor-time editing).
+
+**Structure:**
+
+```csharp
+[CreateAssetMenu(fileName = "MockRemoteConfigData", menuName = "Knife Toss/Remote Config/Mock Data")]
+public class MockRemoteConfigDataAsset : ScriptableObject
+{
+    [Tooltip("Configuration key-value pairs for mock remote config.")]
+    [field: SerializeField] public List<RemoteConfigEntry> Entries { get; private set; } = new();
+    
+    [Tooltip("Simulated network delay in milliseconds (0-2000).")]
+    [field: SerializeField, Range(0, 2000)] public int SimulatedDelayMs { get; private set; } = 100;
+}
+```
+
+**Default asset location:** `Assets/Configurations/RemoteConfig/MockRemoteConfigData.asset`
 
 ### 2.2 MockRemoteConfigService
 
@@ -163,13 +256,77 @@ public class MockRemoteConfigDataAsset : ScriptableObject
 
 **Features:**
 
+- Implements `IRemoteConfigService`
 - Reads from `MockRemoteConfigDataAsset` 
-- Simulates network delay (configurable 0-500ms)
-- Type conversion with validation
-- Caches fetched values in memory
-- Thread-safe operations using `UniTask`
+- Simulates network delay (configurable via asset)
+- Type conversion with validation (int, float, bool, string)
+- Caches fetched values in `Dictionary<string, string>`
+- Thread-safe using `UniTask`
 
-**Dependencies:** Requires reference to `MockRemoteConfigDataAsset` injected via constructor
+**Implementation outline:**
+
+```csharp
+public class MockRemoteConfigService : IRemoteConfigService
+{
+    private readonly MockRemoteConfigDataAsset _DataAsset;
+    private Dictionary<string, string> _Cache;
+    private bool _IsInitialized;
+
+    public bool IsInitialized => _IsInitialized;
+
+    public MockRemoteConfigService(MockRemoteConfigDataAsset dataAsset)
+    {
+        _DataAsset = dataAsset;
+        _Cache = new Dictionary<string, string>();
+    }
+
+    public async Task<bool> FetchAndActivateAsync()
+    {
+        if (_DataAsset == null)
+        {
+            _IsInitialized = false;
+            return false;
+        }
+
+        // Simulate network delay
+        if (_DataAsset.SimulatedDelayMs > 0)
+        {
+            await UniTask.Delay(_DataAsset.SimulatedDelayMs);
+        }
+
+        // Load entries into cache
+        _Cache.Clear();
+        foreach (var entry in _DataAsset.Entries)
+        {
+            if (!string.IsNullOrEmpty(entry.Key))
+            {
+                _Cache[entry.Key] = entry.Value ?? string.Empty;
+            }
+        }
+
+        _IsInitialized = true;
+        return true;
+    }
+
+    public async Task<T> GetValueAsync<T>(string key, T defaultValue)
+    {
+        await UniTask.Yield(); // Maintain async pattern
+        
+        if (!_IsInitialized || !_Cache.TryGetValue(key, out string rawValue))
+        {
+            return defaultValue;
+        }
+
+        return TryParse<T>(rawValue, defaultValue);
+    }
+
+    private T TryParse<T>(string rawValue, T defaultValue)
+    {
+        // Type-specific parsing logic with fallback
+        // Handle int, float, bool, string
+    }
+}
+```
 
 ### 2.3 MockRemoteConfigEditor (Editor Window)
 
@@ -178,273 +335,383 @@ public class MockRemoteConfigDataAsset : ScriptableObject
 **Features:**
 
 - Add/Remove configuration keys
-- Set value types (int, float, bool, string) via dropdown
-- Edit values with type-appropriate controls
+- Edit key-value pairs (string values, no type dropdown)
 - Search/filter keys
-- Import/Export JSON functionality
-- Visual feedback for changes
+- Visual validation hints
 - "Create Asset" button if asset doesn't exist
+- Auto-save on changes
 
 **Menu:** `Tools/Remote Config/Mock Config Editor`
 
 **UI Layout:**
 
-- Header: Asset reference field + Create button
-- Toolbar: Add key, Search box
-- Main area: Scrollable list of entries
-  - Key name (editable)
-  - Value field (string input with auto-detection hints)
-  - Delete button
-- Footer: Save, Import JSON, Export JSON buttons
+- **Header:** Asset reference field + Create Asset button
+- **Toolbar:** Add Key button, Search box, Simulated Delay slider
+- **Main area:** Scrollable list of entries
+  - Key name (text field)
+  - Value field (text field)
+  - Delete button (red X)
+- **Footer:** Save button, Entry count display
 
-**Note:** No type dropdown needed - values are stored as strings and parsed based on usage context.
+**Implementation note:** Use `EditorGUILayout` for UI, `SerializedObject` for asset editing.
 
-## Phase 3: Integration with Existing Configs
+## Phase 3: Catalog Wrapper (Core Integration)
 
-### 3.1 Config Value Override Pattern
+### 3.1 RemoteConfigLevelCatalog
 
-**Strategy:** Create runtime copies of config data with remote overrides applied. **CRITICAL: Never mutate the original ScriptableObject assets.**
+**Location:** `Assets/Scripts/Game/Level/Catalogs/RemoteConfigLevelCatalog.cs`
 
-**Pattern:**
+**Purpose:** Wraps `ILevelCatalog` and transparently applies remote config overrides to returned configs.
 
-1. Game starts → Remote config fetches values at startup
-2. When loading level → Create runtime copy of config data
-3. Apply remote overrides to the runtime copy only
-4. Use runtime copy for gameplay
-5. ScriptableObject assets remain unchanged
+**Key principle:** **Never mutate ScriptableObject assets.** Always return deep copies with overrides applied.
 
-### 3.2 StageConfig Integration
-
-**File:** [`Assets/Scripts/Game/Level/Configurations/Stage/StageConfig.cs`](c:\Users\jons1\Documents\Knife-Toss\Assets\Scripts\Game\Level\Configurations\Stage\StageConfig.cs)
-
-**Current structure:** ScriptableObject with `StageName`, `LayoutSettings`, `Levels` (no primitive tuning values identified)
-
-**Integration approach:**
-
-- Currently no primitive tuning values exist in StageConfig
-- No changes needed for now - StageConfig remains a pure ScriptableObject
-- Future tuning values can be added later if needed
-
-### 3.3 LevelConfig Integration
-
-**File:** [`Assets/Scripts/Game/Level/Configurations/Level/LevelConfig.cs`](c:\Users\jons1\Documents\Knife-Toss\Assets\Scripts\Game\Level\Configurations\Level\LevelConfig.cs)
-
-**Current tunable primitives:**
-
-- `ExtraKnives` (int) - currently inspector-only
-- Note: `KnifeCount` is calculated, not directly tunable
-
-**Integration changes:**
-
-LevelConfig is currently `[Serializable]` class, not ScriptableObject, so it's already copied by value. We'll add a static helper method to apply remote overrides to a copy:
+**Implementation:**
 
 ```csharp
-public static async Task<LevelConfig> CreateWithRemoteOverrides(
-    LevelConfig source,
-    IRemoteConfigService remoteConfig,
-    string stageKey,
-    int levelIndex)
+namespace Game.Level.Catalogs
 {
-    // Create a deep copy (implement copy logic)
-    var copy = source.DeepCopy();
-    
-    if (remoteConfig == null || !remoteConfig.IsInitialized)
-        return copy;
-        
-    string key = $"level_{stageKey}_{levelIndex}_extraKnives";
-    copy.ExtraKnives = await remoteConfig.GetValueAsync(key, copy.ExtraKnives);
-    
+    /// <summary>
+    /// Wraps ILevelCatalog to apply remote configuration overrides to level/stage configs.
+    /// Returns runtime copies with overrides applied, never mutates ScriptableObject assets.
+    /// </summary>
+    public class RemoteConfigLevelCatalog : ILevelCatalog
+    {
+        private readonly ILevelCatalog _BaseCatalog;
+        private readonly IRemoteConfigService _RemoteConfigService;
+
+        public RemoteConfigLevelCatalog(
+            ILevelCatalog baseCatalog,
+            IRemoteConfigService remoteConfigService)
+        {
+            _BaseCatalog = baseCatalog;
+            _RemoteConfigService = remoteConfigService;
+        }
+
+        public int StageCount => _BaseCatalog.StageCount;
+
+        public int GetLevelCount(int stageIndex) => _BaseCatalog.GetLevelCount(stageIndex);
+
+        public StageConfig GetStageConfig(int stageIndex)
+        {
+            // For now, just pass through (no primitive tuning values in StageConfig)
+            return _BaseCatalog.GetStageConfig(stageIndex);
+        }
+
+        public LevelConfig GetLevelConfig(int stageIndex, int levelIndex)
+        {
+            var baseConfig = _BaseCatalog.GetLevelConfig(stageIndex, levelIndex);
+            if (baseConfig == null)
+                return null;
+
+            // Create deep copy (never mutate original)
+            var runtimeCopy = DeepCopyLevelConfig(baseConfig);
+
+            // Apply remote overrides if service is available
+            if (_RemoteConfigService?.IsInitialized == true)
+            {
+                var stageConfig = _BaseCatalog.GetStageConfig(stageIndex);
+                string stageKey = stageConfig?.StageName ?? $"stage_{stageIndex}";
+                
+                ApplyRemoteOverrides(runtimeCopy, stageKey, levelIndex).Forget();
+            }
+
+            return runtimeCopy;
+        }
+
+        private async UniTaskVoid ApplyRemoteOverrides(LevelConfig config, string stageKey, int levelIndex)
+        {
+            try
+            {
+                // Override ExtraKnives
+                string key = $"level_{stageKey}_{levelIndex}_extraKnives";
+                config.ExtraKnives = await _RemoteConfigService.GetValueAsync(key, config.ExtraKnives);
+
+                // Override target configs
+                for (int i = 0; i < config.Targets.Count; i++)
+                {
+                    string targetKey = $"level_{stageKey}_{levelIndex}_target_{i}";
+                    await ApplyTargetOverrides(config.Targets[i], targetKey);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"Failed to apply remote overrides: {e.Message}");
+            }
+        }
+
+        private async UniTask ApplyTargetOverrides(TargetConfig target, string keyPrefix)
+        {
+            target.KnivesToBreak = await _RemoteConfigService.GetValueAsync(
+                $"{keyPrefix}_knivesToBreak", target.KnivesToBreak);
+            target.BaseScale = await _RemoteConfigService.GetValueAsync(
+                $"{keyPrefix}_baseScale", target.BaseScale);
+            target.InitialRotation = await _RemoteConfigService.GetValueAsync(
+                $"{keyPrefix}_initialRotation", target.InitialRotation);
+        }
+
+        private LevelConfig DeepCopyLevelConfig(LevelConfig source)
+        {
+            // Deep copy implementation for LevelConfig
+            // Must copy all nested objects (Targets list, TargetConfig, Behaviors, etc.)
+        }
+    }
+}
+```
+
+**Key naming convention:**
+
+- Level properties: `level_{stageName}_{levelIndex}_{propertyName}`
+  - Example: `level_forest_0_extraKnives`
+- Target properties: `level_{stageName}_{levelIndex}_target_{targetIndex}_{propertyName}`
+  - Example: `level_forest_0_target_2_knivesToBreak`
+
+### 3.2 Deep Copy Implementation
+
+**Challenge:** `LevelConfig` and `TargetConfig` contain nested objects that must be deep copied.
+
+**Solution:** Implement `DeepCopy()` methods or use serialization-based cloning:
+
+```csharp
+private LevelConfig DeepCopyLevelConfig(LevelConfig source)
+{
+    var copy = new LevelConfig
+    {
+        KnifeCount = source.KnifeCount,
+        ExtraKnives = source.ExtraKnives,
+        Targets = new List<TargetConfig>(source.Targets.Count)
+    };
+
+    foreach (var target in source.Targets)
+    {
+        copy.Targets.Add(DeepCopyTargetConfig(target));
+    }
+
     return copy;
 }
-```
 
-**Key naming convention:** `level_{stageKey}_{levelIndex}_{propertyName}`
-
-- Example: `level_forest_0_extraKnives`
-
-### 3.4 TargetConfig Integration
-
-**File:** [`Assets/Scripts/Game/Entities/Target/Data/TargetConfig.cs`](c:\Users\jons1\Documents\Knife-Toss\Assets\Scripts\Game\Entities\Target\Data\TargetConfig.cs)
-
-**Current tunable primitives:**
-
-- `KnivesToBreak` (int)
-- `BaseScale` (float)
-- `InitialRotation` (float)
-
-**Integration approach:**
-
-TargetConfig is also `[Serializable]` class. Add static helper for creating override copies:
-
-```csharp
-public static async Task<TargetConfig> CreateWithRemoteOverrides(
-    TargetConfig source,
-    IRemoteConfigService remoteConfig,
-    string configKey)
+private TargetConfig DeepCopyTargetConfig(TargetConfig source)
 {
-    var copy = source.DeepCopy();
-    
-    if (remoteConfig == null || !remoteConfig.IsInitialized)
-        return copy;
-        
-    copy.KnivesToBreak = await remoteConfig.GetValueAsync(
-        $"{configKey}_knivesToBreak", copy.KnivesToBreak);
-    copy.BaseScale = await remoteConfig.GetValueAsync(
-        $"{configKey}_baseScale", copy.BaseScale);
-    copy.InitialRotation = await remoteConfig.GetValueAsync(
-        $"{configKey}_initialRotation", copy.InitialRotation);
-        
-    return copy;
+    // Copy all primitive fields
+    // Deep copy nested collections (Behaviors, Collectibles, PreStuckKnives)
 }
 ```
 
-**Note:** Deep copy implementation needed for nested objects (Behaviors, Collectibles, etc.)
+**Alternative:** Use JSON serialization for deep cloning (Unity's `JsonUtility` or Newtonsoft.Json).
 
-### 3.5 Flow Integration Point
+## Phase 4: Configuration Providers (Optional Enhancement)
 
-**Location:** Game startup + Level loading
+### 4.1 LevelConfigProvider
 
-**Two-Phase Approach:**
+**Location:** `Assets/Scripts/Game/Level/Configurations/Level/LevelConfigProvider.cs`
 
-#### Phase A: Game Startup (GameInstaller/Initialization)
+**Purpose:** Implements `IConfigurationProvider<LevelConfig>` for dependency injection.
 
 ```csharp
-// In GameInstaller.Awake() or IStartable
-public async void Start()
+namespace Game.Level.Configurations.Level
 {
-    // Fetch remote config once at startup with timeout
-    try 
+    /// <summary>
+    /// Provides level configuration with remote overrides applied.
+    /// </summary>
+    public class LevelConfigProvider : IConfigurationProvider<LevelConfig>
     {
-        await _remoteConfigService
-            .FetchAndActivateAsync()
-            .Timeout(TimeSpan.FromSeconds(2));
-    }
-    catch (Exception e)
-    {
-        Debug.LogWarning($"Remote config fetch failed: {e.Message}");
-        // Continue with local values
+        private readonly ILevelCatalog _Catalog;
+        private readonly int _StageIndex;
+        private readonly int _LevelIndex;
+
+        public LevelConfigProvider(ILevelCatalog catalog, int stageIndex, int levelIndex)
+        {
+            _Catalog = catalog;
+            _StageIndex = stageIndex;
+            _LevelIndex = levelIndex;
+        }
+
+        public LevelConfig GetConfiguration()
+        {
+            return _Catalog.GetLevelConfig(_StageIndex, _LevelIndex);
+        }
     }
 }
 ```
 
-#### Phase B: Level Loading (LevelFlowController or LevelLoadingState)
+**Note:** This is optional - flow controllers can continue using `ILevelCatalog` directly as they currently do.
 
-```csharp
-// In LoadLevel method
-public async void LoadLevel(StageConfig stageConfig, LevelConfig levelConfig)
-{
-    // Create runtime copy with remote overrides
-    var runtimeConfig = await LevelConfig.CreateWithRemoteOverrides(
-        levelConfig,
-        _remoteConfigService,
-        stageConfig.StageName,
-        levelIndex);
-    
-    // Apply to targets as well
-    for (int i = 0; i < runtimeConfig.Targets.Count; i++)
-    {
-        string targetKey = $"level_{stageConfig.StageName}_{levelIndex}_target_{i}";
-        runtimeConfig.Targets[i] = await TargetConfig.CreateWithRemoteOverrides(
-            runtimeConfig.Targets[i],
-            _remoteConfigService,
-            targetKey);
-    }
-    
-    // Continue with spawning using runtime config
-    _stateMachine.Context.Config = runtimeConfig;
-    _stateMachine.SetState(_stateMachine.Loading);
-}
-```
+## Phase 5: Dependency Injection Setup
 
-**Safety measures:**
+### 5.1 GameInstaller Registration
 
-- Remote config fetched once at startup (not per level)
-- 2-second timeout on initial fetch
-- All operations use runtime copies, never mutate ScriptableObject assets
-- Automatic fallback to ScriptableObject values if service unavailable
-- All remote calls wrapped in try-catch
-
-## Phase 4: Dependency Injection Setup
-
-### 4.1 GameInstaller Registration
-
-**File:** [`Assets/Scripts/Game/Installers/GameInstaller.cs`](c:\Users\jons1\Documents\Knife-Toss\Assets\Scripts\Game\Installers\GameInstaller.cs)
+**File:** `Assets/Scripts/Game/Installers/GameInstaller.cs`
 
 **Changes:**
 
-1. Add serialized field: `[SerializeField] private MockRemoteConfigDataAsset _RemoteConfigData;`
-2. Register service in `Configure()`:
+1. Add serialized field for mock data asset:
 ```csharp
-// Remote Config
-if (_RemoteConfigData != null)
+[Header("Remote Config")]
+[SerializeField] private MockRemoteConfigDataAsset _RemoteConfigData;
+```
+
+2. Register services in `Configure()`:
+```csharp
+protected override void Configure(IContainerBuilder builder)
 {
-    builder.Register<MockRemoteConfigService>(Lifetime.Singleton)
-        .WithParameter(_RemoteConfigData)
-        .As<IRemoteConfigService>()
-        .AsImplementedInterfaces();
+    // Existing registrations...
+    
+    // Remote Config Service
+    if (_RemoteConfigData != null)
+    {
+        builder.Register<MockRemoteConfigService>(Lifetime.Singleton)
+            .WithParameter(_RemoteConfigData)
+            .As<IRemoteConfigService>();
+    }
+    
+    // Other registrations...
+}
+```
+
+3. Add startup initialization (implement `IStartable`):
+```csharp
+protected override void Awake()
+{
+    base.Awake();
+    
+    // Existing code...
+    
+    // Fetch remote config at startup
+    InitializeRemoteConfig().Forget();
+}
+
+private async UniTaskVoid InitializeRemoteConfig()
+{
+    var remoteConfig = Container.Resolve<IRemoteConfigService>();
+    if (remoteConfig == null)
+        return;
+
+    try
+    {
+        await remoteConfig.FetchAndActivateAsync().Timeout(TimeSpan.FromSeconds(2));
+        Debug.Log("Remote config initialized successfully");
+    }
+    catch (Exception e)
+    {
+        Debug.LogWarning($"Remote config initialization failed: {e.Message}. Using default values.");
+    }
 }
 ```
 
 
-**Rationale:** Registered in GameInstaller (root scope) so it persists across scenes and is available to all game systems.
+### 5.2 StageFlowInstaller Registration
 
-### 4.2 Update Common.asmdef
+**File:** `Assets/Scripts/Game/Installers/StageFlowInstaller.cs`
 
-**File:** [`Assets/Scripts/Common/Common.asmdef`](c:\Users\jons1\Documents\Knife-Toss\Assets\Scripts\Common\Common.asmdef)
+**Changes:** Replace `StagesConfigCatalog` registration with wrapped version:
+
+```csharp
+public void Install(IContainerBuilder builder)
+{
+    builder.RegisterInstance(_StagesConfig);
+    
+    // Register base catalog
+    builder.Register<StagesConfigCatalog>(Lifetime.Singleton);
+    
+    // Register wrapped catalog with remote config
+    builder.Register<RemoteConfigLevelCatalog>(Lifetime.Singleton)
+        .As<ILevelCatalog>()
+        .AsSelf();
+    
+    // Rest of registrations unchanged...
+}
+```
+
+**Key insight:** Flow controllers receive `ILevelCatalog` interface - they don't care if it's `StagesConfigCatalog` or `RemoteConfigLevelCatalog`.
+
+### 5.3 Update Common.asmdef
+
+**File:** `Assets/Scripts/Common/Common.asmdef`
 
 **Add dependencies:**
 
-- `UniTask` (for async operations)
-- `VContainer` (for DI integration)
+```json
+{
+    "name": "Common",
+    "references": [
+        "UniTask",
+        "VContainer"
+    ],
+    ...
+}
+```
 
 ## Implementation Safety & Constraints
 
 ### Fallback Behavior
 
-- **Network failure:** Use Inspector values
-- **Parse error:** Use Inspector values  
-- **Missing key:** Use defaultValue parameter
-- **Timeout:** 2 seconds max wait, then proceed with defaults
+- **Network failure:** Use ScriptableObject values
+- **Parse error:** Use default parameter value
+- **Missing key:** Use default parameter value
+- **Timeout:** 2 seconds max on startup fetch, then proceed with defaults
+- **Service unavailable:** Catalog wrapper passes through base values unchanged
 
-### Testing Strategy
+### ScriptableObject Protection
 
-1. **Mock Editor**: Test via editor window without network
-2. **Runtime Test**: Verify override application during gameplay
-3. **Failure Test**: Disconnect asset to ensure fallback works
+**CRITICAL:** Original ScriptableObject assets are **NEVER** modified. All modifications happen on runtime copies created in `RemoteConfigLevelCatalog`.
 
 ### Asset References
 
-**Not affected:** Sprites, prefabs, and other asset references remain Inspector-only. Only primitive values (int, float, bool, string) are remotely configurable.
+**Not affected:** Sprites, prefabs, and other asset references remain ScriptableObject-only. Only primitive values (int, float, bool, string) are remotely configurable.
 
 ### Future Extensibility
 
-- Swap `MockRemoteConfigService` with `FirebaseRemoteConfigService` by changing registration in GameInstaller
-- No game code changes required due to interface abstraction
-- Editor window can remain for offline testing
+- Swap `MockRemoteConfigService` with `FirebaseRemoteConfigService` by changing registration in `GameInstaller`
+- No flow controller changes required due to `ILevelCatalog` abstraction
+- Editor window remains for offline testing
 
 ## File Summary
 
-**New files (9 total):**
+**New files (8 total):**
 
 1. `Common/Services/RemoteConfig/IRemoteConfigService.cs`
-2. `Common/Services/RemoteConfig/RemoteConfigEntry.cs` (serializable)
+2. `Common/Services/RemoteConfig/RemoteConfigEntry.cs`
 3. `Common/Services/RemoteConfig/MockRemoteConfigDataAsset.cs`
 4. `Common/Services/RemoteConfig/MockRemoteConfigService.cs`
-5. `Editor/RemoteConfig/MockRemoteConfigEditor.cs`
-6. `Configurations/RemoteConfig/MockRemoteConfigData.asset` (asset instance)
+5. `Game/Level/Catalogs/RemoteConfigLevelCatalog.cs`
+6. `Editor/RemoteConfig/MockRemoteConfigEditor.cs`
+7. `Configurations/RemoteConfig/` (directory)
+8. `Configurations/RemoteConfig/MockRemoteConfigData.asset` (asset instance)
 
-**Modified files (5 total):**
+**Modified files (3 total):**
 
-1. `Game/Level/Configurations/Level/LevelConfig.cs` (add CreateWithRemoteOverrides + DeepCopy)
-2. `Game/Entities/Target/Data/TargetConfig.cs` (add CreateWithRemoteOverrides + DeepCopy)
-3. `Game/Flow/Level/LevelFlowController.cs` (apply overrides before loading)
-4. `Game/Installers/GameInstaller.cs` (register service + fetch at startup)
-5. `Common/Common.asmdef` (add dependencies)
+1. `Game/Installers/GameInstaller.cs` (register remote config service, add startup fetch)
+2. `Game/Installers/StageFlowInstaller.cs` (register wrapped catalog)
+3. `Common/Common.asmdef` (add UniTask and VContainer dependencies)
+
+**Unchanged files (flow controllers remain untouched):**
+
+- `Game/Flow/Level/LevelFlowController.cs` ✅
+- `Game/Flow/Stage/StageFlowController.cs` ✅
+- `Game/Flow/Level/States/LevelLoadingState.cs` ✅
+- `Game/Level/Configurations/Level/LevelConfig.cs` ✅
+- `Game/Level/Configurations/Stage/StageConfig.cs` ✅
+- `Game/Entities/Target/Data/TargetConfig.cs` ✅
 
 ## Testing Instructions (Post-Implementation)
 
-1. **Create mock data:** Use editor window to add test keys
-2. **Configure levels:** Add override keys matching convention
-3. **Run game:** Verify values are applied from mock service
-4. **Test fallback:** Remove asset reference, verify Inspector values are used
-5. **Performance:** Verify no noticeable delay during level loading
+1. **Create mock data asset:** `Assets/Configurations/RemoteConfig/MockRemoteConfigData.asset`
+2. **Open editor window:** `Tools/Remote Config/Mock Config Editor`
+3. **Add test keys:**
+
+   - `level_Stage1_0_extraKnives` = `10`
+   - `level_Stage1_0_target_0_knivesToBreak` = `3`
+
+4. **Assign asset:** In `GameInstaller`, drag MockRemoteConfigData asset to field
+5. **Run game:** Verify values from remote config are used
+6. **Test fallback:** Remove asset reference, verify ScriptableObject values are used
+7. **Performance:** Verify no blocking during level load (fetch happens at startup)
+
+## Key Advantages of This Design
+
+1. ✅ **No flow controller changes** - They continue using `ILevelCatalog` interface
+2. ✅ **Follows existing patterns** - Uses same provider pattern as `KnifeThrowConfigAsset`
+3. ✅ **Transparent integration** - Catalog wrapper handles all remote config logic
+4. ✅ **ScriptableObject safety** - Assets never modified, only runtime copies
+5. ✅ **Easy provider swap** - Change DI registration to switch from Mock to Firebase
+6. ✅ **No enums** - Type inference via generics
+7. ✅ **Startup fetch** - One fetch at game start, not per level
