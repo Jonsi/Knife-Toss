@@ -1,19 +1,63 @@
 ---
 name: Remote Config System - Core
-overview: Implement a provider-agnostic Remote Configuration system with IRemoteConfigService interface for fetching and caching remote JSON configuration data. This is the CORE system only - stage/level tuning integration is in a separate plan.
+overview: Implement a remote configuration system using Firebase Remote Config with an abstraction layer. Consumers depend on IRemoteConfigService interface, not Firebase directly.
 todos:
   - id: phase1-interface
-    content: Create IRemoteConfigService interface with FetchAndActivateAsync and GetJsonValue methods
-    status: pending
-  - id: phase1-data-asset
-    content: Create RemoteConfigDataAsset ScriptableObject for mock JSON storage (edit manually in Inspector)
-    status: pending
-  - id: phase2-service
-    content: Implement RemoteConfigService with IStartable, JSON fetching, caching, and fallback handling
-    status: pending
-  - id: phase3-di-setup
-    content: Create RemoteConfigInstaller and call it from GameInstaller
-    status: pending
+    content: Create IRemoteConfigService interface with typed GetValue methods (int, long, string, bool)
+  - id: phase1-interface
+    content: Create IRemoteConfigService interface with typed GetValue methods (int, long, string, bool)
+    status: complete
+  - id: phase2-firebase-provider
+    content: Implement FirebaseRemoteConfigService that wraps Firebase SDK
+    status: complete
+  - id: phase3-settings
+    content: Create RemoteConfigSettings ScriptableObject for timeout configuration
+    status: complete
+  - id: phase4-installer
+    content: Create RemoteConfigInstaller and register in GameInstaller
+    status: complete
+  - id: phase2-firebase-provider
+    content: Implement FirebaseRemoteConfigService that wraps Firebase SDK
+  - id: phase1-interface
+    content: Create IRemoteConfigService interface with typed GetValue methods (int, long, string, bool)
+    status: complete
+  - id: phase2-firebase-provider
+    content: Implement FirebaseRemoteConfigService that wraps Firebase SDK
+    status: complete
+  - id: phase3-settings
+    content: Create RemoteConfigSettings ScriptableObject for timeout configuration
+    status: complete
+  - id: phase4-installer
+    content: Create RemoteConfigInstaller and register in GameInstaller
+    status: complete
+  - id: phase3-settings
+    content: Create RemoteConfigSettings ScriptableObject for timeout configuration
+  - id: phase1-interface
+    content: Create IRemoteConfigService interface with typed GetValue methods (int, long, string, bool)
+    status: complete
+  - id: phase2-firebase-provider
+    content: Implement FirebaseRemoteConfigService that wraps Firebase SDK
+    status: complete
+  - id: phase3-settings
+    content: Create RemoteConfigSettings ScriptableObject for timeout configuration
+    status: complete
+  - id: phase4-installer
+    content: Create RemoteConfigInstaller and register in GameInstaller
+    status: complete
+  - id: phase4-installer
+    content: Create RemoteConfigInstaller and register in GameInstaller
+  - id: phase1-interface
+    content: Create IRemoteConfigService interface with typed GetValue methods (int, long, string, bool)
+    status: complete
+  - id: phase2-firebase-provider
+    content: Implement FirebaseRemoteConfigService that wraps Firebase SDK
+    status: complete
+  - id: phase3-settings
+    content: Create RemoteConfigSettings ScriptableObject for timeout configuration
+    status: complete
+  - id: phase4-installer
+    content: Create RemoteConfigInstaller and register in GameInstaller
+    status: complete
 isProject: false
 ---
 
@@ -21,15 +65,15 @@ isProject: false
 
 ## Overview
 
-This plan covers the **core remote config infrastructure only**. The stage/level tuning integration is handled in a separate plan file: `stage_level_tuning_integration.plan.md`.
+This plan covers the **core remote config infrastructure** using Firebase Remote Config.
 
 **Key Design Principles:**
 
-- One production-ready service (not a "mock" service)
-- Mock data via ScriptableObject asset (edited manually in Inspector, no editor window)
+- Consumers depend on `IRemoteConfigService` interface (not Firebase directly)
+- 4 typed GetValue methods: `int`, `long`, `string`, `bool`
 - Service initializes via `IStartable` (not in installer)
-- No deep copying of configs
-- Modular, readable code with small focused functions
+- All failure paths return defaults silently
+- Use `JsonUtility` for any JSON parsing (handled by consumers, not this system)
 
 ---
 
@@ -37,31 +81,31 @@ This plan covers the **core remote config infrastructure only**. The stage/level
 
 ```mermaid
 graph TB
-    subgraph core [Core Remote Config System]
-        IRemoteConfigService[IRemoteConfigService]
-        RemoteConfigService[RemoteConfigService]
-        RemoteConfigDataAsset[RemoteConfigDataAsset - Mock JSON]
-    end
-    
-    subgraph future [Future: Firebase]
-        FirebaseAdapter[FirebaseRemoteConfigAdapter]
-    end
-    
-    subgraph consumers [Consumers - Separate Plan]
+    subgraph consumers [Consumers]
         IStageTuningProvider[IStageTuningProvider]
         OtherConsumers[Other Config Consumers]
     end
     
-    IRemoteConfigService -.implements.-> RemoteConfigService
-    IRemoteConfigService -.implements.-> FirebaseAdapter
-    RemoteConfigService -->|reads from| RemoteConfigDataAsset
+    subgraph abstraction [Abstraction Layer]
+        IRemoteConfigService[IRemoteConfigService]
+    end
+    
+    subgraph implementation [Implementation]
+        FirebaseRemoteConfigService[FirebaseRemoteConfigService]
+    end
+    
+    subgraph firebase [Firebase SDK]
+        FirebaseRemoteConfig[Firebase.RemoteConfig]
+    end
     
     IStageTuningProvider -->|uses| IRemoteConfigService
     OtherConsumers -->|uses| IRemoteConfigService
     
+    IRemoteConfigService -.implements.-> FirebaseRemoteConfigService
+    FirebaseRemoteConfigService -->|wraps| FirebaseRemoteConfig
+    
     style IRemoteConfigService fill:#90EE90
-    style RemoteConfigService fill:#90EE90
-    style RemoteConfigDataAsset fill:#87CEEB
+    style FirebaseRemoteConfigService fill:#90EE90
 ```
 
 
@@ -73,134 +117,107 @@ graph TB
 ```mermaid
 sequenceDiagram
     participant DI as DI Container
-    participant Service as RemoteConfigService
-    participant Asset as RemoteConfigDataAsset
-    participant Consumers as Tuning Providers
+    participant Service as FirebaseRemoteConfigService
+    participant Firebase as Firebase Remote Config
+    participant Consumers as Consumers
     
     Note over DI,Service: Game Startup
     DI->>Service: Resolve IRemoteConfigService
     DI->>Service: IStartable.Start() called
     
-    Service->>Service: FetchAndActivateAsync()
-    
-    alt Mock Mode (Development)
-        Service->>Asset: Read JSON from ScriptableObject
-        Asset-->>Service: JSON string
-    else Production Mode (Firebase)
-        Service->>Service: Fetch from Firebase Remote Config
-    end
+    Service->>Firebase: FetchAsync(timeout)
     
     alt Fetch Success
-        Service->>Service: Cache JSON, IsInitialized = true
+        Firebase-->>Service: Config fetched
+        Service->>Firebase: ActivateAsync()
+        Service->>Service: IsInitialized = true
     else Fetch Failed / Timeout
-        Service->>Service: IsInitialized = false, consumers use defaults
+        Service->>Service: IsInitialized = false
+        Note over Service: Use Firebase default values
     end
     
-    Note over Consumers: Later: Consumers query cached JSON
-    Consumers->>Service: GetJsonValue<T>(path, default)
-    Service-->>Consumers: Return cached value or default
+    Note over Consumers: Later: Consumers query values
+    Consumers->>Service: GetValue("key", defaultValue)
+    Service->>Firebase: GetValue(key)
+    Firebase-->>Service: Return value (or default)
+    Service-->>Consumers: Return value
 ```
 
 
 
-## Phase 1: Core Interface & Data Asset
+---
 
-### 1.1 IRemoteConfigService Interface
+## Phase 1: IRemoteConfigService Interface
+
+### 1.1 Interface Definition
 
 **Location:** `Assets/Scripts/Common/Services/RemoteConfig/IRemoteConfigService.cs`
 
-**Purpose:** Provider-agnostic interface for fetching and accessing remote configuration.
+**Purpose:** Abstraction over remote configuration. Consumers depend on this, not Firebase.
 
 ```csharp
 namespace Common.Services.RemoteConfig
 {
     /// <summary>
-    /// Provider-agnostic interface for remote configuration services.
-    /// Fetches JSON configuration and provides typed access to values.
+    /// Abstraction for remote configuration services.
+    /// Provides typed access to configuration values.
     /// </summary>
     public interface IRemoteConfigService
     {
         /// <summary>
-        /// Whether the service has successfully fetched and cached configuration.
+        /// Whether the service has successfully fetched and activated configuration.
         /// </summary>
         bool IsInitialized { get; }
         
         /// <summary>
-        /// Fetches configuration from the remote source and caches it.
+        /// Fetches and activates the latest configuration from the remote source.
         /// </summary>
         UniTask<bool> FetchAndActivateAsync();
         
         /// <summary>
-        /// Gets a typed value from a JSON path with fallback.
+        /// Gets an integer value from remote config.
         /// </summary>
-        /// <typeparam name="T">Target type (int, float, bool, string).</typeparam>
-        /// <param name="jsonPath">Dot-notation path (e.g., "Stages.0.Levels.0.ExtraKnives").</param>
-        /// <param name="defaultValue">Fallback if path not found or parse fails.</param>
-        T GetValue<T>(string jsonPath, T defaultValue);
+        /// <param name="key">The configuration key.</param>
+        /// <param name="defaultValue">Fallback if key not found.</param>
+        int GetValue(string key, int defaultValue);
+        
+        /// <summary>
+        /// Gets a long value from remote config.
+        /// </summary>
+        /// <param name="key">The configuration key.</param>
+        /// <param name="defaultValue">Fallback if key not found.</param>
+        long GetValue(string key, long defaultValue);
+        
+        /// <summary>
+        /// Gets a string value from remote config.
+        /// </summary>
+        /// <param name="key">The configuration key.</param>
+        /// <param name="defaultValue">Fallback if key not found.</param>
+        string GetValue(string key, string defaultValue);
+        
+        /// <summary>
+        /// Gets a boolean value from remote config.
+        /// </summary>
+        /// <param name="key">The configuration key.</param>
+        /// <param name="defaultValue">Fallback if key not found.</param>
+        bool GetValue(string key, bool defaultValue);
     }
 }
 ```
 
 **Design notes:**
 
-- Simple, minimal interface - only what's needed
-- Uses `UniTask` for async (consistent with codebase)
-- `GetValue<T>` is synchronous (reads from cache, no await needed)
+- 4 typed overloads matching Firebase types: `int`, `long`, `string`, `bool`
+- No generic `GetValue<T>` - explicit types for clarity
+- No JSON type - consumers handle JSON parsing manually with `JsonUtility`
 
-### 1.2 RemoteConfigDataAsset (Mock Data)
+---
 
-**Location:** `Assets/Scripts/Common/Services/RemoteConfig/RemoteConfigDataAsset.cs`
+## Phase 2: FirebaseRemoteConfigService
 
-**Purpose:** ScriptableObject holding mock JSON for development. Edit directly in Inspector.
-
-```csharp
-namespace Common.Services.RemoteConfig
-{
-    /// <summary>
-    /// ScriptableObject for storing mock remote configuration JSON.
-    /// Edit the JSON directly in the Unity Inspector for testing.
-    /// </summary>
-    [CreateAssetMenu(fileName = "RemoteConfigData", menuName = "Knife Toss/Remote Config/Data Asset")]
-    public class RemoteConfigDataAsset : ScriptableObject
-    {
-        /// <summary>
-        /// The raw JSON configuration string.
-        /// </summary>
-        [field: SerializeField, TextArea(10, 30)]
-        [field: Tooltip("JSON configuration data. Edit directly to test remote config behavior.")]
-        public string JsonData { get; private set; } = "{}";
-        
-        /// <summary>
-        /// Simulated network delay for testing async behavior.
-        /// </summary>
-        [field: SerializeField, Range(0, 2000)]
-        [field: Tooltip("Simulated network delay in milliseconds for testing.")]
-        public int SimulatedDelayMs { get; private set; } = 100;
-    }
-}
-```
-
-**Asset location:** `Assets/Resources/RemoteConfig/RemoteConfigData.asset`
-
-**No editor window** - edit the JSON directly in the Inspector's TextArea field.
-
-### 1.3 Directory Structure
-
-```
-Assets/Scripts/Common/Services/RemoteConfig/
-├── IRemoteConfigService.cs
-├── RemoteConfigService.cs
-├── RemoteConfigDataAsset.cs
-└── IRemoteConfigDataProvider.cs (optional - for Firebase adapter)
-```
-
-## Phase 2: RemoteConfigService Implementation
-
-### 2.1 RemoteConfigSettings (Settings Asset)
+### 2.1 Settings Asset
 
 **Location:** `Assets/Scripts/Common/Services/RemoteConfig/RemoteConfigSettings.cs`
-
-**Purpose:** Dedicated settings asset for remote config service configuration.
 
 ```csharp
 namespace Common.Services.RemoteConfig
@@ -214,60 +231,49 @@ namespace Common.Services.RemoteConfig
         /// <summary>
         /// Timeout in seconds for fetching remote configuration.
         /// </summary>
-        [field: SerializeField, Range(1, 10)]
+        [field: SerializeField, Range(1, 30)]
         [field: Tooltip("Timeout in seconds for fetching remote configuration.")]
-        public float FetchTimeoutSeconds { get; private set; } = 2f;
+        public float FetchTimeoutSeconds { get; private set; } = 5f;
+        
+        /// <summary>
+        /// Minimum interval between fetches in seconds (to avoid throttling).
+        /// </summary>
+        [field: SerializeField, Range(0, 3600)]
+        [field: Tooltip("Minimum interval between fetches in seconds.")]
+        public float MinimumFetchIntervalSeconds { get; private set; } = 0f;
     }
 }
 ```
 
-**Asset location:** `Assets/Resources/RemoteConfig/RemoteConfigSettings.asset`
+### 2.2 FirebaseRemoteConfigService Implementation
 
-### 2.2 RemoteConfigService
-
-**Location:** `Assets/Scripts/Common/Services/RemoteConfig/RemoteConfigService.cs`
-
-**Purpose:** Production-ready service that implements `IRemoteConfigService` and `IStartable`.
-
-**Key features:**
-
-- Implements `IStartable` for automatic initialization (not in installer)
-- Works with mock data (development) or Firebase (production) via data provider
-- Caches JSON after fetch for fast synchronous access
-- Timeout configured via settings asset (no magic numbers)
-- Small, focused methods with clear responsibilities
-
-**Implementation outline:**
+**Location:** `Assets/Scripts/Common/Services/RemoteConfig/FirebaseRemoteConfigService.cs`
 
 ```csharp
+using Firebase.RemoteConfig;
+
 namespace Common.Services.RemoteConfig
 {
     /// <summary>
-    /// Production-ready remote configuration service.
-    /// Fetches JSON configuration and provides typed access with fallback.
-    /// Initializes automatically via IStartable.
+    /// Remote configuration service using Firebase Remote Config.
+    /// Wraps Firebase SDK behind IRemoteConfigService interface.
     /// </summary>
-    public class RemoteConfigService : IRemoteConfigService, IStartable
+    public class FirebaseRemoteConfigService : IRemoteConfigService, IStartable
     {
-        private readonly IRemoteConfigDataProvider _dataProvider;
         private readonly RemoteConfigSettings _settings;
-        
-        private string _cachedJson;
         private bool _isInitialized;
         
         public bool IsInitialized => _isInitialized;
         
-        public RemoteConfigService(
-            IRemoteConfigDataProvider dataProvider,
-            RemoteConfigSettings settings)
+        public FirebaseRemoteConfigService(RemoteConfigSettings settings)
         {
-            _dataProvider = dataProvider;
             _settings = settings;
         }
         
-        /// <summary>
-        /// Called automatically by DI container on startup.
-        /// </summary>
+        // ─────────────────────────────────────────────────────────────
+        // IStartable
+        // ─────────────────────────────────────────────────────────────
+        
         public void Start()
         {
             InitializeAsync().Forget();
@@ -275,106 +281,135 @@ namespace Common.Services.RemoteConfig
         
         private async UniTaskVoid InitializeAsync()
         {
-            await FetchWithTimeout();
+            await FetchAndActivateAsync();
         }
         
-        private async UniTask FetchWithTimeout()
-        {
-            var timeout = TimeSpan.FromSeconds(_settings.FetchTimeoutSeconds);
-            // Implementation: fetch with timeout, handle failure gracefully
-        }
+        // ─────────────────────────────────────────────────────────────
+        // Fetch & Activate
+        // ─────────────────────────────────────────────────────────────
         
         public async UniTask<bool> FetchAndActivateAsync()
         {
-            // Implementation: fetch JSON from provider, cache it
+            if (!TryGetFirebaseInstance(out var remoteConfig))
+                return MarkAsNotInitialized();
+            
+            SetFetchSettings(remoteConfig);
+            
+            if (!await TryFetchConfig(remoteConfig))
+                return MarkAsNotInitialized();
+            
+            if (!await TryActivateConfig(remoteConfig))
+                return MarkAsNotInitialized();
+            
+            return MarkAsInitialized();
         }
         
-        public T GetValue<T>(string jsonPath, T defaultValue)
+        private bool TryGetFirebaseInstance(out FirebaseRemoteConfig remoteConfig)
         {
-            // Implementation: navigate JSON path, parse value, return default on failure
-        }
-    }
-}
-```
-
-**Code structure principles:**
-
-- Each public method delegates to small private helpers
-- Clear separation: fetching → caching → parsing → accessing
-- Settings via dedicated asset (no magic numbers)
-- All failure paths return defaults silently (no exceptions to callers)
-
-### 2.2 IRemoteConfigDataProvider (Abstraction for Data Source)
-
-**Location:** `Assets/Scripts/Common/Services/RemoteConfig/IRemoteConfigDataProvider.cs`
-
-**Purpose:** Abstracts the data source so the same service works with mock or Firebase.
-
-```csharp
-namespace Common.Services.RemoteConfig
-{
-    /// <summary>
-    /// Abstracts the source of remote configuration data.
-    /// Implement for mock (ScriptableObject) or production (Firebase).
-    /// </summary>
-    public interface IRemoteConfigDataProvider
-    {
-        /// <summary>
-        /// Fetches the JSON configuration string from the source.
-        /// </summary>
-        UniTask<string> FetchJsonAsync();
-    }
-}
-```
-
-### 2.3 MockRemoteConfigDataProvider
-
-**Location:** `Assets/Scripts/Common/Services/RemoteConfig/MockRemoteConfigDataProvider.cs`
-
-**Purpose:** Reads JSON from the ScriptableObject asset.
-
-```csharp
-namespace Common.Services.RemoteConfig
-{
-    /// <summary>
-    /// Provides remote config JSON from a ScriptableObject for development/testing.
-    /// </summary>
-    public class MockRemoteConfigDataProvider : IRemoteConfigDataProvider
-    {
-        private readonly RemoteConfigDataAsset _dataAsset;
-        
-        public MockRemoteConfigDataProvider(RemoteConfigDataAsset dataAsset)
-        {
-            _dataAsset = dataAsset;
+            remoteConfig = FirebaseRemoteConfig.DefaultInstance;
+            return remoteConfig != null;
         }
         
-        public async UniTask<string> FetchJsonAsync()
+        private void SetFetchSettings(FirebaseRemoteConfig remoteConfig)
         {
-            if (_dataAsset == null)
+            var configSettings = new ConfigSettings
+            {
+                FetchTimeoutInMilliseconds = (ulong)(_settings.FetchTimeoutSeconds * 1000),
+                MinimumFetchInternalInMilliseconds = (ulong)(_settings.MinimumFetchIntervalSeconds * 1000)
+            };
+            remoteConfig.SetConfigSettingsAsync(configSettings);
+        }
+        
+        private async UniTask<bool> TryFetchConfig(FirebaseRemoteConfig remoteConfig)
+        {
+            try
+            {
+                await remoteConfig.FetchAsync(TimeSpan.FromSeconds(_settings.FetchTimeoutSeconds));
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        
+        private async UniTask<bool> TryActivateConfig(FirebaseRemoteConfig remoteConfig)
+        {
+            try
+            {
+                await remoteConfig.ActivateAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        
+        private bool MarkAsInitialized()
+        {
+            _isInitialized = true;
+            return true;
+        }
+        
+        private bool MarkAsNotInitialized()
+        {
+            _isInitialized = false;
+            return false;
+        }
+        
+        // ─────────────────────────────────────────────────────────────
+        // GetValue Methods
+        // ─────────────────────────────────────────────────────────────
+        
+        public int GetValue(string key, int defaultValue)
+        {
+            return GetConfigValue(key)?.LongValue is long value 
+                ? (int)value 
+                : defaultValue;
+        }
+        
+        public long GetValue(string key, long defaultValue)
+        {
+            return GetConfigValue(key)?.LongValue ?? defaultValue;
+        }
+        
+        public string GetValue(string key, string defaultValue)
+        {
+            return GetConfigValue(key)?.StringValue ?? defaultValue;
+        }
+        
+        public bool GetValue(string key, bool defaultValue)
+        {
+            return GetConfigValue(key)?.BooleanValue ?? defaultValue;
+        }
+        
+        private ConfigValue GetConfigValue(string key)
+        {
+            var remoteConfig = FirebaseRemoteConfig.DefaultInstance;
+            if (remoteConfig == null)
                 return null;
             
-            await SimulateNetworkDelay();
-            return _dataAsset.JsonData;
-        }
-        
-        private async UniTask SimulateNetworkDelay()
-        {
-            if (_dataAsset.SimulatedDelayMs > 0)
-                await UniTask.Delay(_dataAsset.SimulatedDelayMs);
+            return remoteConfig.GetValue(key);
         }
     }
 }
 ```
 
-**No editor window** - edit `RemoteConfigDataAsset.JsonData` directly in Unity Inspector.
+**Code organization:**
 
-## Phase 3: Dependency Injection Setup
+- IStartable implementation at top
+- Fetch & Activate section with small focused methods
+- GetValue methods at bottom
+- Each method tells a clear story
+
+---
+
+## Phase 3: Dependency Injection
 
 ### 3.1 RemoteConfigInstaller
 
 **Location:** `Assets/Scripts/Common/Services/RemoteConfig/RemoteConfigInstaller.cs`
-
-**Purpose:** Dedicated installer for all remote config registrations. Keeps GameInstaller clean.
 
 ```csharp
 namespace Common.Services.RemoteConfig
@@ -387,7 +422,6 @@ namespace Common.Services.RemoteConfig
         public void Install(IContainerBuilder builder)
         {
             RegisterSettings(builder);
-            RegisterDataProvider(builder);
             RegisterService(builder);
         }
         
@@ -400,20 +434,9 @@ namespace Common.Services.RemoteConfig
             }
         }
         
-        private void RegisterDataProvider(IContainerBuilder builder)
-        {
-            var dataAsset = Resources.Load<RemoteConfigDataAsset>("RemoteConfig/RemoteConfigData");
-            if (dataAsset != null)
-            {
-                builder.Register<MockRemoteConfigDataProvider>(Lifetime.Singleton)
-                    .WithParameter(dataAsset)
-                    .As<IRemoteConfigDataProvider>();
-            }
-        }
-        
         private void RegisterService(IContainerBuilder builder)
         {
-            builder.Register<RemoteConfigService>(Lifetime.Singleton)
+            builder.Register<FirebaseRemoteConfigService>(Lifetime.Singleton)
                 .As<IRemoteConfigService>()
                 .AsImplementedInterfaces();
         }
@@ -433,13 +456,12 @@ protected override void Configure(IContainerBuilder builder)
 }
 ```
 
-### 3.3 Asset Locations
+### 3.3 Asset Location
 
 
 | Asset                        | Location                         |
 | ---------------------------- | -------------------------------- |
 | `RemoteConfigSettings.asset` | `Assets/Resources/RemoteConfig/` |
-| `RemoteConfigData.asset`     | `Assets/Resources/RemoteConfig/` |
 
 
 ### 3.4 Update Common.asmdef
@@ -450,19 +472,19 @@ Add dependencies:
 
 - `UniTask`
 - `VContainer`
+- `Firebase.RemoteConfig`
 
 ---
 
 ## Fallback & Safety
 
 
-| Scenario                            | Behavior                                        |
-| ----------------------------------- | ----------------------------------------------- |
-| Network failure                     | `IsInitialized = false`, consumers use defaults |
-| Parse error                         | `GetValue<T>` returns provided default          |
-| Missing path                        | `GetValue<T>` returns provided default          |
-| Timeout (configurable via settings) | Proceed with `IsInitialized = false`            |
-| Null asset                          | Service works but has no data                   |
+| Scenario                 | Behavior                                                    |
+| ------------------------ | ----------------------------------------------------------- |
+| Firebase not initialized | `IsInitialized = false`, GetValue returns default           |
+| Fetch failed             | `IsInitialized = false`, use Firebase cached/default values |
+| Fetch timeout            | `IsInitialized = false`, use Firebase cached/default values |
+| Key not found            | GetValue returns provided default                           |
 
 
 **No exceptions thrown to callers** - all failure modes return defaults silently.
@@ -471,18 +493,15 @@ Add dependencies:
 
 ## File Summary
 
-**New files (7 total):**
+**New files (4 total):**
 
 
-| File                                                           | Purpose                           |
-| -------------------------------------------------------------- | --------------------------------- |
-| `Common/Services/RemoteConfig/IRemoteConfigService.cs`         | Core interface                    |
-| `Common/Services/RemoteConfig/RemoteConfigService.cs`          | Implementation with IStartable    |
-| `Common/Services/RemoteConfig/RemoteConfigSettings.cs`         | Settings asset for timeout config |
-| `Common/Services/RemoteConfig/RemoteConfigDataAsset.cs`        | ScriptableObject for mock JSON    |
-| `Common/Services/RemoteConfig/IRemoteConfigDataProvider.cs`    | Data source abstraction           |
-| `Common/Services/RemoteConfig/MockRemoteConfigDataProvider.cs` | Mock data provider                |
-| `Common/Services/RemoteConfig/RemoteConfigInstaller.cs`        | Dedicated DI installer            |
+| File                                                          | Purpose                   |
+| ------------------------------------------------------------- | ------------------------- |
+| `Common/Services/RemoteConfig/IRemoteConfigService.cs`        | Interface abstraction     |
+| `Common/Services/RemoteConfig/FirebaseRemoteConfigService.cs` | Firebase implementation   |
+| `Common/Services/RemoteConfig/RemoteConfigSettings.cs`        | Settings ScriptableObject |
+| `Common/Services/RemoteConfig/RemoteConfigInstaller.cs`       | DI installer              |
 
 
 **Assets to create:**
@@ -491,7 +510,6 @@ Add dependencies:
 | Asset                        | Location                         |
 | ---------------------------- | -------------------------------- |
 | `RemoteConfigSettings.asset` | `Assets/Resources/RemoteConfig/` |
-| `RemoteConfigData.asset`     | `Assets/Resources/RemoteConfig/` |
 
 
 **Modified files:**
@@ -500,19 +518,43 @@ Add dependencies:
 | File               | Change                                 |
 | ------------------ | -------------------------------------- |
 | `GameInstaller.cs` | Call `RemoteConfigInstaller.Install()` |
-| `Common.asmdef`    | Add UniTask, VContainer dependencies   |
+| `Common.asmdef`    | Add Firebase.RemoteConfig dependency   |
 
 
 ---
 
 ## Testing Instructions
 
-1. Create `RemoteConfigData.asset` in `Assets/Resources/RemoteConfig/`
-2. In Inspector, paste test JSON into the TextArea field
+1. Create `RemoteConfigSettings.asset` in `Assets/Resources/RemoteConfig/`
+2. Configure Firebase Remote Config in Firebase Console with test parameters
 3. Run game - service initializes via `IStartable`
 4. Verify `IRemoteConfigService.IsInitialized` is `true`
-5. Test `GetValue<T>` with various paths
-6. Test fallback by providing invalid JSON
+5. Test `GetValue` methods with various keys
+6. Test fallback by using non-existent keys
+
+---
+
+## Usage Example
+
+```csharp
+public class SomeService
+{
+    private readonly IRemoteConfigService _remoteConfig;
+    
+    public SomeService(IRemoteConfigService remoteConfig)
+    {
+        _remoteConfig = remoteConfig;
+    }
+    
+    public void DoSomething()
+    {
+        int extraKnives = _remoteConfig.GetValue("extra_knives", 5);
+        bool featureEnabled = _remoteConfig.GetValue("new_feature_enabled", false);
+        string welcomeMessage = _remoteConfig.GetValue("welcome_message", "Hello!");
+        long bigNumber = _remoteConfig.GetValue("big_number", 1000000L);
+    }
+}
+```
 
 ---
 
@@ -524,7 +566,7 @@ Add dependencies:
 That plan covers:
 
 - `IStageTuningProvider` interface
+- JSON parsing with `JsonUtility` for hierarchical stage/level data
 - Overlay pattern (no deep copy)
-- JSON structure for stages/levels/targets
 - Integration with flow controllers
 

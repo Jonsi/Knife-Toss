@@ -197,3 +197,4 @@ MonoBehaviour:
   _ReturnToMenuEventChannel: {fileID: 11400000, guid: 67ee024458bba644abb8a2f664ce3204, type: 2}
   _SoundSettings: {fileID: 11400000, guid: 189e658594fd4ea4d8b64463039ef584, type: 2}
   _AudioPlayer: {fileID: 2965484948011319591}
+  _RemoteConfigSettings: {fileID: 11400000, guid: b80493aa5f5497b43ab4f14b27878bf3, type: 2}

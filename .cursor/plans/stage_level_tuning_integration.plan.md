@@ -29,14 +29,19 @@ This plan integrates the core remote config system with stage and level tuning.
 **Prerequisites:** Complete `remote_config_system_f24d3bee.plan.md` first.
 
 **Key Principles:**
+
 - **No deep copy** - ScriptableObjects are never copied or modified
 - **Overlay pattern** - Pass default value, get remote value OR default back
 - **Hierarchical JSON** - Mirrors game structure (Stages → Levels → Targets)
 - **Sparse overrides** - Only specify values you want to change
+- **JsonUtility** - Used for JSON parsing
+- **Firebase key** - JSON stored as string value with key `"stages_tuning"`
 
 ---
 
 ## JSON Structure
+
+**Firebase Remote Config Key:** `stages_tuning` (type: String/JSON)
 
 ```json
 {
@@ -65,10 +70,13 @@ This plan integrates the core remote config system with stage and level tuning.
 ```
 
 **Key format:**
+
 - `Stages["0"]` → Stage index 0
 - `Levels["0"]` → Level index 0  
 - `Targets["0"]` → Target index 0
 - **Missing = use ScriptableObject default**
+
+**Note:** Store this entire JSON as a string value in Firebase Remote Config with key `stages_tuning`.
 
 ---
 
@@ -77,7 +85,7 @@ This plan integrates the core remote config system with stage and level tuning.
 ```mermaid
 graph TB
     subgraph remoteConfig [Remote Config System - From Other Plan]
-        IRemoteConfigDataProvider[IRemoteConfigDataProvider]
+        IRemoteConfigService[IRemoteConfigService]
     end
     
     subgraph tuning [Stage Tuning Layer]
@@ -96,7 +104,7 @@ graph TB
         TargetConfig[TargetConfig]
     end
     
-    IRemoteConfigDataProvider -->|provides JSON| StageTuningProvider
+    IRemoteConfigService -->|GetValue("stages_tuning", "")| StageTuningProvider
     IStageTuningProvider -.implements.-> StageTuningProvider
     StageTuningProvider -->|parses into| StageTuningData
     
@@ -272,24 +280,26 @@ namespace Game.Services.Tuning
 {
     /// <summary>
     /// Provides stage/level tuning values with remote config overlay.
-    /// Gets JSON directly from IRemoteConfigDataProvider and parses it.
+    /// Gets JSON from IRemoteConfigService and parses it with JsonUtility.
     /// </summary>
-    public class StageTuningProvider : IStageTuningProvider, IAsyncStartable
+    public class StageTuningProvider : IStageTuningProvider, IStartable
     {
-        private readonly IRemoteConfigDataProvider _dataProvider;
+        private const string STAGES_TUNING_KEY = "stages_tuning";
+        
+        private readonly IRemoteConfigService _remoteConfigService;
         private StageTuningRoot _tuningData;
         private bool _isReady;
         
         public bool IsReady => _isReady;
         
-        public StageTuningProvider(IRemoteConfigDataProvider dataProvider)
+        public StageTuningProvider(IRemoteConfigService remoteConfigService)
         {
-            _dataProvider = dataProvider;
+            _remoteConfigService = remoteConfigService;
         }
         
-        public async UniTask StartAsync(CancellationToken cancellation)
+        public void Start()
         {
-            await FetchAndParseTuningData();
+            ParseTuningData();
         }
         
         // ─────────────────────────────────────────────────────────────
@@ -321,12 +331,12 @@ namespace Game.Services.Tuning
         }
         
         // ─────────────────────────────────────────────────────────────
-        // Private: Fetch & Parse
+        // Private: Parse
         // ─────────────────────────────────────────────────────────────
         
-        private async UniTask FetchAndParseTuningData()
+        private void ParseTuningData()
         {
-            var json = await FetchJsonFromProvider();
+            var json = GetJsonFromRemoteConfig();
             if (string.IsNullOrEmpty(json))
             {
                 MarkAsNotReady();
@@ -342,19 +352,26 @@ namespace Game.Services.Tuning
             CacheTuningData(data);
         }
         
-        private async UniTask<string> FetchJsonFromProvider()
+        private string GetJsonFromRemoteConfig()
         {
-            if (_dataProvider == null)
+            if (_remoteConfigService == null || !_remoteConfigService.IsInitialized)
                 return null;
             
-            return await _dataProvider.FetchJsonAsync();
+            return _remoteConfigService.GetValue(STAGES_TUNING_KEY, string.Empty);
         }
         
         private bool TryDeserializeJson(string json, out StageTuningRoot data)
         {
-            data = null;
-            // Use JsonUtility or Newtonsoft.Json
-            // Return false on parse error
+            try
+            {
+                data = JsonUtility.FromJson<StageTuningRoot>(json);
+                return data != null;
+            }
+            catch
+            {
+                data = null;
+                return false;
+            }
         }
         
         private void CacheTuningData(StageTuningRoot data)
@@ -430,11 +447,11 @@ private void RegisterTuningProvider(IContainerBuilder builder)
 {
     builder.Register<StageTuningProvider>(Lifetime.Singleton)
         .As<IStageTuningProvider>()
-        .AsImplementedInterfaces(); // Includes IAsyncStartable
+        .AsImplementedInterfaces(); // Includes IStartable
 }
 ```
 
-**Note:** `StageTuningProvider` implements `IAsyncStartable`, so it fetches and parses JSON automatically at startup.
+**Note:** `StageTuningProvider` implements `IStartable`, so it parses JSON automatically after `IRemoteConfigService` is initialized.
 
 ---
 

@@ -12,6 +12,7 @@ using Game.Feedback.Audio.Systems;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using Common.Services.RemoteConfig;
 
 namespace Game.Installers
 {
@@ -30,6 +31,9 @@ namespace Game.Installers
         [SerializeField] private SoundSettings _SoundSettings;
         [SerializeField] private AudioPlayer _AudioPlayer;
 
+        [Header("Services")]
+        [SerializeField] private Common.Services.RemoteConfig.RemoteConfigSettings _RemoteConfigSettings;
+
         protected override void Awake()
         {
             base.Awake();
@@ -42,6 +46,7 @@ namespace Game.Installers
         {
             Install(builder, CreateGameFlowInstaller());
             Install(builder, CreatePersistenceInstaller());
+            Install(builder, CreateRemoteConfigInstaller());
 
             builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
             builder.Register<SceneLoaderService>(Lifetime.Singleton);
@@ -70,6 +75,11 @@ namespace Game.Installers
         private PersistenceInstaller CreatePersistenceInstaller()
         {
             return new PersistenceInstaller();
+        }
+
+        private RemoteConfigInstaller CreateRemoteConfigInstaller()
+        {
+            return new RemoteConfigInstaller(_RemoteConfigSettings);
         }
     }
 }
