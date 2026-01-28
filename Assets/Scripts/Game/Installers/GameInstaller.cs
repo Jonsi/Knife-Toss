@@ -1,5 +1,4 @@
 using Common.Events;
-using Common.Services.RemoteConfig;
 using Game.Feedback.Audio.Data;
 using Game.Flow.Events;
 using Game.Flow.Game;
@@ -41,7 +40,6 @@ namespace Game.Installers
 
         protected override void Configure(IContainerBuilder builder)
         {
-            new RemoteConfigInstaller().Install(builder);
             Install(builder, CreateGameFlowInstaller());
             Install(builder, CreatePersistenceInstaller());
 
