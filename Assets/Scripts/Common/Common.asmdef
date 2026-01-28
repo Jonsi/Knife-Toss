@@ -1,6 +1,9 @@
 {
     "name": "Common",
-    "references": [],
+    "references": [
+        "VContainer",
+        "UniTask"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
@@ -11,4 +14,3 @@
     "versionDefines": [],
     "noEngineReferences": false
 }
-
