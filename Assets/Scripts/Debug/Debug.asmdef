@@ -1,0 +1,26 @@
+{
+    "name": "Debug",
+    "rootNamespace": "",
+    "references": [
+        "Game",
+        "Common",
+        "StompyRobot.SRDebugger",
+        "StompyRobot.SRF",
+        "VContainer",
+        "Unity.InputSystem",
+        "UniTask",
+        "Unity.TextMeshPro",
+        "DOTween.Modules"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "TEST_ENABLED"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
