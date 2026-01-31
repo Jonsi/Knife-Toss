@@ -29,13 +29,21 @@ namespace Game.Persistence.Services
         public void Initialize()
         {
             _CachedData = _Store.Load() ?? new PlayerData();
+            MigrateFromLegacyStructure();
             EnsureDataIntegrity();
             SyncGameData();
         }
 
         public void Dispose()
         {
-            // No cleanup needed since we removed async scheduling
+        }
+
+        /// <summary>
+        /// Gets the current cached player data (used by currency and other systems).
+        /// </summary>
+        public PlayerData GetData()
+        {
+            return _CachedData;
         }
 
         /// <summary>
@@ -69,12 +77,12 @@ namespace Game.Persistence.Services
         /// </summary>
         public PowerUpInventoryData EnsurePowerUpInventory()
         {
-            if (_CachedData.PowerUpInventory == null)
+            if (_CachedData.Resources.PowerUps == null)
             {
-                _CachedData.PowerUpInventory = new PowerUpInventoryData();
+                _CachedData.Resources.PowerUps = new PowerUpInventoryData();
             }
 
-            return _CachedData.PowerUpInventory;
+            return _CachedData.Resources.PowerUps;
         }
 
         /// <summary>
@@ -84,14 +92,14 @@ namespace Game.Persistence.Services
         public void ReloadPowerUpInventory()
         {
             var loaded = _Store.Load();
-            if (loaded?.PowerUpInventory == null)
+            if (loaded?.Resources?.PowerUps == null)
             {
                 return;
             }
 
             _CachedData ??= new PlayerData();
             EnsureDataIntegrity();
-            _CachedData.PowerUpInventory = loaded.PowerUpInventory;
+            _CachedData.Resources.PowerUps = loaded.Resources.PowerUps;
         }
 
         /// <summary>
@@ -117,26 +125,44 @@ namespace Game.Persistence.Services
             SaveNow();
         }
 
+        private void MigrateFromLegacyStructure()
+        {
+            if (_CachedData.Resources == null)
+            {
+                _CachedData.Resources = new PlayerResourcesData();
+            }
+
+            if (_CachedData.Resources.PowerUps == null)
+            {
+                _CachedData.Resources.PowerUps = new PowerUpInventoryData();
+            }
+
+            if (_CachedData.Resources.Currencies == null)
+            {
+                _CachedData.Resources.Currencies = new System.Collections.Generic.List<CurrencyBalanceEntry>();
+            }
+        }
+
         private void UpdateProgress()
         {
             _CachedData.Progress.CurrentStageIndex = _GameData.CurrentStageIndex;
             _CachedData.Progress.HighestStageIndex = Math.Max(
                 _CachedData.Progress.HighestStageIndex,
                 _GameData.CurrentStageIndex);
-            _CachedData.Progress.TotalCollectiblesCollected = _GameData.TotalCollected;
         }
 
         private void EnsureDataIntegrity()
         {
             _CachedData.Progress ??= new PlayerProgressData();
             _CachedData.Settings ??= new PlayerSettingsData();
-            _CachedData.PowerUpInventory ??= new PowerUpInventoryData();
+            _CachedData.Resources ??= new PlayerResourcesData();
+            _CachedData.Resources.PowerUps ??= new PowerUpInventoryData();
+            _CachedData.Resources.Currencies ??= new System.Collections.Generic.List<CurrencyBalanceEntry>();
         }
 
         private void SyncGameData()
         {
             _GameData.CurrentStageIndex = _CachedData.Progress.CurrentStageIndex;
-            _GameData.TotalCollected = _CachedData.Progress.TotalCollectiblesCollected;
         }
 
         private void SaveNow()

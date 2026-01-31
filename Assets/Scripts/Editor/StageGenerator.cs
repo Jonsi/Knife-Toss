@@ -338,23 +338,32 @@ namespace Editor.Generators
                 }
             }
 
-            // Collectibles
-            // More common on Level 1 (Reward)
             bool spawnApple = (level == 1) || (Random.value < 0.4f);
             if (spawnApple)
             {
-                int appleCount = (level == 1) ? Random.Range(2, 4) : 1;
-                for (int i = 0; i < appleCount; i++)
+                CollectibleCurrencyConfig defaultCollectible = GetDefaultCollectibleCurrencyConfig();
+                if (defaultCollectible != null)
                 {
-                    float angle = GetRandomFreeAngle(occupiedAngles, minSeparation);
-                    if (angle >= 0)
+                    int appleCount = (level == 1) ? Random.Range(2, 4) : 1;
+                    for (int i = 0; i < appleCount; i++)
                     {
-                        int value = 1 + (stage / 3);
-                        target.Collectibles.Add(new CollectibleConfig(value, angle, 0f));
-                        occupiedAngles.Add(angle);
+                        float angle = GetRandomFreeAngle(occupiedAngles, minSeparation);
+                        if (angle >= 0)
+                        {
+                            target.Collectibles.Add(new CollectibleConfig(defaultCollectible, angle, 0f));
+                            occupiedAngles.Add(angle);
+                        }
                     }
                 }
             }
+        }
+
+        private static CollectibleCurrencyConfig GetDefaultCollectibleCurrencyConfig()
+        {
+            string[] guids = AssetDatabase.FindAssets("t:CollectibleCurrencyConfig");
+            if (guids.Length == 0) return null;
+            string path = AssetDatabase.GUIDToAssetPath(guids[0]);
+            return AssetDatabase.LoadAssetAtPath<CollectibleCurrencyConfig>(path);
         }
 
         private static float GetRandomFreeAngle(List<float> occupied, float separation)

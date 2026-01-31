@@ -85,11 +85,10 @@ namespace Game.Entities.Target.Factories
             }
 
             var knifePrefab = _PrefabsConfiguration?.GetDefaultKnifePrefab();
-            var collectiblePrefab = _PrefabsConfiguration?.GetCollectiblePrefab();
 
-            if (collectiblePrefab != null && config.Collectibles != null && config.Collectibles.Count > 0)
+            if (config.Collectibles != null && config.Collectibles.Count > 0)
             {
-                _CollectibleSpawner.SpawnCollectibles(instance, config.Collectibles, collectiblePrefab);
+                _CollectibleSpawner.SpawnCollectibles(instance, config.Collectibles);
             }
 
             if (knifePrefab != null && config.PreStuckKnives != null && config.PreStuckKnives.Count > 0)

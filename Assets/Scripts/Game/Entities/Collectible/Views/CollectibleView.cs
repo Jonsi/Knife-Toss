@@ -29,7 +29,11 @@ namespace Game.Entities.Collectible.Views
 
         private bool _IsHit;
         private CollectibleRegistry _CollectibleRegistry;
-        public int Value { get; private set; }
+
+        /// <summary>
+        /// Config used to initialize this collectible (type + placement; value from ICurrencyValueProvider).
+        /// </summary>
+        public CollectibleConfig Config { get; private set; }
 
         public Transform Transform => transform;
         public float RadiusOffset { get; private set; }
@@ -55,11 +59,14 @@ namespace Game.Entities.Collectible.Views
 
         public void Initialize(CollectibleConfig config)
         {
-            Value = config.Value;
+            Config = config;
             _IsHit = false;
-            
+
             RadiusOffset = config.RadiusOffset;
-            RotationOffset = -180f; // Compensate for default +90 rotation in StickPositionService to get -90
+            RotationOffset = -180f;
+
+            if (config.CollectibleCurrency?.Sprite != null && _SpriteRenderer != null)
+                _SpriteRenderer.sprite = config.CollectibleCurrency.Sprite;
 
             if (_Collider != null)
                 _Collider.enabled = true;

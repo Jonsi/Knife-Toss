@@ -10,6 +10,5 @@ namespace Game.Persistence.Data
     {
         public int CurrentStageIndex;
         public int HighestStageIndex;
-        public int TotalCollectiblesCollected;
     }
 }

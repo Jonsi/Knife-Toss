@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using Common.Events;
+using Game.Entities.Collectible.Data;
 using Game.Entities.Knife.Data;
 using Game.Entities.Target.Interfaces;
-using Game.Flow.Game;
 using Game.KnifeThrower.Interfaces;
-using Game.Entities.Collectible.Data;
 
 namespace Game.Flow.Level.States
 {
@@ -14,23 +13,23 @@ namespace Game.Flow.Level.States
         private readonly IEventChannel<CollectibleHitEventData> _CollectibleHitChannel;
         private readonly IEventChannel _KnifeThrownChannel;
         private readonly IKnifeThrowerView _KnifeThrowerView;
-        private readonly GameData _GameData;
         private readonly List<ITargetView> _SubscribedTargets = new List<ITargetView>();
 
+        /// <summary>
+        /// Initializes a new instance of the LevelPlayingState.
+        /// </summary>
         public LevelPlayingState(
             LevelStateMachine machine,
             IEventChannel<KnifeImpactEventData> impactChannel,
             IEventChannel<CollectibleHitEventData> collectibleHitChannel,
             IEventChannel knifeThrownChannel,
-            IKnifeThrowerView knifeThrowerView,
-            GameData gameData)
+            IKnifeThrowerView knifeThrowerView)
             : base(machine)
         {
             _ImpactChannel = impactChannel;
             _CollectibleHitChannel = collectibleHitChannel;
             _KnifeThrownChannel = knifeThrownChannel;
             _KnifeThrowerView = knifeThrowerView;
-            _GameData = gameData;
         }
 
         public override void Enter()
@@ -109,13 +108,7 @@ namespace Game.Flow.Level.States
         {
             if (Machine.Current != this)
                 return;
-
             Context.CollectedCount += data.Value;
-            
-            if (_GameData != null)
-            {
-                _GameData.TotalCollected += data.Value;
-            }
         }
 
         private void HandleTargetDestroyed(ITargetView target)

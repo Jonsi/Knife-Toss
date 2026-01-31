@@ -1913,12 +1913,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 773830222}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e19da4493b496f4439515f3942c7597c, type: 3}
+  m_Script: {fileID: 11500000, guid: 8a2db7ad40f9c7b478cf9cf35ca6b575, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game::Game.UI.HUD.CollectibleCountDisplay
   _CountText: {fileID: 1550521643}
   _LevelStartedChannel: {fileID: 11400000, guid: 8016f38368e175c479eb37bb6b1726fd, type: 2}
-  _CollectibleHitChannel: {fileID: 11400000, guid: d09bfa9eabb3b3d4a82eb07099a20991, type: 2}
+  _BalanceChangedChannel: {fileID: 11400000, guid: 51473d9d8042dd747bd67e5c302e2a66, type: 2}
 --- !u!1 &777620290
 GameObject:
   m_ObjectHideFlags: 0
@@ -5277,6 +5277,8 @@ MonoBehaviour:
   _RestartStageClickedChannel: {fileID: 11400000, guid: eef8d9c482392e74bb97e0df72cf980b, type: 2}
   _PowerUpActivatedEventChannel: {fileID: 11400000, guid: 2b6171f146e7b7940afb3c72048ac1d0, type: 2}
   _PowerUpUsedEventChannel: {fileID: 11400000, guid: c87d83ddea622ce42a7261a62f7c9c00, type: 2}
+  _CurrencyTypeCatalog: {fileID: 11400000, guid: 2e19ae051d2a93f40847e9a57b3109c6, type: 2}
+  _CurrencyBalanceChangedEventChannel: {fileID: 11400000, guid: 51473d9d8042dd747bd67e5c302e2a66, type: 2}
 --- !u!1 &1957040490 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2036229646191269102, guid: 58353aba8a65cb9479373360a5731a0b, type: 3}
@@ -5846,7 +5848,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 883865395147445389, guid: 065bd27afbae0d14da764432bb6f186f, type: 3}
+  m_Sprite: {fileID: -8969950464597331464, guid: d8a31475487ae064cb14babb4c551d80, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

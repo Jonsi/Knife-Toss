@@ -1,11 +1,10 @@
 #if TEST_ENABLED
 using System.Collections.Generic;
-using System.Linq;
+using Common.Economy.Data;
+using Game.Economy.Interfaces;
+using VContainer;
 using Game.Flow.Game;
 using Game.Persistence.Services;
-using UnityEngine;
-using VContainer;
-using VContainer.Unity;
 
 namespace Game.Debugging.Tabs
 {
@@ -26,20 +25,7 @@ namespace Game.Debugging.Tabs
         {
         }
 
-        private static IObjectResolver CurrentResolver
-        {
-            get
-            {
-                var scopes = Object.FindObjectsByType<LifetimeScope>(FindObjectsSortMode.None);
-                foreach (var scope in scopes)
-                {
-                    if (scope.gameObject.scene.name != "DontDestroyOnLoad" && scope.Container != null)
-                        return scope.Container;
-                }
-                return scopes.FirstOrDefault(s => s.Container != null)?.Container;
-            }
-        }
-
+        /// <inheritdoc />
         public override IEnumerable<DebugTabSection> GetSections()
         {
             var resolver = CurrentResolver;
@@ -47,11 +33,16 @@ namespace Game.Debugging.Tabs
 
             var playerDataService = resolver.Resolve<PlayerDataService>();
             var gameData = resolver.Resolve<GameData>();
+            var currencyService = resolver.Resolve<ICurrencyService>();
+            var catalog = TryResolve<CurrencyTypeCatalog>(resolver);
+            var configs = catalog?.GetAllConfigs();
+            string currencyId = (configs != null && configs.Count > 0 && configs[0] != null) ? (configs[0].TypeId ?? string.Empty) : string.Empty;
+            int totalCoins = string.IsNullOrEmpty(currencyId) ? 0 : currencyService.GetBalance(currencyId);
 
             yield return new DebugTabSection("Progress")
                 .Add("Highest Stage", playerDataService.GetHighestStageIndex())
                 .Add("Current Stage", gameData.CurrentStageIndex)
-                .Add("Total Collected", gameData.TotalCollected);
+                .Add("Total Coins", totalCoins);
 
             yield return new DebugTabSection("Settings")
                 .Add("Is Muted", playerDataService.Settings.IsMuted ? "Yes" : "No");

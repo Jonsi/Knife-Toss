@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
-using Game.Flow.Game;
+using Game.Economy.Interfaces;
+using VContainer;
 using Game.Persistence.Services;
 using Game.PowerUps.Configs;
 using UnityEngine;
-using VContainer;
-using VContainer.Unity;
 
 namespace Game.Debugging.Tabs
 {
+    /// <summary>
+    /// Debug tab for resources (currency and power-ups).
+    /// </summary>
     public class ResourcesTab : OptionsTab
     {
         public override string Key => "Resources";
@@ -23,52 +24,40 @@ namespace Game.Debugging.Tabs
         {
         }
 
-        private static IObjectResolver CurrentResolver
-        {
-            get
-            {
-                var scopes = Object.FindObjectsByType<LifetimeScope>(FindObjectsSortMode.None);
-                foreach (var scope in scopes)
-                {
-                    if (scope.gameObject.scene.name != "DontDestroyOnLoad" && scope.Container != null)
-                        return scope.Container;
-                }
-                return scopes.FirstOrDefault(s => s.Container != null)?.Container;
-            }
-        }
-
-        private static T TryResolve<T>(IObjectResolver resolver) where T : class
-        {
-            return resolver?.Resolve<T>();
-        }
-
         [Category("Currency")]
-        [DisplayName("Total Tomatoes")]
-        public int TotalTomatoes
+        [DisplayName("Total Coins")]
+        public int TotalCoins
         {
             get
             {
                 var resolver = CurrentResolver;
-                return TryResolve<GameData>(resolver)?.TotalCollected ?? 0;
+                string currencyId = GetFirstCurrencyId();
+                return string.IsNullOrEmpty(currencyId) ? 0 : (TryResolve<ICurrencyService>(resolver)?.GetBalance(currencyId) ?? 0);
             }
             set
             {
                 var resolver = CurrentResolver;
-                var gameData = TryResolve<GameData>(resolver);
-                if (gameData != null)
+                var currencyService = TryResolve<ICurrencyService>(resolver);
+                var playerDataService = TryResolve<PlayerDataService>(resolver);
+                string currencyId = GetFirstCurrencyId();
+                if (currencyService != null && playerDataService != null && value >= 0 && !string.IsNullOrEmpty(currencyId))
                 {
-                    var prop = typeof(GameData).GetProperty("TotalCollected", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                    prop?.SetValue(gameData, value);
-                    TryResolve<PlayerDataService>(resolver)?.RequestSave();
+                    int current = currencyService.GetBalance(currencyId);
+                    int diff = value - current;
+                    if (diff > 0)
+                        currencyService.AddBalance(currencyId, diff);
+                    else if (diff < 0)
+                        currencyService.TrySpend(currencyId, -diff);
+                    playerDataService.RequestSave();
                 }
             }
         }
 
         [Category("Currency")]
-        [DisplayName("Add 100 Tomatoes")]
-        public void AddTomatoes()
+        [DisplayName("Add 100 Coins")]
+        public void AddCoins()
         {
-            TotalTomatoes += 100;
+            TotalCoins += 100;
             RequestRefresh();
         }
 
@@ -79,7 +68,6 @@ namespace Game.Debugging.Tabs
             var resolver = CurrentResolver;
             var playerDataService = TryResolve<PlayerDataService>(resolver);
             
-            // Just load the fucking catalog
             var catalog = Resources.FindObjectsOfTypeAll<PowerUpCatalog>().FirstOrDefault();
             
             if (catalog != null && playerDataService != null)

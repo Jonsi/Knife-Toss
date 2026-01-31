@@ -29,30 +29,28 @@ namespace Game.Entities.Collectible.Spawning
         }
 
         /// <summary>
-        /// Spawns collectibles attached to the target based on the provided configurations.
+        /// Spawns collectibles attached to the target. Prefab and sprite come from each config's CollectibleCurrencyConfig.
         /// </summary>
         /// <param name="target">The target view to attach collectibles to.</param>
-        /// <param name="configs">List of collectible configurations.</param>
-        /// <param name="defaultPrefab">The prefab to instantiate for each collectible.</param>
-        public void SpawnCollectibles(TargetView target, List<CollectibleConfig> configs, CollectibleView defaultPrefab)
+        /// <param name="configs">List of collectible configurations (type + placement).</param>
+        public void SpawnCollectibles(TargetView target, List<CollectibleConfig> configs)
         {
-            if (target == null || configs == null || defaultPrefab == null)
+            if (target == null || configs == null)
                 return;
 
             foreach (var config in configs)
             {
-                SpawnSingleCollectible(target, config, defaultPrefab);
-            }
-        }
+                CollectibleView prefab = config.CollectibleCurrency?.Prefab;
+                if (prefab == null)
+                    continue;
 
-        private void SpawnSingleCollectible(TargetView target, CollectibleConfig config, CollectibleView defaultPrefab)
-        {
-            CollectibleView view = Object.Instantiate(defaultPrefab);
-            view.Initialize(config);
-            _ObjectResolver.Inject(view);
-            _CollectibleRegistry?.Register(view);
-            
-            target.PlaceStickable(view, config.AngleOffset);
+                CollectibleView view = Object.Instantiate(prefab);
+                view.Initialize(config);
+                _ObjectResolver.Inject(view);
+                _CollectibleRegistry?.Register(view);
+
+                target.PlaceStickable(view, config.AngleOffset);
+            }
         }
     }
 }

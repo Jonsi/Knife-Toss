@@ -1,5 +1,6 @@
 using System;
 using Game.PowerUps.Data;
+using Newtonsoft.Json;
 
 namespace Game.Persistence.Data
 {
@@ -11,6 +12,17 @@ namespace Game.Persistence.Data
     {
         public PlayerProgressData Progress = new PlayerProgressData();
         public PlayerSettingsData Settings = new PlayerSettingsData();
-        public PowerUpInventoryData PowerUpInventory = new PowerUpInventoryData();
+        public PlayerResourcesData Resources = new PlayerResourcesData();
+
+        [JsonProperty("PowerUpInventory")]
+        private PowerUpInventoryData LegacyPowerUpInventory
+        {
+            set
+            {
+                if (Resources == null)
+                    Resources = new PlayerResourcesData();
+                Resources.PowerUps = value ?? new PowerUpInventoryData();
+            }
+        }
     }
 }

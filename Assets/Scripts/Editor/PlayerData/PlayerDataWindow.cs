@@ -29,9 +29,10 @@ namespace Game.EditorTools
             public static readonly GUIContent ProgressHeader = new GUIContent("Progress");
             public static readonly GUIContent CurrentStage = new GUIContent("Current Stage");
             public static readonly GUIContent HighestStage = new GUIContent("Highest Stage");
-            public static readonly GUIContent TomatoCount = new GUIContent("Tomatoes Collected");
             public static readonly GUIContent SettingsHeader = new GUIContent("Settings");
             public static readonly GUIContent Muted = new GUIContent("Muted");
+            public static readonly GUIContent ResourcesHeader = new GUIContent("Resources");
+            public static readonly GUIContent CurrenciesHeader = new GUIContent("Currencies");
             public static readonly GUIContent PowerUpsHeader = new GUIContent("Power Ups");
         }
 
@@ -87,7 +88,7 @@ namespace Game.EditorTools
             EditorGUILayout.Space(10f);
             DrawSettingsSection();
             EditorGUILayout.Space(10f);
-            DrawPowerUpSection();
+            DrawResourcesSection();
 
             EditorGUILayout.EndScrollView();
         }
@@ -129,13 +130,11 @@ namespace Game.EditorTools
             EditorGUI.BeginChangeCheck();
             int currentStage = EditorGUILayout.IntField(Styles.CurrentStage, progress.CurrentStageIndex);
             int highestStage = EditorGUILayout.IntField(Styles.HighestStage, progress.HighestStageIndex);
-            int tomatoCount = EditorGUILayout.IntField(Styles.TomatoCount, progress.TotalCollectiblesCollected);
 
             if (EditorGUI.EndChangeCheck())
             {
                 progress.CurrentStageIndex = Mathf.Max(0, currentStage);
                 progress.HighestStageIndex = Mathf.Max(0, highestStage);
-                progress.TotalCollectiblesCollected = Mathf.Max(0, tomatoCount);
                 MarkDirty();
             }
         }
@@ -155,9 +154,34 @@ namespace Game.EditorTools
             }
         }
 
-        private void DrawPowerUpSection()
+        private void DrawResourcesSection()
         {
-            EditorGUILayout.LabelField(Styles.PowerUpsHeader, EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(Styles.ResourcesHeader, EditorStyles.boldLabel);
+            var resources = EnsureResourcesData();
+
+            EditorGUILayout.LabelField(Styles.CurrenciesHeader, EditorStyles.miniLabel);
+            if (resources.Currencies != null)
+            {
+                bool currencyChanges = false;
+                for (int i = 0; i < resources.Currencies.Count; i++)
+                {
+                    var entry = resources.Currencies[i];
+                    EditorGUI.BeginChangeCheck();
+                    string typeId = EditorGUILayout.TextField(entry.TypeId ?? "?", entry.TypeId);
+                    int balance = EditorGUILayout.IntField("Balance", entry.Balance);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        entry.TypeId = typeId ?? string.Empty;
+                        entry.Balance = Mathf.Max(0, balance);
+                        currencyChanges = true;
+                    }
+                }
+                if (currencyChanges)
+                    MarkDirty();
+            }
+
+            EditorGUILayout.Space(5f);
+            EditorGUILayout.LabelField(Styles.PowerUpsHeader, EditorStyles.miniLabel);
             var inventory = EnsurePowerUpInventory();
 
             if (_Catalog == null || _PowerUpConfigs.Count == 0)
@@ -208,6 +232,7 @@ namespace Game.EditorTools
             _PlayerData = _Store.Load() ?? new PlayerData();
             EnsureProgressData();
             EnsureSettingsData();
+            EnsureResourcesData();
 
             _HasUnsavedChanges = false;
             Repaint();
@@ -255,14 +280,30 @@ namespace Game.EditorTools
             _HasUnsavedChanges = true;
         }
 
-        private PowerUpInventoryData EnsurePowerUpInventory()
+        private PlayerResourcesData EnsureResourcesData()
         {
-            if (_PlayerData.PowerUpInventory == null)
+            if (_PlayerData.Resources == null)
             {
-                _PlayerData.PowerUpInventory = new PowerUpInventoryData();
+                _PlayerData.Resources = new PlayerResourcesData();
             }
 
-            return _PlayerData.PowerUpInventory;
+            if (_PlayerData.Resources.Currencies == null)
+            {
+                _PlayerData.Resources.Currencies = new List<CurrencyBalanceEntry>();
+            }
+
+            if (_PlayerData.Resources.PowerUps == null)
+            {
+                _PlayerData.Resources.PowerUps = new PowerUpInventoryData();
+            }
+
+            return _PlayerData.Resources;
+        }
+
+        private PowerUpInventoryData EnsurePowerUpInventory()
+        {
+            var resources = EnsureResourcesData();
+            return resources.PowerUps;
         }
     }
 }

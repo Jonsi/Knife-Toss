@@ -4,13 +4,14 @@ using UnityEngine;
 namespace Game.Entities.Collectible.Data
 {
     /// <summary>
-    /// Configuration data for a collectible instance on a target.
+    /// Per-slot data for a collectible on a target: which type (prefab/sprite/currency) and placement.
+    /// References one CollectibleCurrencyConfig; serialized in TargetConfig.Collectibles.
     /// </summary>
     [Serializable]
     public class CollectibleConfig
     {
-        [Tooltip("Currency value awarded when collected.")]
-        [field: SerializeField] public int Value { get; private set; } = 1;
+        [Tooltip("Collectible type (prefab, sprite, currency). Required.")]
+        [SerializeField] private CollectibleCurrencyConfig _collectibleCurrency;
 
         [Tooltip("Angle offset in degrees relative to the target's rotation (0 is right).")]
         [field: SerializeField] public float AngleOffset { get; private set; }
@@ -18,14 +19,21 @@ namespace Game.Entities.Collectible.Data
         [Tooltip("Additional distance offset from the target's radius.")]
         [field: SerializeField] public float RadiusOffset { get; private set; }
 
+        /// <summary>
+        /// Collectible type (prefab, sprite, currency).
+        /// </summary>
+        public CollectibleCurrencyConfig CollectibleCurrency => _collectibleCurrency;
+
         public CollectibleConfig() { }
 
-        public CollectibleConfig(int value, float angle, float radiusOffset)
+        /// <summary>
+        /// Creates a config for runtime (e.g. editor stage generator).
+        /// </summary>
+        public CollectibleConfig(CollectibleCurrencyConfig collectibleCurrency, float angleOffset, float radiusOffset)
         {
-            Value = value;
-            AngleOffset = angle;
+            _collectibleCurrency = collectibleCurrency;
+            AngleOffset = angleOffset;
             RadiusOffset = radiusOffset;
         }
     }
 }
-

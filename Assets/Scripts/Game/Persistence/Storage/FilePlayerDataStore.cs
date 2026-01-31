@@ -1,12 +1,13 @@
 using System.IO;
 using Game.Persistence.Data;
 using Game.Persistence.Interfaces;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Game.Persistence.Storage
 {
     /// <summary>
-    /// Persists player data to a JSON file on disk.
+    /// Persists player data to a JSON file on disk using Newtonsoft.Json for dictionary and list support.
     /// </summary>
     public class FilePlayerDataStore : IPlayerDataStore
     {
@@ -20,6 +21,9 @@ namespace Game.Persistence.Storage
             _TempFilePath = _FilePath + ".tmp";
         }
 
+        /// <summary>
+        /// Loads player data from disk.
+        /// </summary>
         public PlayerData Load()
         {
             try
@@ -30,7 +34,7 @@ namespace Game.Persistence.Storage
                 }
 
                 string json = File.ReadAllText(_FilePath);
-                var data = JsonUtility.FromJson<PlayerData>(json);
+                var data = JsonConvert.DeserializeObject<PlayerData>(json);
                 return data ?? new PlayerData();
             }
             catch
@@ -39,6 +43,9 @@ namespace Game.Persistence.Storage
             }
         }
 
+        /// <summary>
+        /// Saves player data to disk.
+        /// </summary>
         public void Save(PlayerData data)
         {
             if (data == null)
@@ -50,7 +57,7 @@ namespace Game.Persistence.Storage
             {
                 EnsureDirectory();
 
-                string json = JsonUtility.ToJson(data);
+                string json = JsonConvert.SerializeObject(data, Formatting.Indented);
                 File.WriteAllText(_TempFilePath, json);
 
                 if (File.Exists(_FilePath))

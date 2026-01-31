@@ -58,7 +58,7 @@ namespace Game.Installers
             
             builder.Register<SettingsPopupController>(Lifetime.Singleton);
             
-            builder.RegisterComponentInHierarchy<CollectibleCountDisplay>();
+            builder.RegisterComponentInHierarchy<CoinsUiDisplay>();
             builder.RegisterComponentInHierarchy<PowerUpHudController>();
             builder.RegisterComponentInHierarchy<SettingsButtonView>();
         }

@@ -1,15 +1,17 @@
 #if TEST_ENABLED
 using System.ComponentModel;
 using System.Linq;
-using Common.Events;
+using Game.Economy.Interfaces;
+using VContainer;
 using Game.Flow.Game;
 using Game.Persistence.Services;
 using UnityEngine;
-using VContainer;
-using VContainer.Unity;
 
 namespace Game.Debugging.Tabs
 {
+    /// <summary>
+    /// Debug tab for general progress and options.
+    /// </summary>
     public class GeneralTab : OptionsTab
     {
         public override string Key => "General";
@@ -19,25 +21,6 @@ namespace Game.Debugging.Tabs
 
         public GeneralTab(IObjectResolver resolver)
         {
-        }
-
-        private static IObjectResolver CurrentResolver
-        {
-            get
-            {
-                var scopes = Object.FindObjectsByType<LifetimeScope>(FindObjectsSortMode.None);
-                foreach (var scope in scopes)
-                {
-                    if (scope.gameObject.scene.name != "DontDestroyOnLoad" && scope.Container != null)
-                        return scope.Container;
-                }
-                return scopes.FirstOrDefault(s => s.Container != null)?.Container;
-            }
-        }
-
-        private static T TryResolve<T>(IObjectResolver resolver) where T : class
-        {
-            return resolver?.Resolve<T>();
         }
 
         [Category("Progress")]
@@ -63,13 +46,14 @@ namespace Game.Debugging.Tabs
         }
 
         [Category("Progress")]
-        [DisplayName("Total Collected")]
-        public int TotalCollected
+        [DisplayName("Total Coins")]
+        public int TotalCoins
         {
             get
             {
                 var resolver = CurrentResolver;
-                return TryResolve<GameData>(resolver)?.TotalCollected ?? 0;
+                string currencyId = GetFirstCurrencyId();
+                return string.IsNullOrEmpty(currencyId) ? 0 : (TryResolve<ICurrencyService>(resolver)?.GetBalance(currencyId) ?? 0);
             }
         }
 
@@ -79,10 +63,10 @@ namespace Game.Debugging.Tabs
         {
             var resolver = CurrentResolver;
             if (resolver == null) return;
-            
+
             var gameData = TryResolve<GameData>(resolver);
             var playerDataService = TryResolve<PlayerDataService>(resolver);
-            
+
             if (gameData == null) return;
             gameData.Reset();
             playerDataService?.ForceSave();

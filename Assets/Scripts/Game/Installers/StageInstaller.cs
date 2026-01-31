@@ -1,5 +1,7 @@
 using Common.Collision.Events;
+using Common.Economy.Data;
 using Common.Events;
+using Game.Economy.Events;
 using Game.Entities.Collectible.Events;
 using Game.Entities.Knife.Events;
 using Game.Entities.Knife.Views;
@@ -61,6 +63,10 @@ namespace Game.Installers
         [SerializeField] private PowerUpActivatedEventChannel _PowerUpActivatedEventChannel;
         [SerializeField] private PowerUpUsedEventChannel _PowerUpUsedEventChannel;
 
+        [Header("Economy (optional; use when stage runs standalone or parent has none)")]
+        [SerializeField] private CurrencyTypeCatalog _CurrencyTypeCatalog;
+        [SerializeField] private CurrencyBalanceChangedEventChannel _CurrencyBalanceChangedEventChannel;
+
         protected override void Configure(IContainerBuilder builder)
         {
             Install(builder, CreateTargetInstaller());
@@ -83,6 +89,11 @@ namespace Game.Installers
             if (_PrefabsConfiguration != null)
             {
                 builder.RegisterInstance(_PrefabsConfiguration).AsSelf();
+            }
+
+            if (_CurrencyTypeCatalog != null && _CurrencyBalanceChangedEventChannel != null)
+            {
+                Install(builder, new EconomyInstaller(_CurrencyTypeCatalog, _CurrencyBalanceChangedEventChannel));
             }
         }
 

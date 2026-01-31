@@ -1,6 +1,9 @@
 using Common.Collision.Data;
 using Common.Collision.Logic;
+using Common.Economy.Data;
+using Common.Economy.Interfaces;
 using Common.Events;
+using Game.Economy.Interfaces;
 using Game.Entities.Collectible.Data;
 using Game.Entities.Collectible.Views;
 using Game.Entities.Knife.Data;
@@ -22,13 +25,19 @@ namespace Game.CollisionHandlers
 
         private readonly IEventChannel<KnifeImpactEventData> _ImpactChannel;
         private readonly IEventChannel<CollectibleHitEventData> _CollectibleHitChannel;
+        private readonly ICurrencyService _CurrencyService;
+        private readonly ICurrencyValueProvider _ValueProvider;
 
         public KnifeHitTargetHandler(
             IEventChannel<KnifeImpactEventData> impactChannel,
-            IEventChannel<CollectibleHitEventData> collectibleHitChannel)
+            IEventChannel<CollectibleHitEventData> collectibleHitChannel,
+            ICurrencyService currencyService,
+            ICurrencyValueProvider valueProvider)
         {
             _ImpactChannel = impactChannel;
             _CollectibleHitChannel = collectibleHitChannel;
+            _CurrencyService = currencyService;
+            _ValueProvider = valueProvider;
         }
 
         protected override void HandleCollision(CollisionData data)
@@ -81,8 +90,15 @@ namespace Game.CollisionHandlers
             if (!collectible.MarkAsHit())
                 return;
 
+            CurrencyTypeConfig currencyType = collectible.Config?.CollectibleCurrency?.CurrencyType;
+            if (currencyType == null || !_ValueProvider.HasType(currencyType.TypeId))
+                return;
+
+            int value = _ValueProvider.GetValue(currencyType.TypeId);
+            _CurrencyService.AddBalance(currencyType.TypeId, value);
+
             collectible.PlayHitFeedback();
-            _CollectibleHitChannel.Raise(new CollectibleHitEventData(impactPoint, collectible.Value));
+            _CollectibleHitChannel.Raise(new CollectibleHitEventData(impactPoint, value));
             Object.Destroy(collectible.gameObject);
         }
     }

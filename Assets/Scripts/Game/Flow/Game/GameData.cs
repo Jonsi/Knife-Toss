@@ -1,18 +1,21 @@
 namespace Game.Flow.Game
 {
+    /// <summary>
+    /// Session-wide runtime game state (stage index). Currency is tracked via ICurrencyService.
+    /// </summary>
     public class GameData
     {
-        public int CurrentStageIndex { get; internal set; } = 0;
+        /// <summary>
+        /// Current stage index in progression.
+        /// </summary>
+        public int CurrentStageIndex { get; internal set; }
 
         /// <summary>
-        /// Total currency collected across the entire game session.
+        /// Resets session progression state.
         /// </summary>
-        public int TotalCollected { get; internal set; } = 0;
-
         public void Reset()
         {
             CurrentStageIndex = 0;
-            TotalCollected = 0;
         }
     }
 }

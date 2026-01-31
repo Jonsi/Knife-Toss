@@ -30,21 +30,21 @@ MonoBehaviour:
         _LocalBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372265937896031
+            rid: 5211687349436023620
         _WorldBehaviors: []
       <Collectibles>k__BackingField:
-      - <Value>k__BackingField: 3
-        <AngleOffset>k__BackingField: 260.1538
+      - _collectibleCurrency: {fileID: 11400000, guid: 1ca1d82dd804abf4bb79ebf4a4e90ecd, type: 2}
+        <AngleOffset>k__BackingField: 279.83966
         <RadiusOffset>k__BackingField: 0
-      - <Value>k__BackingField: 3
-        <AngleOffset>k__BackingField: 350.59552
+      - _collectibleCurrency: {fileID: 11400000, guid: 1ca1d82dd804abf4bb79ebf4a4e90ecd, type: 2}
+        <AngleOffset>k__BackingField: 350.1784
         <RadiusOffset>k__BackingField: 0
       <PreStuckKnives>k__BackingField:
-      - <Angle>k__BackingField: 141.02469
-      - <Angle>k__BackingField: 199.919
-      - <Angle>k__BackingField: 113.625305
-      - <Angle>k__BackingField: 229.32556
-      - <Angle>k__BackingField: 65.13738
+      - <Angle>k__BackingField: 88.386986
+      - <Angle>k__BackingField: 145.75264
+      - <Angle>k__BackingField: 255.16576
+      - <Angle>k__BackingField: 50.323605
+      - <Angle>k__BackingField: 12.989402
   - <KnifeCount>k__BackingField: 0
     <ExtraKnives>k__BackingField: 0
     <Targets>k__BackingField:
@@ -55,47 +55,25 @@ MonoBehaviour:
       <InitialRotation>k__BackingField: 0
       <Behaviors>k__BackingField:
         _LocalBehaviors:
-        - _Kind: 2
+        - _Kind: 0
           _Config:
-            rid: 3169372265937896032
+            rid: 5211687349436023621
         _WorldBehaviors:
         - _Kind: 1
           _Config:
-            rid: 3169372265937896033
+            rid: 5211687349436023622
       <Collectibles>k__BackingField:
-      - <Value>k__BackingField: 3
-        <AngleOffset>k__BackingField: 74.94298
+      - _collectibleCurrency: {fileID: 11400000, guid: 1ca1d82dd804abf4bb79ebf4a4e90ecd, type: 2}
+        <AngleOffset>k__BackingField: 169.00099
         <RadiusOffset>k__BackingField: 0
       <PreStuckKnives>k__BackingField:
-      - <Angle>k__BackingField: 354.36307
-      - <Angle>k__BackingField: 281.08838
-      - <Angle>k__BackingField: 165.63548
-      - <Angle>k__BackingField: 238.50142
+      - <Angle>k__BackingField: 290.69135
+      - <Angle>k__BackingField: 112.8648
+      - <Angle>k__BackingField: 67.91225
+      - <Angle>k__BackingField: 16.143808
   - <KnifeCount>k__BackingField: 0
     <ExtraKnives>k__BackingField: 0
     <Targets>k__BackingField:
-    - <PrefabOverride>k__BackingField: {fileID: 0}
-      <BaseScale>k__BackingField: 0.585
-      <InitialOffset>k__BackingField: {x: 0, y: 0, z: 0}
-      <KnivesToBreak>k__BackingField: 5
-      <InitialRotation>k__BackingField: 0
-      <Behaviors>k__BackingField:
-        _LocalBehaviors:
-        - _Kind: 3
-          _Config:
-            rid: 3169372265937896034
-        _WorldBehaviors:
-        - _Kind: 0
-          _Config:
-            rid: 3169372265937896035
-      <Collectibles>k__BackingField:
-      - <Value>k__BackingField: 3
-        <AngleOffset>k__BackingField: 261.4447
-        <RadiusOffset>k__BackingField: 0
-      <PreStuckKnives>k__BackingField:
-      - <Angle>k__BackingField: 229.96771
-      - <Angle>k__BackingField: 348.1497
-      - <Angle>k__BackingField: 172.51202
     - <PrefabOverride>k__BackingField: {fileID: 0}
       <BaseScale>k__BackingField: 0.585
       <InitialOffset>k__BackingField: {x: 0, y: 0, z: 0}
@@ -105,19 +83,16 @@ MonoBehaviour:
         _LocalBehaviors:
         - _Kind: 2
           _Config:
-            rid: 3169372265937896036
+            rid: 5211687349436023623
         _WorldBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372265937896037
-      <Collectibles>k__BackingField:
-      - <Value>k__BackingField: 3
-        <AngleOffset>k__BackingField: 34.181427
-        <RadiusOffset>k__BackingField: 0
+            rid: 5211687349436023624
+      <Collectibles>k__BackingField: []
       <PreStuckKnives>k__BackingField:
-      - <Angle>k__BackingField: 326.7911
-      - <Angle>k__BackingField: 145.87262
-      - <Angle>k__BackingField: 291.87433
+      - <Angle>k__BackingField: 202.21657
+      - <Angle>k__BackingField: 103.30927
+      - <Angle>k__BackingField: 37.54084
     - <PrefabOverride>k__BackingField: {fileID: 0}
       <BaseScale>k__BackingField: 0.585
       <InitialOffset>k__BackingField: {x: 0, y: 0, z: 0}
@@ -127,19 +102,38 @@ MonoBehaviour:
         _LocalBehaviors:
         - _Kind: 3
           _Config:
-            rid: 3169372265937896038
+            rid: 5211687349436023625
         _WorldBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372265937896039
+            rid: 5211687349436023626
+      <Collectibles>k__BackingField: []
+      <PreStuckKnives>k__BackingField:
+      - <Angle>k__BackingField: 96.68898
+      - <Angle>k__BackingField: 317.8465
+      - <Angle>k__BackingField: 181.0926
+    - <PrefabOverride>k__BackingField: {fileID: 0}
+      <BaseScale>k__BackingField: 0.585
+      <InitialOffset>k__BackingField: {x: 0, y: 0, z: 0}
+      <KnivesToBreak>k__BackingField: 5
+      <InitialRotation>k__BackingField: 0
+      <Behaviors>k__BackingField:
+        _LocalBehaviors:
+        - _Kind: 3
+          _Config:
+            rid: 5211687349436023627
+        _WorldBehaviors:
+        - _Kind: 0
+          _Config:
+            rid: 5211687349436023628
       <Collectibles>k__BackingField:
-      - <Value>k__BackingField: 3
-        <AngleOffset>k__BackingField: 273.36813
+      - _collectibleCurrency: {fileID: 11400000, guid: 1ca1d82dd804abf4bb79ebf4a4e90ecd, type: 2}
+        <AngleOffset>k__BackingField: 2.7560663
         <RadiusOffset>k__BackingField: 0
       <PreStuckKnives>k__BackingField:
-      - <Angle>k__BackingField: 345.85297
-      - <Angle>k__BackingField: 309.12402
-      - <Angle>k__BackingField: 84.91299
+      - <Angle>k__BackingField: 47.321808
+      - <Angle>k__BackingField: 339.98798
+      - <Angle>k__BackingField: 148.92722
   - <KnifeCount>k__BackingField: 0
     <ExtraKnives>k__BackingField: 0
     <Targets>k__BackingField:
@@ -152,15 +146,15 @@ MonoBehaviour:
         _LocalBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372265937896040
+            rid: 5211687349436023629
         _WorldBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372265937896041
+            rid: 5211687349436023630
       <Collectibles>k__BackingField: []
       <PreStuckKnives>k__BackingField:
-      - <Angle>k__BackingField: 198.77446
-      - <Angle>k__BackingField: 315.8295
+      - <Angle>k__BackingField: 163.10936
+      - <Angle>k__BackingField: 59.39947
     - <PrefabOverride>k__BackingField: {fileID: 0}
       <BaseScale>k__BackingField: 0.52
       <InitialOffset>k__BackingField: {x: 0, y: 0, z: 0}
@@ -170,15 +164,15 @@ MonoBehaviour:
         _LocalBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372265937896042
+            rid: 5211687349436023631
         _WorldBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372265937896043
+            rid: 5211687349436023632
       <Collectibles>k__BackingField: []
       <PreStuckKnives>k__BackingField:
-      - <Angle>k__BackingField: 4.3138504
-      - <Angle>k__BackingField: 246.92184
+      - <Angle>k__BackingField: 243.00183
+      - <Angle>k__BackingField: 69.04036
   - <KnifeCount>k__BackingField: 0
     <ExtraKnives>k__BackingField: 0
     <Targets>k__BackingField:
@@ -189,14 +183,14 @@ MonoBehaviour:
       <InitialRotation>k__BackingField: 0
       <Behaviors>k__BackingField:
         _LocalBehaviors:
-        - _Kind: 3
+        - _Kind: 2
           _Config:
-            rid: 3169372265937896044
+            rid: 5211687349436023633
         _WorldBehaviors: []
       <Collectibles>k__BackingField: []
       <PreStuckKnives>k__BackingField:
-      - <Angle>k__BackingField: 57.676422
-      - <Angle>k__BackingField: 307.0104
+      - <Angle>k__BackingField: 271.16824
+      - <Angle>k__BackingField: 149.80444
     - <PrefabOverride>k__BackingField: {fileID: 0}
       <BaseScale>k__BackingField: 0.52
       <InitialOffset>k__BackingField: {x: 0, y: 3.2, z: 0}
@@ -204,88 +198,50 @@ MonoBehaviour:
       <InitialRotation>k__BackingField: 0
       <Behaviors>k__BackingField:
         _LocalBehaviors:
-        - _Kind: 3
+        - _Kind: 2
           _Config:
-            rid: 3169372265937896045
+            rid: 5211687349436023634
         _WorldBehaviors: []
-      <Collectibles>k__BackingField: []
+      <Collectibles>k__BackingField:
+      - _collectibleCurrency: {fileID: 11400000, guid: 1ca1d82dd804abf4bb79ebf4a4e90ecd, type: 2}
+        <AngleOffset>k__BackingField: 60.93584
+        <RadiusOffset>k__BackingField: 0
       <PreStuckKnives>k__BackingField:
-      - <Angle>k__BackingField: 135.5556
-      - <Angle>k__BackingField: 50.861206
+      - <Angle>k__BackingField: 170.53633
+      - <Angle>k__BackingField: 83.87422
   references:
     version: 2
     RefIds:
-    - rid: 3169372265937896031
+    - rid: 5211687349436023620
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _Speed: -124.8
-    - rid: 3169372265937896032
-      type: {class: FlippingSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
+    - rid: 5211687349436023621
+      type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
-        _BaseSpeed: 162
-        _MinInterval: 1.5
-        _MaxInterval: 3
-    - rid: 3169372265937896033
+        _Speed: 194.40001
+    - rid: 5211687349436023622
       type: {class: SinMovementBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
       data:
-        _MovementDistance: 1.85
-        _OscillationsPerSecond: 0.925
-        _PhaseOffsetDegrees: 246
-    - rid: 3169372265937896034
-      type: {class: CurveSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
-      data:
-        _Curve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: -24.960001
-            inSlope: -405.6
-            outSlope: -405.6
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.33333334
-            outWeight: 0.33333334
-          - serializedVersion: 3
-            time: 0.4
-            value: -187.20001
-            inSlope: -67.600006
-            outSlope: -67.600006
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.33333334
-            outWeight: 0.33333334
-          - serializedVersion: 3
-            time: 1
-            value: -24.960001
-            inSlope: 270.4
-            outSlope: 270.4
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.33333334
-            outWeight: 0.33333334
-          m_PreInfinity: 1
-          m_PostInfinity: 2
-          m_RotationOrder: 4
-    - rid: 3169372265937896035
-      type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
-      data:
-        _StartingAngle: 0
-        _DegreesPerSecond: 66
-        _DistanceFromCenter: 1.6
-    - rid: 3169372265937896036
+        _HorizontalMovementDistance: 1.85
+        _HorizontalOscillationsPerSecond: 0.925
+        _HorizontalPhaseOffsetDegrees: 317
+        _VerticalMovementDistance: 0
+        _VerticalOscillationsPerSecond: 0.5
+        _VerticalPhaseOffsetDegrees: 0
+    - rid: 5211687349436023623
       type: {class: FlippingSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _BaseSpeed: 124.8
         _MinInterval: 1.5
         _MaxInterval: 3
-    - rid: 3169372265937896037
+    - rid: 5211687349436023624
       type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
       data:
-        _StartingAngle: 120
+        _StartingAngle: 0
         _DegreesPerSecond: 66
         _DistanceFromCenter: 1.6
-    - rid: 3169372265937896038
+    - rid: 5211687349436023625
       type: {class: CurveSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _Curve:
@@ -321,101 +277,83 @@ MonoBehaviour:
           m_PreInfinity: 1
           m_PostInfinity: 2
           m_RotationOrder: 4
-    - rid: 3169372265937896039
+    - rid: 5211687349436023626
+      type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
+      data:
+        _StartingAngle: 120
+        _DegreesPerSecond: 66
+        _DistanceFromCenter: 1.6
+    - rid: 5211687349436023627
+      type: {class: CurveSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
+      data:
+        _Curve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: -24.960001
+            inSlope: -405.6
+            outSlope: -405.6
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0.33333334
+            outWeight: 0.33333334
+          - serializedVersion: 3
+            time: 0.4
+            value: -187.20001
+            inSlope: -67.600006
+            outSlope: -67.600006
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0.33333334
+            outWeight: 0.33333334
+          - serializedVersion: 3
+            time: 1
+            value: -24.960001
+            inSlope: 270.4
+            outSlope: 270.4
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0.33333334
+            outWeight: 0.33333334
+          m_PreInfinity: 1
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+    - rid: 5211687349436023628
       type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
       data:
         _StartingAngle: 240
         _DegreesPerSecond: 66
         _DistanceFromCenter: 1.6
-    - rid: 3169372265937896040
+    - rid: 5211687349436023629
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
-        _Speed: -181.44
-    - rid: 3169372265937896041
+        _Speed: 181.44
+    - rid: 5211687349436023630
       type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
       data:
         _StartingAngle: 0
         _DegreesPerSecond: 87.5
         _DistanceFromCenter: 1.5
-    - rid: 3169372265937896042
+    - rid: 5211687349436023631
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
-        _Speed: -181.44
-    - rid: 3169372265937896043
+        _Speed: 181.44
+    - rid: 5211687349436023632
       type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
       data:
         _StartingAngle: 180
         _DegreesPerSecond: 87.5
         _DistanceFromCenter: 1.5
-    - rid: 3169372265937896044
-      type: {class: CurveSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
+    - rid: 5211687349436023633
+      type: {class: FlippingSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
-        _Curve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 31.2
-            inSlope: 507
-            outSlope: 507
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.33333334
-            outWeight: 0.33333334
-          - serializedVersion: 3
-            time: 0.4
-            value: 234
-            inSlope: 84.5
-            outSlope: 84.5
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.33333334
-            outWeight: 0.33333334
-          - serializedVersion: 3
-            time: 1
-            value: 31.2
-            inSlope: -338
-            outSlope: -338
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.33333334
-            outWeight: 0.33333334
-          m_PreInfinity: 1
-          m_PostInfinity: 2
-          m_RotationOrder: 4
-    - rid: 3169372265937896045
-      type: {class: CurveSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
+        _BaseSpeed: 156
+        _MinInterval: 1.5
+        _MaxInterval: 3
+    - rid: 5211687349436023634
+      type: {class: FlippingSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
-        _Curve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 31.2
-            inSlope: 507
-            outSlope: 507
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.33333334
-            outWeight: 0.33333334
-          - serializedVersion: 3
-            time: 0.4
-            value: 234
-            inSlope: 84.5
-            outSlope: 84.5
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.33333334
-            outWeight: 0.33333334
-          - serializedVersion: 3
-            time: 1
-            value: 31.2
-            inSlope: -338
-            outSlope: -338
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.33333334
-            outWeight: 0.33333334
-          m_PreInfinity: 1
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+        _BaseSpeed: -156
+        _MinInterval: 1.5
+        _MaxInterval: 3

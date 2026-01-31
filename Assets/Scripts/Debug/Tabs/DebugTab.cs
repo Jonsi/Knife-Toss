@@ -1,6 +1,10 @@
 #if TEST_ENABLED
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
 namespace Game.Debugging.Tabs
 {
@@ -15,6 +19,43 @@ namespace Game.Debugging.Tabs
         public virtual int SortIndex => 100;
 
         internal Action RefreshCallback { get; set; }
+
+        /// <summary>
+        /// Resolves the current scene's container for debug tab resolution.
+        /// </summary>
+        protected static IObjectResolver CurrentResolver
+        {
+            get
+            {
+                var scopes = UnityEngine.Object.FindObjectsByType<LifetimeScope>(FindObjectsSortMode.None);
+                foreach (var scope in scopes)
+                {
+                    if (scope.gameObject.scene.name != "DontDestroyOnLoad" && scope.Container != null)
+                        return scope.Container;
+                }
+                return scopes.FirstOrDefault(s => s.Container != null)?.Container;
+            }
+        }
+
+        /// <summary>
+        /// Tries to resolve a service from the current container.
+        /// </summary>
+        protected static T TryResolve<T>(IObjectResolver resolver) where T : class
+        {
+            return resolver?.Resolve<T>();
+        }
+
+        /// <summary>
+        /// Returns the first currency type id from the catalog, or empty string if none.
+        /// </summary>
+        protected static string GetFirstCurrencyId()
+        {
+            var catalog = TryResolve<Common.Economy.Data.CurrencyTypeCatalog>(CurrentResolver);
+            var configs = catalog?.GetAllConfigs();
+            if (configs == null || configs.Count == 0) return string.Empty;
+            var first = configs[0];
+            return first != null ? (first.TypeId ?? string.Empty) : string.Empty;
+        }
 
         /// <summary>
         /// Returns sections of data to display in the tab.

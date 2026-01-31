@@ -21,6 +21,9 @@ namespace Game.Flow.Level.States
         private readonly LevelCompletedEventChannel _LevelCompletedChannel;
         private readonly LevelFailedEventChannel _LevelFailedChannel;
 
+        /// <summary>
+        /// Initializes a new instance of the LevelStateMachine.
+        /// </summary>
         public LevelStateMachine(
             LevelData context,
             LevelCompletedEventChannel levelCompletedChannel,
@@ -28,15 +31,14 @@ namespace Game.Flow.Level.States
             IEventChannel<KnifeImpactEventData> impactChannel,
             IEventChannel<CollectibleHitEventData> collectibleHitChannel,
             IEventChannel knifeThrownChannel,
-            IKnifeThrowerView knifeThrowerView,
-            GameData gameData)
+            IKnifeThrowerView knifeThrowerView)
         {
             Context = context;
             _LevelCompletedChannel = levelCompletedChannel;
             _LevelFailedChannel = levelFailedChannel;
 
             Loading = new LevelLoadingState(this);
-            Playing = new LevelPlayingState(this, impactChannel, collectibleHitChannel, knifeThrownChannel, knifeThrowerView, gameData);
+            Playing = new LevelPlayingState(this, impactChannel, collectibleHitChannel, knifeThrownChannel, knifeThrowerView);
             Completed = new LevelCompletedState(this);
             Failed = new LevelFailedState(this);
         }

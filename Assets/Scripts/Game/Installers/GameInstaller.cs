@@ -1,4 +1,6 @@
+using Common.Economy.Data;
 using Common.Events;
+using Game.Economy.Events;
 using Game.Feedback.Audio.Data;
 using Game.Flow.Events;
 using Game.Flow.Game;
@@ -27,6 +29,10 @@ namespace Game.Installers
         [Header("Event Channels")]
         [SerializeField] private ReturnToMenuEventChannel _ReturnToMenuEventChannel;
 
+        [Header("Economy")]
+        [SerializeField] private CurrencyTypeCatalog _CurrencyTypeCatalog;
+        [SerializeField] private CurrencyBalanceChangedEventChannel _CurrencyBalanceChangedEventChannel;
+
         [Header("Feedback")]
         [SerializeField] private SoundSettings _SoundSettings;
         [SerializeField] private AudioPlayer _AudioPlayer;
@@ -46,6 +52,10 @@ namespace Game.Installers
         {
             Install(builder, CreateGameFlowInstaller());
             Install(builder, CreatePersistenceInstaller());
+            if (_CurrencyTypeCatalog != null && _CurrencyBalanceChangedEventChannel != null)
+            {
+                Install(builder, CreateEconomyInstaller());
+            }
             Install(builder, CreateRemoteConfigInstaller());
 
             builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
@@ -75,6 +85,11 @@ namespace Game.Installers
         private PersistenceInstaller CreatePersistenceInstaller()
         {
             return new PersistenceInstaller();
+        }
+
+        private EconomyInstaller CreateEconomyInstaller()
+        {
+            return new EconomyInstaller(_CurrencyTypeCatalog, _CurrencyBalanceChangedEventChannel);
         }
 
         private RemoteConfigInstaller CreateRemoteConfigInstaller()

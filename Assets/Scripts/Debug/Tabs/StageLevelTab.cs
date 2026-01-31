@@ -27,25 +27,6 @@ namespace Game.Debugging.Tabs
         {
         }
 
-        private static IObjectResolver CurrentResolver
-        {
-            get
-            {
-                var scopes = Object.FindObjectsByType<LifetimeScope>(FindObjectsSortMode.None);
-                foreach (var scope in scopes)
-                {
-                    if (scope.gameObject.scene.name != "DontDestroyOnLoad" && scope.Container != null)
-                        return scope.Container;
-                }
-                return scopes.FirstOrDefault(s => s.Container != null)?.Container;
-            }
-        }
-
-        private static T TryResolve<T>(IObjectResolver resolver) where T : class
-        {
-            return resolver?.Resolve<T>();
-        }
-
         private VoidEventChannel RetryChannel => _RetryChannel ??= FindChannel("RetryLevelClicked");
         private VoidEventChannel RestartChannel => _RestartChannel ??= FindChannel("RestartStageClicked");
 
