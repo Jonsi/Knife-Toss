@@ -30,11 +30,11 @@ MonoBehaviour:
         _LocalBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372551430013685
+            rid: 3169372668888351354
         _WorldBehaviors:
         - _Kind: 1
           _Config:
-            rid: 3169372551430013686
+            rid: 3169372668888351355
       <Collectibles>k__BackingField:
       - <Value>k__BackingField: 1
         <AngleOffset>k__BackingField: 90
@@ -53,11 +53,11 @@ MonoBehaviour:
         _LocalBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372551430013687
+            rid: 3169372668888351356
         _WorldBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372551430013688
+            rid: 3169372668888351357
       <Collectibles>k__BackingField:
       - <Value>k__BackingField: 1
         <AngleOffset>k__BackingField: 90
@@ -79,7 +79,7 @@ MonoBehaviour:
         _LocalBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372551430013689
+            rid: 3169372668888351358
         _WorldBehaviors: []
       <Collectibles>k__BackingField: []
       <PreStuckKnives>k__BackingField: []
@@ -95,7 +95,7 @@ MonoBehaviour:
         _LocalBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372551430013690
+            rid: 3169372668888351359
         _WorldBehaviors: []
       <Collectibles>k__BackingField:
       - <Value>k__BackingField: 1
@@ -114,7 +114,7 @@ MonoBehaviour:
         _LocalBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372551430013691
+            rid: 3169372668888351360
         _WorldBehaviors: []
       <Collectibles>k__BackingField:
       - <Value>k__BackingField: 1
@@ -133,7 +133,7 @@ MonoBehaviour:
         _LocalBehaviors:
         - _Kind: 0
           _Config:
-            rid: 3169372551430013692
+            rid: 3169372668888351361
         _WorldBehaviors: []
       <Collectibles>k__BackingField:
       - <Value>k__BackingField: 1
@@ -144,39 +144,42 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 3169372551430013685
+    - rid: 3169372668888351354
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _Speed: 100
-    - rid: 3169372551430013686
+    - rid: 3169372668888351355
       type: {class: SinMovementBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
       data:
-        _MovementDistance: 1
-        _OscillationsPerSecond: 1
-        _PhaseOffsetDegrees: 180
-    - rid: 3169372551430013687
+        _HorizontalMovementDistance: 1
+        _HorizontalOscillationsPerSecond: 1
+        _HorizontalPhaseOffsetDegrees: 180
+        _VerticalMovementDistance: 1
+        _VerticalOscillationsPerSecond: 0.5
+        _VerticalPhaseOffsetDegrees: 0
+    - rid: 3169372668888351356
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _Speed: 100
-    - rid: 3169372551430013688
+    - rid: 3169372668888351357
       type: {class: OrbitBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.World, asm: Game}
       data:
         _StartingAngle: 0
         _DegreesPerSecond: 90
         _DistanceFromCenter: 1
-    - rid: 3169372551430013689
+    - rid: 3169372668888351358
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _Speed: 78
-    - rid: 3169372551430013690
+    - rid: 3169372668888351359
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _Speed: 84
-    - rid: 3169372551430013691
+    - rid: 3169372668888351360
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _Speed: 90
-    - rid: 3169372551430013692
+    - rid: 3169372668888351361
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _Speed: 96
