@@ -16,18 +16,8 @@ namespace Game.Debugging
         private static void Initialize()
         {
 #if !DISABLE_SRDEBUGGER
-            var scope = Object.FindAnyObjectByType<LifetimeScope>();
-            if (scope == null) return;
-
-            var resolver = scope.Container;
-            if (resolver == null) return;
-
             SRDebug.Init();
-            
-            DebugTabRegistry.Register(new PlayerDataTab(resolver));
-            DebugTabRegistry.Register(new CheatsTab(resolver));
             DebugTabLoader.Initialize();
-            
             CreateDebugButton();
 #endif
         }

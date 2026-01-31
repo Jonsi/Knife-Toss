@@ -36,21 +36,25 @@ namespace Game.Debugging.Tabs
         {
             get
             {
-                var scope = Object.FindAnyObjectByType<LifetimeScope>();
-                return scope?.Container;
+                // Find all scopes and prefer scene scopes over the project scope
+                var scopes = Object.FindObjectsByType<LifetimeScope>(FindObjectsSortMode.None);
+                foreach (var scope in scopes)
+                {
+                    // Project scope is usually in a special scene or at the root of DontDestroyOnLoad
+                    if (scope.gameObject.scene.name != "DontDestroyOnLoad" && scope.Container != null)
+                        return scope.Container;
+                }
+                return scopes.FirstOrDefault(s => s.Container != null)?.Container;
             }
         }
 
         private static T TryResolve<T>(IObjectResolver resolver) where T : class
         {
-            try
-            {
-                return resolver?.Resolve<T>();
-            }
-            catch
-            {
-                return null;
-            }
+            if (resolver == null) return null;
+            
+            // In VContainer, resolving IEnumerable<T> returns an empty collection 
+            // instead of throwing if the type is not registered.
+            return resolver.Resolve<System.Collections.Generic.IEnumerable<T>>().FirstOrDefault();
         }
 
         private VoidEventChannel RetryChannel => _RetryChannel ??= FindChannel("RetryLevelClicked");

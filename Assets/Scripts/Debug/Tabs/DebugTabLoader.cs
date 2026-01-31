@@ -5,6 +5,7 @@ using SRDebugger.UI.Controls;
 using SRDebugger.UI.Other;
 using SRF.Service;
 using UnityEngine;
+using VContainer.Unity;
 
 namespace Game.Debugging.Tabs
 {
@@ -41,6 +42,17 @@ namespace Game.Debugging.Tabs
         private static void OnVisibilityChanged(IDebugPanelService service, bool visible)
         {
             if (!visible || _TabsCreated) return;
+
+            var scope = Object.FindAnyObjectByType<LifetimeScope>();
+            if (scope == null) return;
+
+            var resolver = scope.Container;
+            if (resolver == null) return;
+
+            // Register core tabs now that we have a resolver
+            DebugTabRegistry.Register(new PlayerDataTab(resolver));
+            DebugTabRegistry.Register(new CheatsTab(resolver));
+
             _TabsCreated = true;
 
             var impl = service as SRDebugger.Services.Implementation.DebugPanelServiceImpl;
