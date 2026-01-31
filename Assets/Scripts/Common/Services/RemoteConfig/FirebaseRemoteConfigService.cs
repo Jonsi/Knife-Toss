@@ -11,9 +11,10 @@ namespace Common.Services.RemoteConfig
     /// Remote configuration service using Firebase Remote Config.
     /// Wraps Firebase SDK behind IRemoteConfigService interface.
     /// </summary>
-    public class FirebaseRemoteConfigService : IRemoteConfigService, IStartable
+    public class FirebaseRemoteConfigService : IRemoteConfigService, IStartable, IDisposable
     {
         private readonly RemoteConfigSettings _settings;
+        private FirebaseApp _app;
 
         /// <summary>
         /// Whether the service has successfully fetched and activated configuration.
@@ -42,11 +43,34 @@ namespace Common.Services.RemoteConfig
             var dependencyStatus = await FirebaseApp.CheckAndFixDependenciesAsync();
             if (dependencyStatus == DependencyStatus.Available)
             {
+                _app = FirebaseApp.DefaultInstance;
                 await FetchAndActivateAsync();
             }
             else
             {
                 LogError("Init", $"Could not resolve all Firebase dependencies: {dependencyStatus}");
+            }
+        }
+
+        /// <summary>
+        /// Disposes the service and cleans up Firebase resources.
+        /// </summary>
+        public void Dispose()
+        {
+            if (_app == null) return;
+
+            // Silence noisy SDK warnings during disposal (e.g., FirebaseRemoteConfig.OnAppDisposed)
+            var previousLogLevel = FirebaseApp.LogLevel;
+            FirebaseApp.LogLevel = LogLevel.Error;
+
+            try
+            {
+                _app.Dispose();
+            }
+            finally
+            {
+                _app = null;
+                FirebaseApp.LogLevel = previousLogLevel;
             }
         }
 
