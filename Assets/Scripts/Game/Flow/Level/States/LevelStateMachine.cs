@@ -27,6 +27,7 @@ namespace Game.Flow.Level.States
             LevelFailedEventChannel levelFailedChannel,
             IEventChannel<KnifeImpactEventData> impactChannel,
             IEventChannel<CollectibleHitEventData> collectibleHitChannel,
+            IEventChannel knifeThrownChannel,
             IKnifeThrowerView knifeThrowerView,
             GameData gameData)
         {
@@ -35,7 +36,7 @@ namespace Game.Flow.Level.States
             _LevelFailedChannel = levelFailedChannel;
 
             Loading = new LevelLoadingState(this);
-            Playing = new LevelPlayingState(this, impactChannel, collectibleHitChannel, knifeThrowerView, gameData);
+            Playing = new LevelPlayingState(this, impactChannel, collectibleHitChannel, knifeThrownChannel, knifeThrowerView, gameData);
             Completed = new LevelCompletedState(this);
             Failed = new LevelFailedState(this);
         }

@@ -12,6 +12,7 @@ namespace Game.Flow.Level.States
     {
         private readonly IEventChannel<KnifeImpactEventData> _ImpactChannel;
         private readonly IEventChannel<CollectibleHitEventData> _CollectibleHitChannel;
+        private readonly IEventChannel _KnifeThrownChannel;
         private readonly IKnifeThrowerView _KnifeThrowerView;
         private readonly GameData _GameData;
         private readonly List<ITargetView> _SubscribedTargets = new List<ITargetView>();
@@ -20,12 +21,14 @@ namespace Game.Flow.Level.States
             LevelStateMachine machine,
             IEventChannel<KnifeImpactEventData> impactChannel,
             IEventChannel<CollectibleHitEventData> collectibleHitChannel,
+            IEventChannel knifeThrownChannel,
             IKnifeThrowerView knifeThrowerView,
             GameData gameData)
             : base(machine)
         {
             _ImpactChannel = impactChannel;
             _CollectibleHitChannel = collectibleHitChannel;
+            _KnifeThrownChannel = knifeThrownChannel;
             _KnifeThrowerView = knifeThrowerView;
             _GameData = gameData;
         }
@@ -46,6 +49,9 @@ namespace Game.Flow.Level.States
             _ImpactChannel.Subscribe(OnKnifeImpact);
             if (_CollectibleHitChannel != null)
                 _CollectibleHitChannel.Subscribe(OnCollectibleHit);
+
+            if (_KnifeThrownChannel != null)
+                _KnifeThrownChannel.Subscribe(OnKnifeThrown);
         }
 
         public override void Exit()
@@ -62,14 +68,18 @@ namespace Game.Flow.Level.States
             _ImpactChannel.Unsubscribe(OnKnifeImpact);
             if (_CollectibleHitChannel != null)
                 _CollectibleHitChannel.Unsubscribe(OnCollectibleHit);
+
+            if (_KnifeThrownChannel != null)
+                _KnifeThrownChannel.Unsubscribe(OnKnifeThrown);
         }
 
-        private void OnKnifeSpawned(KnifeSpawnRequestData data)
+        private void OnKnifeThrown()
         {
             if (Machine.Current != this)
                 return;
 
             Context.KnivesThrown++;
+            Context.KnivesInFlight++;
         }
 
         private void OnKnifeImpact(KnifeImpactEventData data)
@@ -77,17 +87,22 @@ namespace Game.Flow.Level.States
             if (Machine.Current != this)
                 return;
 
+            if (data.ImpactType == KnifeImpactType.Stuck || data.ImpactType == KnifeImpactType.OutOfView)
+            {
+                Context.KnivesInFlight = UnityEngine.Mathf.Max(0, Context.KnivesInFlight - 1);
+            }
+
             if (data.ImpactType == KnifeImpactType.Bounced)
             {
-                Machine.SetState(Machine.Failed);
-                return;
+                Context.HasBounced = true;
             }
 
             if (data.ImpactType == KnifeImpactType.Stuck)
             {
                 Context.KnivesStuck++;
-                CheckCompletion();
             }
+
+            CheckCompletion();
         }
         
         private void OnCollectibleHit(CollectibleHitEventData data)
@@ -117,7 +132,11 @@ namespace Game.Flow.Level.States
                 return;
             }
 
-            if (!Context.HasKnivesRemaining)
+            // Only check for failure after all launched knives have finished their lifecycle
+            if (Context.KnivesInFlight > 0)
+                return;
+
+            if (Context.HasBounced || !Context.HasKnivesRemaining)
             {
                 Machine.SetState(Machine.Failed);
             }

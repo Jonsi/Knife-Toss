@@ -30,8 +30,12 @@ namespace Game.KnifeThrower.Services
         private readonly IPowerUpService _PowerUpService;
         private readonly IEventChannel<PowerUpActivatedEventData> _PowerUpActivatedChannel;
         private readonly IEventChannel<PowerUpUsedEventData> _PowerUpUsedChannel;
+        private readonly IEventChannel _KnifeThrownChannel;
+        private readonly IEventChannel<KnifeImpactEventData> _KnifeImpactChannel;
+
         private bool _IsRunning;
         private bool _IsPointerDown;
+        private int _KnivesInFlight;
 
         /// <summary>
         /// Initializes a new instance of the ThrowService.
@@ -43,7 +47,9 @@ namespace Game.KnifeThrower.Services
             KnifePoolProvider knifePoolProvider,
             IPowerUpService powerUpService,
             IEventChannel<PowerUpActivatedEventData> powerUpActivatedChannel,
-            IEventChannel<PowerUpUsedEventData> powerUpUsedChannel)
+            IEventChannel<PowerUpUsedEventData> powerUpUsedChannel,
+            IEventChannel knifeThrownChannel,
+            IEventChannel<KnifeImpactEventData> knifeImpactChannel)
         {
             _PlayerThrowInputListener = playerThrowInputListener;
             _KnifeThrowConfigurationProvider = knifeThrowConfigurationProvider;
@@ -52,6 +58,8 @@ namespace Game.KnifeThrower.Services
             _PowerUpService = powerUpService;
             _PowerUpActivatedChannel = powerUpActivatedChannel;
             _PowerUpUsedChannel = powerUpUsedChannel;
+            _KnifeThrownChannel = knifeThrownChannel;
+            _KnifeImpactChannel = knifeImpactChannel;
         }
 
         /// <summary>
@@ -69,6 +77,8 @@ namespace Game.KnifeThrower.Services
 
             _PowerUpActivatedChannel?.Subscribe(OnPowerUpActivated);
             _PowerUpUsedChannel?.Subscribe(OnPowerUpUsed);
+            _KnifeThrownChannel?.Subscribe(OnKnifeThrown);
+            _KnifeImpactChannel?.Subscribe(OnKnifeImpact);
 
             ReloadLoadedKnifeForActivePowerUp();
             _IsRunning = true;
@@ -82,6 +92,19 @@ namespace Game.KnifeThrower.Services
             if (_PowerUpService?.ActiveConfig is KnifeAimConfig)
             {
                 UpdateKnifeAiming();
+            }
+        }
+
+        private void OnKnifeThrown()
+        {
+            _KnivesInFlight++;
+        }
+
+        private void OnKnifeImpact(KnifeImpactEventData data)
+        {
+            if (data.ImpactType == KnifeImpactType.Stuck || data.ImpactType == KnifeImpactType.OutOfView)
+            {
+                _KnivesInFlight = Mathf.Max(0, _KnivesInFlight - 1);
             }
         }
 
@@ -153,6 +176,11 @@ namespace Game.KnifeThrower.Services
 
         private void PerformThrow()
         {
+            // Block throwing if a knife is already in flight and no power-up is active.
+            // This does not affect power-ups as per requirement.
+            if (_PowerUpService?.ActiveConfig == null && _KnivesInFlight > 0)
+                return;
+
             var config = _KnifeThrowConfigurationProvider.GetConfiguration();
             ReloadLoadedKnifeForActivePowerUp();
             _PowerUpService?.PrepareLoadedKnives(_KnifeThrowerView.LoadedKnives);
@@ -321,6 +349,8 @@ namespace Game.KnifeThrower.Services
 
             _PowerUpActivatedChannel?.Unsubscribe(OnPowerUpActivated);
             _PowerUpUsedChannel?.Unsubscribe(OnPowerUpUsed);
+            _KnifeThrownChannel?.Unsubscribe(OnKnifeThrown);
+            _KnifeImpactChannel?.Unsubscribe(OnKnifeImpact);
             _IsRunning = false;
         }
     }

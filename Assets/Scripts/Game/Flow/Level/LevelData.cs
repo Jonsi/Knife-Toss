@@ -19,6 +19,8 @@ namespace Game.Flow.Level
         public int KnifeCount { get; internal set; }
         public int KnivesThrown { get; internal set; }
         public int KnivesStuck { get; internal set; }
+        public int KnivesInFlight { get; internal set; }
+        public bool HasBounced { get; internal set; }
         public bool IsThrowingActive { get; internal set; }
         
         /// <summary>
@@ -40,6 +42,8 @@ namespace Game.Flow.Level
         {
             KnivesThrown = 0;
             KnivesStuck = 0;
+            KnivesInFlight = 0;
+            HasBounced = false;
             CollectedCount = 0;
             IsThrowingActive = false;
             ActiveTargets.Clear();
