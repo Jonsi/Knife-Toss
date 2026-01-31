@@ -51,7 +51,9 @@ namespace Game.Debugging.Tabs
 
             // Register core tabs now that we have a resolver
             DebugTabRegistry.Register(new PlayerDataTab(resolver));
-            DebugTabRegistry.Register(new CheatsTab(resolver));
+            DebugTabRegistry.Register(new GeneralTab(resolver));
+            DebugTabRegistry.Register(new StageLevelTab(resolver));
+            DebugTabRegistry.Register(new ResourcesTab(resolver));
 
             _TabsCreated = true;
 

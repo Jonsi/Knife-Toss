@@ -24,7 +24,7 @@ namespace Game.Debugging.Tabs
         /// <summary>
         /// Gets all option definitions from this class using reflection.
         /// </summary>
-        internal List<OptionDefinition> GetOptions()
+        internal virtual List<OptionDefinition> GetOptions()
         {
             var options = new List<OptionDefinition>();
             var type = GetType();

@@ -6,29 +6,24 @@ using Common.Events;
 using Game.Flow.Game;
 using Game.Flow.Stage;
 using Game.Level.Interfaces;
-using Game.Persistence.Services;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
 namespace Game.Debugging.Tabs
 {
-    /// <summary>
-    /// Cheats tab - same code pattern as the original CheatOptions partial class.
-    /// Uses [Category] and [DisplayName] attributes.
-    /// </summary>
-    public class CheatsTab : OptionsTab
+    public class StageLevelTab : OptionsTab
     {
         private int _TargetStageIndex;
         private VoidEventChannel _RetryChannel;
         private VoidEventChannel _RestartChannel;
 
-        public override string Key => "Cheats";
-        public override string Title => "Cheats";
+        public override string Key => "StageLevel";
+        public override string Title => "2. Stage/Level";
         public override string IconStyleKey => "Icon_BugReport";
-        public override int SortIndex => -110;
+        public override int SortIndex => -109;
 
-        public CheatsTab(IObjectResolver resolver)
+        public StageLevelTab(IObjectResolver resolver)
         {
         }
 
@@ -36,11 +31,9 @@ namespace Game.Debugging.Tabs
         {
             get
             {
-                // Find all scopes and prefer scene scopes over the project scope
                 var scopes = Object.FindObjectsByType<LifetimeScope>(FindObjectsSortMode.None);
                 foreach (var scope in scopes)
                 {
-                    // Project scope is usually in a special scene or at the root of DontDestroyOnLoad
                     if (scope.gameObject.scene.name != "DontDestroyOnLoad" && scope.Container != null)
                         return scope.Container;
                 }
@@ -50,11 +43,7 @@ namespace Game.Debugging.Tabs
 
         private static T TryResolve<T>(IObjectResolver resolver) where T : class
         {
-            if (resolver == null) return null;
-            
-            // In VContainer, resolving IEnumerable<T> returns an empty collection 
-            // instead of throwing if the type is not registered.
-            return resolver.Resolve<System.Collections.Generic.IEnumerable<T>>().FirstOrDefault();
+            return resolver?.Resolve<T>();
         }
 
         private VoidEventChannel RetryChannel => _RetryChannel ??= FindChannel("RetryLevelClicked");
@@ -86,7 +75,7 @@ namespace Game.Debugging.Tabs
             var gameData = TryResolve<GameData>(resolver);
             if (gameData == null)
             {
-                Debug.LogWarning("[Cheats] GameData not available - are you in a stage scene?");
+                Debug.LogWarning("[StageLevelTab] GameData not available - are you in a stage scene?");
                 return;
             }
             
@@ -102,6 +91,13 @@ namespace Game.Debugging.Tabs
             
             RestartChannel?.Raise();
             RequestRefresh();
+        }
+
+        [Category("Stage Navigation")]
+        [DisplayName("Restart Current Stage")]
+        public void RestartStage()
+        {
+            RestartChannel?.Raise();
         }
         
         [Category("Level Navigation")]
@@ -159,46 +155,6 @@ namespace Game.Debugging.Tabs
         public void RestartLevel()
         {
             RetryChannel?.Raise();
-        }
-        
-        [Category("Stage Navigation")]
-        [DisplayName("Restart Current Stage")]
-        public void RestartStage()
-        {
-            RestartChannel?.Raise();
-        }
-        
-        [Category("Resources")]
-        [DisplayName("Add 100 Tomatoes")]
-        public void AddTomatoes()
-        {
-            var resolver = CurrentResolver;
-            if (resolver == null) return;
-            
-            var gameData = TryResolve<GameData>(resolver);
-            var playerDataService = TryResolve<PlayerDataService>(resolver);
-            
-            if (gameData == null) return;
-            
-            int newValue = gameData.TotalCollected + 100;
-            SetInternalProperty(gameData, nameof(GameData.TotalCollected), newValue);
-            
-            playerDataService?.RequestSave();
-        }
-        
-        [Category("Progress")]
-        [DisplayName("Clear All Progress")]
-        public void ClearProgress()
-        {
-            var resolver = CurrentResolver;
-            if (resolver == null) return;
-            
-            var gameData = TryResolve<GameData>(resolver);
-            var playerDataService = TryResolve<PlayerDataService>(resolver);
-            
-            if (gameData == null) return;
-            gameData.Reset();
-            playerDataService?.ForceSave();
         }
 
         private void SetInternalProperty<T>(object target, string propName, T value)
