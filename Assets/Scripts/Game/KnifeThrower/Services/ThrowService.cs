@@ -80,7 +80,6 @@ namespace Game.KnifeThrower.Services
             _KnifeThrownChannel?.Subscribe(OnKnifeThrown);
             _KnifeImpactChannel?.Subscribe(OnKnifeImpact);
 
-            ReloadLoadedKnifeForActivePowerUp();
             _IsRunning = true;
         }
 

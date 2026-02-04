@@ -95,7 +95,9 @@ namespace Game.Pooling
                 return;
 
             if (!_KnifePoolLookup.TryGetValue(knife, out var pool))
+            {
                 pool = _DefaultPool;
+            }
 
             pool.Release(knife);
         }

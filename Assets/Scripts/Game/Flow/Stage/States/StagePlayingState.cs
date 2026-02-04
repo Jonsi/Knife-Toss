@@ -123,6 +123,13 @@ namespace Game.Flow.Stage.States
 
         private void LoadKnifeForLevel()
         {
+            // If a knife is already loaded, don't load another one.
+            // This prevents double loading when ThrowService and StagePlayingState both try to initialize.
+            if (_KnifeThrowerView.LoadedKnife != null)
+            {
+                return;
+            }
+
             // Get a knife from the pool and load it into the thrower
             var knife = _KnifePoolProvider.Get();
             var spawnData = new KnifeSpawnRequestData

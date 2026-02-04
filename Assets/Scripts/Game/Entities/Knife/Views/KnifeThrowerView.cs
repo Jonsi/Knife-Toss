@@ -53,7 +53,9 @@ namespace Game.Entities.Knife.Views
             {
                 var knife = knives[i];
                 if (knife == null)
+                {
                     continue;
+                }
 
                 float offsetX = (i - centeredOffset) * spacing;
                 Vector3 spawnPosition = spawnTransform.position +
@@ -91,7 +93,9 @@ namespace Game.Entities.Knife.Views
         public void ThrowLoadedKnifeWithDirection(Vector2 direction, float throwSpeed)
         {
             if (_LoadedKnives.Count == 0)
+            {
                 return;
+            }
 
             _ = ThrowLoadedKnivesWithDirectionInternal(direction, throwSpeed);
         }
@@ -137,7 +141,7 @@ namespace Game.Entities.Knife.Views
                 var knife = _LoadedKnives[i];
                 if (knife != null)
                 {
-                    knife.gameObject.SetActive(false);
+                    knife.ReturnToPool();
                 }
             }
 
@@ -165,7 +169,7 @@ namespace Game.Entities.Knife.Views
 
                 if (!stillLoaded)
                 {
-                    oldKnife.gameObject.SetActive(false);
+                    oldKnife.ReturnToPool();
                 }
             }
         }
