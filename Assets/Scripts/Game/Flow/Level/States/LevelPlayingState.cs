@@ -86,19 +86,20 @@ namespace Game.Flow.Level.States
             if (Machine.Current != this)
                 return;
 
-            if (data.ImpactType == KnifeImpactType.Stuck || data.ImpactType == KnifeImpactType.OutOfView)
+            switch (data.ImpactType)
             {
-                Context.KnivesInFlight = UnityEngine.Mathf.Max(0, Context.KnivesInFlight - 1);
-            }
-
-            if (data.ImpactType == KnifeImpactType.Bounced)
-            {
-                Context.HasBounced = true;
-            }
-
-            if (data.ImpactType == KnifeImpactType.Stuck)
-            {
-                Context.KnivesStuck++;
+                case KnifeImpactType.Stuck:
+                    Context.KnivesInFlight = UnityEngine.Mathf.Max(0, Context.KnivesInFlight - 1);
+                    Context.KnivesStuck++;
+                    break;
+                case KnifeImpactType.OutOfView:
+                    Context.KnivesInFlight = UnityEngine.Mathf.Max(0, Context.KnivesInFlight - 1);
+                    break;
+                case KnifeImpactType.Bounced:
+                    Context.KnivesInFlight = UnityEngine.Mathf.Max(0, Context.KnivesInFlight - 1);
+                    Context.HasBounced = true;
+                    Machine.SetState(Machine.Failed);
+                    return;
             }
 
             CheckCompletion();
