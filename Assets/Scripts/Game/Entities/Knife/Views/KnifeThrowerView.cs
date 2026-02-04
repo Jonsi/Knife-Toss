@@ -18,12 +18,26 @@ namespace Game.Entities.Knife.Views
 
         private IEventChannel _KnifeThrownChannel;
         private KnifeView _LoadedKnife;
+        private bool _IsVisible = true;
         private readonly System.Collections.Generic.List<KnifeView> _LoadedKnives = new System.Collections.Generic.List<KnifeView>();
 
         [Inject]
         private void Construct(IEventChannel knifeThrownChannel)
         {
             _KnifeThrownChannel = knifeThrownChannel;
+        }
+
+        public void SetVisible(bool visible)
+        {
+            _IsVisible = visible;
+            for (int i = 0; i < _LoadedKnives.Count; i++)
+            {
+                var knife = _LoadedKnives[i];
+                if (knife != null)
+                {
+                    knife.gameObject.SetActive(visible);
+                }
+            }
         }
 
         public void LoadKnife(KnifeView knife, KnifeSpawnRequestData spawnData)
@@ -65,8 +79,8 @@ namespace Game.Entities.Knife.Views
                 // Parent the knife to the thrower for proper hierarchy organization
                 knife.transform.SetParent(transform, true);
 
-                // Ensure the knife is active and visible after parenting
-                knife.gameObject.SetActive(true);
+                // Ensure the knife follows the current visibility state
+                knife.gameObject.SetActive(_IsVisible);
 
                 if (_LoadAnimator != null)
                 {

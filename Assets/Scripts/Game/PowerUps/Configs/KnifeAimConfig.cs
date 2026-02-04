@@ -8,7 +8,7 @@ namespace Game.PowerUps.Configs
     /// Configuration for the Knife Aim power-up that allows aiming knives toward input position.
     /// </summary>
     [CreateAssetMenu(fileName = "KnifeAimConfig", menuName = "Knife Toss/Power Ups/Knife Aim Config")]
-    public class KnifeAimConfig : PowerUpConfigBase
+    public class KnifeAimConfig : PowerUpConfigBase, IProjectilePowerUp, ICancellablePowerUp
     {
         [field: SerializeField] public float ThrowSpeed { get; private set; } = 10f;
 
@@ -24,6 +24,11 @@ namespace Game.PowerUps.Configs
             Vector2 aimDirection = CalculateAimDirection(throwContext);
             throwContext.ThrowerView.ThrowLoadedKnifeWithDirection(aimDirection, ThrowSpeed);
             return true;
+        }
+
+        public void OnCancelled()
+        {
+            // No specific cleanup needed
         }
 
         private Vector2 CalculateAimDirection(PowerUpThrowContext throwContext)

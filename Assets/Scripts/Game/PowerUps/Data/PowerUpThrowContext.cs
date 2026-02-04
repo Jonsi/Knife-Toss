@@ -11,7 +11,7 @@ namespace Game.PowerUps.Data
     public class PowerUpThrowContext
     {
         public PowerUpThrowContext(
-            IKnifeThrowerView throwerView,
+            IProjectileThrower throwerView,
             KnifePoolProvider poolProvider,
             KnifeThrowConfiguration throwConfiguration,
             Transform spawnPoint)
@@ -25,7 +25,7 @@ namespace Game.PowerUps.Data
         /// <summary>
         /// Gets the thrower view used to launch knives.
         /// </summary>
-        public IKnifeThrowerView ThrowerView { get; }
+        public IProjectileThrower ThrowerView { get; }
         /// <summary>
         /// Gets the knife pool provider.
         /// </summary>

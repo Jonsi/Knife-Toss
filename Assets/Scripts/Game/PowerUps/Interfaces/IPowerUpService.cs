@@ -23,6 +23,10 @@ namespace Game.PowerUps.Interfaces
         /// </summary>
         bool TryActivate(PowerUpConfigBase config);
         /// <summary>
+        /// Attempts to cancel the active power-up.
+        /// </summary>
+        bool TryCancelActive();
+        /// <summary>
         /// Clears any active power-up state.
         /// </summary>
         void ClearActive();
@@ -34,9 +38,5 @@ namespace Game.PowerUps.Interfaces
         /// Resets runtime state when a level starts.
         /// </summary>
         void OnLevelStarted();
-        /// <summary>
-        /// Prepares the loaded knife based on the active power-up.
-        /// </summary>
-        void PrepareLoadedKnives(System.Collections.Generic.IReadOnlyList<KnifeView> knives);
     }
 }

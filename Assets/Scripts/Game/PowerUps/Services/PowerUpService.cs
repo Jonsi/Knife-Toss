@@ -18,8 +18,10 @@ namespace Game.PowerUps.Services
         private readonly PlayerDataService _PlayerDataService;
         private readonly PowerUpActivatedEventChannel _ActivatedChannel;
         private readonly PowerUpUsedEventChannel _UsedChannel;
+        private readonly PowerUpCancelledEventChannel _CancelledChannel;
         private readonly LevelStartedEventChannel _LevelStartedChannel;
         private readonly PowerUpEffectService _EffectService;
+        private readonly Game.KnifeThrower.Interfaces.IThrowerStateManager _ThrowerStateManager;
         private readonly PowerUpRuntimeState _RuntimeState = new PowerUpRuntimeState();
 
         /// <summary>
@@ -29,14 +31,18 @@ namespace Game.PowerUps.Services
             PlayerDataService playerDataService,
             PowerUpActivatedEventChannel activatedChannel,
             PowerUpUsedEventChannel usedChannel,
+            PowerUpCancelledEventChannel cancelledChannel,
             LevelStartedEventChannel levelStartedChannel,
-            PowerUpEffectService effectService)
+            PowerUpEffectService effectService,
+            Game.KnifeThrower.Interfaces.IThrowerStateManager throwerStateManager)
         {
             _PlayerDataService = playerDataService;
             _ActivatedChannel = activatedChannel;
             _UsedChannel = usedChannel;
+            _CancelledChannel = cancelledChannel;
             _LevelStartedChannel = levelStartedChannel;
             _EffectService = effectService;
+            _ThrowerStateManager = throwerStateManager;
         }
 
         /// <summary>
@@ -77,21 +83,47 @@ namespace Game.PowerUps.Services
             if (!HasInventory(inventory, config))
                 return false;
 
-            if (config is IPowerUpEffect effectConfig)
+            // World effects apply immediately without affecting thrower
+            if (config is IWorldEffectPowerUp worldEffect)
             {
-                if (config is TimeDilatorConfig timeDilator)
-                {
-                    _EffectService?.ApplyEffect(effectConfig, timeDilator.Duration);
-                    ConsumeInventory(inventory, config);
-                    _UsedChannel?.Raise(new PowerUpUsedEventData(config, GetRemainingCount(inventory, config)));
-                    return true;
-                }
+                worldEffect.ApplyWorldEffect(_EffectService);
+                ConsumeInventory(inventory, config);
+                _UsedChannel?.Raise(new PowerUpUsedEventData(config, GetRemainingCount(inventory, config)));
+                return true;
             }
 
-            _RuntimeState.HasActivePowerUp = true;
-            _RuntimeState.ActiveConfig = config;
-            _ActivatedChannel?.Raise(new PowerUpActivatedEventData(config, GetRemainingCount(inventory, config)));
-            return true;
+            // Projectile powerups switch thrower state
+            if (config is IProjectilePowerUp)
+            {
+                _ThrowerStateManager.ActivateProjectilePowerUp(config);
+                _RuntimeState.HasActivePowerUp = true;
+                _RuntimeState.ActiveConfig = config;
+                _ActivatedChannel?.Raise(new PowerUpActivatedEventData(config, GetRemainingCount(inventory, config)));
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to cancel the active power-up.
+        /// </summary>
+        public bool TryCancelActive()
+        {
+            if (!HasActivePowerUp)
+                return false;
+
+            if (_RuntimeState.ActiveConfig is ICancellablePowerUp cancellable)
+            {
+                cancellable.OnCancelled();
+                _ThrowerStateManager.CancelProjectilePowerUp();
+                var config = _RuntimeState.ActiveConfig;
+                _RuntimeState.Clear();
+                _CancelledChannel?.Raise(new PowerUpCancelledEventData(config));
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -100,30 +132,6 @@ namespace Game.PowerUps.Services
         public void ClearActive()
         {
             _RuntimeState.Clear();
-        }
-
-        /// <summary>
-        /// Prepares the loaded knife based on the active power-up.
-        /// </summary>
-        public void PrepareLoadedKnives(System.Collections.Generic.IReadOnlyList<KnifeView> knives)
-        {
-            if (knives == null || knives.Count == 0)
-                return;
-
-            if (!HasActivePowerUp)
-                return;
-
-            if (_RuntimeState.ActiveConfig is SuperKnifeConfig)
-            {
-                for (int i = 0; i < knives.Count; i++)
-                {
-                    var knife = knives[i];
-                    if (knife == null)
-                        continue;
-
-                    knife.IsSuperKnife = true;
-                }
-            }
         }
 
         /// <summary>
@@ -167,6 +175,12 @@ namespace Game.PowerUps.Services
         {
             var inventory = _PlayerDataService.EnsurePowerUpInventory();
             var activeConfig = _RuntimeState.ActiveConfig;
+
+            if (activeConfig is IProjectilePowerUp)
+            {
+                _ThrowerStateManager.DeactivateProjectilePowerUp();
+            }
+
             ConsumeInventory(inventory, activeConfig);
             _RuntimeState.Clear();
             _UsedChannel?.Raise(new PowerUpUsedEventData(activeConfig, GetRemainingCount(inventory, activeConfig)));

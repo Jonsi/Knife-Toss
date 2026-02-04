@@ -21,6 +21,7 @@ namespace Game.PowerUps.Views
         [SerializeField] private Transform _Container;
         [SerializeField] private PowerUpActivatedEventChannel _ActivatedChannel;
         [SerializeField] private PowerUpUsedEventChannel _UsedChannel;
+        [SerializeField] private PowerUpCancelledEventChannel _CancelledChannel;
         [SerializeField] private LevelStartedEventChannel _LevelStartedChannel;
 
         private readonly List<PowerUpButtonView> _Buttons = new List<PowerUpButtonView>();
@@ -52,6 +53,7 @@ namespace Game.PowerUps.Views
         {
             _ActivatedChannel?.Subscribe(OnActivated);
             _UsedChannel?.Subscribe(OnUsed);
+            _CancelledChannel?.Subscribe(OnCancelled);
             _LevelStartedChannel?.Subscribe(OnLevelStarted);
         }
 
@@ -59,6 +61,7 @@ namespace Game.PowerUps.Views
         {
             _ActivatedChannel?.Unsubscribe(OnActivated);
             _UsedChannel?.Unsubscribe(OnUsed);
+            _CancelledChannel?.Unsubscribe(OnCancelled);
             _LevelStartedChannel?.Unsubscribe(OnLevelStarted);
         }
 
@@ -86,6 +89,12 @@ namespace Game.PowerUps.Views
         {
             if (_PowerUpService == null)
                 return;
+
+            if (_PowerUpService.ActiveConfig == config)
+            {
+                _PowerUpService.TryCancelActive();
+                return;
+            }
 
             if (_PowerUpService.TryActivate(config))
             {
@@ -127,6 +136,11 @@ namespace Game.PowerUps.Views
         private void OnUsed(PowerUpUsedEventData data)
         {
             RefreshCounts();
+            ClearSelection();
+        }
+
+        private void OnCancelled(PowerUpCancelledEventData data)
+        {
             ClearSelection();
         }
 

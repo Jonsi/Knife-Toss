@@ -7,7 +7,7 @@ namespace Game.PowerUps.Configs
     /// Configuration for the Multiple Knives power-up.
     /// </summary>
     [CreateAssetMenu(fileName = "MultipleKnivesConfig", menuName = "Knife Toss/Power Ups/Multiple Knives Config")]
-    public class MultipleKnivesConfig : PowerUpConfigBase
+    public class MultipleKnivesConfig : PowerUpConfigBase, IProjectilePowerUp, ICancellablePowerUp
     {
         [field: SerializeField, Min(1)] public int KnifeCount { get; private set; } = 3;
         [field: SerializeField, Min(0f)] public float KnifeSpacing { get; private set; } = 0.35f;
@@ -23,6 +23,11 @@ namespace Game.PowerUps.Configs
 
             int thrown = context.ThrowContext.ThrowerView.ThrowLoadedKnives(ThrowSpeed);
             return thrown > 0;
+        }
+
+        public void OnCancelled()
+        {
+            // No specific cleanup needed
         }
     }
 }

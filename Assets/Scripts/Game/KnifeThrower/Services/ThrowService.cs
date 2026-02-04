@@ -26,8 +26,10 @@ namespace Game.KnifeThrower.Services
         private readonly IPlayerThrowInputListener _PlayerThrowInputListener;
         private readonly IConfigurationProvider<KnifeThrowConfiguration> _KnifeThrowConfigurationProvider;
         private readonly IKnifeThrowerView _KnifeThrowerView;
+        private readonly IPowerUpThrowerView _PowerUpThrowerView;
         private readonly KnifePoolProvider _KnifePoolProvider;
         private readonly IPowerUpService _PowerUpService;
+        private readonly IThrowerStateManager _ThrowerStateManager;
         private readonly IEventChannel<PowerUpActivatedEventData> _PowerUpActivatedChannel;
         private readonly IEventChannel<PowerUpUsedEventData> _PowerUpUsedChannel;
         private readonly IEventChannel _KnifeThrownChannel;
@@ -44,8 +46,10 @@ namespace Game.KnifeThrower.Services
             IPlayerThrowInputListener playerThrowInputListener,
             IConfigurationProvider<KnifeThrowConfiguration> knifeThrowConfigurationProvider,
             IKnifeThrowerView knifeThrowerView,
+            IPowerUpThrowerView powerUpThrowerView,
             KnifePoolProvider knifePoolProvider,
             IPowerUpService powerUpService,
+            IThrowerStateManager throwerStateManager,
             IEventChannel<PowerUpActivatedEventData> powerUpActivatedChannel,
             IEventChannel<PowerUpUsedEventData> powerUpUsedChannel,
             IEventChannel knifeThrownChannel,
@@ -54,8 +58,10 @@ namespace Game.KnifeThrower.Services
             _PlayerThrowInputListener = playerThrowInputListener;
             _KnifeThrowConfigurationProvider = knifeThrowConfigurationProvider;
             _KnifeThrowerView = knifeThrowerView;
+            _PowerUpThrowerView = powerUpThrowerView;
             _KnifePoolProvider = knifePoolProvider;
             _PowerUpService = powerUpService;
+            _ThrowerStateManager = throwerStateManager;
             _PowerUpActivatedChannel = powerUpActivatedChannel;
             _PowerUpUsedChannel = powerUpUsedChannel;
             _KnifeThrownChannel = knifeThrownChannel;
@@ -109,7 +115,9 @@ namespace Game.KnifeThrower.Services
 
         private void UpdateKnifeAiming()
         {
-            var loadedKnives = _KnifeThrowerView.LoadedKnives;
+            var thrower = _ThrowerStateManager.IsProjectilePowerUpActive ? (IProjectileThrower)_PowerUpThrowerView : _KnifeThrowerView;
+            var loadedKnives = thrower.LoadedKnives;
+            
             if (loadedKnives == null || loadedKnives.Count == 0)
                 return;
 
@@ -122,8 +130,8 @@ namespace Game.KnifeThrower.Services
             if (mainCamera == null)
                 return;
 
-            // Use the spawn point's Z distance from the camera for accurate world point calculation
-            float distance = Mathf.Abs(mainCamera.transform.position.z - _KnifeThrowerView.SpawnPoint.position.z);
+            // Use the thrower's spawn point's Z distance from the camera for accurate world point calculation
+            float distance = Mathf.Abs(mainCamera.transform.position.z - thrower.SpawnPoint.position.z);
             Vector3 screenPosWithZ = new Vector3(screenPosition.x, screenPosition.y, distance);
             Vector3 worldPosition = mainCamera.ScreenToWorldPoint(screenPosWithZ);
 
@@ -175,30 +183,30 @@ namespace Game.KnifeThrower.Services
 
         private void PerformThrow()
         {
+            var activePowerUp = _PowerUpService?.ActiveConfig;
+            
             // Block throwing if a knife is already in flight and no power-up is active.
-            // This does not affect power-ups as per requirement.
-            if (_PowerUpService?.ActiveConfig == null && _KnivesInFlight > 0)
+            if (!_ThrowerStateManager.IsProjectilePowerUpActive && _KnivesInFlight > 0)
                 return;
 
             var config = _KnifeThrowConfigurationProvider.GetConfiguration();
-            ReloadLoadedKnifeForActivePowerUp();
-            _PowerUpService?.PrepareLoadedKnives(_KnifeThrowerView.LoadedKnives);
-
-            var context = new PowerUpThrowContext(
-                _KnifeThrowerView,
-                _KnifePoolProvider,
-                config,
-                _KnifeThrowerView.SpawnPoint);
-
-            if (_PowerUpService != null && _PowerUpService.TryHandleThrow(context))
+            
+            if (_ThrowerStateManager.IsProjectilePowerUpActive && activePowerUp != null)
             {
-                if (_PowerUpUsedChannel == null)
+                var context = new PowerUpThrowContext(
+                    _PowerUpThrowerView,
+                    _KnifePoolProvider,
+                    config,
+                    _PowerUpThrowerView.SpawnPoint);
+
+                if (_PowerUpService.TryHandleThrow(context))
                 {
-                    LoadKnife(config);
+                    // Power-up throw handled, magazine remains untouched.
+                    return;
                 }
-                return;
             }
 
+            // Normal magazine-based throw
             _KnifeThrowerView.ThrowLoadedKnife(config.ThrowSpeed);
             LoadKnife(config);
         }
@@ -227,103 +235,18 @@ namespace Game.KnifeThrower.Services
                 SpawnOffset = config.SpawnPositionOffset,
                 ThrowSpeed = config.ThrowSpeed
             };
-            var knife = _KnifePoolProvider.Get(_PowerUpService?.ActiveConfig);
-            _PowerUpService?.PrepareLoadedKnives(new[] { knife });
+            var knife = _KnifePoolProvider.Get(null); // Explicitly normal knife
             _KnifeThrowerView.LoadKnife(knife, spawnData);
         }
 
         private void OnPowerUpActivated(PowerUpActivatedEventData data)
         {
-            ReloadLoadedKnifeForActivePowerUp();
+            // Redundant: PowerUpService now handles this through ThrowerStateManager
         }
 
         private void OnPowerUpUsed(PowerUpUsedEventData data)
         {
-            ReloadLoadedKnifeForActivePowerUp();
-        }
-
-        private void ReloadLoadedKnifeForActivePowerUp()
-        {
-            var config = _KnifeThrowConfigurationProvider.GetConfiguration();
-            var activePowerUp = _PowerUpService?.ActiveConfig;
-            var loadedKnives = _KnifeThrowerView.LoadedKnives;
-            int desiredCount = GetDesiredKnifeCount(activePowerUp);
-
-            if (IsAlreadyLoadedForPowerUp(loadedKnives, activePowerUp, desiredCount))
-                return;
-
-            ReleaseLoadedKnives(loadedKnives);
-
-            var spawnData = new KnifeSpawnRequestData
-            {
-                SpawnOffset = config.SpawnPositionOffset,
-                ThrowSpeed = config.ThrowSpeed
-            };
-
-            if (desiredCount <= 1)
-            {
-                var knife = _KnifePoolProvider.Get(activePowerUp);
-                _PowerUpService?.PrepareLoadedKnives(new[] { knife });
-                _KnifeThrowerView.LoadKnife(knife, spawnData);
-                return;
-            }
-
-            var knives = new List<KnifeView>(desiredCount);
-            for (int i = 0; i < desiredCount; i++)
-            {
-                knives.Add(_KnifePoolProvider.Get(activePowerUp));
-            }
-            _PowerUpService?.PrepareLoadedKnives(knives);
-            _KnifeThrowerView.LoadKnives(knives, spawnData, GetKnifeSpacing(activePowerUp));
-        }
-
-        private static int GetDesiredKnifeCount(PowerUpConfigBase activePowerUp)
-        {
-            if (activePowerUp is MultipleKnivesConfig multipleKnivesConfig)
-            {
-                return Mathf.Max(1, multipleKnivesConfig.KnifeCount);
-            }
-
-            return 1;
-        }
-
-        private static float GetKnifeSpacing(PowerUpConfigBase activePowerUp)
-        {
-            if (activePowerUp is MultipleKnivesConfig multipleKnivesConfig)
-            {
-                return Mathf.Max(0f, multipleKnivesConfig.KnifeSpacing);
-            }
-
-            return 0f;
-        }
-
-        private static bool IsAlreadyLoadedForPowerUp(IReadOnlyList<KnifeView> loadedKnives, PowerUpConfigBase activePowerUp, int desiredCount)
-        {
-            if (loadedKnives == null || loadedKnives.Count == 0)
-                return false;
-
-            if (loadedKnives.Count != desiredCount)
-                return false;
-
-            for (int i = 0; i < loadedKnives.Count; i++)
-            {
-                var knife = loadedKnives[i];
-                if (knife == null || knife.SourcePowerUpConfig != activePowerUp)
-                    return false;
-            }
-
-            return true;
-        }
-
-        private void ReleaseLoadedKnives(IReadOnlyList<KnifeView> loadedKnives)
-        {
-            if (loadedKnives == null)
-                return;
-
-            for (int i = 0; i < loadedKnives.Count; i++)
-            {
-                _KnifePoolProvider.Release(loadedKnives[i]);
-            }
+            // Redundant: PowerUpService now handles this through ThrowerStateManager
         }
 
         /// <summary>

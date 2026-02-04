@@ -173,6 +173,7 @@ MonoBehaviour:
   _Container: {fileID: 41204891}
   _ActivatedChannel: {fileID: 11400000, guid: 2b6171f146e7b7940afb3c72048ac1d0, type: 2}
   _UsedChannel: {fileID: 11400000, guid: c87d83ddea622ce42a7261a62f7c9c00, type: 2}
+  _CancelledChannel: {fileID: 11400000, guid: 548ba72244a87c54d8f107bd1c3effb0, type: 2}
   _LevelStartedChannel: {fileID: 11400000, guid: 8016f38368e175c479eb37bb6b1726fd, type: 2}
 --- !u!114 &41204893
 MonoBehaviour:
@@ -1218,6 +1219,7 @@ GameObject:
   - component: {fileID: 497239671}
   - component: {fileID: 497239670}
   - component: {fileID: 497239672}
+  - component: {fileID: 497239673}
   m_Layer: 0
   m_Name: KnifeThrower
   m_TagString: Untagged
@@ -1267,6 +1269,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game::Game.Entities.Knife.Feedback.KnifeLoadAnimator
   _Config: {fileID: 11400000, guid: ffeed95d9871d8f44972dfe4fe032a4c, type: 2}
+--- !u!114 &497239673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497239669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cb621709cf66dd4a92dec1417661d42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.PowerUps.Views.PowerUpThrowerView
+  _SpawnPoint: {fileID: 497239671}
+  _LoadAnimator: {fileID: 497239672}
 --- !u!224 &509203402 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3207458631617955686, guid: 58353aba8a65cb9479373360a5731a0b, type: 3}
@@ -5258,6 +5274,7 @@ MonoBehaviour:
   _PowerUpCatalog: {fileID: 11400000, guid: e5d29e583c76d9547a0b6378b8cece49, type: 2}
   _PrivacyPolicyContent: {fileID: 11400000, guid: b773414e95f06b147a8f9172cdbe40e8, type: 2}
   _KnifeThrowerView: {fileID: 497239670}
+  _PowerUpThrowerView: {fileID: 497239673}
   _LevelRoot: {fileID: 182301541}
   _StageFailPopup: {fileID: 1957040492}
   _SettingsPopup: {fileID: 8633855206658701134}
@@ -5277,6 +5294,7 @@ MonoBehaviour:
   _RestartStageClickedChannel: {fileID: 11400000, guid: eef8d9c482392e74bb97e0df72cf980b, type: 2}
   _PowerUpActivatedEventChannel: {fileID: 11400000, guid: 2b6171f146e7b7940afb3c72048ac1d0, type: 2}
   _PowerUpUsedEventChannel: {fileID: 11400000, guid: c87d83ddea622ce42a7261a62f7c9c00, type: 2}
+  _PowerUpCancelledEventChannel: {fileID: 11400000, guid: 548ba72244a87c54d8f107bd1c3effb0, type: 2}
   _CurrencyTypeCatalog: {fileID: 11400000, guid: 2e19ae051d2a93f40847e9a57b3109c6, type: 2}
   _CurrencyBalanceChangedEventChannel: {fileID: 11400000, guid: 51473d9d8042dd747bd67e5c302e2a66, type: 2}
 --- !u!1 &1957040490 stripped

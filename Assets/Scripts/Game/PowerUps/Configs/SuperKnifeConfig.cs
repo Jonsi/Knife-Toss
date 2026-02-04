@@ -7,7 +7,7 @@ namespace Game.PowerUps.Configs
     /// Configuration for the Super Knife power-up.
     /// </summary>
     [CreateAssetMenu(fileName = "SuperKnifeConfig", menuName = "Knife Toss/Power Ups/Super Knife Config")]
-    public class SuperKnifeConfig : PowerUpConfigBase
+    public class SuperKnifeConfig : PowerUpConfigBase, IProjectilePowerUp, ICancellablePowerUp
     {
         [field: SerializeField] public float ThrowSpeed { get; private set; } = 10f;
 
@@ -21,6 +21,20 @@ namespace Game.PowerUps.Configs
 
             context.ThrowContext.ThrowerView.ThrowLoadedKnife(ThrowSpeed);
             return true;
+        }
+
+        public override void PrepareKnives(System.Collections.Generic.IReadOnlyList<Game.Entities.Knife.Views.KnifeView> knives)
+        {
+            if (knives == null) return;
+            foreach (var knife in knives)
+            {
+                if (knife != null) knife.IsSuperKnife = true;
+            }
+        }
+
+        public void OnCancelled()
+        {
+            // No specific cleanup needed for super knife
         }
     }
 }

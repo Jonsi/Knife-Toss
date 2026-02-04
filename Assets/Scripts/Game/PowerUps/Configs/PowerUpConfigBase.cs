@@ -19,5 +19,13 @@ namespace Game.PowerUps.Configs
         /// <param name="context">Execution context containing required services.</param>
         /// <returns>True if execution was successful.</returns>
         public abstract bool Execute(IPowerUpExecutionContext context);
+
+        /// <summary>
+        /// Optionally prepares the loaded knives for this power-up.
+        /// </summary>
+        /// <param name="knives">List of knives to prepare.</param>
+        public virtual void PrepareKnives(System.Collections.Generic.IReadOnlyList<Game.Entities.Knife.Views.KnifeView> knives)
+        {
+        }
     }
 }

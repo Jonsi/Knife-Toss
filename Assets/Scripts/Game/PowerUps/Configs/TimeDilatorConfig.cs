@@ -1,5 +1,6 @@
 using Game.Entities.Target.Interfaces;
 using Game.PowerUps.Interfaces;
+using Game.PowerUps.Services;
 using UnityEngine;
 
 namespace Game.PowerUps.Configs
@@ -8,10 +9,12 @@ namespace Game.PowerUps.Configs
     /// Configuration for the Time Dilator power-up that slows target rotation.
     /// </summary>
     [CreateAssetMenu(fileName = "TimeDilatorConfig", menuName = "Knife Toss/Power Ups/Time Dilator Config")]
-    public class TimeDilatorConfig : PowerUpConfigBase, IPowerUpEffect
+    public class TimeDilatorConfig : PowerUpConfigBase, IPowerUpEffect, IWorldEffectPowerUp
     {
         [field: SerializeField, Min(0.01f)] public float Duration { get; private set; } = 5f;
         [field: SerializeField, Range(0f, 1f)] public float SpeedMultiplier { get; private set; } = 0.3f;
+
+        public float EffectDuration => Duration;
 
         /// <summary>
         /// Executes the time dilator power-up by applying the slow motion effect.
@@ -20,6 +23,11 @@ namespace Game.PowerUps.Configs
         public override bool Execute(IPowerUpExecutionContext context)
         {
             return false;
+        }
+
+        public void ApplyWorldEffect(PowerUpEffectService effectService)
+        {
+            effectService?.ApplyEffect(this, Duration);
         }
 
         /// <summary>

@@ -38,6 +38,7 @@ namespace Game.Installers
         
         [Header("Scene References")]
         [SerializeField] private KnifeThrowerView _KnifeThrowerView;
+        [SerializeField] private Game.PowerUps.Views.PowerUpThrowerView _PowerUpThrowerView;
         [SerializeField] private Transform _LevelRoot;
         [SerializeField] private StageFailPopup _StageFailPopup;
         [SerializeField] private SettingsPopup _SettingsPopup;
@@ -62,6 +63,7 @@ namespace Game.Installers
         
         [SerializeField] private PowerUpActivatedEventChannel _PowerUpActivatedEventChannel;
         [SerializeField] private PowerUpUsedEventChannel _PowerUpUsedEventChannel;
+        [SerializeField] private PowerUpCancelledEventChannel _PowerUpCancelledEventChannel;
 
         [Header("Economy (optional; use when stage runs standalone or parent has none)")]
         [SerializeField] private CurrencyTypeCatalog _CurrencyTypeCatalog;
@@ -112,6 +114,7 @@ namespace Game.Installers
             return new KnifeInstaller(
                 _KnifeThrowConfig,
                 _KnifeThrowerView,
+                _PowerUpThrowerView,
                 _PrefabsConfiguration,
                 _KnifeImpactEventChannel,
                 _KnifeThrownEventChannel);
@@ -128,6 +131,7 @@ namespace Game.Installers
                 _PowerUpCatalog,
                 _PowerUpActivatedEventChannel,
                 _PowerUpUsedEventChannel,
+                _PowerUpCancelledEventChannel,
                 _LevelStartedEventChannel);
         }
 
