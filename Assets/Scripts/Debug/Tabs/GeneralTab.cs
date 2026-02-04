@@ -30,7 +30,7 @@ namespace Game.Debugging.Tabs
             get
             {
                 var resolver = CurrentResolver;
-                return TryResolve<PlayerDataService>(resolver)?.GetHighestStageIndex() ?? 0;
+                return (TryResolve<PlayerDataService>(resolver)?.GetHighestStageIndex() ?? 0) + 1;
             }
         }
 
@@ -41,7 +41,7 @@ namespace Game.Debugging.Tabs
             get
             {
                 var resolver = CurrentResolver;
-                return TryResolve<GameData>(resolver)?.CurrentStageIndex ?? 0;
+                return (TryResolve<GameData>(resolver)?.CurrentStageIndex ?? 0) + 1;
             }
         }
 
@@ -64,12 +64,8 @@ namespace Game.Debugging.Tabs
             var resolver = CurrentResolver;
             if (resolver == null) return;
 
-            var gameData = TryResolve<GameData>(resolver);
-            var playerDataService = TryResolve<PlayerDataService>(resolver);
-
-            if (gameData == null) return;
-            gameData.Reset();
-            playerDataService?.ForceSave();
+            var cheats = TryResolve<GeneralCheats>(resolver);
+            cheats?.ClearProgress();
             RequestRefresh();
         }
     }

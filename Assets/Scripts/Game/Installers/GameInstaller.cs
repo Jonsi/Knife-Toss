@@ -70,6 +70,12 @@ namespace Game.Installers
 
             // Register Event Channels (Shared/Persistence)
             builder.RegisterInstance(_ReturnToMenuEventChannel);
+
+#if TEST_ENABLED
+            builder.Register<Game.Debugging.GeneralCheats>(Lifetime.Singleton).AsSelf();
+            builder.Register<Game.Debugging.EconomyCheats>(Lifetime.Singleton).AsSelf();
+            builder.Register<Game.Debugging.PowerUpCheats>(Lifetime.Singleton).AsSelf();
+#endif
         }
 
         private static void Install(IContainerBuilder builder, IInstaller installer)

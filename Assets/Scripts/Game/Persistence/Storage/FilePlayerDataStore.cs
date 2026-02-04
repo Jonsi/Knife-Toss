@@ -67,8 +67,9 @@ namespace Game.Persistence.Storage
 
                 File.Move(_TempFilePath, _FilePath);
             }
-            catch
+            catch (System.Exception e)
             {
+                Debug.LogError($"[FilePlayerDataStore] Failed to save player data: {e.Message}");
                 if (File.Exists(_TempFilePath))
                 {
                     File.Delete(_TempFilePath);

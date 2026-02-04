@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Game.PowerUps.Data
@@ -11,7 +12,7 @@ namespace Game.PowerUps.Data
     [Serializable]
     public class PowerUpInventoryData
     {
-        [SerializeField] private List<PowerUpInventoryEntry> _Entries = new List<PowerUpInventoryEntry>();
+        [SerializeField] [JsonProperty("_Entries")] private List<PowerUpInventoryEntry> _Entries = new List<PowerUpInventoryEntry>();
 
         /// <summary>
         /// Gets the count for the specified power-up key.
@@ -31,7 +32,10 @@ namespace Game.PowerUps.Data
         public void SetCount(string key, int count)
         {
             if (string.IsNullOrEmpty(key))
+            {
+                Debug.LogWarning("[PowerUpInventoryData] SetCount called with null or empty key.");
                 return;
+            }
 
             count = Mathf.Max(0, count);
             var entry = _Entries.FirstOrDefault(e => e.Key == key);

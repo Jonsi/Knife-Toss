@@ -62,6 +62,10 @@ namespace Game.Installers
 
             builder.Register<GameStateMachine>(Lifetime.Singleton).As<IGameStateMachine>();
             builder.RegisterEntryPoint<GameFlowController>();
+
+#if TEST_ENABLED
+            builder.Register<Game.Debugging.StageLevelCheats>(Lifetime.Singleton).AsSelf();
+#endif
         }
 
         private StageStateMachine CreateStageStateMachine(IObjectResolver resolver)

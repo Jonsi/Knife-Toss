@@ -15,8 +15,6 @@ namespace Game.Debugging.Tabs
     public class StageLevelTab : OptionsTab
     {
         private int _TargetStageIndex;
-        private VoidEventChannel _RetryChannel;
-        private VoidEventChannel _RestartChannel;
 
         public override string Key => "StageLevel";
         public override string Title => "2. Stage/Level";
@@ -27,14 +25,13 @@ namespace Game.Debugging.Tabs
         {
         }
 
-        private VoidEventChannel RetryChannel => _RetryChannel ??= FindChannel("RetryLevelClicked");
-        private VoidEventChannel RestartChannel => _RestartChannel ??= FindChannel("RestartStageClicked");
+        private StageLevelCheats Cheats => TryResolve<StageLevelCheats>(CurrentResolver);
 
         [Category("Stage Navigation")]
-        [DisplayName("Target Stage (0-based)")]
+        [DisplayName("Target Stage (1-based)")]
         public int TargetStage
         {
-            get => _TargetStageIndex;
+            get => _TargetStageIndex + 1;
             set
             {
                 var resolver = CurrentResolver;
@@ -42,7 +39,7 @@ namespace Game.Debugging.Tabs
                 
                 var catalog = TryResolve<ILevelCatalog>(resolver);
                 int maxStage = catalog?.StageCount - 1 ?? 999;
-                _TargetStageIndex = Mathf.Clamp(value, 0, maxStage);
+                _TargetStageIndex = Mathf.Clamp(value - 1, 0, maxStage);
             }
         }
         
@@ -50,27 +47,7 @@ namespace Game.Debugging.Tabs
         [DisplayName("Jump To Stage")]
         public void JumpToStage()
         {
-            var resolver = CurrentResolver;
-            if (resolver == null) return;
-            
-            var gameData = TryResolve<GameData>(resolver);
-            if (gameData == null)
-            {
-                Debug.LogWarning("[StageLevelTab] GameData not available - are you in a stage scene?");
-                return;
-            }
-            
-            var stageData = TryResolve<StageData>(resolver);
-            
-            SetInternalProperty(gameData, nameof(GameData.CurrentStageIndex), _TargetStageIndex);
-            
-            if (stageData != null)
-            {
-                SetInternalProperty(stageData, nameof(StageData.StageIndex), _TargetStageIndex);
-                SetInternalProperty(stageData, nameof(StageData.CurrentLevelIndex), 0);
-            }
-            
-            RestartChannel?.Raise();
+            Cheats?.JumpToStage(_TargetStageIndex);
             RequestRefresh();
         }
 
@@ -78,7 +55,7 @@ namespace Game.Debugging.Tabs
         [DisplayName("Restart Current Stage")]
         public void RestartStage()
         {
-            RestartChannel?.Raise();
+            Cheats?.RestartStage();
         }
         
         [Category("Level Navigation")]
@@ -88,9 +65,9 @@ namespace Game.Debugging.Tabs
             get
             {
                 var resolver = CurrentResolver;
-                if (resolver == null) return 0;
+                if (resolver == null) return 1;
                 var stageData = TryResolve<StageData>(resolver);
-                return stageData?.CurrentLevelIndex ?? 0;
+                return (stageData?.CurrentLevelIndex ?? 0) + 1;
             }
         }
 
@@ -98,19 +75,7 @@ namespace Game.Debugging.Tabs
         [DisplayName("Next Level")]
         public void NextLevel()
         {
-            var resolver = CurrentResolver;
-            if (resolver == null) return;
-            
-            var stageData = TryResolve<StageData>(resolver);
-            var catalog = TryResolve<ILevelCatalog>(resolver);
-            
-            if (stageData == null || catalog == null) return;
-            
-            int maxLevel = catalog.GetLevelCount(stageData.StageIndex) - 1;
-            int nextLevel = Mathf.Min(stageData.CurrentLevelIndex + 1, maxLevel);
-            
-            SetInternalProperty(stageData, nameof(StageData.CurrentLevelIndex), nextLevel);
-            RetryChannel?.Raise();
+            Cheats?.NextLevel();
             RequestRefresh();
         }
 
@@ -118,16 +83,7 @@ namespace Game.Debugging.Tabs
         [DisplayName("Previous Level")]
         public void PreviousLevel()
         {
-            var resolver = CurrentResolver;
-            if (resolver == null) return;
-            
-            var stageData = TryResolve<StageData>(resolver);
-            if (stageData == null) return;
-            
-            int prevLevel = Mathf.Max(stageData.CurrentLevelIndex - 1, 0);
-            
-            SetInternalProperty(stageData, nameof(StageData.CurrentLevelIndex), prevLevel);
-            RetryChannel?.Raise();
+            Cheats?.PreviousLevel();
             RequestRefresh();
         }
 
@@ -135,7 +91,7 @@ namespace Game.Debugging.Tabs
         [DisplayName("Restart Current Level")]
         public void RestartLevel()
         {
-            RetryChannel?.Raise();
+            Cheats?.RestartLevel();
         }
 
         private void SetInternalProperty<T>(object target, string propName, T value)

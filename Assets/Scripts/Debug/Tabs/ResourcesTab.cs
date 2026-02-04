@@ -37,18 +37,11 @@ namespace Game.Debugging.Tabs
             set
             {
                 var resolver = CurrentResolver;
-                var currencyService = TryResolve<ICurrencyService>(resolver);
-                var playerDataService = TryResolve<PlayerDataService>(resolver);
+                var cheats = TryResolve<EconomyCheats>(resolver);
                 string currencyId = GetFirstCurrencyId();
-                if (currencyService != null && playerDataService != null && value >= 0 && !string.IsNullOrEmpty(currencyId))
+                if (cheats != null && !string.IsNullOrEmpty(currencyId))
                 {
-                    int current = currencyService.GetBalance(currencyId);
-                    int diff = value - current;
-                    if (diff > 0)
-                        currencyService.AddBalance(currencyId, diff);
-                    else if (diff < 0)
-                        currencyService.TrySpend(currencyId, -diff);
-                    playerDataService.RequestSave();
+                    cheats.SetBalance(currencyId, value);
                 }
             }
         }
@@ -57,7 +50,13 @@ namespace Game.Debugging.Tabs
         [DisplayName("Add 100 Coins")]
         public void AddCoins()
         {
-            TotalCoins += 100;
+            var resolver = CurrentResolver;
+            var cheats = TryResolve<EconomyCheats>(resolver);
+            string currencyId = GetFirstCurrencyId();
+            if (cheats != null && !string.IsNullOrEmpty(currencyId))
+            {
+                cheats.AddBalance(currencyId, 100);
+            }
             RequestRefresh();
         }
 
@@ -66,11 +65,10 @@ namespace Game.Debugging.Tabs
             var options = base.GetOptions();
             
             var resolver = CurrentResolver;
-            var playerDataService = TryResolve<PlayerDataService>(resolver);
+            var cheats = TryResolve<PowerUpCheats>(resolver);
+            var catalog = cheats?.GetCatalog();
             
-            var catalog = Resources.FindObjectsOfTypeAll<PowerUpCatalog>().FirstOrDefault();
-            
-            if (catalog != null && playerDataService != null)
+            if (catalog != null && cheats != null)
             {
                 foreach (var entry in catalog.Entries)
                 {
@@ -80,7 +78,7 @@ namespace Game.Debugging.Tabs
                     {
                         Name = entry.DisplayName,
                         Category = "Power Ups",
-                        Target = new PowerUpOptionWrapper(entry.InventoryKey, playerDataService),
+                        Target = new PowerUpOptionWrapper(entry.InventoryKey, cheats, this),
                         PropertyInfo = typeof(PowerUpOptionWrapper).GetProperty("Count"),
                         IsMethod = false
                     });
@@ -93,21 +91,23 @@ namespace Game.Debugging.Tabs
         private class PowerUpOptionWrapper
         {
             private readonly string _Key;
-            private readonly PlayerDataService _PlayerDataService;
+            private readonly PowerUpCheats _Cheats;
+            private readonly ResourcesTab _Tab;
 
-            public PowerUpOptionWrapper(string key, PlayerDataService playerDataService)
+            public PowerUpOptionWrapper(string key, PowerUpCheats cheats, ResourcesTab tab)
             {
                 _Key = key;
-                _PlayerDataService = playerDataService;
+                _Cheats = cheats;
+                _Tab = tab;
             }
 
             public int Count
             {
-                get => _PlayerDataService.EnsurePowerUpInventory().GetCount(_Key);
+                get => _Cheats.GetPowerUpCount(_Key);
                 set
                 {
-                    _PlayerDataService.EnsurePowerUpInventory().SetCount(_Key, value);
-                    _PlayerDataService.RequestSave();
+                    _Cheats.SetPowerUpCount(_Key, value);
+                    _Tab.RequestRefresh();
                 }
             }
         }
