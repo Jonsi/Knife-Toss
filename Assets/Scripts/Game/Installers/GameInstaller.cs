@@ -33,6 +33,9 @@ namespace Game.Installers
         [SerializeField] private CurrencyTypeCatalog _CurrencyTypeCatalog;
         [SerializeField] private CurrencyBalanceChangedEventChannel _CurrencyBalanceChangedEventChannel;
 
+        [Header("Power Ups")]
+        [SerializeField] private Game.PowerUps.Configs.PowerUpCatalog _PowerUpCatalog;
+
         [Header("Feedback")]
         [SerializeField] private SoundSettings _SoundSettings;
         [SerializeField] private AudioPlayer _AudioPlayer;
@@ -90,7 +93,7 @@ namespace Game.Installers
 
         private PersistenceInstaller CreatePersistenceInstaller()
         {
-            return new PersistenceInstaller();
+            return new PersistenceInstaller(_PowerUpCatalog);
         }
 
         private EconomyInstaller CreateEconomyInstaller()

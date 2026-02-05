@@ -12,8 +12,11 @@ namespace Game.Installers
     /// </summary>
     public class PersistenceInstaller : IInstaller
     {
-        public PersistenceInstaller()
+        private readonly Game.PowerUps.Configs.PowerUpCatalog _PowerUpCatalog;
+
+        public PersistenceInstaller(Game.PowerUps.Configs.PowerUpCatalog powerUpCatalog)
         {
+            _PowerUpCatalog = powerUpCatalog;
         }
 
         /// <summary>
@@ -26,6 +29,7 @@ namespace Game.Installers
                 .As<IPlayerDataStore>();
 
             builder.RegisterEntryPoint<PlayerDataService>()
+                .WithParameter(_PowerUpCatalog)
                 .AsSelf()
                 .As<IInitializable>();
         }

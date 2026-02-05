@@ -2,6 +2,7 @@ using System;
 using Game.Flow.Game;
 using Game.Persistence.Data;
 using Game.Persistence.Interfaces;
+using Game.PowerUps.Configs;
 using Game.PowerUps.Data;
 using VContainer.Unity;
 using UnityEngine;
@@ -15,23 +16,72 @@ namespace Game.Persistence.Services
     {
         private readonly IPlayerDataStore _Store;
         private readonly GameData _GameData;
+        private PowerUpCatalog _PowerUpCatalog;
 
         private PlayerData _CachedData;
 
         public PlayerDataService(
             IPlayerDataStore store,
-            GameData gameData)
+            GameData gameData,
+            PowerUpCatalog powerUpCatalog = null)
         {
             _Store = store;
             _GameData = gameData;
+            _PowerUpCatalog = powerUpCatalog;
+
+            if (_PowerUpCatalog == null)
+            {
+                _PowerUpCatalog = Resources.Load<PowerUpCatalog>("PowerUpCatalog");
+            }
         }
 
         public void Initialize()
         {
             _CachedData = _Store.Load() ?? new PlayerData();
+            
             MigrateFromLegacyStructure();
             EnsureDataIntegrity();
+
+            if (ShouldInitializePowerUps())
+            {
+                InitializeDefaultPowerUps();
+            }
+            
             SyncGameData();
+        }
+
+        private bool ShouldInitializePowerUps()
+        {
+            var inventory = _CachedData.Resources.PowerUps;
+            if (inventory == null) return true;
+
+            if (_PowerUpCatalog == null) return false;
+
+            // If all powerups are 0, we initialize them (handles new players and fresh installs)
+            foreach (var config in _PowerUpCatalog.Entries)
+            {
+                if (config != null && !string.IsNullOrEmpty(config.InventoryKey))
+                {
+                    if (inventory.GetCount(config.InventoryKey) > 0)
+                        return false;
+                }
+            }
+            return true;
+        }
+
+        private void InitializeDefaultPowerUps()
+        {
+            if (_PowerUpCatalog == null) return;
+
+            foreach (var config in _PowerUpCatalog.Entries)
+            {
+                if (config != null && !string.IsNullOrEmpty(config.InventoryKey))
+                {
+                    _CachedData.Resources.PowerUps.SetCount(config.InventoryKey, 5);
+                }
+            }
+            
+            SaveNow();
         }
 
         public void Dispose()

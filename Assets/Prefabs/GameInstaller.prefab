@@ -195,8 +195,9 @@ MonoBehaviour:
   - {fileID: 567773180908618903}
   _GameSettings: {fileID: 11400000, guid: 067b2b4cb241a1c47942f156372a8db5, type: 2}
   _ReturnToMenuEventChannel: {fileID: 11400000, guid: 67ee024458bba644abb8a2f664ce3204, type: 2}
-  _CurrencyTypeCatalog: {fileID: 0}
-  _CurrencyBalanceChangedEventChannel: {fileID: 0}
+  _CurrencyTypeCatalog: {fileID: 11400000, guid: 2e19ae051d2a93f40847e9a57b3109c6, type: 2}
+  _CurrencyBalanceChangedEventChannel: {fileID: 11400000, guid: 51473d9d8042dd747bd67e5c302e2a66, type: 2}
+  _PowerUpCatalog: {fileID: 11400000, guid: e5d29e583c76d9547a0b6378b8cece49, type: 2}
   _SoundSettings: {fileID: 11400000, guid: 189e658594fd4ea4d8b64463039ef584, type: 2}
   _AudioPlayer: {fileID: 2965484948011319591}
   _RemoteConfigSettings: {fileID: 11400000, guid: b80493aa5f5497b43ab4f14b27878bf3, type: 2}
