@@ -1,5 +1,5 @@
 using Common.Collision.Events;
-using Common.Economy.Data;
+using Game.Economy.Data;
 using Common.Events;
 using Game.Economy.Events;
 using Game.Entities.Collectible.Events;

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using Common.Economy.Data;
 using Common.Economy.Interfaces;
+using Game.Economy.Data;
 
-namespace Common.Economy.Services
+namespace Game.Economy.Services
 {
     /// <summary>
     /// Implementation of ICurrencyValueProvider.

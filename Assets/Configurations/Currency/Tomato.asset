@@ -10,8 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 25d3a12c9de8ab54eb71dfbd15bc15ff, type: 3}
-  m_Name: CollectibleCurrency_Tomato
+  m_Name: Tomato
   m_EditorClassIdentifier: Game::Game.Entities.Collectible.Data.CollectibleCurrencyConfig
   _prefab: {fileID: -271805343802311218, guid: d5abd729dc883c14193d9008126a4bf2, type: 3}
-  _sprite: {fileID: -1497832910256342930, guid: 8e297df7d0e5d7b45b52ef952f48f17c, type: 3}
-  _currencyType: {fileID: 11400000, guid: 02c9b34be5dc56c44a7063c8f4ce485a, type: 2}
+  _sprite: {fileID: 883865395147445389, guid: 065bd27afbae0d14da764432bb6f186f, type: 3}
+  _typeId: tomato_currency
+  _defaultValue: 1

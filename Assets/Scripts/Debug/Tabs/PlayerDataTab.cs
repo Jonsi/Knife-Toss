@@ -1,6 +1,6 @@
 #if TEST_ENABLED
 using System.Collections.Generic;
-using Common.Economy.Data;
+using Game.Economy.Data;
 using Game.Economy.Interfaces;
 using VContainer;
 using Game.Flow.Game;

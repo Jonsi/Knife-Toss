@@ -1,19 +1,20 @@
 using System.Collections.Generic;
+using Game.Entities.Collectible.Data;
 using UnityEngine;
 
-namespace Common.Economy.Data
+namespace Game.Economy.Data
 {
     /// <summary>
     /// Registry of all available currency types in the project.
     /// Provides lookup methods by TypeId.
     /// </summary>
-    [CreateAssetMenu(fileName = "CurrencyTypeCatalog", menuName = "Economy/Currency Type Catalog")]
+    [CreateAssetMenu(fileName = "CurrencyTypeCatalog", menuName = "Knife Toss/Currency Type Catalog")]
     public class CurrencyTypeCatalog : ScriptableObject
     {
         [Tooltip("List of all currency type configurations")]
-        [SerializeField] private CurrencyTypeConfig[] _currencyTypes;
+        [SerializeField] private CollectibleCurrencyConfig[] _currencyTypes;
 
-        private Dictionary<string, CurrencyTypeConfig> _lookupCache;
+        private Dictionary<string, CollectibleCurrencyConfig> _lookupCache;
 
         /// <summary>
         /// Initializes the lookup cache if it hasn't been initialized yet.
@@ -22,7 +23,7 @@ namespace Common.Economy.Data
         {
             if (_lookupCache != null) return;
 
-            _lookupCache = new Dictionary<string, CurrencyTypeConfig>();
+            _lookupCache = new Dictionary<string, CollectibleCurrencyConfig>();
             if (_currencyTypes != null)
             {
                 foreach (var config in _currencyTypes)
@@ -46,8 +47,8 @@ namespace Common.Economy.Data
         /// Retrieves the configuration for a specific currency type ID.
         /// </summary>
         /// <param name="typeId">The unique identifier of the currency type.</param>
-        /// <returns>The CurrencyTypeConfig if found, otherwise null.</returns>
-        public CurrencyTypeConfig GetConfig(string typeId)
+        /// <returns>The CollectibleCurrencyConfig if found, otherwise null.</returns>
+        public CollectibleCurrencyConfig GetConfig(string typeId)
         {
             InitializeCache();
             if (_lookupCache.TryGetValue(typeId, out var config))
@@ -61,8 +62,8 @@ namespace Common.Economy.Data
         /// <summary>
         /// Returns a read-only list of all registered currency configurations.
         /// </summary>
-        /// <returns>List of CurrencyTypeConfig.</returns>
-        public IReadOnlyList<CurrencyTypeConfig> GetAllConfigs()
+        /// <returns>List of CollectibleCurrencyConfig.</returns>
+        public IReadOnlyList<CollectibleCurrencyConfig> GetAllConfigs()
         {
             return _currencyTypes;
         }

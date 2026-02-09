@@ -50,7 +50,7 @@ namespace Game.Debugging.Tabs
         /// </summary>
         protected static string GetFirstCurrencyId()
         {
-            var catalog = TryResolve<Common.Economy.Data.CurrencyTypeCatalog>(CurrentResolver);
+            var catalog = TryResolve<Game.Economy.Data.CurrencyTypeCatalog>(CurrentResolver);
             var configs = catalog?.GetAllConfigs();
             if (configs == null || configs.Count == 0) return string.Empty;
             var first = configs[0];

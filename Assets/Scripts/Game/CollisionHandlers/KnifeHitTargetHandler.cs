@@ -1,6 +1,5 @@
 using Common.Collision.Data;
 using Common.Collision.Logic;
-using Common.Economy.Data;
 using Common.Economy.Interfaces;
 using Common.Events;
 using Game.Economy.Interfaces;
@@ -90,12 +89,12 @@ namespace Game.CollisionHandlers
             if (!collectible.MarkAsHit())
                 return;
 
-            CurrencyTypeConfig currencyType = collectible.Config?.CollectibleCurrency?.CurrencyType;
-            if (currencyType == null || !_ValueProvider.HasType(currencyType.TypeId))
+            var collectibleCurrency = collectible.Config?.CollectibleCurrency;
+            if (collectibleCurrency == null || string.IsNullOrEmpty(collectibleCurrency.TypeId) || !_ValueProvider.HasType(collectibleCurrency.TypeId))
                 return;
 
-            int value = _ValueProvider.GetValue(currencyType.TypeId);
-            _CurrencyService.AddBalance(currencyType.TypeId, value);
+            int value = _ValueProvider.GetValue(collectibleCurrency.TypeId);
+            _CurrencyService.AddBalance(collectibleCurrency.TypeId, value);
 
             collectible.PlayHitFeedback();
             _CollectibleHitChannel.Raise(new CollectibleHitEventData(impactPoint, value));

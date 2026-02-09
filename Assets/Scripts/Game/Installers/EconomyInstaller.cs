@@ -1,6 +1,5 @@
-using Common.Economy.Data;
 using Common.Economy.Interfaces;
-using Common.Economy.Services;
+using Game.Economy.Data;
 using Game.Economy.Events;
 using Game.Economy.Interfaces;
 using Game.Economy.Services;

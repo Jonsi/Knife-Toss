@@ -11,6 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a8461eb743c7dde4dac7923194bac9e4, type: 3}
   m_Name: CurrencyTypeCatalog
-  m_EditorClassIdentifier: Common::Common.Economy.Data.CurrencyTypeCatalog
+  m_EditorClassIdentifier: Game::Game.Economy.Data.CurrencyTypeCatalog
   _currencyTypes:
-  - {fileID: 11400000, guid: 02c9b34be5dc56c44a7063c8f4ce485a, type: 2}
+  - {fileID: 11400000, guid: 1ca1d82dd804abf4bb79ebf4a4e90ecd, type: 2}
+  - {fileID: 11400000, guid: 120c28194366edb4dba251f55e37b8a2, type: 2}

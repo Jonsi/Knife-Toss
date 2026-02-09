@@ -1,4 +1,4 @@
-using Common.Economy.Data;
+using Game.Economy.Data;
 using Common.Events;
 using Game.Economy.Events;
 using Game.Feedback.Audio.Data;

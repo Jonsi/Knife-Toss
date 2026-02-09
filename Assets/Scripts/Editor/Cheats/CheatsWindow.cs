@@ -239,11 +239,11 @@ namespace Game.EditorTools
                     var economyCheats = GetEconomyCheats();
                     
                     // Dynamically find the currency ID from the catalog
-                    var catalog = Resources.Load<Common.Economy.Data.CurrencyTypeCatalog>("CurrencyTypeCatalog");
+                    var catalog = Resources.Load<Game.Economy.Data.CurrencyTypeCatalog>("CurrencyTypeCatalog");
                     if (catalog == null)
                     {
                         // Try alternative path if not in Resources root
-                        catalog = AssetDatabase.LoadAssetAtPath<Common.Economy.Data.CurrencyTypeCatalog>("Assets/Configurations/Currency/CurrencyTypeCatalog.asset");
+                        catalog = AssetDatabase.LoadAssetAtPath<Game.Economy.Data.CurrencyTypeCatalog>("Assets/Configurations/Currency/CurrencyTypeCatalog.asset");
                     }
 
                     var configs = catalog?.GetAllConfigs();

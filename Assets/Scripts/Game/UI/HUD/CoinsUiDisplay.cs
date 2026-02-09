@@ -1,4 +1,4 @@
-using Common.Economy.Data;
+using Game.Economy.Data;
 using Game.Economy.Events;
 using Game.Economy.Interfaces;
 using Game.Flow.Events;
