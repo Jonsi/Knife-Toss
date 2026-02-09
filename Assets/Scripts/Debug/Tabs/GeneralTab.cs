@@ -58,7 +58,7 @@ namespace Game.Debugging.Tabs
         }
 
         [Category("Progress")]
-        [DisplayName("Clear All Progress")]
+        [DisplayName("Reset All Player Data")]
         public void ClearProgress()
         {
             var resolver = CurrentResolver;

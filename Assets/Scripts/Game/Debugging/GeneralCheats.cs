@@ -1,5 +1,6 @@
 #if TEST_ENABLED
 using Game.Flow.Game;
+using Game.Persistence.Data;
 using Game.Persistence.Services;
 using Game.Persistence.Storage;
 using UnityEngine;
@@ -23,17 +24,12 @@ namespace Game.Debugging
             {
                 if (_gameData == null) return;
                 _gameData.Reset();
-                _playerDataService?.ForceSave();
+                _playerDataService?.ResetAllData();
             }
             else
             {
                 var store = new FilePlayerDataStore();
-                var data = store.Load();
-                if (data != null)
-                {
-                    data.Progress = new Game.Persistence.Data.PlayerProgressData();
-                    store.Save(data);
-                }
+                store.Save(new PlayerData());
             }
         }
     }

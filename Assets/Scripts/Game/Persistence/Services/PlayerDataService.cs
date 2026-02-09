@@ -125,6 +125,17 @@ namespace Game.Persistence.Services
             SaveNow();
         }
 
+        /// <summary>
+        /// Resets all persisted player data to defaults and syncs runtime state.
+        /// </summary>
+        public void ResetAllData()
+        {
+            _CachedData = new PlayerData();
+            EnsureDataIntegrity();
+            SyncGameData();
+            SaveNow();
+        }
+
         private void MigrateFromLegacyStructure()
         {
             if (_CachedData.Resources == null)
