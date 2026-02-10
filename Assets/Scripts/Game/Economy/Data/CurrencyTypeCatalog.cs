@@ -8,7 +8,7 @@ namespace Game.Economy.Data
     /// Registry of all available currency types in the project.
     /// Provides lookup methods by TypeId.
     /// </summary>
-    [CreateAssetMenu(fileName = "CurrencyTypeCatalog", menuName = "Knife Toss/Currency Type Catalog")]
+    [CreateAssetMenu(fileName = "CurrencyTypeCatalog", menuName = "Knife Toss/Systems/Economy/Currency Type Catalog")]
     public class CurrencyTypeCatalog : ScriptableObject
     {
         [Tooltip("List of all currency type configurations")]

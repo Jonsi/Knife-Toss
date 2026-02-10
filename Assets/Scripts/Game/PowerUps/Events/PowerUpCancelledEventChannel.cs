@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Game.PowerUps.Events
 {
-    [CreateAssetMenu(fileName = "PowerUpCancelledEventChannel", menuName = "Knife Toss/Events/PowerUp Cancelled Event Channel")]
+    [CreateAssetMenu(fileName = "PowerUpCancelledEventChannel", menuName = "Knife Toss/Events/Power Ups/Power Up Cancelled")]
     public class PowerUpCancelledEventChannel : EventChannel<PowerUpCancelledEventData>
     {
     }

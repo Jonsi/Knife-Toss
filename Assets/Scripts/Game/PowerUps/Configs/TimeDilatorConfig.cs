@@ -8,7 +8,7 @@ namespace Game.PowerUps.Configs
     /// <summary>
     /// Configuration for the Time Dilator power-up that slows target rotation.
     /// </summary>
-    [CreateAssetMenu(fileName = "TimeDilatorConfig", menuName = "Knife Toss/Power Ups/Time Dilator Config")]
+    [CreateAssetMenu(fileName = "TimeDilatorConfig", menuName = "Knife Toss/Systems/Power Ups/Time Dilator Config")]
     public class TimeDilatorConfig : PowerUpConfigBase, IPowerUpEffect, IWorldEffectPowerUp
     {
         [field: SerializeField, Min(0.01f)] public float Duration { get; private set; } = 5f;

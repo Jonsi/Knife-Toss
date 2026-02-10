@@ -5,7 +5,7 @@ namespace Common.Services.RemoteConfig
     /// <summary>
     /// Settings for the remote configuration service.
     /// </summary>
-    [CreateAssetMenu(fileName = "RemoteConfigSettings", menuName = "Knife Toss/Remote Config/Settings")]
+    [CreateAssetMenu(fileName = "RemoteConfigSettings", menuName = "Knife Toss/Settings/Remote Config Settings")]
     public class RemoteConfigSettings : ScriptableObject
     {
         /// <summary>

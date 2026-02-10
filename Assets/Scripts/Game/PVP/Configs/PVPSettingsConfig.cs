@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Game.PVP.Configs
 {
-    [CreateAssetMenu(fileName = "PVPSettingsConfig", menuName = "KnifeToss/PVP/Settings Config")]
+    [CreateAssetMenu(fileName = "PVPSettingsConfig", menuName = "Knife Toss/PVP/Settings Config")]
     public class PVPSettingsConfig : ScriptableObject
     {
         [Header("Target Settings")]

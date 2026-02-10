@@ -10,7 +10,7 @@ namespace Game.Pooling
     /// Centralized registry of prefabs and their pooling settings.
     /// Uses explicit lists per entry type to keep inspector workflows simple.
     /// </summary>
-    [CreateAssetMenu(fileName = "PrefabsConfiguration", menuName = "Knife Toss/Prefabs/Prefabs Configuration")]
+    [CreateAssetMenu(fileName = "PrefabsConfiguration", menuName = "Knife Toss/Core/Prefabs Configuration")]
     public class PrefabsConfiguration : ScriptableObject
     {
         [Header("Knives")]

@@ -7,7 +7,7 @@ namespace Game.Entities.Collectible.Data
     /// Single config per collectible type: prefab, sprite, and currency data (TypeId and default value).
     /// One asset per type (e.g. tomato, lemon); referenced by CollectibleConfig for placement.
     /// </summary>
-    [CreateAssetMenu(fileName = "CollectibleCurrency", menuName = "Knife Toss/Collectible Currency Config")]
+    [CreateAssetMenu(fileName = "CollectibleCurrency", menuName = "Knife Toss/Systems/Economy/Collectible Currency Config")]
     public class CollectibleCurrencyConfig : ScriptableObject
     {
         [Header("Visual")]

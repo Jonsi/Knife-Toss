@@ -5,7 +5,7 @@ namespace Game.Feedback.Animation.Data
     /// <summary>
     /// Configuration for target hit animation feedback.
     /// </summary>
-    [CreateAssetMenu(fileName = "TargetHitAnimationConfig", menuName = "Knife Toss/Animations/Target Hit Animation Config")]
+    [CreateAssetMenu(fileName = "TargetHitAnimationConfig", menuName = "Knife Toss/Systems/Animation/Target Hit")]
     public class TargetHitAnimationConfig : ScriptableObject
     {
         [field: SerializeField] public float ShakeDuration { get; private set; } = 0.25f;

@@ -8,7 +8,7 @@ namespace Common.Events
     /// <summary>
     /// Event channel for void events (no data passed).
     /// </summary>
-    [CreateAssetMenu(fileName = "VoidEventChannel", menuName = "Knife Toss/Events/Void Event Channel")]
+    [CreateAssetMenu(fileName = "VoidEventChannel", menuName = "Knife Toss/Events/Common/Void")]
     public class VoidEventChannel : ScriptableObject, IEventChannel
     {
         private readonly Dictionary<object, Action> _subscriptions = new();

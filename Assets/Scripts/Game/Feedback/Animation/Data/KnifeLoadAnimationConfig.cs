@@ -5,7 +5,7 @@ namespace Game.Feedback.Animation.Data
     /// <summary>
     /// Configuration for knife spawn/load animation.
     /// </summary>
-    [CreateAssetMenu(fileName = "KnifeLoadAnimationConfig", menuName = "Knife Toss/Animations/Knife Load Animation Config")]
+    [CreateAssetMenu(fileName = "KnifeLoadAnimationConfig", menuName = "Knife Toss/Systems/Animation/Knife Load")]
     public class KnifeLoadAnimationConfig : ScriptableObject
     {
         [field: SerializeField] public float Duration { get; private set; } = 0.3f;

@@ -7,7 +7,7 @@ namespace Game.PowerUps.Configs
     /// <summary>
     /// Configuration for the Knife Aim power-up that allows aiming knives toward input position.
     /// </summary>
-    [CreateAssetMenu(fileName = "KnifeAimConfig", menuName = "Knife Toss/Power Ups/Knife Aim Config")]
+    [CreateAssetMenu(fileName = "KnifeAimConfig", menuName = "Knife Toss/Systems/Power Ups/Knife Aim Config")]
     public class KnifeAimConfig : PowerUpConfigBase, IProjectilePowerUp, ICancellablePowerUp
     {
         [field: SerializeField] public float ThrowSpeed { get; private set; } = 10f;

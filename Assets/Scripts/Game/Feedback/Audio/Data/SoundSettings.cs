@@ -5,7 +5,7 @@ namespace Game.Feedback.Audio.Data
     /// <summary>
     /// Stores audio clips used by gameplay feedback systems.
     /// </summary>
-    [CreateAssetMenu(fileName = "SoundSettings", menuName = "Knife Toss/Audio/Sound Settings")]
+    [CreateAssetMenu(fileName = "SoundSettings", menuName = "Knife Toss/Systems/Audio/Sound Settings")]
     public class SoundSettings : ScriptableObject
     {
         [Header("Knife")]

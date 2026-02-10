@@ -7,7 +7,7 @@ namespace Game.Store.Data
     /// <summary>
     /// Catalog containing all configured store entries.
     /// </summary>
-    [CreateAssetMenu(fileName = "StoreCatalog", menuName = "Knife Toss/Store/Store Catalog")]
+    [CreateAssetMenu(fileName = "StoreCatalog", menuName = "Knife Toss/Systems/Store/Store Catalog")]
     public class StoreCatalog : ScriptableObject
     {
         [field: SerializeField] public List<PurchasableEntry> PowerUps { get; private set; } = new List<PurchasableEntry>();

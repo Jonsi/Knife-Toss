@@ -7,7 +7,7 @@ namespace Game.PowerUps.Events
     /// <summary>
     /// Event channel raised when a power-up is activated.
     /// </summary>
-    [CreateAssetMenu(fileName = "PowerUpActivatedEventChannel", menuName = "Knife Toss/Power Ups/Power Up Activated Event Channel")]
+    [CreateAssetMenu(fileName = "PowerUpActivatedEventChannel", menuName = "Knife Toss/Events/Power Ups/Power Up Activated")]
     public class PowerUpActivatedEventChannel : EventChannel<PowerUpActivatedEventData>
     {
     }

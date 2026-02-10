@@ -7,7 +7,7 @@ namespace Common.Collision.Events
     /// <summary>
     /// ScriptableObject event channel for collision events.
     /// </summary>
-    [CreateAssetMenu(fileName = "CollisionEventChannel", menuName = "Knife Toss/Events/Collision Event Channel")]
+    [CreateAssetMenu(fileName = "CollisionEventChannel", menuName = "Knife Toss/Events/Common/Collision")]
     public class CollisionEventChannel : EventChannel<CollisionData>
     {
     }

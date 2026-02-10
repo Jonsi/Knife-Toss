@@ -6,7 +6,7 @@ namespace Game.PowerUps.Configs
     /// <summary>
     /// Configuration for the Multiple Knives power-up.
     /// </summary>
-    [CreateAssetMenu(fileName = "MultipleKnivesConfig", menuName = "Knife Toss/Power Ups/Multiple Knives Config")]
+    [CreateAssetMenu(fileName = "MultipleKnivesConfig", menuName = "Knife Toss/Systems/Power Ups/Multiple Knives Config")]
     public class MultipleKnivesConfig : PowerUpConfigBase, IProjectilePowerUp, ICancellablePowerUp
     {
         [field: SerializeField, Min(1)] public int KnifeCount { get; private set; } = 3;

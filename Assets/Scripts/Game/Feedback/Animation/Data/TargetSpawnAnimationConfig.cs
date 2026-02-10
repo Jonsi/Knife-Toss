@@ -7,7 +7,7 @@ namespace Game.Feedback.Animation.Data
     /// Configuration for the target spawn/enter animation.
     /// Controls scale pop animation.
     /// </summary>
-    [CreateAssetMenu(fileName = "TargetSpawnAnimationConfig", menuName = "Knife Toss/Animations/Target Spawn Animation Config")]
+    [CreateAssetMenu(fileName = "TargetSpawnAnimationConfig", menuName = "Knife Toss/Systems/Animation/Target Spawn")]
     public class TargetSpawnAnimationConfig : ScriptableObject
     {
         [field: SerializeField, Min(0f), Tooltip("Duration of the pop-out scale-up stage (seconds).")]

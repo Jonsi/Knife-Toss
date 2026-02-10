@@ -5,7 +5,7 @@ namespace Game.Feedback.Animation.Data
     /// <summary>
     /// Generic configuration for sprite shatter animation behavior.
     /// </summary>
-    [CreateAssetMenu(fileName = "SpriteShatterAnimationConfig", menuName = "Knife Toss/Animations/Shatter Animation Config")]
+    [CreateAssetMenu(fileName = "SpriteShatterAnimationConfig", menuName = "Knife Toss/Systems/Animation/Shatter")]
     public class SpriteShatterAnimationConfig : ScriptableObject
     {
         [field: SerializeField, Tooltip("Randomized number of shards spawned when the sprite shatters (inclusive range).")]
@@ -48,7 +48,7 @@ namespace Game.Feedback.Animation.Data
     /// <summary>
     /// Backward-compatible configuration asset for target shatter animations.
     /// </summary>
-    [CreateAssetMenu(fileName = "TargetShatterAnimationConfig", menuName = "Knife Toss/Animations/Target Shatter Animation Config")]
+    [CreateAssetMenu(fileName = "TargetShatterAnimationConfig", menuName = "Knife Toss/Systems/Animation/Target Shatter")]
     public class TargetShatterAnimationConfig : SpriteShatterAnimationConfig
     {
     }
