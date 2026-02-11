@@ -1,5 +1,6 @@
 using Game.Store.Data;
 using Game.Store.Events;
+using Game.UI.Store;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -19,9 +20,23 @@ namespace Game.Installers
         [SerializeField] private PurchaseCompletedEventChannel _PurchaseCompletedEventChannel;
         [SerializeField] private PurchaseFailedEventChannel _PurchaseFailedEventChannel;
 
+        [Header("Scene References")]
+        [SerializeField] private StoreMenuController _StoreMenuController;
+        [SerializeField] private StorePurchaseFeedbackPresenter _StorePurchaseFeedbackPresenter;
+
         protected override void Configure(IContainerBuilder builder)
         {
             Install(builder, CreateStoreInstaller());
+
+            if (_StoreMenuController != null)
+            {
+                builder.RegisterComponent(_StoreMenuController);
+            }
+
+            if (_StorePurchaseFeedbackPresenter != null)
+            {
+                builder.RegisterComponent(_StorePurchaseFeedbackPresenter);
+            }
         }
 
         private static void Install(IContainerBuilder builder, IInstaller installer)
