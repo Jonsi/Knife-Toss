@@ -1,177 +1,233 @@
 # Store System Setup Guide
 
-This guide explains how to set up the new Store system and how to create purchasable items in Unity.
+This guide only covers the required setup steps, in the order they should be done.
 
-## 1. What Was Added
+## 1. Create Core Assets First
 
-Store scripts were added under:
-
-- `Assets/Scripts/Game/Store/Attributes`
-- `Assets/Scripts/Game/Store/Data`
-- `Assets/Scripts/Game/Store/Events`
-- `Assets/Scripts/Game/Store/Interfaces`
-- `Assets/Scripts/Game/Store/Rewards`
-- `Assets/Scripts/Game/Store/Services`
-- `Assets/Scripts/Game/Installers/StoreInstaller.cs`
-- `Assets/Scripts/Editor/Drawers/SerializeReferenceDropdownDrawer.cs`
-
-## 2. Create Required Assets
-
-Create these ScriptableObject assets in Unity:
+Create these ScriptableObjects before touching the scene:
 
 1. `StoreCatalog`
    - Menu: `Create > Knife Toss > Store > Store Catalog`
-2. Purchase event channels:
-   - `PurchaseStartedEventChannel`
-     - Menu: `Create > Knife Toss > Events > Purchase Started Event Channel`
-   - `PurchaseCompletedEventChannel`
-     - Menu: `Create > Knife Toss > Events > Purchase Completed Event Channel`
-   - `PurchaseFailedEventChannel`
-     - Menu: `Create > Knife Toss > Events > Purchase Failed Event Channel`
+2. `PurchaseStartedEventChannel`
+   - Menu: `Create > Knife Toss > Events > Purchase Started Event Channel`
+3. `PurchaseCompletedEventChannel`
+   - Menu: `Create > Knife Toss > Events > Purchase Completed Event Channel`
+4. `PurchaseFailedEventChannel`
+   - Menu: `Create > Knife Toss > Events > Purchase Failed Event Channel`
 
-Recommended folder:
+Recommended folders:
 
 - `Assets/Configurations/Store/StoreCatalog.asset`
-- `Assets/Configurations/EventChannels/Store/PurchaseStartedEventChannel.asset`
-- `Assets/Configurations/EventChannels/Store/PurchaseCompletedEventChannel.asset`
-- `Assets/Configurations/EventChannels/Store/PurchaseFailedEventChannel.asset`
+- `Assets/Configurations/EventChannels/Store/`
 
-## 3. Register StoreInstaller in a Scene
+## 2. Create Knife Skin Configs
 
-`StoreInstaller` exists but is not auto-wired yet. Add it from your scene `LifetimeScope` (for example `StageInstaller` or a dedicated Store scene installer).
+Create a `KnifeSkinConfig` asset for each purchasable skin before configuring store entries.
 
-Example pattern (inside `Configure`):
+Each `KnifeSkinConfig` needs:
 
-```csharp
-Install(builder, new StoreInstaller(
-    _StoreCatalog,
-    _PurchaseStartedEventChannel,
-    _PurchaseCompletedEventChannel,
-    _PurchaseFailedEventChannel));
-```
-
-You need serialized fields on the scene installer for:
-
-- `StoreCatalog _StoreCatalog`
-- `PurchaseStartedEventChannel _PurchaseStartedEventChannel`
-- `PurchaseCompletedEventChannel _PurchaseCompletedEventChannel`
-- `PurchaseFailedEventChannel _PurchaseFailedEventChannel`
-
-After this, `IPurchaseService` is available for injection.
-
-## 4. How to Create Store Items
-
-Open your `StoreCatalog` asset and configure entries in:
-
-- `Power Ups`
-- `Currency Packs`
-- `Skins`
-
-Each `PurchasableEntry` has:
-
-- `Display Name`
-- `Description`
+- `Id` (stable unique id, e.g. `fire_blade`)
 - `Icon`
-- `Price`:
-  - `Currency Id` (example: `coins`)
+
+The icon for a skin should come from `KnifeSkinConfig`.
+Only the `Id` is saved to player data when the skin is unlocked.
+
+## 3. Configure Store Items In StoreCatalog
+
+Open `StoreCatalog` and fill these sections:
+
+- `Skins`
+- `PowerUps`
+
+Each item (`PurchasableEntry`) needs:
+
+- `Price`
+  - `Currency` (`CurrencyType` enum, not a string)
   - `Amount`
-- `Reward` (SerializeReference dropdown)
+- `Reward`
 
-### Reward Types Available
-
-From the `Reward` dropdown you can choose:
+Reward types currently available:
 
 1. `PowerUpReward`
-   - `Config`: assign a `PowerUpConfigBase` asset (for example `SuperKnifeConfig`)
-   - `Quantity`: amount to add to inventory
+   - Assign `Config`
+   - Set `Quantity`
 2. `CurrencyReward`
-   - `Currency Id`: currency to grant
-   - `Amount`: amount to grant
+   - Set `Currency`
+   - Set `Amount`
+3. `KnifeSkinReward`
+   - Assign `KnifeSkinConfig`
+   - Optional: enable `AutoEquipOnPurchase`
 
-### Price Rules
+Do this before creating the scene so the UI has real data to bind to.
 
-A purchase is treated as free if:
+## 4. Create UI Prefabs
 
-- `Amount <= 0`, or
-- `Currency Id` is empty
+Create the card prefabs directly.
 
-Otherwise the service checks affordability and spends currency before granting reward.
+The price pill is not a separate prefab or component.
+It is a serializable nested binding inside `StoreCardView`.
 
-## 5. Example Item Configurations
+### 4.1 KnifeSkinStoreCardView
 
-### Example A: Buy Power-Up with Coins
+Create a knife skin card prefab with:
 
-- Display Name: `Super Knife x1`
-- Price:
-  - Currency Id: `coins`
-  - Amount: `20`
-- Reward: `PowerUpReward`
-  - Config: `SuperKnifeConfig`
-  - Quantity: `1`
+- visual art/layout you want
+- a price pill area inside the prefab
+  - `AmountText`
+- `BuyButton`
+- `IconImage`
+- `ShadowImage` (back/shadow image)
+- `KnifeSkinStoreCardView` component
 
-### Example B: Currency Pack Purchase
+`KnifeSkinStoreCardView` inherits from the abstract base `StoreCardView`.
 
-- Display Name: `Orange Pack`
-- Price:
-  - Currency Id: `coins`
-  - Amount: `100`
-- Reward: `CurrencyReward`
-  - Currency Id: `orange`
-  - Amount: `10`
+Assign:
 
-### Example C: Free Reward
+- `PricePill.AmountText`
+- `IconImage`
+- `ShadowImage`
+- `BuyButton`
 
-- Display Name: `Daily Gift`
-- Price:
-  - Currency Id: ``
-  - Amount: `0`
-- Reward: `CurrencyReward`
-  - Currency Id: `coins`
-  - Amount: `25`
+Save as:
 
-## 6. How UI Should Use the System
+- `Assets/Prefabs/UI/Store/KnifeSkinStoreCardView.prefab`
 
-Inject into your Store UI controller:
+### 4.2 PowerUpStoreCardView
+
+Create a power-up card prefab with:
+
+- visual art/layout you want
+- a price pill area inside the prefab
+  - `AmountText`
+- `BuyButton`
+- `IconImage`
+- `ShadowImage` (back/shadow image)
+- `RewardAmountText` (for the granted amount, e.g. `+5`)
+- `PowerUpStoreCardView` component
+
+`PowerUpStoreCardView` inherits from the abstract base `StoreCardView`.
+
+Assign:
+
+- `PricePill.AmountText`
+- `IconImage`
+- `ShadowImage`
+- `RewardAmountText`
+- `BuyButton`
+
+Save as:
+
+- `Assets/Prefabs/UI/Store/PowerUpStoreCardView.prefab`
+
+Important:
+
+- The card prefab owns the image references.
+- `KnifeSkinStoreCardView` sets the images from `KnifeSkinReward.Config.Icon`.
+- `PowerUpStoreCardView` sets the images from `PowerUpReward.Config.Icon`.
+- `PowerUpStoreCardView` sets `RewardAmountText` from `PowerUpReward.Quantity`.
+
+## 5. Build The Store Scene
+
+After assets and prefabs exist, create the Store scene.
+
+1. Create or open `Assets/Scenes/Store.unity`
+2. Add a root object with `StoreSceneInstaller`
+3. Add a `Canvas`
+4. Create these scene elements:
+   - `BalanceChip` with `StoreBalanceChipView`
+   - `KnifeSkinsContentRoot`
+   - `PowerUpsContentRoot`
+   - `CloseButton`
+   - `StoreMenuController` component
+
+Recommended structure:
+
+- `StoreRoot`
+  - `Header`
+    - `BalanceChip`
+  - `KnifeSkinsSection`
+    - `KnifeSkinsContentRoot`
+  - `PowerUpsSection`
+    - `PowerUpsContentRoot`
+  - `BottomActions`
+    - `CloseButton`
+
+## 6. Wire The Scene
+
+### 6.1 StoreSceneInstaller
+
+Assign:
 
 - `StoreCatalog`
-- `IPurchaseService`
-- Optional purchase event channels for feedback
+- `PurchaseStartedEventChannel`
+- `PurchaseCompletedEventChannel`
+- `PurchaseFailedEventChannel`
+- `StoreMenuController`
 
-Basic flow:
+### 6.2 StoreMenuController
 
-1. Render catalog entries.
-2. On buy click: `await _PurchaseService.TryPurchaseAsync(entry)`.
-3. Use returned `PurchaseResult` and/or event channels to show success/failure/loading.
-4. Disable buy buttons while `IsPurchaseInProgress` is true.
+Assign:
 
-## 7. Events Raised During Purchase
+- `KnifeSkinCardPrefab`
+- `KnifeSkinsContentRoot`
+- `PowerUpCardPrefab`
+- `PowerUpsContentRoot`
+- `CloseButton`
 
-- `PurchaseStartedEventChannel` when purchase begins
-- `PurchaseCompletedEventChannel` when reward grant succeeds
-- `PurchaseFailedEventChannel` when validation/spend/grant fails
+### 6.3 StoreBalanceChipView
 
-Failure reason is provided in `PurchaseFailedEventData.Reason`.
+Assign:
 
-## 8. Validation Checklist
+- `BalanceText`
+- Optional `Currency`
 
-Use this quick pass after setup:
+If `Currency` is `None`, it uses the first currency from `CurrencyTypeCatalog`.
 
-1. Purchase succeeds when enough balance exists.
-2. Purchase fails with insufficient funds and does not grant reward.
-3. Free item grants without balance check.
-4. Currency is refunded if reward grant throws an exception.
-5. Only one purchase runs at a time (`IsPurchaseInProgress`).
-6. Purchase events fire and UI reacts correctly.
+## 7. How It Works At Runtime
+
+Once wired:
+
+1. `StoreSceneInstaller` registers the store services and controller.
+2. `StoreMenuController` instantiates:
+   - knife skin cards from `StoreCatalog.Skins`
+   - power-up cards from `StoreCatalog.PowerUps`
+3. Each card calls `IPurchaseService.TryPurchaseAsync(...)` when bought.
+4. `KnifeSkinReward` saves the unlocked skin id into persistent player data.
+5. `StoreBalanceChipView` updates itself from the currency service and balance changed events.
+
+## 8. Quick Validation
+
+Check these after setup:
+
+1. Skin cards appear under `KnifeSkinsContentRoot`
+2. Power-up cards appear under `PowerUpsContentRoot`
+3. Prices are visible on both card types
+4. Clicking buy triggers a purchase
+5. Balance chip updates after a successful purchase
+6. Buttons disable while a purchase is in progress
+7. Purchased skins become non-purchasable after unlock
 
 ## 9. Troubleshooting
 
-1. Reward dropdown is missing in inspector:
-   - Confirm field is `[SerializeReference]` with `[SerializeReferenceDropdown]`.
-   - Confirm file exists: `Assets/Scripts/Editor/Drawers/SerializeReferenceDropdownDrawer.cs`.
-2. Purchase service cannot be resolved:
-   - Confirm `StoreInstaller` is installed in active scene scope.
-3. Purchase always fails affordability:
-   - Verify `Price.CurrencyId` matches an ID used by `CurrencyTypeCatalog`.
-4. Power-up reward does nothing:
-   - Verify `PowerUpReward.Config` is assigned and has a non-empty `InventoryKey`.
-
+1. No cards appear
+   - Check the correct prefab is assigned on `StoreMenuController`
+   - Check the content roots are assigned
+   - Check the catalog section actually has entries
+2. Prices do not show
+   - Check `PricePill.AmountText` is assigned on the card prefab
+3. Card icon is missing
+   - Check `IconImage` is assigned on the card prefab
+   - Check `ShadowImage` is assigned if you expect the back/shadow image to update
+   - Check the reward config has a valid icon
+4. Power-up reward amount is not shown
+   - Check `RewardAmountText` is assigned on the power-up card prefab
+   - Check the store entry uses `PowerUpReward`
+5. Buy does nothing
+   - Check `BuyButton` is assigned on the card prefab
+   - Check the item has a valid `Reward`
+6. Balance chip does not update
+   - Check `BalanceText` is assigned
+   - Check the currency services are available in the parent scope
+7. Skin can still be bought after purchase
+   - Check the store entry uses `KnifeSkinReward`
+   - Check `KnifeSkinConfig.Id` is set

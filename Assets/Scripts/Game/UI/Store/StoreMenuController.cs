@@ -1,15 +1,12 @@
-using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using Game.Economy.Data;
-using Game.Economy.Events;
-using Game.Economy.Interfaces;
 using Game.Flow.Game;
+using Game.Persistence.Services;
 using Game.Store.Data;
 using Game.Store.Events;
 using Game.Store.Interfaces;
+using Game.Store.Rewards;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 using VContainer;
 
@@ -21,63 +18,45 @@ namespace Game.UI.Store
     public class StoreMenuController : MonoBehaviour
     {
         [Header("Store UI")]
-        [field: SerializeField] public StoreBalanceChipView BalanceChipView { get; private set; }
-        [field: SerializeField] public StoreCardView[] FeaturedItemSlots { get; private set; }
-        [field: SerializeField] public StoreCardView[] PowerUpItemSlots { get; private set; }
-        [field: SerializeField] public StoreAdCtaView BottomAdCtaView { get; private set; }
+        [field: SerializeField] public KnifeSkinStoreCardView KnifeSkinCardPrefab { get; private set; }
+        [field: SerializeField] public Transform KnifeSkinsContentRoot { get; private set; }
+        [field: SerializeField] public PowerUpStoreCardView PowerUpCardPrefab { get; private set; }
+        [field: SerializeField] public Transform PowerUpsContentRoot { get; private set; }
         [field: SerializeField] public Button CloseButton { get; private set; }
-
-        [Header("Feedback")]
-        [field: SerializeField] public StorePurchaseFeedbackPresenter FeedbackPresenter { get; private set; }
-
-        [Header("Ad Hooks")]
-        [field: SerializeField] public int WatchAdRewardAmount { get; private set; } = 50;
-        [field: SerializeField] public UnityEvent OnBottomAdClicked { get; private set; }
-        [field: SerializeField] public UnityEvent OnPowerUpAdClicked { get; private set; }
-
-        [Header("Currency")]
-        [field: SerializeField] public string PrimaryCurrencyId { get; private set; }
 
         private StoreCatalog _StoreCatalog;
         private IPurchaseService _PurchaseService;
-        private ICurrencyService _CurrencyService;
-        private CurrencyTypeCatalog _CurrencyTypeCatalog;
+        private PlayerDataService _PlayerDataService;
         private SceneLoaderService _SceneLoaderService;
         private PurchaseStartedEventChannel _PurchaseStartedChannel;
         private PurchaseCompletedEventChannel _PurchaseCompletedChannel;
         private PurchaseFailedEventChannel _PurchaseFailedChannel;
-        private CurrencyBalanceChangedEventChannel _CurrencyBalanceChangedChannel;
+        private readonly List<SpawnedCardBinding> _KnifeSkinBindings = new List<SpawnedCardBinding>();
+        private readonly List<SpawnedCardBinding> _PowerUpBindings = new List<SpawnedCardBinding>();
 
         [Inject]
         private void Construct(
             StoreCatalog storeCatalog,
             IPurchaseService purchaseService,
-            ICurrencyService currencyService,
-            CurrencyTypeCatalog currencyTypeCatalog,
+            PlayerDataService playerDataService,
             SceneLoaderService sceneLoaderService,
             PurchaseStartedEventChannel purchaseStartedChannel,
             PurchaseCompletedEventChannel purchaseCompletedChannel,
-            PurchaseFailedEventChannel purchaseFailedChannel,
-            CurrencyBalanceChangedEventChannel currencyBalanceChangedChannel)
+            PurchaseFailedEventChannel purchaseFailedChannel)
         {
             _StoreCatalog = storeCatalog;
             _PurchaseService = purchaseService;
-            _CurrencyService = currencyService;
-            _CurrencyTypeCatalog = currencyTypeCatalog;
+            _PlayerDataService = playerDataService;
             _SceneLoaderService = sceneLoaderService;
             _PurchaseStartedChannel = purchaseStartedChannel;
             _PurchaseCompletedChannel = purchaseCompletedChannel;
             _PurchaseFailedChannel = purchaseFailedChannel;
-            _CurrencyBalanceChangedChannel = currencyBalanceChangedChannel;
         }
 
         private void Start()
         {
             BindCloseButton();
-            BindBottomAdCta();
             BindCatalog();
-            ResolvePrimaryCurrencyId();
-            RefreshBalance();
             RefreshInteractableState();
         }
 
@@ -86,7 +65,6 @@ namespace Game.UI.Store
             _PurchaseStartedChannel?.Subscribe(OnPurchaseStarted);
             _PurchaseCompletedChannel?.Subscribe(OnPurchaseCompleted);
             _PurchaseFailedChannel?.Subscribe(OnPurchaseFailed);
-            _CurrencyBalanceChangedChannel?.Subscribe(OnCurrencyChanged);
         }
 
         private void OnDisable()
@@ -94,7 +72,6 @@ namespace Game.UI.Store
             _PurchaseStartedChannel?.Unsubscribe(OnPurchaseStarted);
             _PurchaseCompletedChannel?.Unsubscribe(OnPurchaseCompleted);
             _PurchaseFailedChannel?.Unsubscribe(OnPurchaseFailed);
-            _CurrencyBalanceChangedChannel?.Unsubscribe(OnCurrencyChanged);
 
             if (CloseButton != null)
             {
@@ -113,95 +90,68 @@ namespace Game.UI.Store
             CloseButton.onClick.AddListener(OnCloseClicked);
         }
 
-        private void BindBottomAdCta()
-        {
-            BottomAdCtaView?.Setup(WatchAdRewardAmount, OnBottomAdPressed);
-        }
-
         private void BindCatalog()
         {
-            BindFeaturedItems(_StoreCatalog?.CurrencyPacks);
-            BindPowerUpItems(_StoreCatalog?.PowerUps);
+            BindKnifeSkinEntries(_StoreCatalog?.Skins);
+            BindPowerUpEntries(_StoreCatalog?.PowerUps);
         }
 
-        private void BindFeaturedItems(IReadOnlyList<PurchasableEntry> entries)
+        private void BindKnifeSkinEntries(IReadOnlyList<PurchasableEntry> entries)
         {
-            var slots = FeaturedItemSlots ?? Array.Empty<StoreCardView>();
-            for (var i = 0; i < slots.Length; i++)
-            {
-                var slot = slots[i];
-                if (slot == null)
-                {
-                    continue;
-                }
-
-                var entry = entries != null && i < entries.Count ? entries[i] : null;
-                slot.Setup(entry, WatchAdRewardAmount, false, OnBuyClicked, OnPowerUpAdPressed);
-            }
+            BindEntries(entries, KnifeSkinsContentRoot, KnifeSkinCardPrefab, _KnifeSkinBindings);
         }
 
-        private void BindPowerUpItems(IReadOnlyList<PurchasableEntry> entries)
+        private void BindPowerUpEntries(IReadOnlyList<PurchasableEntry> entries)
         {
-            var slots = PowerUpItemSlots ?? Array.Empty<StoreCardView>();
-            for (var i = 0; i < slots.Length; i++)
-            {
-                var slot = slots[i];
-                if (slot == null)
-                {
-                    continue;
-                }
-
-                var entry = entries != null && i < entries.Count ? entries[i] : null;
-                slot.Setup(entry, WatchAdRewardAmount, true, OnBuyClicked, OnPowerUpAdPressed);
-            }
+            BindEntries(entries, PowerUpsContentRoot, PowerUpCardPrefab, _PowerUpBindings);
         }
 
-        private void ResolvePrimaryCurrencyId()
+        private void BindEntries<TCard>(
+            IReadOnlyList<PurchasableEntry> entries,
+            Transform parent,
+            TCard prefab,
+            List<SpawnedCardBinding> bindings)
+            where TCard : StoreCardView
         {
-            if (!string.IsNullOrEmpty(PrimaryCurrencyId))
+            bindings.Clear();
+
+            if (parent == null || prefab == null)
             {
                 return;
             }
 
-            var currencies = _CurrencyTypeCatalog?.GetAllConfigs();
-            if (currencies != null && currencies.Count > 0 && currencies[0] != null)
-            {
-                PrimaryCurrencyId = currencies[0].TypeId;
-            }
-        }
+            ClearChildren(parent);
 
-        private void RefreshBalance()
-        {
-            if (_CurrencyService == null || string.IsNullOrEmpty(PrimaryCurrencyId))
+            if (entries == null)
             {
                 return;
             }
 
-            var balance = _CurrencyService.GetBalance(PrimaryCurrencyId);
-            BalanceChipView?.SetBalance(balance);
+            for (var i = 0; i < entries.Count; i++)
+            {
+                var entry = entries[i];
+                if (entry == null)
+                {
+                    continue;
+                }
+
+                var card = Instantiate(prefab, parent);
+                card.Setup(entry, OnBuyClicked);
+                bindings.Add(new SpawnedCardBinding
+                {
+                    Card = card,
+                    Entry = entry
+                });
+            }
+
+            RefreshOwnedState();
         }
 
         private void RefreshInteractableState()
         {
             var canInteract = _PurchaseService == null || !_PurchaseService.IsPurchaseInProgress;
-
-            if (FeaturedItemSlots != null)
-            {
-                foreach (var slot in FeaturedItemSlots)
-                {
-                    slot?.SetInteractable(canInteract);
-                }
-            }
-
-            if (PowerUpItemSlots != null)
-            {
-                foreach (var slot in PowerUpItemSlots)
-                {
-                    slot?.SetInteractable(canInteract);
-                }
-            }
-
-            BottomAdCtaView?.SetInteractable(canInteract);
+            SetBindingsInteractable(_KnifeSkinBindings, canInteract);
+            SetBindingsInteractable(_PowerUpBindings, canInteract);
             if (CloseButton != null)
             {
                 CloseButton.interactable = canInteract;
@@ -226,32 +176,18 @@ namespace Game.UI.Store
 
         private void OnPurchaseStarted(PurchaseStartedEventData _)
         {
-            FeedbackPresenter?.ShowLoading(true);
             RefreshInteractableState();
         }
 
         private void OnPurchaseCompleted(PurchaseCompletedEventData _)
         {
-            FeedbackPresenter?.ShowLoading(false);
-            FeedbackPresenter?.ShowSuccess("Purchase successful");
-            RefreshBalance();
+            RefreshOwnedState();
             RefreshInteractableState();
         }
 
-        private void OnPurchaseFailed(PurchaseFailedEventData data)
+        private void OnPurchaseFailed(PurchaseFailedEventData _)
         {
-            FeedbackPresenter?.ShowLoading(false);
-            FeedbackPresenter?.ShowError(data.Reason);
-            RefreshBalance();
             RefreshInteractableState();
-        }
-
-        private void OnCurrencyChanged(CurrencyBalanceChangedEventData data)
-        {
-            if (!string.IsNullOrEmpty(PrimaryCurrencyId) && data.CurrencyId == PrimaryCurrencyId)
-            {
-                BalanceChipView?.SetBalance(data.NewBalance);
-            }
         }
 
         private void OnCloseClicked()
@@ -259,14 +195,55 @@ namespace Game.UI.Store
             _SceneLoaderService?.LoadMainMenu().Forget();
         }
 
-        private void OnBottomAdPressed()
+        private static void ClearChildren(Transform parent)
         {
-            OnBottomAdClicked?.Invoke();
+            for (var i = parent.childCount - 1; i >= 0; i--)
+            {
+                Destroy(parent.GetChild(i).gameObject);
+            }
         }
 
-        private void OnPowerUpAdPressed(PurchasableEntry _)
+        private void RefreshOwnedState()
         {
-            OnPowerUpAdClicked?.Invoke();
+            for (var i = 0; i < _KnifeSkinBindings.Count; i++)
+            {
+                var binding = _KnifeSkinBindings[i];
+                binding.IsOwned = IsOwned(binding.Entry);
+            }
+        }
+
+        private void SetBindingsInteractable(List<SpawnedCardBinding> bindings, bool canInteract)
+        {
+            for (var i = 0; i < bindings.Count; i++)
+            {
+                var binding = bindings[i];
+                if (binding.Card == null)
+                {
+                    continue;
+                }
+
+                binding.Card.SetInteractable(canInteract && !binding.IsOwned);
+            }
+        }
+
+        private bool IsOwned(PurchasableEntry entry)
+        {
+            if (entry?.Reward is KnifeSkinReward knifeSkinReward &&
+                knifeSkinReward.Config != null &&
+                !string.IsNullOrEmpty(knifeSkinReward.Config.Id))
+            {
+                return _PlayerDataService != null &&
+                    _PlayerDataService.EnsureKnifeSkinCollection().IsUnlocked(knifeSkinReward.Config.Id);
+            }
+
+            return false;
+        }
+
+        private sealed class SpawnedCardBinding
+        {
+            public StoreCardView Card;
+            public PurchasableEntry Entry;
+            public bool IsOwned;
         }
     }
 }

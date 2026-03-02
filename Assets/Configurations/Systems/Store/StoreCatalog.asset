@@ -13,21 +13,38 @@ MonoBehaviour:
   m_Name: StoreCatalog
   m_EditorClassIdentifier: Game::Game.Store.Data.StoreCatalog
   <PowerUps>k__BackingField:
-  - <DisplayName>k__BackingField: 
-    <Description>k__BackingField: 
-    <Icon>k__BackingField: {fileID: 0}
-    <Price>k__BackingField:
-      <CurrencyId>k__BackingField: 
-      <Amount>k__BackingField: 0
+  - <Price>k__BackingField:
+      <Currency>k__BackingField: 1
+      <Amount>k__BackingField: 250
     <Reward>k__BackingField:
       rid: 5211687559453999730
   <CurrencyPacks>k__BackingField: []
-  <Skins>k__BackingField: []
+  <Skins>k__BackingField:
+  - <Price>k__BackingField:
+      <Currency>k__BackingField: 1
+      <Amount>k__BackingField: 100
+    <Reward>k__BackingField:
+      rid: 8566979025762517408
+  - <Price>k__BackingField:
+      <Currency>k__BackingField: 1
+      <Amount>k__BackingField: 150
+    <Reward>k__BackingField:
+      rid: 8566979033683460164
   references:
     version: 2
     RefIds:
     - rid: 5211687559453999730
       type: {class: PowerUpReward, ns: Game.Store.Rewards, asm: Game}
       data:
-        _Config: {fileID: 0}
-        _Quantity: 1
+        <Config>k__BackingField: {fileID: 0}
+        <Quantity>k__BackingField: 1
+    - rid: 8566979025762517408
+      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
+      data:
+        <Config>k__BackingField: {fileID: 11400000, guid: 4390750316d8e1d4f8502549b66bdd0f, type: 2}
+        <AutoEquipOnPurchase>k__BackingField: 1
+    - rid: 8566979033683460164
+      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
+      data:
+        <Config>k__BackingField: {fileID: 11400000, guid: a507911e36d9b11488a05e00bfeb0467, type: 2}
+        <AutoEquipOnPurchase>k__BackingField: 1

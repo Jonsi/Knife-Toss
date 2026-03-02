@@ -1,4 +1,5 @@
 using System;
+using Game.Economy.Data;
 using Game.Store.Data;
 using TMPro;
 using UnityEngine;
@@ -7,67 +8,35 @@ using UnityEngine.UI;
 namespace Game.UI.Store
 {
     /// <summary>
-    /// Reusable store card view for both featured and power-up entries.
+    /// Base store card view. Concrete card types provide the prefab-specific implementation.
     /// </summary>
-    public class StoreCardView : MonoBehaviour
+    public abstract class StoreCardView : MonoBehaviour
     {
-        [field: SerializeField] public TMP_Text NameText { get; private set; }
-        [field: SerializeField] public TMP_Text DescriptionText { get; private set; }
-        [field: SerializeField] public PricePillView PricePill { get; private set; }
+        [field: SerializeField] public PricePillBinding PricePill { get; private set; }
+        [field: SerializeField] public Image IconImage { get; private set; }
+        [field: SerializeField] public Image ShadowImage { get; private set; }
         [field: SerializeField] public Button BuyButton { get; private set; }
-        [field: SerializeField] public Button WatchAdButton { get; private set; }
-        [field: SerializeField] public TMP_Text WatchAdRewardText { get; private set; }
-        [field: SerializeField] public GameObject LockedOverlay { get; private set; }
 
-        private PurchasableEntry _Entry;
+        protected PurchasableEntry Entry { get; private set; }
         private Action<PurchasableEntry> _OnBuyClicked;
-        private Action<PurchasableEntry> _OnWatchAdClicked;
 
-        public void Setup(
-            PurchasableEntry entry,
-            int adRewardAmount,
-            bool showWatchAdButton,
-            Action<PurchasableEntry> onBuyClicked,
-            Action<PurchasableEntry> onWatchAdClicked)
+        public void Setup(PurchasableEntry entry, Action<PurchasableEntry> onBuyClicked)
         {
-            _Entry = entry;
+            Entry = entry;
             _OnBuyClicked = onBuyClicked;
-            _OnWatchAdClicked = onWatchAdClicked;
-
-            if (NameText != null)
-            {
-                NameText.text = entry?.DisplayName ?? string.Empty;
-            }
-
-            if (DescriptionText != null)
-            {
-                DescriptionText.text = entry?.Description ?? string.Empty;
-            }
 
             if (PricePill != null)
             {
-                PricePill.SetPrice(entry?.Price?.Amount ?? 0, entry?.Price?.CurrencyId);
+                PricePill.SetPrice(entry?.Price?.Amount ?? 0, entry?.Price?.Currency ?? CurrencyType.None);
             }
 
-            if (WatchAdRewardText != null)
-            {
-                WatchAdRewardText.text = $"+{adRewardAmount}";
-            }
+            BindEntry(entry);
 
             if (BuyButton != null)
             {
                 BuyButton.onClick.RemoveListener(OnBuyPressed);
                 BuyButton.onClick.AddListener(OnBuyPressed);
             }
-
-            if (WatchAdButton != null)
-            {
-                WatchAdButton.gameObject.SetActive(showWatchAdButton);
-                WatchAdButton.onClick.RemoveListener(OnWatchAdPressed);
-                WatchAdButton.onClick.AddListener(OnWatchAdPressed);
-            }
-
-            gameObject.SetActive(entry != null);
         }
 
         public void SetInteractable(bool interactable)
@@ -76,44 +45,52 @@ namespace Game.UI.Store
             {
                 BuyButton.interactable = interactable;
             }
+        }
 
-            if (WatchAdButton != null && WatchAdButton.gameObject.activeSelf)
+        protected virtual void BindEntry(PurchasableEntry entry)
+        {
+        }
+
+        protected void SetDisplaySprite(Sprite sprite)
+        {
+            if (IconImage != null)
             {
-                WatchAdButton.interactable = interactable;
+                IconImage.sprite = sprite;
             }
 
-            if (LockedOverlay != null)
+            if (ShadowImage != null)
             {
-                LockedOverlay.SetActive(!interactable);
+                ShadowImage.sprite = sprite;
             }
         }
 
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             if (BuyButton != null)
             {
                 BuyButton.onClick.RemoveListener(OnBuyPressed);
             }
-
-            if (WatchAdButton != null)
-            {
-                WatchAdButton.onClick.RemoveListener(OnWatchAdPressed);
-            }
         }
 
         private void OnBuyPressed()
         {
-            if (_Entry != null)
+            if (Entry != null)
             {
-                _OnBuyClicked?.Invoke(_Entry);
+                _OnBuyClicked?.Invoke(Entry);
             }
         }
 
-        private void OnWatchAdPressed()
+        [Serializable]
+        public class PricePillBinding
         {
-            if (_Entry != null)
+            [field: SerializeField] public TMP_Text AmountText { get; private set; }
+
+            public void SetPrice(int amount, CurrencyType currencyType)
             {
-                _OnWatchAdClicked?.Invoke(_Entry);
+                if (AmountText != null)
+                {
+                    AmountText.text = amount.ToString();
+                }
             }
         }
     }

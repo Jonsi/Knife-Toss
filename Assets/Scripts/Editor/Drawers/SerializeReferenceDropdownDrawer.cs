@@ -16,6 +16,7 @@ namespace Editor.Drawers
     public class SerializeReferenceDropdownDrawer : PropertyDrawer
     {
         private static readonly Dictionary<Type, Type[]> DerivedTypeCache = new Dictionary<Type, Type[]>();
+        private static readonly Dictionary<int, Dictionary<long, string>> ManagedReferenceOwners = new Dictionary<int, Dictionary<long, string>>();
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -41,6 +42,7 @@ namespace Editor.Drawers
 
             if (property.managedReferenceValue != null)
             {
+                EnsureUniqueManagedReferenceInstance(property);
                 DrawChildren(position, property);
             }
 
@@ -121,6 +123,59 @@ namespace Editor.Drawers
             var result = allTypes.OrderBy(type => type.Name).ToArray();
             DerivedTypeCache[baseType] = result;
             return result;
+        }
+
+        private static void EnsureUniqueManagedReferenceInstance(SerializedProperty property)
+        {
+            if (property == null || property.managedReferenceValue == null)
+            {
+                return;
+            }
+
+            var targetObject = property.serializedObject.targetObject;
+            if (targetObject == null)
+            {
+                return;
+            }
+
+            var targetId = targetObject.GetInstanceID();
+            if (!ManagedReferenceOwners.TryGetValue(targetId, out var owners))
+            {
+                owners = new Dictionary<long, string>();
+                ManagedReferenceOwners[targetId] = owners;
+            }
+
+            var referenceId = property.managedReferenceId;
+            if (referenceId == 0)
+            {
+                return;
+            }
+
+            if (owners.TryGetValue(referenceId, out var existingPath))
+            {
+                if (existingPath == property.propertyPath)
+                {
+                    return;
+                }
+
+                property.managedReferenceValue = CloneManagedReference(property.managedReferenceValue);
+                property.serializedObject.ApplyModifiedProperties();
+                referenceId = property.managedReferenceId;
+            }
+
+            owners[referenceId] = property.propertyPath;
+        }
+
+        private static object CloneManagedReference(object source)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+
+            var type = source.GetType();
+            var json = JsonUtility.ToJson(source);
+            return JsonUtility.FromJson(json, type);
         }
 
         private static void DrawChildren(Rect position, SerializedProperty property)

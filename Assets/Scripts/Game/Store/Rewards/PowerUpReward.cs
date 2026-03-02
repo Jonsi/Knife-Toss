@@ -13,18 +13,18 @@ namespace Game.Store.Rewards
     [Serializable]
     public class PowerUpReward : ItemReward
     {
-        [SerializeField] private PowerUpConfigBase _Config;
-        [SerializeField] private int _Quantity = 1;
+        [field: SerializeField] public PowerUpConfigBase Config { get; private set; }
+        [field: SerializeField] public int Quantity { get; private set; } = 1;
 
         public override UniTask GrantAsync(IObjectResolver resolver)
         {
-            if (_Config == null || string.IsNullOrEmpty(_Config.InventoryKey) || _Quantity <= 0)
+            if (Config == null || string.IsNullOrEmpty(Config.InventoryKey) || Quantity <= 0)
             {
                 return UniTask.CompletedTask;
             }
 
             var playerData = resolver.Resolve<PlayerDataService>();
-            playerData.EnsurePowerUpInventory().IncrementCount(_Config.InventoryKey, _Quantity);
+            playerData.EnsurePowerUpInventory().IncrementCount(Config.InventoryKey, Quantity);
             playerData.SavePowerUpInventory();
             return UniTask.CompletedTask;
         }

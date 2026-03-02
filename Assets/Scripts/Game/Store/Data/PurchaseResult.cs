@@ -17,6 +17,7 @@ namespace Game.Store.Data
         public static PurchaseResult Succeeded => new PurchaseResult(true, null);
         public static PurchaseResult InsufficientFunds => new PurchaseResult(false, "Insufficient funds.");
         public static PurchaseResult InvalidItem => new PurchaseResult(false, "Invalid item.");
+        public static PurchaseResult AlreadyOwned => new PurchaseResult(false, "Item already owned.");
         public static PurchaseResult PurchaseInProgress => new PurchaseResult(false, "Purchase already in progress.");
         public static PurchaseResult Cancelled => new PurchaseResult(false, "Purchase cancelled.");
 

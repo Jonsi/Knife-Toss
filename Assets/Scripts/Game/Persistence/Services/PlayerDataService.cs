@@ -103,6 +103,19 @@ namespace Game.Persistence.Services
         }
 
         /// <summary>
+        /// Ensures knife skin collection exists and returns the instance.
+        /// </summary>
+        public KnifeSkinCollectionData EnsureKnifeSkinCollection()
+        {
+            if (_CachedData.Resources.KnifeSkins == null)
+            {
+                _CachedData.Resources.KnifeSkins = new KnifeSkinCollectionData();
+            }
+
+            return _CachedData.Resources.KnifeSkins;
+        }
+
+        /// <summary>
         /// Gets the player settings, ensuring they exist.
         /// </summary>
         public PlayerSettingsData Settings
@@ -121,6 +134,14 @@ namespace Game.Persistence.Services
         /// Schedules a save for updated power-up inventory data.
         /// </summary>
         public void SavePowerUpInventory()
+        {
+            SaveNow();
+        }
+
+        /// <summary>
+        /// Schedules a save for updated knife skin unlock data.
+        /// </summary>
+        public void SaveKnifeSkinCollection()
         {
             SaveNow();
         }
@@ -152,6 +173,11 @@ namespace Game.Persistence.Services
             {
                 _CachedData.Resources.Currencies = new System.Collections.Generic.List<CurrencyBalanceEntry>();
             }
+
+            if (_CachedData.Resources.KnifeSkins == null)
+            {
+                _CachedData.Resources.KnifeSkins = new KnifeSkinCollectionData();
+            }
         }
 
         private void UpdateProgress()
@@ -169,6 +195,7 @@ namespace Game.Persistence.Services
             _CachedData.Resources ??= new PlayerResourcesData();
             _CachedData.Resources.PowerUps ??= new PowerUpInventoryData();
             _CachedData.Resources.Currencies ??= new System.Collections.Generic.List<CurrencyBalanceEntry>();
+            _CachedData.Resources.KnifeSkins ??= new KnifeSkinCollectionData();
         }
 
         private void SyncGameData()

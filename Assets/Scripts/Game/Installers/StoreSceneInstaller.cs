@@ -22,7 +22,6 @@ namespace Game.Installers
 
         [Header("Scene References")]
         [SerializeField] private StoreMenuController _StoreMenuController;
-        [SerializeField] private StorePurchaseFeedbackPresenter _StorePurchaseFeedbackPresenter;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -33,10 +32,7 @@ namespace Game.Installers
                 builder.RegisterComponent(_StoreMenuController);
             }
 
-            if (_StorePurchaseFeedbackPresenter != null)
-            {
-                builder.RegisterComponent(_StorePurchaseFeedbackPresenter);
-            }
+            builder.RegisterComponentInHierarchy<StoreBalanceChipView>();
         }
 
         private static void Install(IContainerBuilder builder, IInstaller installer)

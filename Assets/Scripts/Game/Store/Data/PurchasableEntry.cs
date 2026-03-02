@@ -11,9 +11,6 @@ namespace Game.Store.Data
     [Serializable]
     public class PurchasableEntry
     {
-        [field: SerializeField] public string DisplayName { get; private set; }
-        [field: SerializeField] public string Description { get; private set; }
-        [field: SerializeField] public Sprite Icon { get; private set; }
         [field: SerializeField] public PriceDefinition Price { get; private set; }
 
         [field: SerializeReference]
