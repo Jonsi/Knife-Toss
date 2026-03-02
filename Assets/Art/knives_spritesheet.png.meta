@@ -1,0 +1,401 @@
+fileFormatVersion: 2
+guid: 2430df956d5cfb14eb484c6ebab768c9
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 9077934665165776762
+    second: knives_spritesheet_0
+  - first:
+      213: 8649467916312722835
+    second: knives_spritesheet_1
+  - first:
+      213: 5032398225070904949
+    second: knives_spritesheet_2
+  - first:
+      213: 4204890447247370090
+    second: knives_spritesheet_3
+  - first:
+      213: -5648524259021177327
+    second: knives_spritesheet_4
+  - first:
+      213: 149550956948230891
+    second: knives_spritesheet_5
+  - first:
+      213: -5743620972532539695
+    second: knives_spritesheet_6
+  - first:
+      213: 3519111995045917850
+    second: knives_spritesheet_7
+  - first:
+      213: 3567345176366350178
+    second: knives_spritesheet_8
+  - first:
+      213: -2616486665584873065
+    second: knives_spritesheet_9
+  - first:
+      213: -3264252200881160108
+    second: knives_spritesheet_10
+  - first:
+      213: -5245503529901400037
+    second: knives_spritesheet_11
+  - first:
+      213: -2792665082343953959
+    second: knives_spritesheet_12
+  - first:
+      213: 8363046628207074246
+    second: knives_spritesheet_13
+  - first:
+      213: -9150888544769465580
+    second: knives_spritesheet_14
+  - first:
+      213: 1924366389900059309
+    second: knives_spritesheet_15
+  - first:
+      213: 3390007644126361965
+    second: knives_spritesheet_16
+  - first:
+      213: -2799349188144634658
+    second: knives_spritesheet_17
+  - first:
+      213: 4318558301749668917
+    second: knives_spritesheet_18
+  - first:
+      213: 2015197487886710812
+    second: knives_spritesheet_19
+  - first:
+      213: -7621813000068579928
+    second: knives_spritesheet_20
+  - first:
+      213: 8815822626587400712
+    second: knives_spritesheet_21
+  - first:
+      213: 4183362495750181499
+    second: knives_spritesheet_22
+  - first:
+      213: -8778861471232334818
+    second: knives_spritesheet_23
+  - first:
+      213: -2954579258551910268
+    second: knives_spritesheet_24
+  - first:
+      213: 4473277018086748883
+    second: knives_spritesheet_25
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: knives_spritesheet_0
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 1260
+        width: 55
+        height: 230
+      alignment: 9
+      pivot: {x: 0.52435803, y: 0.4068025}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7729632b7d4bfd70800000000000000
+      internalID: 9077934665165776762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knives_spritesheet_20
+      rect:
+        serializedVersion: 2
+        x: 890
+        y: 294
+        width: 11
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ad35726571e93690800000000000000
+      internalID: -7621813000068579928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knives_spritesheet_23
+      rect:
+        serializedVersion: 2
+        x: 431
+        y: 79
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1465da11083b2680800000000000000
+      internalID: -8778861471232334818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knives_spritesheet_1
+      rect:
+        serializedVersion: 2
+        x: 358
+        y: 1261
+        width: 57
+        height: 230
+      alignment: 9
+      pivot: {x: 0.5175273, y: 0.40003133}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9b976fd776cd6164999255c55e6232d2
+      internalID: 8649467916312722835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knives_spritesheet_2
+      rect:
+        serializedVersion: 2
+        x: 606
+        y: 1260
+        width: 57
+        height: 230
+      alignment: 9
+      pivot: {x: 0.5175273, y: 0.40003133}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1e511e2f873c84b45a0fb933a2eedc71
+      internalID: 5032398225070904949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knives_spritesheet_3
+      rect:
+        serializedVersion: 2
+        x: 835
+        y: 1260
+        width: 61
+        height: 228
+      alignment: 9
+      pivot: {x: 0.5175273, y: 0.40003133}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 114d56e285c9b6e4c8414be6011ac33d
+      internalID: 4204890447247370090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knives_spritesheet_4
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 695
+        width: 68
+        height: 247
+      alignment: 9
+      pivot: {x: 0.5100753, y: 0.4026637}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: afd5d7f10b375a246b069701d1fb80c3
+      internalID: -5648524259021177327
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: bf0cd9749f082ee479126fa1a4c7f59a
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      knives_spritesheet_0: 9077934665165776762
+      knives_spritesheet_1: 8649467916312722835
+      knives_spritesheet_10: -3264252200881160108
+      knives_spritesheet_11: -5245503529901400037
+      knives_spritesheet_12: -2792665082343953959
+      knives_spritesheet_13: 8363046628207074246
+      knives_spritesheet_14: -9150888544769465580
+      knives_spritesheet_15: 1924366389900059309
+      knives_spritesheet_16: 3390007644126361965
+      knives_spritesheet_17: -2799349188144634658
+      knives_spritesheet_18: 4318558301749668917
+      knives_spritesheet_19: 2015197487886710812
+      knives_spritesheet_2: 5032398225070904949
+      knives_spritesheet_20: -7621813000068579928
+      knives_spritesheet_21: 8815822626587400712
+      knives_spritesheet_22: 4183362495750181499
+      knives_spritesheet_23: -8778861471232334818
+      knives_spritesheet_24: -2954579258551910268
+      knives_spritesheet_25: 4473277018086748883
+      knives_spritesheet_3: 4204890447247370090
+      knives_spritesheet_4: -5648524259021177327
+      knives_spritesheet_5: 149550956948230891
+      knives_spritesheet_6: -5743620972532539695
+      knives_spritesheet_7: 3519111995045917850
+      knives_spritesheet_8: 3567345176366350178
+      knives_spritesheet_9: -2616486665584873065
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
