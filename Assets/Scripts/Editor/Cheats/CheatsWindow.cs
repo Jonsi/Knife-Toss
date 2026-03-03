@@ -19,6 +19,7 @@ namespace Game.EditorTools
         private const string RetryChannelPath = "Assets/Configurations/EventChannels/UI/LevelFailedPopup/RetryLevelClicked.asset";
         private const string RestartChannelPath = "Assets/Configurations/EventChannels/UI/LevelFailedPopup/RestartStageClicked.asset";
         private const string KnifeImpactChannelPath = "Assets/Configurations/EventChannels/Knife/KnifeImpactEventChannel.asset";
+        private const string CurrencyTypeCatalogPath = "Assets/Configurations/Systems/Economy/CurrencyTypeCatalog.asset";
 
         [SerializeField] private VoidEventChannel _RetryLevelChannel;
         [SerializeField] private VoidEventChannel _RestartStageChannel;
@@ -237,18 +238,7 @@ namespace Game.EditorTools
                 {
 #if TEST_ENABLED
                     var economyCheats = GetEconomyCheats();
-                    
-                    // Dynamically find the currency ID from the catalog
-                    var catalog = Resources.Load<Game.Economy.Data.CurrencyTypeCatalog>("CurrencyTypeCatalog");
-                    if (catalog == null)
-                    {
-                        // Try alternative path if not in Resources root
-                        catalog = AssetDatabase.LoadAssetAtPath<Game.Economy.Data.CurrencyTypeCatalog>("Assets/Configurations/Currency/CurrencyTypeCatalog.asset");
-                    }
-
-                    var configs = catalog?.GetAllConfigs();
-                    string currencyId = (configs != null && configs.Count > 0) ? configs[0].TypeId : "Coins";
-
+                    string currencyId = GetFirstCurrencyId();
                     economyCheats?.AddBalance(currencyId, _AddCoinsAmount);
 #endif
                 }
@@ -358,6 +348,26 @@ namespace Game.EditorTools
             {
                 _KnifeImpactChannel = AssetDatabase.LoadAssetAtPath<KnifeImpactEventChannel>(KnifeImpactChannelPath);
             }
+        }
+
+        private string GetFirstCurrencyId()
+        {
+            var catalog = AssetDatabase.LoadAssetAtPath<Game.Economy.Data.CurrencyTypeCatalog>(CurrencyTypeCatalogPath);
+            var configs = catalog?.GetAllConfigs();
+            if (configs == null)
+            {
+                return string.Empty;
+            }
+
+            foreach (var config in configs)
+            {
+                if (config != null && !string.IsNullOrEmpty(config.TypeId))
+                {
+                    return config.TypeId;
+                }
+            }
+
+            return string.Empty;
         }
 
         private void UpdateImpactSubscription()
