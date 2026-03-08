@@ -10,6 +10,7 @@ using Game.Entities.Target.Data;
 using Game.Feedback.Animation;
 using Game.Pooling;
 using Game.PowerUps.Configs;
+using Game.Store.Services;
 using UnityEngine;
 using VContainer;
 
@@ -35,10 +36,12 @@ namespace Game.Entities.Knife.Views
         private bool _HasReportedOutOfView;
         private bool _IsSuperKnife;
         private PowerUpConfigBase _SourcePowerUpConfig;
+        private Sprite _DefaultSprite;
 
         private IEventChannel<CollisionData> _CollisionChannel;
         private IEventChannel<KnifeImpactEventData> _ImpactChannel;
         private KnifePoolProvider _KnifePoolProvider;
+        private KnifeSkinService _KnifeSkinService;
 
         /// <summary>
         /// Gets the cached type for efficient collision routing.
@@ -90,16 +93,22 @@ namespace Game.Entities.Knife.Views
         [Inject]
         private void Construct(
             IEventChannel<CollisionData> collisionChannel,
-            IEventChannel<KnifeImpactEventData> impactChannel)
+            IEventChannel<KnifeImpactEventData> impactChannel,
+            KnifeSkinService knifeSkinService)
         {
             _CollisionChannel = collisionChannel;
             _ImpactChannel = impactChannel;
+            _KnifeSkinService = knifeSkinService;
         }
 
         private void Awake()
         {
             InitializeStateMachine();
             _MainCamera = Camera.main;
+            if (_SpriteRenderer != null)
+            {
+                _DefaultSprite = _SpriteRenderer.sprite;
+            }
         }
         
         private void Update()
@@ -162,7 +171,19 @@ namespace Game.Entities.Knife.Views
             _HasReportedOutOfView = false;
             _IsSuperKnife = false;
             _SourcePowerUpConfig = null;
+            RefreshVisualSkin();
             _StateMachine.SetState(_StateMachine.Loaded);
+        }
+
+        public void RefreshVisualSkin()
+        {
+            if (_SpriteRenderer == null)
+            {
+                return;
+            }
+
+            var sprite = _KnifeSkinService?.GetEquippedConfig()?.GetKnifeSprite();
+            _SpriteRenderer.sprite = sprite != null ? sprite : _DefaultSprite;
         }
 
 

@@ -11,6 +11,8 @@ using Game.PVP.UI;
 using Game.Pooling;
 using Game.KnifeThrower.Events;
 using Game.Entities.Collectible.Events;
+using Game.Store.Data;
+using Game.Store.Services;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -25,6 +27,7 @@ namespace Game.PVP.Installers
         [Header("Configs")]
         [SerializeField] private PVPSettingsConfig _PvpConfig;
         [SerializeField] private PrefabsConfiguration _PrefabsConfiguration;
+        [SerializeField] private StoreCatalog _StoreCatalog;
 
         [Header("Scene References")]
         [SerializeField] private KnifeThrowerView _Player1Thrower;
@@ -46,10 +49,15 @@ namespace Game.PVP.Installers
             // Configs
             builder.RegisterInstance(_PvpConfig);
             builder.RegisterInstance(_PrefabsConfiguration);
+            if (_StoreCatalog != null)
+            {
+                builder.RegisterInstance(_StoreCatalog).AsSelf();
+            }
 
             // Event Channels
             builder.RegisterInstance(_KnifeImpactEventChannel).As<IEventChannel<KnifeImpactEventData>>();
             builder.RegisterInstance(_KnifeThrownEventChannel).AsImplementedInterfaces();
+            builder.Register<KnifeSkinService>(Lifetime.Scoped).AsSelf();
 
             // Services
             builder.Register<PVPThrowerManager>(Lifetime.Scoped)

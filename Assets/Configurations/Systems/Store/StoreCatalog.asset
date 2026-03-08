@@ -36,8 +36,8 @@ MonoBehaviour:
     - rid: 5211687559453999730
       type: {class: PowerUpReward, ns: Game.Store.Rewards, asm: Game}
       data:
-        <Config>k__BackingField: {fileID: 0}
-        <Quantity>k__BackingField: 1
+        <Config>k__BackingField: {fileID: 11400000, guid: 3a7a84bba57c2384b9d72d20c044fcc8, type: 2}
+        <Quantity>k__BackingField: 6
     - rid: 8566979025762517408
       type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
       data:

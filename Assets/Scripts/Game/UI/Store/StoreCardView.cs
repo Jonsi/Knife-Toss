@@ -92,6 +92,19 @@ namespace Game.UI.Store
                     AmountText.text = amount.ToString();
                 }
             }
+
+            public void SetVisible(bool visible)
+            {
+                if (AmountText == null)
+                {
+                    return;
+                }
+
+                var root = AmountText.transform.parent != null
+                    ? AmountText.transform.parent.gameObject
+                    : AmountText.gameObject;
+                root.SetActive(visible);
+            }
         }
     }
 }

@@ -1484,6 +1484,7 @@ MonoBehaviour:
   autoInjectGameObjects: []
   _PvpConfig: {fileID: 11400000, guid: ea82a24299e86284c8bb78e735535f5f, type: 2}
   _PrefabsConfiguration: {fileID: 11400000, guid: 89c8339ac5c03a8469b04f345c441a2f, type: 2}
+  _StoreCatalog: {fileID: 11400000, guid: be6458f09b294b2438f43789174e696f, type: 2}
   _Player1Thrower: {fileID: 497239670}
   _Player2Thrower: {fileID: 2021232002}
   _FlowController: {fileID: 546727110}

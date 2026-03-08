@@ -11,5 +11,11 @@ namespace Game.Store.Configs
     {
         [field: SerializeField] public string Id { get; private set; }
         [field: SerializeField] public Sprite Icon { get; private set; }
+        [field: SerializeField] public Sprite KnifeSprite { get; private set; }
+
+        public Sprite GetKnifeSprite()
+        {
+            return KnifeSprite != null ? KnifeSprite : Icon;
+        }
     }
 }

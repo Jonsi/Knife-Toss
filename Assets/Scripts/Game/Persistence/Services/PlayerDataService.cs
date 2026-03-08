@@ -116,6 +116,22 @@ namespace Game.Persistence.Services
         }
 
         /// <summary>
+        /// Reloads persisted data and updates only the knife skin collection.
+        /// </summary>
+        public void ReloadKnifeSkinCollection()
+        {
+            var loaded = _Store.Load();
+            if (loaded?.Resources?.KnifeSkins == null)
+            {
+                return;
+            }
+
+            _CachedData ??= new PlayerData();
+            EnsureDataIntegrity();
+            _CachedData.Resources.KnifeSkins = loaded.Resources.KnifeSkins;
+        }
+
+        /// <summary>
         /// Gets the player settings, ensuring they exist.
         /// </summary>
         public PlayerSettingsData Settings

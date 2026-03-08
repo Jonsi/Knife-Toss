@@ -5297,6 +5297,7 @@ MonoBehaviour:
   _PowerUpCancelledEventChannel: {fileID: 11400000, guid: 548ba72244a87c54d8f107bd1c3effb0, type: 2}
   _CurrencyTypeCatalog: {fileID: 11400000, guid: 2e19ae051d2a93f40847e9a57b3109c6, type: 2}
   _CurrencyBalanceChangedEventChannel: {fileID: 11400000, guid: 51473d9d8042dd747bd67e5c302e2a66, type: 2}
+  _StoreCatalog: {fileID: 11400000, guid: be6458f09b294b2438f43789174e696f, type: 2}
 --- !u!1 &1957040490 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2036229646191269102, guid: 58353aba8a65cb9479373360a5731a0b, type: 3}

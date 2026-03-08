@@ -11,6 +11,8 @@ using Game.Settings;
 using Game.UI.Services;
 using Game.Feedback.Audio.Interfaces;
 using Game.Feedback.Audio.Systems;
+using Game.Store.Data;
+using Game.Store.Services;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -39,6 +41,7 @@ namespace Game.Installers
 
         [Header("Services")]
         [SerializeField] private Common.Services.RemoteConfig.RemoteConfigSettings _RemoteConfigSettings;
+        [SerializeField] private StoreCatalog _StoreCatalog;
 
         protected override void Awake()
         {
@@ -60,6 +63,7 @@ namespace Game.Installers
 
             builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
             builder.Register<SceneLoaderService>(Lifetime.Singleton);
+            builder.Register<KnifeSkinService>(Lifetime.Singleton).AsSelf();
             
             // Settings & Feedback
             builder.RegisterEntryPoint<SettingsService>().AsSelf();
@@ -70,6 +74,10 @@ namespace Game.Installers
 
             // Register Event Channels (Shared/Persistence)
             builder.RegisterInstance(_ReturnToMenuEventChannel);
+            if (_StoreCatalog != null)
+            {
+                builder.RegisterInstance(_StoreCatalog).AsSelf();
+            }
 
 #if TEST_ENABLED
             builder.Register<Game.Debugging.GeneralCheats>(Lifetime.Singleton).AsSelf();

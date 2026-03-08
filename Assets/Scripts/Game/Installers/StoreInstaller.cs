@@ -35,6 +35,7 @@ namespace Game.Installers
             builder.RegisterInstance(_StartedEventChannel).AsSelf();
             builder.RegisterInstance(_CompletedEventChannel).AsSelf();
             builder.RegisterInstance(_FailedEventChannel).AsSelf();
+            builder.Register<KnifeSkinService>(Lifetime.Singleton).AsSelf();
             builder.Register<PurchaseService>(Lifetime.Singleton).As<IPurchaseService>();
         }
     }

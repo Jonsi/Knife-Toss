@@ -61,6 +61,8 @@ namespace Game.PowerUps.Views
                 var knife = knives[i];
                 if (knife == null) continue;
 
+                knife.RefreshVisualSkin();
+
                 float offsetX = (i - centeredOffset) * spacing;
                 Vector3 spawnPosition = spawnTransform.position +
                     new Vector3(spawnData.SpawnOffset.x + offsetX, spawnData.SpawnOffset.y, 0f);

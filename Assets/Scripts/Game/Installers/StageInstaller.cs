@@ -15,6 +15,8 @@ using Game.UI.Data;
 using Game.UI.Popups;
 using Game.Persistence.Services;
 using Game.Pooling;
+using Game.Store.Data;
+using Game.Store.Services;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -68,6 +70,7 @@ namespace Game.Installers
         [Header("Economy (optional; use when stage runs standalone or parent has none)")]
         [SerializeField] private CurrencyTypeCatalog _CurrencyTypeCatalog;
         [SerializeField] private CurrencyBalanceChangedEventChannel _CurrencyBalanceChangedEventChannel;
+        [SerializeField] private StoreCatalog _StoreCatalog;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -92,6 +95,13 @@ namespace Game.Installers
             {
                 builder.RegisterInstance(_PrefabsConfiguration).AsSelf();
             }
+
+            if (_StoreCatalog != null)
+            {
+                builder.RegisterInstance(_StoreCatalog).AsSelf();
+            }
+
+            builder.Register<KnifeSkinService>(Lifetime.Scoped).AsSelf();
 
             if (_CurrencyTypeCatalog != null && _CurrencyBalanceChangedEventChannel != null)
             {
