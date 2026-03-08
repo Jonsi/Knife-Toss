@@ -18,6 +18,10 @@ namespace Game.Store.Rewards
 
         public string AlreadyOwnedReason => "Item already owned.";
 
+        /// <inheritdoc/>
+        public override string GetDisplayText() =>
+            Config != null ? Config.name : string.Empty;
+
         public bool IsOwned(IObjectResolver resolver)
         {
             if (Config == null || string.IsNullOrEmpty(Config.Id))

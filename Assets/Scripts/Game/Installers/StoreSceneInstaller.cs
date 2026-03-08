@@ -1,3 +1,6 @@
+using Common.Ads.Interfaces;
+using Game.Ads.Controllers;
+using Game.Ads.Data;
 using Game.Store.Data;
 using Game.Store.Events;
 using Game.UI.Store;
@@ -22,17 +25,32 @@ namespace Game.Installers
 
         [Header("Scene References")]
         [SerializeField] private StoreMenuController _StoreMenuController;
+        [SerializeField] private StoreAdCtaView _StoreAdCtaView;
+
+        [Header("Ads (optional; requires AdSettings in GameInstaller)")]
+        [SerializeField] private RewardedPlacement _StoreAdPlacement;
 
         protected override void Configure(IContainerBuilder builder)
         {
             Install(builder, CreateStoreInstaller());
 
             if (_StoreMenuController != null)
-            {
                 builder.RegisterComponent(_StoreMenuController);
-            }
 
             builder.RegisterComponentInHierarchy<StoreBalanceChipView>();
+
+            if (_StoreAdPlacement != null && _StoreAdCtaView != null)
+            {
+                builder.RegisterInstance(_StoreAdPlacement);
+                builder.RegisterComponent(_StoreAdCtaView);
+
+                builder.Register(resolver => new StoreAdController(
+                    resolver.Resolve<IAdService>(),
+                    _StoreAdPlacement,
+                    resolver,
+                    resolver.Resolve<StoreAdCtaView>()
+                ), Lifetime.Scoped).AsImplementedInterfaces();
+            }
         }
 
         private static void Install(IContainerBuilder builder, IInstaller installer)

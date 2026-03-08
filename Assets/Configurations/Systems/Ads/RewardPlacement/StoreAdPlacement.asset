@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84b9d22dd21e42641871d6ff34f18c65, type: 3}
+  m_Name: StoreAdPlacement
+  m_EditorClassIdentifier: Game::Game.Ads.Data.RewardedPlacement
+  <PlacementKey>k__BackingField: 1
+  <CooldownSeconds>k__BackingField: 0
+  <MinAttemptsBetweenAds>k__BackingField: 0
+  <OncePerRun>k__BackingField: 0
+  <Reward>k__BackingField:
+    rid: 8566979295253626880
+  references:
+    version: 2
+    RefIds:
+    - rid: 8566979295253626880
+      type: {class: CurrencyReward, ns: Game.Store.Rewards, asm: Game}
+      data:
+        _CurrencyType: 1
+        _Amount: 50

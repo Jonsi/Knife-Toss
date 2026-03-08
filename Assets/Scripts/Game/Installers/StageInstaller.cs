@@ -1,4 +1,8 @@
+using Common.Ads.Data;
+using Common.Ads.Interfaces;
 using Common.Collision.Events;
+using Game.Ads.Controllers;
+using Game.Ads.Data;
 using Game.Economy.Data;
 using Common.Events;
 using Game.Economy.Events;
@@ -72,6 +76,11 @@ namespace Game.Installers
         [SerializeField] private CurrencyBalanceChangedEventChannel _CurrencyBalanceChangedEventChannel;
         [SerializeField] private StoreCatalog _StoreCatalog;
 
+        [Header("Ads (optional)")]
+        [SerializeField] private VoidEventChannel _ContinueRequestedChannel;
+        [SerializeField] private RewardedPlacement _ContinuePlacement;
+        [SerializeField] private InterstitialPlacement _InterstitialPlacement;
+
         protected override void Configure(IContainerBuilder builder)
         {
             Install(builder, CreateTargetInstaller());
@@ -106,6 +115,32 @@ namespace Game.Installers
             if (_CurrencyTypeCatalog != null && _CurrencyBalanceChangedEventChannel != null)
             {
                 Install(builder, new EconomyInstaller(_CurrencyTypeCatalog, _CurrencyBalanceChangedEventChannel));
+            }
+
+            if (_ContinuePlacement != null && _ContinueRequestedChannel != null)
+            {
+                builder.Register(resolver => new AdRewardController(
+                    resolver.Resolve<IAdService>(),
+                    _ContinuePlacement,
+                    resolver,
+                    _ContinueRequestedChannel,
+                    _RetryLevelClickedChannel,
+                    _RestartStageClickedChannel,
+                    resolver.Resolve<LevelFailedEventChannel>(),
+                    resolver.Resolve<StageFailPopup>()
+                ), Lifetime.Scoped).AsImplementedInterfaces();
+            }
+
+            if (_InterstitialPlacement != null)
+            {
+                builder.Register(resolver => new InterstitialAdTrigger(
+                    resolver.Resolve<IAdService>(),
+                    _InterstitialPlacement,
+                    resolver.Resolve<LevelFailedEventChannel>(),
+                    resolver.Resolve<StageCompletedEventChannel>(),
+                    _RetryLevelClickedChannel,
+                    _RestartStageClickedChannel
+                ), Lifetime.Scoped).AsImplementedInterfaces();
             }
         }
 

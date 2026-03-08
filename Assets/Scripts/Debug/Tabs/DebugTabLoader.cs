@@ -58,6 +58,7 @@ namespace Game.Debugging.Tabs
                         DebugTabRegistry.Register(new StageLevelTab(resolver));
                         DebugTabRegistry.Register(new ResourcesTab(resolver));
                         DebugTabRegistry.Register(new PlayerDataTab(resolver));
+                        DebugTabRegistry.Register(new AdCheatsTab());
 
                         _TabsCreated = true;
                     }

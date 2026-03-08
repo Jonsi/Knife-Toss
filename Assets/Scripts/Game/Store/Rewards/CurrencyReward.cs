@@ -16,6 +16,13 @@ namespace Game.Store.Rewards
         [SerializeField] private CurrencyType _CurrencyType;
         [SerializeField] private int _Amount;
 
+        /// <inheritdoc/>
+        public override string GetDisplayText() =>
+            _CurrencyType == CurrencyType.None || _Amount <= 0
+                ? string.Empty
+                : $"+{_Amount} {_CurrencyType.ToDisplayLabel()}";
+
+        /// <inheritdoc/>
         public override UniTask GrantAsync(IObjectResolver resolver)
         {
             if (_CurrencyType == CurrencyType.None || _Amount <= 0)

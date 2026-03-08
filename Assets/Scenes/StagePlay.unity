@@ -153,7 +153,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -96.380005, y: 50}
+  m_AnchoredPosition: {x: -96.37988, y: 50}
   m_SizeDelta: {x: 192.77, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &41204892
@@ -1467,7 +1467,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.94}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -24.199951}
+  m_AnchoredPosition: {x: 0, y: -24.199707}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &580353642
@@ -4684,7 +4684,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.49996948}
+  m_AnchoredPosition: {x: 0, y: -0.5}
   m_SizeDelta: {x: -20, y: -13}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1604478457
@@ -5298,6 +5298,9 @@ MonoBehaviour:
   _CurrencyTypeCatalog: {fileID: 11400000, guid: 2e19ae051d2a93f40847e9a57b3109c6, type: 2}
   _CurrencyBalanceChangedEventChannel: {fileID: 11400000, guid: 51473d9d8042dd747bd67e5c302e2a66, type: 2}
   _StoreCatalog: {fileID: 11400000, guid: be6458f09b294b2438f43789174e696f, type: 2}
+  _ContinueRequestedChannel: {fileID: 11400000, guid: 6453204750942b04681a7ddbea28c760, type: 2}
+  _ContinuePlacement: {fileID: 11400000, guid: 76d6cdadc5220ab4ba197e285414eace, type: 2}
+  _InterstitialPlacement: {fileID: 11400000, guid: bc24614acda72f94ab9912ab4a311733, type: 2}
 --- !u!1 &1957040490 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2036229646191269102, guid: 58353aba8a65cb9479373360a5731a0b, type: 3}
@@ -5322,8 +5325,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Presentation.UI.StageFailPopup
   _RetryButton: {fileID: 1621210344}
   _RestartStageButton: {fileID: 1271855576}
+  _ContinueButton: {fileID: 1621210344}
   _RetryLevelChannel: {fileID: 11400000, guid: a8aafdd4ae42ad145876819d5f37bedb, type: 2}
   _RestartStageChannel: {fileID: 11400000, guid: eef8d9c482392e74bb97e0df72cf980b, type: 2}
+  _ContinueRequestedChannel: {fileID: 11400000, guid: 6453204750942b04681a7ddbea28c760, type: 2}
 --- !u!1 &1982895829
 GameObject:
   m_ObjectHideFlags: 0

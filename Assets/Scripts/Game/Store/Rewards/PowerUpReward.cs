@@ -16,6 +16,13 @@ namespace Game.Store.Rewards
         [field: SerializeField] public PowerUpConfigBase Config { get; private set; }
         [field: SerializeField] public int Quantity { get; private set; } = 1;
 
+        /// <inheritdoc/>
+        public override string GetDisplayText() =>
+            Config != null && Quantity > 0
+                ? $"+{Quantity} {Config.DisplayName}"
+                : string.Empty;
+
+        /// <inheritdoc/>
         public override UniTask GrantAsync(IObjectResolver resolver)
         {
             if (Config == null || string.IsNullOrEmpty(Config.InventoryKey) || Quantity <= 0)

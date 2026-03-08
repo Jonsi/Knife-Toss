@@ -1,3 +1,4 @@
+using Game.Ads.Installers;
 using Game.Economy.Data;
 using Common.Events;
 using Game.Economy.Events;
@@ -27,7 +28,7 @@ namespace Game.Installers
     public class GameInstaller : LifetimeScope
     {
         [SerializeField] private GameSettings _GameSettings;
-        
+
         [Header("Event Channels")]
         [SerializeField] private ReturnToMenuEventChannel _ReturnToMenuEventChannel;
 
@@ -42,6 +43,9 @@ namespace Game.Installers
         [Header("Services")]
         [SerializeField] private Common.Services.RemoteConfig.RemoteConfigSettings _RemoteConfigSettings;
         [SerializeField] private StoreCatalog _StoreCatalog;
+
+        [Header("Ads")]
+        [SerializeField] private AdInstaller _AdInstaller;
 
         protected override void Awake()
         {
@@ -61,18 +65,18 @@ namespace Game.Installers
             }
             Install(builder, CreateRemoteConfigInstaller());
 
+            if (_AdInstaller != null)
+                Install(builder, _AdInstaller);
+
             builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
             builder.Register<SceneLoaderService>(Lifetime.Singleton);
             builder.Register<KnifeSkinService>(Lifetime.Singleton).AsSelf();
-            
-            // Settings & Feedback
+
             builder.RegisterEntryPoint<SettingsService>().AsSelf();
 
-            // Audio Core (Feedback listeners are in StageInstaller)
             builder.RegisterInstance(_SoundSettings);
             builder.RegisterComponent(_AudioPlayer).As<IAudioPlayer>();
 
-            // Register Event Channels (Shared/Persistence)
             builder.RegisterInstance(_ReturnToMenuEventChannel);
             if (_StoreCatalog != null)
             {

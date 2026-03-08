@@ -15,13 +15,13 @@ namespace Game.UI.Store
 
         private Action _OnClicked;
 
-        public void Setup(int rewardAmount, Action onClicked)
+        public void Setup(string displayText, Action onClicked)
         {
             _OnClicked = onClicked;
 
             if (RewardText != null)
             {
-                RewardText.text = $"+{rewardAmount}";
+                RewardText.text = displayText;
             }
 
             if (ActionButton != null)
