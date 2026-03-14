@@ -1,4 +1,5 @@
 using System;
+using Common.Ads.Data;
 using Common.Ads.Interfaces;
 using Common.Events;
 using Cysharp.Threading.Tasks;
@@ -24,6 +25,7 @@ namespace Game.Ads.Controllers
     public class AdRewardController : IStartable, IDisposable
     {
         private readonly IAdService _AdService;
+        private readonly AdSettings _AdSettings;
         private readonly RewardedPlacement _ContinuePlacement;
         private readonly IObjectResolver _Resolver;
         private readonly VoidEventChannel _ContinueRequestedChannel;
@@ -31,12 +33,14 @@ namespace Game.Ads.Controllers
         private readonly VoidEventChannel _RestartStageChannel;
         private readonly LevelFailedEventChannel _LevelFailedChannel;
         private readonly StageFailPopup _FailPopup;
+        private bool _HasConsumedDisabledContinue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AdRewardController"/> class.
         /// </summary>
         public AdRewardController(
             IAdService adService,
+            AdSettings adSettings,
             RewardedPlacement continuePlacement,
             IObjectResolver resolver,
             VoidEventChannel continueRequestedChannel,
@@ -46,6 +50,7 @@ namespace Game.Ads.Controllers
             StageFailPopup failPopup)
         {
             _AdService = adService;
+            _AdSettings = adSettings;
             _ContinuePlacement = continuePlacement;
             _Resolver = resolver;
             _ContinueRequestedChannel = continueRequestedChannel;
@@ -62,6 +67,7 @@ namespace Game.Ads.Controllers
         {
             _ContinueRequestedChannel.Subscribe(OnContinueRequested);
             _LevelFailedChannel.Subscribe(OnLevelFailed);
+            _RestartStageChannel?.Subscribe(OnRestartStageRequested);
         }
 
         /// <summary>
@@ -71,15 +77,29 @@ namespace Game.Ads.Controllers
         {
             _ContinueRequestedChannel.Unsubscribe(OnContinueRequested);
             _LevelFailedChannel.Unsubscribe(OnLevelFailed);
+            _RestartStageChannel?.Unsubscribe(OnRestartStageRequested);
         }
 
         private void OnLevelFailed(LevelData _)
         {
-            _FailPopup.SetContinueAvailable(_AdService.CanShowAd(_ContinuePlacement));
+            _FailPopup.SetContinueAvailable(CanContinueAfterFailure());
         }
 
         private async void OnContinueRequested()
         {
+            if (!_AdSettings.AdsEnabled)
+            {
+                if (!CanUseDisabledAdsFallback())
+                {
+                    _FailPopup.SetContinueAvailable(false);
+                    return;
+                }
+
+                ConsumeDisabledAdsFallback();
+                _RetryLevelChannel.Raise();
+                return;
+            }
+
             if (!_AdService.CanShowAd(_ContinuePlacement))
             {
                 _FailPopup.SetContinueAvailable(false);
@@ -99,6 +119,30 @@ namespace Game.Ads.Controllers
             {
                 _RestartStageChannel?.Raise();
             }
+        }
+
+        private void OnRestartStageRequested()
+        {
+            _HasConsumedDisabledContinue = false;
+        }
+
+        private bool CanContinueAfterFailure()
+        {
+            if (!_AdSettings.AdsEnabled)
+                return CanUseDisabledAdsFallback();
+
+            return _AdService.CanShowAd(_ContinuePlacement);
+        }
+
+        private bool CanUseDisabledAdsFallback() =>
+            !_ContinuePlacement.OncePerRun || !_HasConsumedDisabledContinue;
+
+        private void ConsumeDisabledAdsFallback()
+        {
+            if (_ContinuePlacement.OncePerRun)
+                _HasConsumedDisabledContinue = true;
+
+            _FailPopup.SetContinueAvailable(false);
         }
     }
 }

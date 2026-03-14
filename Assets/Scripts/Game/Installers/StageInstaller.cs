@@ -121,6 +121,7 @@ namespace Game.Installers
             {
                 builder.Register(resolver => new AdRewardController(
                     resolver.Resolve<IAdService>(),
+                    resolver.Resolve<AdSettings>(),
                     _ContinuePlacement,
                     resolver,
                     _ContinueRequestedChannel,
