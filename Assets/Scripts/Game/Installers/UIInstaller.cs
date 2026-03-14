@@ -1,8 +1,10 @@
-using Game.UI.Controllers;
-using Game.UI.HUD;
-using Game.UI.Popups;
-using Game.UI.Data;
 using Game.PowerUps.Views;
+using Game.UI.Controllers;
+using Game.UI.Data;
+using Game.UI.HUD;
+using Game.UI.Interfaces;
+using Game.UI.Popups;
+using Game.UI.Services;
 using VContainer;
 using VContainer.Unity;
 
@@ -55,13 +57,13 @@ namespace Game.Installers
 
             if (_PrivacyPolicyContent != null)
                 builder.RegisterInstance(_PrivacyPolicyContent);
-            
+
+            builder.Register<PopupGamePauseController>(Lifetime.Singleton).As<IGamePauseController>();
             builder.Register<SettingsPopupController>(Lifetime.Singleton);
-            
+
             builder.RegisterComponentInHierarchy<CoinsUiDisplay>();
             builder.RegisterComponentInHierarchy<PowerUpHudController>();
             builder.RegisterComponentInHierarchy<SettingsButtonView>();
         }
     }
 }
-
