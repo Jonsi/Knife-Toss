@@ -15,6 +15,7 @@ namespace Game.UI.HUD
         [SerializeField] private Transform _Container;
         [SerializeField] private GameObject _SlotPrefab;
         [SerializeField] private Color _CompletedColor = Color.white;
+        [SerializeField] private Color _CurrentLevelColor = Color.yellow;
         [SerializeField] private Color _IncompleteColor = Color.gray;
         [SerializeField] private LevelStartedEventChannel _LevelStartedChannel;
         [SerializeField] private StageCompletedEventChannel _StageCompletedChannel;
@@ -112,14 +113,24 @@ namespace Game.UI.HUD
             if (_CachedLevelCount < 0)
                 return;
 
-            int completedIndex = _CurrentLevelIndex;
             for (int i = 0; i < _Slots.Count; i++)
             {
                 var slot = _Slots[i];
                 if (slot == null)
                     continue;
 
-                slot.color = i < completedIndex ? _CompletedColor : _IncompleteColor;
+                if (i < _CurrentLevelIndex)
+                {
+                    slot.color = _CompletedColor;
+                }
+                else if (i == _CurrentLevelIndex && _CurrentLevelIndex < _CachedLevelCount)
+                {
+                    slot.color = _CurrentLevelColor;
+                }
+                else
+                {
+                    slot.color = _IncompleteColor;
+                }
             }
         }
 
