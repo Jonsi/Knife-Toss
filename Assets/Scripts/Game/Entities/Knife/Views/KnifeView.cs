@@ -6,8 +6,9 @@ using Common.Interfaces;
 using Game.Entities.Knife.Data;
 using Game.Entities.Knife.Interfaces;
 using Game.Entities.Knife.States;
-using Game.Entities.Target.Data;
 using Game.Feedback.Animation;
+using Game.Feedback.Animation.Data;
+using Game.Entities.Target.Data;
 using Game.Pooling;
 using Game.PowerUps.Configs;
 using Game.Store.Services;
@@ -30,13 +31,16 @@ namespace Game.Entities.Knife.Views
         [SerializeField] private Collider2D _Collider;
         [SerializeField] private Collider2D _HitCollider;
         [SerializeField] private SpriteShatterController _ShatterController;
-        
+        [SerializeField] private KnifeFailAnimationConfig _FailAnimationConfig;
+
         private KnifeStateMachine _StateMachine;
         private Camera _MainCamera;
         private bool _HasReportedOutOfView;
+        private bool _SuppressOutOfViewMonitoring;
         private bool _IsSuperKnife;
         private PowerUpConfigBase _SourcePowerUpConfig;
         private Sprite _DefaultSprite;
+        private Coroutine _FailSequenceCoroutine;
 
         private IEventChannel<CollisionData> _CollisionChannel;
         private IEventChannel<KnifeImpactEventData> _ImpactChannel;
@@ -52,7 +56,7 @@ namespace Game.Entities.Knife.Views
         /// Gets whether the knife is currently in flight.
         /// </summary>
         public bool IsInFlight => _StateMachine?.IsInFlight ?? false;
-        
+
         /// <summary>
         /// Exposes transform for state consumption.
         /// </summary>
@@ -63,7 +67,7 @@ namespace Game.Entities.Knife.Views
 
         public float RadiusOffset => 0f;
         public float RotationOffset => 0f;
-        
+
         /// <inheritdoc />
         public void ApplySorting(int sortingLayerId, int sortingOrder)
         {
@@ -110,7 +114,7 @@ namespace Game.Entities.Knife.Views
                 _DefaultSprite = _SpriteRenderer.sprite;
             }
         }
-        
+
         private void Update()
         {
             _StateMachine?.Update(Time.deltaTime);
@@ -122,7 +126,7 @@ namespace Game.Entities.Knife.Views
             var collisionChannel = _CollisionChannel;
             if (collisionChannel == null)
                 return;
-            
+
             var hitable = other.GetComponent<IHitable>();
             if (hitable == null)
                 return;
@@ -158,8 +162,8 @@ namespace Game.Entities.Knife.Views
         /// </summary>
         public void Bounce()
         {
-            _StateMachine.Bounced.ConfigureBounce(new Vector2(0f, 6f), 360f);
-            _StateMachine.SetState(_StateMachine.Bounced);
+            StopFailSequence(restoreVisuals: true, restoreTimeScale: true);
+            _FailSequenceCoroutine = StartCoroutine(PlayFailSequence());
         }
 
 
@@ -168,10 +172,13 @@ namespace Game.Entities.Knife.Views
         /// </summary>
         public void ResetKnife()
         {
+            StopFailSequence(restoreVisuals: true, restoreTimeScale: true);
             _HasReportedOutOfView = false;
+            _SuppressOutOfViewMonitoring = false;
             _IsSuperKnife = false;
             _SourcePowerUpConfig = null;
             RefreshVisualSkin();
+            SetSpriteAlpha(1f);
             _StateMachine.SetState(_StateMachine.Loaded);
         }
 
@@ -201,7 +208,7 @@ namespace Game.Entities.Knife.Views
                 new KnifeBouncedState(this),
                 new KnifePooledState(this));
         }
-        
+
         public void SetColliderEnabled(bool enabled)
         {
             // Determine if we are in the Stuck state
@@ -244,6 +251,9 @@ namespace Game.Entities.Knife.Views
             if (_StateMachine == null || !_StateMachine.ShouldMonitorOutOfView)
                 return;
 
+            if (_SuppressOutOfViewMonitoring)
+                return;
+
             Vector3 viewportPoint = mainCamera.WorldToViewportPoint(transform.position);
             bool isOutOfView = viewportPoint.x < 0f || viewportPoint.x > 1f || viewportPoint.y < 0f || viewportPoint.y > 1f;
 
@@ -265,6 +275,8 @@ namespace Game.Entities.Knife.Views
 
         public void ReturnToPool()
         {
+            StopFailSequence(restoreVisuals: true, restoreTimeScale: false);
+
             if (_KnifePoolProvider == null)
                 return;
 
@@ -280,6 +292,106 @@ namespace Game.Entities.Knife.Views
         internal void SetSourcePowerUpConfig(PowerUpConfigBase config)
         {
             _SourcePowerUpConfig = config;
+        }
+
+        private System.Collections.IEnumerator PlayFailSequence()
+        {
+            var config = GetFailAnimationConfig();
+            _SuppressOutOfViewMonitoring = true;
+            SetColliderEnabled(false);
+
+            _StateMachine.Bounced.ConfigureBounce(config.InitialVelocity, config.AngularVelocity, config.Gravity);
+            _StateMachine.SetState(_StateMachine.Bounced);
+
+            float duration = Mathf.Max(0.01f, config.SequenceDuration);
+            float flashDuration = Mathf.Max(0f, config.FlashDuration);
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float normalizedTime = Mathf.Clamp01(elapsed / duration);
+
+                Time.timeScale = Mathf.Clamp01(config.TimeScaleOverSequence.Evaluate(normalizedTime));
+                SetSpriteAlpha(Mathf.Clamp01(config.KnifeAlphaOverSequence.Evaluate(normalizedTime)));
+
+                if (flashDuration > 0f && elapsed <= flashDuration)
+                {
+                    float flashNormalizedTime = Mathf.Clamp01(elapsed / flashDuration);
+                    KnifeFailScreenFlash.Instance.SetAlpha(Mathf.Clamp01(config.FlashAlphaCurve.Evaluate(flashNormalizedTime)));
+                }
+                else
+                {
+                    KnifeFailScreenFlash.Instance.Hide();
+                }
+
+                yield return null;
+            }
+
+            SetSpriteAlpha(0f);
+            KnifeFailScreenFlash.Instance.Hide();
+            CompleteFailSequence();
+        }
+
+        private void CompleteFailSequence()
+        {
+            _FailSequenceCoroutine = null;
+            _SuppressOutOfViewMonitoring = false;
+            Time.timeScale = 1f;
+            KnifeFailScreenFlash.Instance.Hide();
+            _HasReportedOutOfView = true;
+            _ImpactChannel?.Raise(new KnifeImpactEventData(KnifeImpactType.OutOfView, transform.position));
+            ReturnToPool();
+        }
+
+        private void StopFailSequence(bool restoreVisuals, bool restoreTimeScale)
+        {
+            if (_FailSequenceCoroutine != null)
+            {
+                StopCoroutine(_FailSequenceCoroutine);
+                _FailSequenceCoroutine = null;
+            }
+
+            _SuppressOutOfViewMonitoring = false;
+            KnifeFailScreenFlash.Instance.Hide();
+
+            if (restoreTimeScale)
+            {
+                Time.timeScale = 1f;
+            }
+
+            if (restoreVisuals)
+            {
+                SetSpriteAlpha(1f);
+            }
+        }
+
+        private void SetSpriteAlpha(float alpha)
+        {
+            if (_SpriteRenderer == null)
+                return;
+
+            Color color = _SpriteRenderer.color;
+            color.a = Mathf.Clamp01(alpha);
+            _SpriteRenderer.color = color;
+        }
+
+        private KnifeFailAnimationConfig GetFailAnimationConfig()
+        {
+            if (_FailAnimationConfig != null)
+            {
+                return _FailAnimationConfig;
+            }
+
+            _FailAnimationConfig = Resources.Load<KnifeFailAnimationConfig>(
+                "Configurations/Systems/Animation/KnifeFailAnimationConfig");
+
+            if (_FailAnimationConfig != null)
+            {
+                return _FailAnimationConfig;
+            }
+
+            _FailAnimationConfig = ScriptableObject.CreateInstance<KnifeFailAnimationConfig>();
+            return _FailAnimationConfig;
         }
     }
 }

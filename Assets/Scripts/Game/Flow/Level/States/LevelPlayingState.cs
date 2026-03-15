@@ -7,7 +7,7 @@ using Game.KnifeThrower.Interfaces;
 
 namespace Game.Flow.Level.States
 {
-    public class LevelPlayingState : LevelStateBase 
+    public class LevelPlayingState : LevelStateBase
     {
         private readonly IEventChannel<KnifeImpactEventData> _ImpactChannel;
         private readonly IEventChannel<CollectibleHitEventData> _CollectibleHitChannel;
@@ -38,13 +38,13 @@ namespace Game.Flow.Level.States
 
             _SubscribedTargets.Clear();
             _SubscribedTargets.AddRange(Context.ActiveTargets);
-            
+
             foreach (var target in _SubscribedTargets)
             {
                 target.OnDestroyed += HandleTargetDestroyed;
             }
 
-                
+
             _ImpactChannel.Subscribe(OnKnifeImpact);
             if (_CollectibleHitChannel != null)
                 _CollectibleHitChannel.Subscribe(OnCollectibleHit);
@@ -63,7 +63,7 @@ namespace Game.Flow.Level.States
             }
             _SubscribedTargets.Clear();
 
-                
+
             _ImpactChannel.Unsubscribe(OnKnifeImpact);
             if (_CollectibleHitChannel != null)
                 _CollectibleHitChannel.Unsubscribe(OnCollectibleHit);
@@ -96,15 +96,13 @@ namespace Game.Flow.Level.States
                     Context.KnivesInFlight = UnityEngine.Mathf.Max(0, Context.KnivesInFlight - 1);
                     break;
                 case KnifeImpactType.Bounced:
-                    Context.KnivesInFlight = UnityEngine.Mathf.Max(0, Context.KnivesInFlight - 1);
                     Context.HasBounced = true;
-                    Machine.SetState(Machine.Failed);
-                    return;
+                    break;
             }
 
             CheckCompletion();
         }
-        
+
         private void OnCollectibleHit(CollectibleHitEventData data)
         {
             if (Machine.Current != this)

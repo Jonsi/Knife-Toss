@@ -8,16 +8,17 @@ namespace Game.Entities.Knife.States
     /// </summary>
     public class KnifeBouncedState : KnifeStateBase
     {
-        private const float GRAVITY = -20f;
+        private float _Gravity = -20f;
         private float _AngularVelocity;
         private Vector2 _InitialVelocity = new Vector2(0f, 6f);
 
         public KnifeBouncedState(IKnifeViewContext knifeView) : base(knifeView) { }
 
-        public void ConfigureBounce(Vector2 initialVelocity, float angularVelocity)
+        public void ConfigureBounce(Vector2 initialVelocity, float angularVelocity, float gravity)
         {
             _InitialVelocity = initialVelocity;
             _AngularVelocity = angularVelocity;
+            _Gravity = gravity;
         }
 
         public override void Enter()
@@ -30,10 +31,9 @@ namespace Game.Entities.Knife.States
 
         public override void Update(float deltaTime)
         {
-            Velocity += new Vector2(0f, GRAVITY * deltaTime);
+            Velocity += new Vector2(0f, _Gravity * deltaTime);
             KnifeView.Transform.position += (Vector3)(Velocity * deltaTime);
             KnifeView.Transform.Rotate(0f, 0f, _AngularVelocity * deltaTime);
         }
     }
 }
-

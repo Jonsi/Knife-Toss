@@ -29,6 +29,7 @@ namespace Game.PVP.Flow
         
         private bool _IsPlayer1Turn = true;
         private bool _IsGameActive = false;
+        private bool _PendingBounceFailure;
 
         [Inject]
         public void Construct(
@@ -76,6 +77,7 @@ namespace Game.PVP.Flow
         {
             _IsGameActive = true;
             _IsPlayer1Turn = true;
+            _PendingBounceFailure = false;
             _HudController.HideWinnerOverlay();
             _HudController.UpdateTurnIndicator(_IsPlayer1Turn);
             
@@ -122,8 +124,12 @@ namespace Game.PVP.Flow
             }
             else if (data.ImpactType == KnifeImpactType.Bounced)
             {
-                // Hit another knife -> Loss
-                EndGame(!_IsPlayer1Turn); // The other player wins
+                _PendingBounceFailure = true;
+            }
+            else if (data.ImpactType == KnifeImpactType.OutOfView && _PendingBounceFailure)
+            {
+                _PendingBounceFailure = false;
+                EndGame(!_IsPlayer1Turn);
             }
         }
 
