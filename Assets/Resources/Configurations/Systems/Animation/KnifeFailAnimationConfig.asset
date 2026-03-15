@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2154fd6d31b4bfb892b3dd3e9901dbf, type: 3}
   m_Name: KnifeFailAnimationConfig
   m_EditorClassIdentifier: 
-  <FlashDuration>k__BackingField: 0.08
+  <FlashDuration>k__BackingField: 0.84
   <FlashAlphaCurve>k__BackingField:
     serializedVersion: 2
     m_Curve:
@@ -46,7 +46,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  <SequenceDuration>k__BackingField: 0.65
+  <SequenceDuration>k__BackingField: 1.51
   <TimeScaleOverSequence>k__BackingField:
     serializedVersion: 2
     m_Curve:

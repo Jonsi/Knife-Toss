@@ -12,7 +12,14 @@ namespace Game.UI.Common
         [SerializeField] private bool _PauseGameplayWhileVisible = true;
 
         private IGamePauseController _GamePauseController;
+        private PopupFadeInAnimation _PopupAnimation;
         private bool _HasPauseRequest;
+        private bool _IsHiding;
+
+        private void Awake()
+        {
+            _PopupAnimation = GetComponent<PopupFadeInAnimation>();
+        }
 
         [Inject]
         private void Construct(IGamePauseController gamePauseController)
@@ -23,8 +30,17 @@ namespace Game.UI.Common
         public virtual void Show()
         {
             if (gameObject.activeSelf)
-                return;
+            {
+                if (_IsHiding)
+                {
+                    _IsHiding = false;
+                    _PopupAnimation?.PlayShow();
+                }
 
+                return;
+            }
+
+            _IsHiding = false;
             TryAcquirePause();
             gameObject.SetActive(true);
         }
@@ -34,11 +50,22 @@ namespace Game.UI.Common
             if (!gameObject.activeSelf)
             {
                 TryReleasePause();
+                _IsHiding = false;
                 return;
             }
 
-            TryReleasePause();
-            gameObject.SetActive(false);
+            if (_IsHiding)
+                return;
+
+            if (_PopupAnimation == null)
+            {
+                TryReleasePause();
+                gameObject.SetActive(false);
+                return;
+            }
+
+            _IsHiding = true;
+            _PopupAnimation.PlayHide(CompleteHide);
         }
 
         protected virtual bool ShouldPauseGameplayWhileVisible => _PauseGameplayWhileVisible;
@@ -51,6 +78,16 @@ namespace Game.UI.Common
         private void OnDestroy()
         {
             TryReleasePause();
+        }
+
+        private void CompleteHide()
+        {
+            if (!_IsHiding)
+                return;
+
+            _IsHiding = false;
+            TryReleasePause();
+            gameObject.SetActive(false);
         }
 
         private void TryAcquirePause()

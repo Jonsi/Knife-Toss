@@ -9,6 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4812087714442154825}
+  - component: {fileID: 3381742115563209194}
+  - component: {fileID: 1027685531646249907}
   m_Layer: 5
   m_Name: Popup
   m_TagString: Untagged
@@ -37,6 +39,44 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &3381742115563209194
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2036229646191269102}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &1027685531646249907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2036229646191269102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dc910e9c6d405cbfed1266c5ec5e77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _CanvasGroup: {fileID: 3381742115563209194}
+  _AnimatedContent: {fileID: 3207458631617955686}
+  _Show:
+    Duration: 0.2
+    StartAlpha: 0
+    EndAlpha: 1
+    StartScale: 0.5
+    EndScale: 1
+  _Hide:
+    Duration: 0.2
+    StartAlpha: 1
+    EndAlpha: 0
+    StartScale: 1
+    EndScale: 0.5
 --- !u!1 &2510593192903460413
 GameObject:
   m_ObjectHideFlags: 0
