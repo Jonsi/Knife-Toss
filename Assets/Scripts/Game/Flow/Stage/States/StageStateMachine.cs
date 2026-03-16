@@ -1,7 +1,9 @@
 using Common.Events;
 using Common.Patterns.State;
+using Common.Config;
 using Game.Flow.Events;
 using Game.Flow.Interfaces;
+using Game.KnifeThrower.Configs;
 using Game.KnifeThrower.Interfaces;
 using Game.Level.Interfaces;
 using Game.Pooling;
@@ -35,7 +37,8 @@ namespace Game.Flow.Stage.States
             VoidEventChannel restartRequestChannel,
             LevelStartedEventChannel levelStartedChannel,
             IKnifeThrowerView knifeThrowerView,
-            KnifePoolProvider knifePoolProvider)
+            KnifePoolProvider knifePoolProvider,
+            IConfigurationProvider<KnifeThrowConfiguration> knifeThrowConfigurationProvider)
         {
             Context = context;
             LevelFlowController = levelFlowController;
@@ -52,7 +55,8 @@ namespace Game.Flow.Stage.States
                 restartRequestChannel,
                 levelStartedChannel,
                 knifeThrowerView,
-                knifePoolProvider);
+                knifePoolProvider,
+                knifeThrowConfigurationProvider);
             Completed = new StageCompletedState(this);
         }
 

@@ -9,7 +9,6 @@ namespace Game.PowerUps.Configs
     [CreateAssetMenu(fileName = "SuperKnifeConfig", menuName = "Knife Toss/Systems/Power Ups/Super Knife Config")]
     public class SuperKnifeConfig : PowerUpConfigBase, IProjectilePowerUp, ICancellablePowerUp
     {
-        [field: SerializeField] public float ThrowSpeed { get; private set; } = 10f;
         [field: SerializeField] public GameObject VfxPrefab { get; private set; }
         [field: SerializeField] public Vector3 VfxLocalOffset { get; private set; } = Vector3.zero;
         [field: SerializeField] public Vector3 VfxLocalScale { get; private set; } = Vector3.one;
@@ -23,7 +22,7 @@ namespace Game.PowerUps.Configs
             if (context?.ThrowContext == null)
                 return false;
 
-            context.ThrowContext.ThrowerView.ThrowLoadedKnife(ThrowSpeed);
+            context.ThrowContext.ThrowerView.ThrowLoadedKnife();
             return true;
         }
 

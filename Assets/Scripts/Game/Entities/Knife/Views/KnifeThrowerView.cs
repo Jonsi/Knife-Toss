@@ -19,6 +19,7 @@ namespace Game.Entities.Knife.Views
         private IEventChannel _KnifeThrownChannel;
         private KnifeView _LoadedKnife;
         private bool _IsVisible = true;
+        private float _LoadedThrowSpeed;
         private readonly System.Collections.Generic.List<KnifeView> _LoadedKnives = new System.Collections.Generic.List<KnifeView>();
 
         [Inject]
@@ -60,6 +61,7 @@ namespace Game.Entities.Knife.Views
             _LoadedKnives.Clear();
             _LoadedKnives.AddRange(knives);
             _LoadedKnife = _LoadedKnives[0];
+            _LoadedThrowSpeed = spawnData.ThrowSpeed;
 
             Transform spawnTransform = _SpawnPoint != null ? _SpawnPoint : transform;
             float centeredOffset = (knives.Count - 1) * 0.5f;
@@ -91,32 +93,31 @@ namespace Game.Entities.Knife.Views
             }
         }
 
-        public void ThrowLoadedKnife(float throwSpeed)
+        public void ThrowLoadedKnife()
         {
-            ThrowLoadedKnives(throwSpeed);
+            ThrowLoadedKnives();
         }
 
-        public int ThrowLoadedKnives(float throwSpeed)
+        public int ThrowLoadedKnives()
         {
-            return ThrowLoadedKnivesWithDirectionInternal(Vector2.up, throwSpeed);
+            return ThrowLoadedKnivesWithDirectionInternal(Vector2.up);
         }
 
         /// <summary>
         /// Launches the currently loaded knife with the given direction and speed.
         /// </summary>
         /// <param name="direction">Launch direction.</param>
-        /// <param name="throwSpeed">Launch speed.</param>
-        public void ThrowLoadedKnifeWithDirection(Vector2 direction, float throwSpeed)
+        public void ThrowLoadedKnifeWithDirection(Vector2 direction)
         {
             if (_LoadedKnives.Count == 0)
             {
                 return;
             }
 
-            _ = ThrowLoadedKnivesWithDirectionInternal(direction, throwSpeed);
+            _ = ThrowLoadedKnivesWithDirectionInternal(direction);
         }
 
-        private int ThrowLoadedKnivesWithDirectionInternal(Vector2 direction, float throwSpeed)
+        private int ThrowLoadedKnivesWithDirectionInternal(Vector2 direction)
         {
             if (_LoadedKnives.Count == 0)
                 return 0;
@@ -128,13 +129,14 @@ namespace Game.Entities.Knife.Views
                 if (knife == null)
                     continue;
 
-                knife.Launch(direction, throwSpeed);
+                knife.Launch(direction, _LoadedThrowSpeed);
                 _KnifeThrownChannel?.Raise();
                 thrownCount++;
             }
 
             _LoadedKnives.Clear();
             _LoadedKnife = null;
+            _LoadedThrowSpeed = 0f;
             return thrownCount;
         }
 
@@ -163,6 +165,7 @@ namespace Game.Entities.Knife.Views
 
             _LoadedKnives.Clear();
             _LoadedKnife = null;
+            _LoadedThrowSpeed = 0f;
         }
 
         private void DeactivateOldKnivesExcept(System.Collections.Generic.IReadOnlyList<KnifeView> knives)

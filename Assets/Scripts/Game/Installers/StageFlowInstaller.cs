@@ -1,9 +1,11 @@
+using Common.Config;
 using Common.Events;
 using Game.Flow.Events;
 using Game.Flow.Game;
 using Game.Flow.Interfaces;
 using Game.Flow.Stage;
 using Game.Flow.Stage.States;
+using Game.KnifeThrower.Configs;
 using Game.KnifeThrower.Interfaces;
 using Game.Level.Catalogs;
 using Game.Level.Interfaces;
@@ -82,7 +84,8 @@ namespace Game.Installers
                 _RestartChannel,
                 _LevelStartedChannel,
                 resolver.Resolve<IKnifeThrowerView>(),
-                resolver.Resolve<KnifePoolProvider>());
+                resolver.Resolve<KnifePoolProvider>(),
+                resolver.Resolve<IConfigurationProvider<KnifeThrowConfiguration>>());
         }
     }
 }

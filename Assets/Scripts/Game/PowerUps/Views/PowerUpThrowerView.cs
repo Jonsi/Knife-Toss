@@ -17,6 +17,7 @@ namespace Game.PowerUps.Views
 
         private readonly List<KnifeView> _LoadedKnives = new List<KnifeView>();
         private bool _IsVisible = true;
+        private float _LoadedThrowSpeed;
 
         public Transform SpawnPoint => _SpawnPoint != null ? _SpawnPoint : transform;
         public IReadOnlyList<KnifeView> LoadedKnives => _LoadedKnives;
@@ -53,6 +54,7 @@ namespace Game.PowerUps.Views
             DeactivateOldKnivesExcept(knives);
             _LoadedKnives.Clear();
             _LoadedKnives.AddRange(knives);
+            _LoadedThrowSpeed = spawnData.ThrowSpeed;
 
             Transform spawnTransform = SpawnPoint;
             float centeredOffset = (knives.Count - 1) * 0.5f;
@@ -80,23 +82,23 @@ namespace Game.PowerUps.Views
             }
         }
 
-        public void ThrowLoadedKnife(float throwSpeed)
+        public void ThrowLoadedKnife()
         {
-            ThrowLoadedKnives(throwSpeed);
+            ThrowLoadedKnives();
         }
 
-        public int ThrowLoadedKnives(float throwSpeed)
+        public int ThrowLoadedKnives()
         {
-            return ThrowLoadedKnivesWithDirectionInternal(Vector2.up, throwSpeed);
+            return ThrowLoadedKnivesWithDirectionInternal(Vector2.up);
         }
 
-        public void ThrowLoadedKnifeWithDirection(Vector2 direction, float throwSpeed)
+        public void ThrowLoadedKnifeWithDirection(Vector2 direction)
         {
             if (_LoadedKnives.Count == 0) return;
-            ThrowLoadedKnivesWithDirectionInternal(direction, throwSpeed);
+            ThrowLoadedKnivesWithDirectionInternal(direction);
         }
 
-        private int ThrowLoadedKnivesWithDirectionInternal(Vector2 direction, float throwSpeed)
+        private int ThrowLoadedKnivesWithDirectionInternal(Vector2 direction)
         {
             if (_LoadedKnives.Count == 0) return 0;
 
@@ -106,11 +108,12 @@ namespace Game.PowerUps.Views
                 var knife = _LoadedKnives[i];
                 if (knife == null) continue;
 
-                knife.Launch(direction, throwSpeed);
+                knife.Launch(direction, _LoadedThrowSpeed);
                 thrownCount++;
             }
 
             _LoadedKnives.Clear();
+            _LoadedThrowSpeed = 0f;
             return thrownCount;
         }
 
@@ -124,6 +127,7 @@ namespace Game.PowerUps.Views
                 }
             }
             _LoadedKnives.Clear();
+            _LoadedThrowSpeed = 0f;
         }
 
         private void DeactivateOldKnivesExcept(IReadOnlyList<KnifeView> knives)

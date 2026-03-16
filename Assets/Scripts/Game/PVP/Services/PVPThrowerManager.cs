@@ -1,7 +1,8 @@
 using Game.Entities.Knife.Views;
 using Game.Entities.Knife.Data;
+using Common.Config;
+using Game.KnifeThrower.Configs;
 using UnityEngine;
-using Game.PVP.Configs;
 using VContainer;
 using VContainer.Unity;
 
@@ -11,28 +12,30 @@ namespace Game.PVP.Services
     {
         private readonly KnifeThrowerView _Player1Thrower; // Bottom
         private readonly KnifeThrowerView _Player2Thrower; // Top
-        private readonly PVPSettingsConfig _Config;
         private readonly IObjectResolver _Container;
+        private readonly IConfigurationProvider<KnifeThrowConfiguration> _KnifeThrowConfigurationProvider;
         
         public PVPThrowerManager(
             KnifeThrowerView player1Thrower,
             KnifeThrowerView player2Thrower,
-            PVPSettingsConfig config,
-            IObjectResolver container)
+            IObjectResolver container,
+            IConfigurationProvider<KnifeThrowConfiguration> knifeThrowConfigurationProvider)
         {
             _Player1Thrower = player1Thrower;
             _Player2Thrower = player2Thrower;
-            _Config = config;
             _Container = container;
+            _KnifeThrowConfigurationProvider = knifeThrowConfigurationProvider;
         }
 
         public void LoadKnifeForPlayer(bool isPlayer1, KnifeView knifePrefab)
         {
             var knife = _Container.Instantiate(knifePrefab);
+            var throwConfig = _KnifeThrowConfigurationProvider.GetConfiguration();
             
             var spawnData = new KnifeSpawnRequestData
             {
-                SpawnOffset = Vector2.zero
+                SpawnOffset = throwConfig.SpawnPositionOffset,
+                ThrowSpeed = throwConfig.ThrowSpeed
             };
 
             if (isPlayer1)
@@ -57,11 +60,11 @@ namespace Game.PVP.Services
         {
             if (isPlayer1)
             {
-                _Player1Thrower.ThrowLoadedKnifeWithDirection(Vector2.up, _Config.ThrowSpeed);
+                _Player1Thrower.ThrowLoadedKnifeWithDirection(Vector2.up);
             }
             else
             {
-                _Player2Thrower.ThrowLoadedKnifeWithDirection(Vector2.down, _Config.ThrowSpeed);
+                _Player2Thrower.ThrowLoadedKnifeWithDirection(Vector2.down);
             }
         }
     }

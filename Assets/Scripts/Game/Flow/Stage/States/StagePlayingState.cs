@@ -1,8 +1,10 @@
 using Common.Events;
+using Common.Config;
 using Game.Entities.Knife.Data;
 using Game.Entities.Knife.Views;
 using Game.Flow.Events;
 using Game.Flow.Level;
+using Game.KnifeThrower.Configs;
 using Game.KnifeThrower.Interfaces;
 using Game.Level.Data;
 using Game.Pooling;
@@ -19,6 +21,7 @@ namespace Game.Flow.Stage.States
         private readonly LevelStartedEventChannel _LevelStartedChannel;
         private readonly IKnifeThrowerView _KnifeThrowerView;
         private readonly KnifePoolProvider _KnifePoolProvider;
+        private readonly IConfigurationProvider<KnifeThrowConfiguration> _KnifeThrowConfigurationProvider;
 
         public StagePlayingState(
             StageStateMachine machine,
@@ -28,7 +31,8 @@ namespace Game.Flow.Stage.States
             VoidEventChannel restartRequestChannel,
             LevelStartedEventChannel levelStartedChannel,
             IKnifeThrowerView knifeThrowerView,
-            KnifePoolProvider knifePoolProvider) : base(machine)
+            KnifePoolProvider knifePoolProvider,
+            IConfigurationProvider<KnifeThrowConfiguration> knifeThrowConfigurationProvider) : base(machine)
         {
             _LevelCompletedChannel = levelCompletedChannel;
             _LevelFailedChannel = levelFailedChannel;
@@ -37,6 +41,7 @@ namespace Game.Flow.Stage.States
             _LevelStartedChannel = levelStartedChannel;
             _KnifeThrowerView = knifeThrowerView;
             _KnifePoolProvider = knifePoolProvider;
+            _KnifeThrowConfigurationProvider = knifeThrowConfigurationProvider;
         }
 
         public override void Enter()
@@ -130,12 +135,14 @@ namespace Game.Flow.Stage.States
                 return;
             }
 
+            var throwConfig = _KnifeThrowConfigurationProvider.GetConfiguration();
+
             // Get a knife from the pool and load it into the thrower
             var knife = _KnifePoolProvider.Get();
             var spawnData = new KnifeSpawnRequestData
             {
-                SpawnOffset = Vector2.zero, // Default spawn position
-                ThrowSpeed = 10f // Default throw speed, could be configured
+                SpawnOffset = throwConfig.SpawnPositionOffset,
+                ThrowSpeed = throwConfig.ThrowSpeed
             };
             _KnifeThrowerView.LoadKnife(knife, spawnData);
         }

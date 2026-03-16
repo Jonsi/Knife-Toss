@@ -207,7 +207,7 @@ namespace Game.KnifeThrower.Services
             }
 
             // Normal magazine-based throw
-            _KnifeThrowerView.ThrowLoadedKnife(config.ThrowSpeed);
+            _KnifeThrowerView.ThrowLoadedKnife();
             LoadKnife(config);
         }
 

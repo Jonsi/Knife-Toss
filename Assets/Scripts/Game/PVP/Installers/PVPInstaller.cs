@@ -19,6 +19,8 @@ using VContainer.Unity;
 using Game.Entities.Knife.Data;
 using Game.Flow.Events;
 using Game.Input;
+using Game.KnifeThrower.Configs;
+using Common.Config;
 
 namespace Game.PVP.Installers
 {
@@ -26,6 +28,7 @@ namespace Game.PVP.Installers
     {
         [Header("Configs")]
         [SerializeField] private PVPSettingsConfig _PvpConfig;
+        [SerializeField] private KnifeThrowConfigAsset _KnifeThrowConfig;
         [SerializeField] private PrefabsConfiguration _PrefabsConfiguration;
         [SerializeField] private StoreCatalog _StoreCatalog;
 
@@ -48,6 +51,7 @@ namespace Game.PVP.Installers
         {
             // Configs
             builder.RegisterInstance(_PvpConfig);
+            builder.RegisterInstance(_KnifeThrowConfig).As<IConfigurationProvider<KnifeThrowConfiguration>>();
             builder.RegisterInstance(_PrefabsConfiguration);
             if (_StoreCatalog != null)
             {

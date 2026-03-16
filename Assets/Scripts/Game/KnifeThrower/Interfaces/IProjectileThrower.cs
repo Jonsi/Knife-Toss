@@ -36,24 +36,21 @@ namespace Game.KnifeThrower.Interfaces
         void LoadKnives(IReadOnlyList<KnifeView> knives, KnifeSpawnRequestData spawnData, float spacing);
 
         /// <summary>
-        /// Launches the currently loaded projectiles with the given speed.
+        /// Launches the currently loaded projectiles using the configured loaded speed.
         /// </summary>
-        /// <param name="throwSpeed">Launch speed.</param>
-        void ThrowLoadedKnife(float throwSpeed);
+        void ThrowLoadedKnife();
 
         /// <summary>
-        /// Launches all currently loaded projectiles with the given speed.
+        /// Launches all currently loaded projectiles using the configured loaded speed.
         /// </summary>
-        /// <param name="throwSpeed">Launch speed.</param>
         /// <returns>Number of projectiles launched.</returns>
-        int ThrowLoadedKnives(float throwSpeed);
+        int ThrowLoadedKnives();
 
         /// <summary>
-        /// Launches the currently loaded projectiles with the given direction and speed.
+        /// Launches the currently loaded projectiles with the given direction and configured loaded speed.
         /// </summary>
         /// <param name="direction">Launch direction.</param>
-        /// <param name="throwSpeed">Launch speed.</param>
-        void ThrowLoadedKnifeWithDirection(Vector2 direction, float throwSpeed);
+        void ThrowLoadedKnifeWithDirection(Vector2 direction);
 
         /// <summary>
         /// Sets whether the loaded projectiles should be visible.

@@ -10,7 +10,5 @@ namespace Game.PVP.Configs
         [Tooltip("Configuration for the PVP target.")]
         public TargetConfig TargetConfig;
         
-        [Header("Throw Settings")]
-        public float ThrowSpeed = 20f;
     }
 }
