@@ -50,6 +50,7 @@ namespace Game.KnifeThrower.Services
             _PowerUpThrower.ClearLoadedKnives();
             _PowerUpThrower.SetVisible(false);
             _NormalThrower.SetVisible(true);
+            ReloadNormalThrower();
         }
 
         public void CancelProjectilePowerUp()
@@ -87,6 +88,19 @@ namespace Game.KnifeThrower.Services
                 config.PrepareKnives(knives);
                 _PowerUpThrower.LoadKnives(knives, spawnData, spacing);
             }
+        }
+
+        private void ReloadNormalThrower()
+        {
+            var throwConfig = _ConfigProvider.GetConfiguration();
+            var spawnData = new KnifeSpawnRequestData
+            {
+                SpawnOffset = throwConfig.SpawnPositionOffset,
+                ThrowSpeed = throwConfig.ThrowSpeed
+            };
+
+            var knife = _KnifePoolProvider.Get(null);
+            _NormalThrower.LoadKnife(knife, spawnData);
         }
 
         private int GetDesiredKnifeCount(PowerUpConfigBase config)

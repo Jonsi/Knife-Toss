@@ -18,3 +18,7 @@ MonoBehaviour:
   <Icon>k__BackingField: {fileID: 1929295679122730106, guid: dd46967cc8ce59446b460b317b580da7, type: 3}
   <InventoryKey>k__BackingField: SuperKnife
   <ThrowSpeed>k__BackingField: 20
+  <VfxPrefab>k__BackingField: {fileID: 3105777051998219250, guid: b236f14c22915b5498c9e5ac68b25baf, type: 3}
+  <VfxLocalOffset>k__BackingField: {x: 0, y: -0.3, z: 0}
+  <VfxLocalScale>k__BackingField: {x: 0.35, y: 0.35, z: 0.35}
+  <VfxSortingOrderOffset>k__BackingField: -1

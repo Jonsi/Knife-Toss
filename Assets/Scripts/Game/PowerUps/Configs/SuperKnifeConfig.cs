@@ -10,6 +10,10 @@ namespace Game.PowerUps.Configs
     public class SuperKnifeConfig : PowerUpConfigBase, IProjectilePowerUp, ICancellablePowerUp
     {
         [field: SerializeField] public float ThrowSpeed { get; private set; } = 10f;
+        [field: SerializeField] public GameObject VfxPrefab { get; private set; }
+        [field: SerializeField] public Vector3 VfxLocalOffset { get; private set; } = Vector3.zero;
+        [field: SerializeField] public Vector3 VfxLocalScale { get; private set; } = Vector3.one;
+        [field: SerializeField] public int VfxSortingOrderOffset { get; private set; } = 2;
 
         /// <summary>
         /// Executes the super knife power-up by throwing the loaded knife.
