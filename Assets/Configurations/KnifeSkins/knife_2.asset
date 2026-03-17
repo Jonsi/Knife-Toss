@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: knife_2
   m_EditorClassIdentifier: Game::Game.Store.Configs.KnifeSkinConfig
   <Id>k__BackingField: knife_2
-  <Icon>k__BackingField: {fileID: -5648524259021177327, guid: 2430df956d5cfb14eb484c6ebab768c9, type: 3}
+  <Icon>k__BackingField: {fileID: 8649467916312722835, guid: 2430df956d5cfb14eb484c6ebab768c9, type: 3}
+  <KnifeSprite>k__BackingField: {fileID: 0}
