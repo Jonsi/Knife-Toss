@@ -48,6 +48,7 @@ namespace Game.Entities.Knife.Views
 
         private IEventChannel<CollisionData> _CollisionChannel;
         private IEventChannel<KnifeImpactEventData> _ImpactChannel;
+        private VoidEventChannel _FailFlowStartedChannel;
         private KnifePoolProvider _KnifePoolProvider;
         private KnifeSkinService _KnifeSkinService;
 
@@ -114,10 +115,12 @@ namespace Game.Entities.Knife.Views
         private void Construct(
             IEventChannel<CollisionData> collisionChannel,
             IEventChannel<KnifeImpactEventData> impactChannel,
+            VoidEventChannel failFlowStartedChannel,
             KnifeSkinService knifeSkinService)
         {
             _CollisionChannel = collisionChannel;
             _ImpactChannel = impactChannel;
+            _FailFlowStartedChannel = failFlowStartedChannel;
             _KnifeSkinService = knifeSkinService;
         }
 
@@ -185,6 +188,7 @@ namespace Game.Entities.Knife.Views
 
             if (playFailFeedback)
             {
+                _FailFlowStartedChannel?.Raise();
                 _FailSequenceCoroutine = StartCoroutine(PlayFailSequence());
             }
         }

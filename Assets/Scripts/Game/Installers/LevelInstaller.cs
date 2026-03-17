@@ -20,6 +20,7 @@ namespace Game.Installers
         private readonly Transform _LevelRoot;
         private readonly LevelCompletedEventChannel _CompletedChannel;
         private readonly LevelFailedEventChannel _FailedChannel;
+        private readonly VoidEventChannel _FailFlowStartedChannel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LevelInstaller"/> class.
@@ -30,11 +31,13 @@ namespace Game.Installers
         public LevelInstaller(
             Transform levelRoot,
             LevelCompletedEventChannel completedChannel,
-            LevelFailedEventChannel failedChannel)
+            LevelFailedEventChannel failedChannel,
+            VoidEventChannel failFlowStartedChannel)
         {
             _LevelRoot = levelRoot;
             _CompletedChannel = completedChannel;
             _FailedChannel = failedChannel;
+            _FailFlowStartedChannel = failFlowStartedChannel;
         }
 
         /// <summary>
@@ -47,6 +50,7 @@ namespace Game.Installers
                 .WithParameter(_LevelRoot)
                 .As<ILevelSpawner>();
             builder.Register<LevelData>(Lifetime.Singleton);
+            builder.RegisterInstance(_FailFlowStartedChannel);
             builder.Register<LevelStateMachine>(Lifetime.Singleton);
             builder.RegisterEntryPoint<LevelFlowController>().As<ILevelFlowController>();
             builder.RegisterInstance(_CompletedChannel).AsSelf().As<IEventChannel<LevelData>>();
@@ -54,4 +58,3 @@ namespace Game.Installers
         }
     }
 }
-

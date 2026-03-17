@@ -1,4 +1,6 @@
 using System;
+using Common.Events;
+using Game.Flow.Events;
 using Game.PowerUps.Configs;
 using TMPro;
 using UnityEngine;
@@ -22,14 +24,23 @@ namespace Game.PowerUps.Views
         private Action<PowerUpConfigBase> _ClickHandler;
         private int _CurrentCount;
         private bool _IsSelected;
+        private bool _IsGameplayActive = true;
+        private LevelStartedEventChannel _LevelStartedChannel;
+        private VoidEventChannel _FailFlowStartedChannel;
 
         /// <summary>
         /// Initializes the button with the given configuration.
         /// </summary>
-        public void Initialize(PowerUpConfigBase config, Action<PowerUpConfigBase> clickHandler)
+        public void Initialize(
+            PowerUpConfigBase config,
+            Action<PowerUpConfigBase> clickHandler,
+            LevelStartedEventChannel levelStartedChannel,
+            VoidEventChannel failFlowStartedChannel)
         {
             _Config = config;
             _ClickHandler = clickHandler;
+            _LevelStartedChannel = levelStartedChannel;
+            _FailFlowStartedChannel = failFlowStartedChannel;
             if (_Icon != null)
             {
                 _Icon.sprite = config.Icon;
@@ -41,6 +52,9 @@ namespace Game.PowerUps.Views
             {
                 _Button.onClick.AddListener(HandleClick);
             }
+
+            _LevelStartedChannel?.Subscribe(OnLevelStarted);
+            _FailFlowStartedChannel?.Subscribe(OnFailFlowStarted);
 
             UpdateVisualState();
         }
@@ -80,15 +94,36 @@ namespace Game.PowerUps.Views
 
         private void HandleClick()
         {
+            if (!_IsGameplayActive)
+                return;
+
             _ClickHandler?.Invoke(_Config);
         }
 
         private void OnDestroy()
         {
+            _LevelStartedChannel?.Unsubscribe(OnLevelStarted);
+            _FailFlowStartedChannel?.Unsubscribe(OnFailFlowStarted);
+
             if (_Button != null)
             {
                 _Button.onClick.RemoveListener(HandleClick);
             }
+        }
+
+        private void OnLevelStarted(LevelStartedEventData data)
+        {
+            SetGameplayActive(true);
+        }
+
+        private void OnFailFlowStarted()
+        {
+            SetGameplayActive(false);
+        }
+
+        private void SetGameplayActive(bool isGameplayActive)
+        {
+            _IsGameplayActive = isGameplayActive;
         }
 
         private void UpdateVisualState()

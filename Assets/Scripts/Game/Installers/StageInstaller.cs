@@ -64,6 +64,7 @@ namespace Game.Installers
         [SerializeField] private StageCompletedEventChannel _StageCompletedEventChannel;
         [SerializeField] private ReturnToMenuEventChannel _ReturnToMenuEventChannel;
         [SerializeField] private LevelStartedEventChannel _LevelStartedEventChannel;
+        [SerializeField] private VoidEventChannel _LevelFailFlowStartedEventChannel;
 
         [SerializeField] private VoidEventChannel _RetryLevelClickedChannel;
         [SerializeField] private VoidEventChannel _RestartStageClickedChannel;
@@ -195,7 +196,11 @@ namespace Game.Installers
 
         private LevelInstaller CreateLevelInstaller()
         {
-            return new LevelInstaller(_LevelRoot, _LevelCompletedEventChannel, _LevelFailedEventChannel);
+            return new LevelInstaller(
+                _LevelRoot,
+                _LevelCompletedEventChannel,
+                _LevelFailedEventChannel,
+                _LevelFailFlowStartedEventChannel);
         }
 
         private StageFlowInstaller CreateStageFlowInstaller()

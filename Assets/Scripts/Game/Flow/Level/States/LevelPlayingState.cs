@@ -130,6 +130,7 @@ namespace Game.Flow.Level.States
 
             if (Context.HasBounced || !Context.HasKnivesRemaining)
             {
+                Machine.NotifyLevelFailFlowStarted();
                 Machine.SetState(Machine.Failed);
             }
         }

@@ -23,13 +23,16 @@ namespace Game.PowerUps.Views
         [SerializeField] private PowerUpUsedEventChannel _UsedChannel;
         [SerializeField] private PowerUpCancelledEventChannel _CancelledChannel;
         [SerializeField] private LevelStartedEventChannel _LevelStartedChannel;
+        [SerializeField] private VoidEventChannel _FailFlowStartedChannel;
 
         private readonly List<PowerUpButtonView> _Buttons = new List<PowerUpButtonView>();
         private IPowerUpService _PowerUpService;
         private PlayerDataService _PlayerDataService;
 
         [Inject]
-        private void Construct(IPowerUpService powerUpService, PlayerDataService playerDataService)
+        private void Construct(
+            IPowerUpService powerUpService,
+            PlayerDataService playerDataService)
         {
             _PowerUpService = powerUpService;
             _PlayerDataService = playerDataService;
@@ -80,7 +83,7 @@ namespace Game.PowerUps.Views
                     continue;
 
                 var view = Instantiate(_ButtonPrefab, _Container);
-                view.Initialize(config, OnButtonClicked);
+                view.Initialize(config, OnButtonClicked, _LevelStartedChannel, _FailFlowStartedChannel);
                 _Buttons.Add(view);
             }
         }
