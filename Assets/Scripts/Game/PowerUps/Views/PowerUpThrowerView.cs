@@ -40,10 +40,14 @@ namespace Game.PowerUps.Views
             if (knife == null)
                 return;
 
-            LoadKnives(new[] { knife }, spawnData, 0f);
+            LoadKnives(new[] { knife }, spawnData, 0f, 0f);
         }
 
-        public void LoadKnives(IReadOnlyList<KnifeView> knives, KnifeSpawnRequestData spawnData, float spacing)
+        public void LoadKnives(
+            IReadOnlyList<KnifeView> knives,
+            KnifeSpawnRequestData spawnData,
+            float spacing,
+            float rotationAnglePerUnitFromCenter = 0f)
         {
             if (knives == null || knives.Count == 0)
             {
@@ -68,8 +72,9 @@ namespace Game.PowerUps.Views
                 float offsetX = (i - centeredOffset) * spacing;
                 Vector3 spawnPosition = spawnTransform.position +
                     new Vector3(spawnData.SpawnOffset.x + offsetX, spawnData.SpawnOffset.y, 0f);
-                
-                knife.transform.SetPositionAndRotation(spawnPosition, Quaternion.identity);
+
+                float rotationAngle = -offsetX * rotationAnglePerUnitFromCenter;
+                knife.transform.SetPositionAndRotation(spawnPosition, Quaternion.Euler(0f, 0f, rotationAngle));
                 knife.transform.SetParent(transform, true);
                 knife.RefreshKnifePowerUpVfx();
                 
@@ -109,7 +114,13 @@ namespace Game.PowerUps.Views
                 var knife = _LoadedKnives[i];
                 if (knife == null) continue;
 
-                knife.Launch(direction, _LoadedThrowSpeed);
+                Vector2 launchDirection = knife.transform.up;
+                if (launchDirection.sqrMagnitude <= 0.001f)
+                {
+                    launchDirection = direction;
+                }
+
+                knife.Launch(launchDirection, _LoadedThrowSpeed);
                 thrownCount++;
             }
 

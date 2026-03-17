@@ -11,6 +11,8 @@ namespace Game.PowerUps.Configs
     {
         [field: SerializeField, Min(1)] public int KnifeCount { get; private set; } = 3;
         [field: SerializeField, Min(0f)] public float KnifeSpacing { get; private set; } = 0.35f;
+        [field: SerializeField, Min(0f), Tooltip("Degrees of Z rotation applied per unit of horizontal distance from the center knife.")]
+        public float RotationAnglePerUnitFromCenter { get; private set; } = 20f;
 
         /// <summary>
         /// Executes the multiple knives power-up by throwing all loaded knives.

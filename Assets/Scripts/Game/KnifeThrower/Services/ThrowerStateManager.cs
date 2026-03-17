@@ -65,6 +65,7 @@ namespace Game.KnifeThrower.Services
 
             int count = GetDesiredKnifeCount(config);
             float spacing = GetKnifeSpacing(config);
+            float rotationAnglePerUnitFromCenter = GetRotationAnglePerUnitFromCenter(config);
 
             var spawnData = new KnifeSpawnRequestData
             {
@@ -86,7 +87,7 @@ namespace Game.KnifeThrower.Services
                     knives.Add(_KnifePoolProvider.Get(config));
                 }
                 config.PrepareKnives(knives);
-                _PowerUpThrower.LoadKnives(knives, spawnData, spacing);
+                _PowerUpThrower.LoadKnives(knives, spawnData, spacing, rotationAnglePerUnitFromCenter);
             }
         }
 
@@ -118,6 +119,16 @@ namespace Game.KnifeThrower.Services
             {
                 return Mathf.Max(0f, multipleKnivesConfig.KnifeSpacing);
             }
+            return 0f;
+        }
+
+        private float GetRotationAnglePerUnitFromCenter(PowerUpConfigBase config)
+        {
+            if (config is MultipleKnivesConfig multipleKnivesConfig)
+            {
+                return Mathf.Max(0f, multipleKnivesConfig.RotationAnglePerUnitFromCenter);
+            }
+
             return 0f;
         }
     }

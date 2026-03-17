@@ -33,7 +33,12 @@ namespace Game.KnifeThrower.Interfaces
         /// <param name="knives">Projectile instances to load.</param>
         /// <param name="spawnData">Configuration for spawn offset.</param>
         /// <param name="spacing">Spacing between projectiles.</param>
-        void LoadKnives(IReadOnlyList<KnifeView> knives, KnifeSpawnRequestData spawnData, float spacing);
+        /// <param name="rotationAnglePerUnitFromCenter">Degrees of Z rotation applied per unit of signed horizontal distance from the center projectile.</param>
+        void LoadKnives(
+            IReadOnlyList<KnifeView> knives,
+            KnifeSpawnRequestData spawnData,
+            float spacing,
+            float rotationAnglePerUnitFromCenter = 0f);
 
         /// <summary>
         /// Launches the currently loaded projectiles using the configured loaded speed.
