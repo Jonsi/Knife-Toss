@@ -15,8 +15,14 @@ MonoBehaviour:
   <DisplayName>k__BackingField: Tri-Barrage
   <Description>k__BackingField: Launches 3 knives simultaneously to quickly reduce
     your required hit count
-  <Icon>k__BackingField: {fileID: 2408068179679165655, guid: dd46967cc8ce59446b460b317b580da7, type: 3}
+  <Icon>k__BackingField: {fileID: -4971332076782476914, guid: 3e840c59f67698f4f833964fb9d9835d, type: 3}
   <InventoryKey>k__BackingField: MultipleKnives
+  <VfxPrefab>k__BackingField: {fileID: 1526880184188440014, guid: b1821fccaa9a9354486f44eb05f07594, type: 3}
+  <VfxLocalOffset>k__BackingField: {x: 0, y: -0.7, z: 0}
+  <VfxLocalScale>k__BackingField: {x: 0.3, y: 0.3, z: 0.3}
+  <VfxSortingOrderOffset>k__BackingField: 2
+  <VfxSpawnMode>k__BackingField: 1
+  <DestroyVfxOnHit>k__BackingField: 1
   <KnifeCount>k__BackingField: 3
-  <KnifeSpacing>k__BackingField: 0.35
-  <ThrowSpeed>k__BackingField: 10
+  <KnifeSpacing>k__BackingField: 0.4
+  <RotationAnglePerUnitFromCenter>k__BackingField: 25

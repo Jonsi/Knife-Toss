@@ -15,10 +15,11 @@ MonoBehaviour:
   <DisplayName>k__BackingField: Dead Eye
   <Description>k__BackingField: Unlocks manual aim, letting you adjust your angle
     to strike exactly where you want
-  <Icon>k__BackingField: {fileID: -1696153379757533951, guid: dd46967cc8ce59446b460b317b580da7, type: 3}
+  <Icon>k__BackingField: {fileID: 143068835, guid: 3e840c59f67698f4f833964fb9d9835d, type: 3}
   <InventoryKey>k__BackingField: KnifeAim
-  <ThrowSpeed>k__BackingField: 30
-  <VfxPrefab>k__BackingField: {fileID: 3105777051998219250, guid: b236f14c22915b5498c9e5ac68b25baf, type: 3}
-  <VfxLocalOffset>k__BackingField: {x: 0, y: -0.3, z: 0}
-  <VfxLocalScale>k__BackingField: {x: 0.35, y: 0.35, z: 0.35}
+  <VfxPrefab>k__BackingField: {fileID: 8869983982274211443, guid: a5db72bd2fe8ed0459db2d47492db5a4, type: 3}
+  <VfxLocalOffset>k__BackingField: {x: 0, y: 0, z: 0}
+  <VfxLocalScale>k__BackingField: {x: 0.8, y: 0.8, z: 0.5}
   <VfxSortingOrderOffset>k__BackingField: -1
+  <VfxSpawnMode>k__BackingField: 1
+  <DestroyVfxOnHit>k__BackingField: 1
