@@ -22,3 +22,5 @@ MonoBehaviour:
   <ScatterRadius>k__BackingField: 44
   <IconSize>k__BackingField: 28
   <EndScale>k__BackingField: 0.45
+  <FadeStartNormalized>k__BackingField: 0.78
+  <FinalAlpha>k__BackingField: 0.5

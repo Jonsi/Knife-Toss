@@ -18,5 +18,7 @@ namespace Game.UI.Common
         [field: SerializeField, Min(0f)] public float ScatterRadius { get; private set; } = 44f;
         [field: SerializeField, Min(0f)] public float IconSize { get; private set; } = 28f;
         [field: SerializeField, Min(0f)] public float EndScale { get; private set; } = 0.45f;
+        [field: SerializeField, Range(0f, 1f)] public float FadeStartNormalized { get; private set; } = 0.72f;
+        [field: SerializeField, Range(0f, 1f)] public float FinalAlpha { get; private set; } = 0.35f;
     }
 }

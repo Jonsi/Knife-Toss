@@ -28,18 +28,21 @@ namespace Game.UI.Common
         {
             if (!IsValid || amount <= 0)
             {
+                Debug.LogWarning($"[CurrencyBurstAnimator] Invalid burst request. IsValid={IsValid}, Amount={amount}, HasCanvas={_Canvas != null}, HasDestination={_Destination != null}, HasConfig={_Config != null}, HasIcon={_Config?.IconSprite != null}");
                 return;
             }
 
             RectTransform overlayRoot = EnsureOverlayRoot();
             if (overlayRoot == null)
             {
+                Debug.LogWarning("[CurrencyBurstAnimator] Overlay root could not be created.");
                 return;
             }
 
             Camera uiCamera = _Canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _Canvas.worldCamera;
             if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRoot, screenPoint, uiCamera, out Vector2 startPoint))
             {
+                Debug.LogWarning($"[CurrencyBurstAnimator] Failed converting start screen point {screenPoint} into overlay local space.");
                 return;
             }
 
@@ -48,6 +51,8 @@ namespace Game.UI.Common
                 Mathf.CeilToInt(Mathf.Sqrt(amount)) + 2,
                 _Config.MinCoinCount,
                 _Config.MaxCoinCount);
+
+            Debug.Log($"[CurrencyBurstAnimator] Spawning {coinCount} coins. Start={startPoint}, Destination={destinationPoint}, CanvasMode={_Canvas.renderMode}");
 
             for (int i = 0; i < coinCount; i++)
             {
@@ -70,6 +75,7 @@ namespace Game.UI.Common
             _OverlayRoot.offsetMin = Vector2.zero;
             _OverlayRoot.offsetMax = Vector2.zero;
             _OverlayRoot.SetAsLastSibling();
+            Debug.Log("[CurrencyBurstAnimator] Created overlay root.");
             return _OverlayRoot;
         }
 
@@ -111,7 +117,9 @@ namespace Game.UI.Common
             sequence.Join(rectTransform.DOScale(1.2f, _Config.PopDuration).SetEase(Ease.OutBack));
             sequence.Append(rectTransform.DOAnchorPos(destinationPoint, travelDuration).SetEase(Ease.InQuad));
             sequence.Join(rectTransform.DOScale(_Config.EndScale, travelDuration).SetEase(Ease.InBack));
-            sequence.Join(canvasGroup.DOFade(0.2f, travelDuration * 0.75f).SetDelay(travelDuration * 0.25f));
+            float fadeStartTime = travelDuration * _Config.FadeStartNormalized;
+            float fadeDuration = Mathf.Max(0.01f, travelDuration - fadeStartTime);
+            sequence.Join(canvasGroup.DOFade(_Config.FinalAlpha, fadeDuration).SetDelay(fadeStartTime));
             sequence.OnComplete(() => Object.Destroy(coinObject));
             sequence.OnKill(() =>
             {

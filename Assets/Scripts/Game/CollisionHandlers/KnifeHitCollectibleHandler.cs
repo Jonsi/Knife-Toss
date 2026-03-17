@@ -55,10 +55,10 @@ namespace Game.CollisionHandlers
             _CurrencyService.AddBalance(collectibleCurrency.TypeId, value);
 
             collectible.PlayHitFeedback();
+            Debug.Log($"[KnifeHitCollectibleHandler] Raising CollectibleHitEventData. ImpactPoint={data.ImpactPoint}, Value={value}, CurrencyId={collectibleCurrency.TypeId}");
             _CollectibleHitChannel.Raise(new CollectibleHitEventData(data.ImpactPoint, value));
 
             Object.Destroy(collectible.gameObject);
         }
     }
 }
-

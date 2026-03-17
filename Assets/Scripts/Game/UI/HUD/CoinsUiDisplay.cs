@@ -39,6 +39,7 @@ namespace Game.UI.HUD
         private bool _HasVisualState;
         private Canvas _ParentCanvas;
         private CurrencyBurstAnimator _BurstAnimator;
+        private bool _IsCollectibleHitSubscribed;
 
         [Inject]
         private void Construct(
@@ -54,32 +55,42 @@ namespace Game.UI.HUD
             _CoinCurrencyId = (configs != null && configs.Count > 0 && configs[0] != null)
                 ? (configs[0].TypeId ?? string.Empty)
                 : string.Empty;
+
+            Debug.Log($"[CoinsUiDisplay] Constructed. CurrencyId={_CoinCurrencyId}, HasCollectibleChannel={_CollectibleHitChannel != null}, HasAccumulationConfig={_AccumulationConfig != null}, HasAccumulationIcon={_AccumulationConfig?.IconSprite != null}", this);
+
+            if (isActiveAndEnabled)
+            {
+                SubscribeToCollectibleHits();
+            }
         }
 
         private void Awake()
         {
             CacheVisualState();
             _ParentCanvas = GetComponentInParent<Canvas>();
+            Debug.Log($"[CoinsUiDisplay] Awake. HasCanvas={_ParentCanvas != null}, HasText={_CountText != null}", this);
         }
 
         private void OnEnable()
         {
+            Debug.Log("[CoinsUiDisplay] OnEnable subscribing to channels.", this);
             if (_LevelStartedChannel != null)
                 _LevelStartedChannel.Subscribe(OnLevelStarted);
             if (_BalanceChangedChannel != null)
                 _BalanceChangedChannel.Subscribe(OnBalanceChanged);
-            _CollectibleHitChannel?.Subscribe(OnCollectibleHit);
+            SubscribeToCollectibleHits();
 
             SyncFromCurrency();
         }
 
         private void OnDisable()
         {
+            Debug.Log("[CoinsUiDisplay] OnDisable unsubscribing from channels.", this);
             if (_LevelStartedChannel != null)
                 _LevelStartedChannel.Unsubscribe(OnLevelStarted);
             if (_BalanceChangedChannel != null)
                 _BalanceChangedChannel.Unsubscribe(OnBalanceChanged);
-            _CollectibleHitChannel?.Unsubscribe(OnCollectibleHit);
+            UnsubscribeFromCollectibleHits();
 
             KillActiveTweens(resetVisuals: true);
         }
@@ -104,9 +115,11 @@ namespace Game.UI.HUD
         {
             if (data.Value <= 0 || _CountText == null)
             {
+                Debug.Log($"[CoinsUiDisplay] Skipping collectible accumulation. Value={data.Value}, HasText={_CountText != null}", this);
                 return;
             }
 
+            Debug.Log($"[CoinsUiDisplay] Collectible hit received. WorldPosition={data.Position}, Value={data.Value}", this);
             PlayAccumulationFromWorld(data.Position, data.Value);
         }
 
@@ -189,16 +202,19 @@ namespace Game.UI.HUD
         {
             if (!EnsureBurstAnimator())
             {
+                Debug.LogWarning($"[CoinsUiDisplay] Burst animator unavailable. HasCanvas={_ParentCanvas != null}, HasText={_CountText != null}, HasConfig={_AccumulationConfig != null}, HasIcon={_AccumulationConfig?.IconSprite != null}", this);
                 return;
             }
 
             Camera worldCamera = Camera.main;
             if (worldCamera == null)
             {
+                Debug.LogWarning("[CoinsUiDisplay] No main camera found for world-to-screen conversion.", this);
                 return;
             }
 
             Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(worldCamera, worldPosition);
+            Debug.Log($"[CoinsUiDisplay] Playing accumulation from screen point {screenPoint} toward {_CountText.rectTransform.position}.", this);
             _BurstAnimator.PlayFromScreenPoint(screenPoint, amount);
         }
 
@@ -221,6 +237,30 @@ namespace Game.UI.HUD
 
             _BurstAnimator = new CurrencyBurstAnimator(_ParentCanvas, _CountText.rectTransform, _AccumulationConfig);
             return _BurstAnimator.IsValid;
+        }
+
+        private void SubscribeToCollectibleHits()
+        {
+            if (_IsCollectibleHitSubscribed || _CollectibleHitChannel == null)
+            {
+                return;
+            }
+
+            _CollectibleHitChannel.Subscribe(OnCollectibleHit);
+            _IsCollectibleHitSubscribed = true;
+            Debug.Log("[CoinsUiDisplay] Subscribed to collectible hit channel.", this);
+        }
+
+        private void UnsubscribeFromCollectibleHits()
+        {
+            if (!_IsCollectibleHitSubscribed || _CollectibleHitChannel == null)
+            {
+                return;
+            }
+
+            _CollectibleHitChannel.Unsubscribe(OnCollectibleHit);
+            _IsCollectibleHitSubscribed = false;
+            Debug.Log("[CoinsUiDisplay] Unsubscribed from collectible hit channel.", this);
         }
 
         private void KillActiveTweens(bool resetVisuals)
