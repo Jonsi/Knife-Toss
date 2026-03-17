@@ -3,6 +3,7 @@ using Game.Ads.Controllers;
 using Game.Ads.Data;
 using Game.Store.Data;
 using Game.Store.Events;
+using Game.UI.Common;
 using Game.UI.Store;
 using UnityEngine;
 using VContainer;
@@ -17,6 +18,7 @@ namespace Game.Installers
     {
         [Header("Store Configuration")]
         [SerializeField] private StoreCatalog _StoreCatalog;
+        [SerializeField] private CurrencyAccumulationConfig _CurrencyAccumulationConfig;
 
         [Header("Store Event Channels")]
         [SerializeField] private PurchaseStartedEventChannel _PurchaseStartedEventChannel;
@@ -34,6 +36,16 @@ namespace Game.Installers
         {
             Install(builder, CreateStoreInstaller());
 
+            if (_CurrencyAccumulationConfig == null)
+            {
+                _CurrencyAccumulationConfig = Resources.Load<CurrencyAccumulationConfig>("Configurations/Systems/UI/CurrencyAccumulationConfig");
+            }
+
+            if (_CurrencyAccumulationConfig != null)
+            {
+                builder.RegisterInstance(_CurrencyAccumulationConfig);
+            }
+
             if (_StoreMenuController != null)
                 builder.RegisterComponent(_StoreMenuController);
 
@@ -48,7 +60,8 @@ namespace Game.Installers
                     resolver.Resolve<IAdService>(),
                     _StoreAdPlacement,
                     resolver,
-                    resolver.Resolve<StoreAdCtaView>()
+                    resolver.Resolve<StoreAdCtaView>(),
+                    resolver.Resolve<StoreBalanceChipView>()
                 ), Lifetime.Scoped).AsImplementedInterfaces();
             }
         }

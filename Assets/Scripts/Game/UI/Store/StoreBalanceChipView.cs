@@ -2,8 +2,10 @@ using DG.Tweening;
 using Game.Economy.Data;
 using Game.Economy.Events;
 using Game.Economy.Interfaces;
+using Game.UI.Common;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using VContainer;
 
 namespace Game.UI.Store
@@ -24,6 +26,7 @@ namespace Game.UI.Store
 
         private ICurrencyService _CurrencyService;
         private CurrencyBalanceChangedEventChannel _BalanceChangedChannel;
+        private CurrencyAccumulationConfig _AccumulationConfig;
         private string _ResolvedCurrencyId;
         private bool _IsSubscribed;
         private Sequence _ActiveSequence;
@@ -32,15 +35,19 @@ namespace Game.UI.Store
         private Color _BaseTextColor = Color.white;
         private Vector3 _BaseScale = Vector3.one;
         private bool _HasVisualState;
+        private Canvas _ParentCanvas;
+        private CurrencyBurstAnimator _BurstAnimator;
 
         [Inject]
         private void Construct(
             ICurrencyService currencyService,
             CurrencyTypeCatalog currencyTypeCatalog,
-            CurrencyBalanceChangedEventChannel balanceChangedChannel)
+            CurrencyBalanceChangedEventChannel balanceChangedChannel,
+            CurrencyAccumulationConfig accumulationConfig)
         {
             _CurrencyService = currencyService;
             _BalanceChangedChannel = balanceChangedChannel;
+            _AccumulationConfig = accumulationConfig;
 
             if (Currency == CurrencyType.None)
             {
@@ -52,7 +59,6 @@ namespace Game.UI.Store
             }
 
             _ResolvedCurrencyId = Currency.ToTypeId();
-
             if (isActiveAndEnabled)
             {
                 Subscribe();
@@ -63,6 +69,7 @@ namespace Game.UI.Store
         private void Awake()
         {
             CacheVisualState();
+            _ParentCanvas = GetComponentInParent<Canvas>();
         }
 
         private void OnEnable()
@@ -204,6 +211,41 @@ namespace Game.UI.Store
                 BalanceText.color = _BaseTextColor;
                 BalanceText.rectTransform.localScale = _BaseScale;
             }
+        }
+
+        public void PlayAccumulationFromUiElement(RectTransform source, int amount)
+        {
+            if (source == null || amount <= 0 || !EnsureBurstAnimator())
+            {
+                return;
+            }
+
+            Camera uiCamera = _ParentCanvas != null && _ParentCanvas.renderMode != RenderMode.ScreenSpaceOverlay
+                ? _ParentCanvas.worldCamera
+                : null;
+            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(uiCamera, source.position);
+            _BurstAnimator.PlayFromScreenPoint(screenPoint, amount);
+        }
+
+        private bool EnsureBurstAnimator()
+        {
+            if (_BurstAnimator != null && _BurstAnimator.IsValid)
+            {
+                return true;
+            }
+
+            if (_ParentCanvas == null)
+            {
+                _ParentCanvas = GetComponentInParent<Canvas>();
+            }
+
+            if (_ParentCanvas == null || BalanceText == null || _AccumulationConfig == null)
+            {
+                return false;
+            }
+
+            _BurstAnimator = new CurrencyBurstAnimator(_ParentCanvas, BalanceText.rectTransform, _AccumulationConfig);
+            return _BurstAnimator.IsValid;
         }
     }
 }

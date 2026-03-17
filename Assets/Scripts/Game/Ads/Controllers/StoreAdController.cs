@@ -2,7 +2,9 @@ using Common.Ads.Interfaces;
 using Cysharp.Threading.Tasks;
 using Game.Ads.Data;
 using Game.Ads.Extensions;
+using Game.Store.Rewards;
 using Game.UI.Store;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
@@ -20,6 +22,7 @@ namespace Game.Ads.Controllers
         private readonly RewardedPlacement _Placement;
         private readonly IObjectResolver _Resolver;
         private readonly StoreAdCtaView _View;
+        private readonly StoreBalanceChipView _BalanceChipView;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StoreAdController"/> class.
@@ -28,12 +31,14 @@ namespace Game.Ads.Controllers
             IAdService adService,
             RewardedPlacement placement,
             IObjectResolver resolver,
-            StoreAdCtaView view)
+            StoreAdCtaView view,
+            StoreBalanceChipView balanceChipView)
         {
             _AdService = adService;
             _Placement = placement;
             _Resolver = resolver;
             _View = view;
+            _BalanceChipView = balanceChipView;
         }
 
         /// <summary>
@@ -52,9 +57,23 @@ namespace Game.Ads.Controllers
             var result = await _AdService.ShowRewardedAsync(_Placement);
 
             if (result.Success)
+            {
                 await _Placement.TryGrantRewardAsync(_Resolver);
+                PlayRewardAccumulation();
+            }
 
             _View.SetInteractable(_AdService.CanShowAd(_Placement));
+        }
+
+        private void PlayRewardAccumulation()
+        {
+            if (_BalanceChipView == null || _Placement?.Reward is not CurrencyReward currencyReward || currencyReward.Amount <= 0)
+            {
+                return;
+            }
+
+            var source = _View.ActionButton != null ? _View.ActionButton.transform as RectTransform : null;
+            _BalanceChipView.PlayAccumulationFromUiElement(source, currencyReward.Amount);
         }
     }
 }

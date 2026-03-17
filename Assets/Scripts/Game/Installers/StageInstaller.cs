@@ -14,6 +14,7 @@ using Game.KnifeThrower.Configs;
 using Game.KnifeThrower.Events;
 using Game.Level.Catalogs;
 using Game.Settings;
+using Game.UI.Common;
 using Game.UI.Controllers;
 using Game.UI.Data;
 using Game.UI.Popups;
@@ -75,6 +76,7 @@ namespace Game.Installers
         [SerializeField] private CurrencyTypeCatalog _CurrencyTypeCatalog;
         [SerializeField] private CurrencyBalanceChangedEventChannel _CurrencyBalanceChangedEventChannel;
         [SerializeField] private StoreCatalog _StoreCatalog;
+        [SerializeField] private CurrencyAccumulationConfig _CurrencyAccumulationConfig;
 
         [Header("Ads (optional)")]
         [SerializeField] private VoidEventChannel _ContinueRequestedChannel;
@@ -108,6 +110,16 @@ namespace Game.Installers
             if (_StoreCatalog != null)
             {
                 builder.RegisterInstance(_StoreCatalog).AsSelf();
+            }
+
+            if (_CurrencyAccumulationConfig == null)
+            {
+                _CurrencyAccumulationConfig = Resources.Load<CurrencyAccumulationConfig>("Configurations/Systems/UI/CurrencyAccumulationConfig");
+            }
+
+            if (_CurrencyAccumulationConfig != null)
+            {
+                builder.RegisterInstance(_CurrencyAccumulationConfig);
             }
 
             builder.Register<KnifeSkinService>(Lifetime.Scoped).AsSelf();

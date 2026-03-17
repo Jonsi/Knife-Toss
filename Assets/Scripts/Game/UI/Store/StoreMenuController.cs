@@ -31,6 +31,7 @@ namespace Game.UI.Store
         private PurchaseStartedEventChannel _PurchaseStartedChannel;
         private PurchaseCompletedEventChannel _PurchaseCompletedChannel;
         private PurchaseFailedEventChannel _PurchaseFailedChannel;
+        private StoreBalanceChipView _StoreBalanceChipView;
         private readonly List<SpawnedCardBinding> _KnifeSkinBindings = new List<SpawnedCardBinding>();
         private readonly List<SpawnedCardBinding> _PowerUpBindings = new List<SpawnedCardBinding>();
 
@@ -42,7 +43,8 @@ namespace Game.UI.Store
             SceneLoaderService sceneLoaderService,
             PurchaseStartedEventChannel purchaseStartedChannel,
             PurchaseCompletedEventChannel purchaseCompletedChannel,
-            PurchaseFailedEventChannel purchaseFailedChannel)
+            PurchaseFailedEventChannel purchaseFailedChannel,
+            StoreBalanceChipView storeBalanceChipView)
         {
             _StoreCatalog = storeCatalog;
             _PurchaseService = purchaseService;
@@ -51,6 +53,7 @@ namespace Game.UI.Store
             _PurchaseStartedChannel = purchaseStartedChannel;
             _PurchaseCompletedChannel = purchaseCompletedChannel;
             _PurchaseFailedChannel = purchaseFailedChannel;
+            _StoreBalanceChipView = storeBalanceChipView;
         }
 
         private void Start()
@@ -178,6 +181,7 @@ namespace Game.UI.Store
             if (result.Success)
             {
                 SyncKnifeSkinState();
+                PlayRewardAccumulation(entry);
             }
             RefreshCardState();
         }
@@ -237,6 +241,38 @@ namespace Game.UI.Store
                     binding.Card.SetInteractable(canInteract && !binding.IsOwned);
                 }
             }
+        }
+
+        private void PlayRewardAccumulation(PurchasableEntry entry)
+        {
+            if (_StoreBalanceChipView == null || entry?.Reward is not CurrencyReward currencyReward || currencyReward.Amount <= 0)
+            {
+                return;
+            }
+
+            var source = FindCardForEntry(entry)?.BuyButton?.transform as RectTransform;
+            _StoreBalanceChipView.PlayAccumulationFromUiElement(source, currencyReward.Amount);
+        }
+
+        private StoreCardView FindCardForEntry(PurchasableEntry entry)
+        {
+            for (var i = 0; i < _KnifeSkinBindings.Count; i++)
+            {
+                if (_KnifeSkinBindings[i].Entry == entry)
+                {
+                    return _KnifeSkinBindings[i].Card;
+                }
+            }
+
+            for (var i = 0; i < _PowerUpBindings.Count; i++)
+            {
+                if (_PowerUpBindings[i].Entry == entry)
+                {
+                    return _PowerUpBindings[i].Card;
+                }
+            }
+
+            return null;
         }
 
         private void SetBindingsInteractable(List<SpawnedCardBinding> bindings, bool canInteract)

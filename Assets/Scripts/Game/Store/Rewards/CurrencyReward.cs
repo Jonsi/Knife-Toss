@@ -16,6 +16,10 @@ namespace Game.Store.Rewards
         [SerializeField] private CurrencyType _CurrencyType;
         [SerializeField] private int _Amount;
 
+        public CurrencyType CurrencyType => _CurrencyType;
+
+        public int Amount => _Amount;
+
         /// <inheritdoc/>
         public override string GetDisplayText() =>
             _CurrencyType == CurrencyType.None || _Amount <= 0

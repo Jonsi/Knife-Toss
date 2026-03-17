@@ -1,8 +1,11 @@
 using DG.Tweening;
+using Common.Events;
 using Game.Economy.Data;
 using Game.Economy.Events;
 using Game.Economy.Interfaces;
+using Game.Entities.Collectible.Data;
 using Game.Flow.Events;
+using Game.UI.Common;
 using TMPro;
 using UnityEngine;
 using VContainer;
@@ -25,6 +28,8 @@ namespace Game.UI.HUD
         [SerializeField] private float _ColorFlashDuration = 0.2f;
 
         private ICurrencyService _CurrencyService;
+        private IEventChannel<CollectibleHitEventData> _CollectibleHitChannel;
+        private CurrencyAccumulationConfig _AccumulationConfig;
         private string _CoinCurrencyId;
         private Sequence _ActiveSequence;
         private Tween _ValueTween;
@@ -32,11 +37,19 @@ namespace Game.UI.HUD
         private Color _BaseTextColor = Color.white;
         private Vector3 _BaseScale = Vector3.one;
         private bool _HasVisualState;
+        private Canvas _ParentCanvas;
+        private CurrencyBurstAnimator _BurstAnimator;
 
         [Inject]
-        private void Construct(ICurrencyService currencyService, CurrencyTypeCatalog catalog)
+        private void Construct(
+            ICurrencyService currencyService,
+            CurrencyTypeCatalog catalog,
+            IEventChannel<CollectibleHitEventData> collectibleHitChannel,
+            CurrencyAccumulationConfig accumulationConfig)
         {
             _CurrencyService = currencyService;
+            _CollectibleHitChannel = collectibleHitChannel;
+            _AccumulationConfig = accumulationConfig;
             var configs = catalog?.GetAllConfigs();
             _CoinCurrencyId = (configs != null && configs.Count > 0 && configs[0] != null)
                 ? (configs[0].TypeId ?? string.Empty)
@@ -46,6 +59,7 @@ namespace Game.UI.HUD
         private void Awake()
         {
             CacheVisualState();
+            _ParentCanvas = GetComponentInParent<Canvas>();
         }
 
         private void OnEnable()
@@ -54,6 +68,7 @@ namespace Game.UI.HUD
                 _LevelStartedChannel.Subscribe(OnLevelStarted);
             if (_BalanceChangedChannel != null)
                 _BalanceChangedChannel.Subscribe(OnBalanceChanged);
+            _CollectibleHitChannel?.Subscribe(OnCollectibleHit);
 
             SyncFromCurrency();
         }
@@ -64,6 +79,7 @@ namespace Game.UI.HUD
                 _LevelStartedChannel.Unsubscribe(OnLevelStarted);
             if (_BalanceChangedChannel != null)
                 _BalanceChangedChannel.Unsubscribe(OnBalanceChanged);
+            _CollectibleHitChannel?.Unsubscribe(OnCollectibleHit);
 
             KillActiveTweens(resetVisuals: true);
         }
@@ -82,6 +98,16 @@ namespace Game.UI.HUD
         {
             if (!string.IsNullOrEmpty(_CoinCurrencyId) && data.CurrencyId == _CoinCurrencyId)
                 AnimateToBalance(data.NewBalance, data.AmountChanged);
+        }
+
+        private void OnCollectibleHit(CollectibleHitEventData data)
+        {
+            if (data.Value <= 0 || _CountText == null)
+            {
+                return;
+            }
+
+            PlayAccumulationFromWorld(data.Position, data.Value);
         }
 
         private void SyncFromCurrency()
@@ -157,6 +183,44 @@ namespace Game.UI.HUD
             _BaseTextColor = _CountText.color;
             _BaseScale = _CountText.rectTransform.localScale;
             _HasVisualState = true;
+        }
+
+        private void PlayAccumulationFromWorld(Vector2 worldPosition, int amount)
+        {
+            if (!EnsureBurstAnimator())
+            {
+                return;
+            }
+
+            Camera worldCamera = Camera.main;
+            if (worldCamera == null)
+            {
+                return;
+            }
+
+            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(worldCamera, worldPosition);
+            _BurstAnimator.PlayFromScreenPoint(screenPoint, amount);
+        }
+
+        private bool EnsureBurstAnimator()
+        {
+            if (_BurstAnimator != null && _BurstAnimator.IsValid)
+            {
+                return true;
+            }
+
+            if (_ParentCanvas == null)
+            {
+                _ParentCanvas = GetComponentInParent<Canvas>();
+            }
+
+            if (_ParentCanvas == null || _CountText == null || _AccumulationConfig == null)
+            {
+                return false;
+            }
+
+            _BurstAnimator = new CurrencyBurstAnimator(_ParentCanvas, _CountText.rectTransform, _AccumulationConfig);
+            return _BurstAnimator.IsValid;
         }
 
         private void KillActiveTweens(bool resetVisuals)
