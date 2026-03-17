@@ -21,6 +21,7 @@ using Game.UI.Popups;
 using Game.Persistence.Services;
 using Game.Pooling;
 using Game.Store.Data;
+using Game.Store.Events;
 using Game.Store.Services;
 using UnityEngine;
 using VContainer;
@@ -78,6 +79,9 @@ namespace Game.Installers
         [SerializeField] private CurrencyBalanceChangedEventChannel _CurrencyBalanceChangedEventChannel;
         [SerializeField] private StoreCatalog _StoreCatalog;
         [SerializeField] private CurrencyAccumulationConfig _CurrencyAccumulationConfig;
+        [SerializeField] private PurchaseStartedEventChannel _PurchaseStartedEventChannel;
+        [SerializeField] private PurchaseCompletedEventChannel _PurchaseCompletedEventChannel;
+        [SerializeField] private PurchaseFailedEventChannel _PurchaseFailedEventChannel;
 
         [Header("Ads (optional)")]
         [SerializeField] private VoidEventChannel _ContinueRequestedChannel;
@@ -86,6 +90,12 @@ namespace Game.Installers
 
         protected override void Configure(IContainerBuilder builder)
         {
+            var hasStorePurchaseFlow =
+                _StoreCatalog != null &&
+                _PurchaseStartedEventChannel != null &&
+                _PurchaseCompletedEventChannel != null &&
+                _PurchaseFailedEventChannel != null;
+
             Install(builder, CreateTargetInstaller());
             Install(builder, CreateKnifeInstaller());
             Install(builder, CreateCollectibleInstaller());
@@ -108,9 +118,13 @@ namespace Game.Installers
                 builder.RegisterInstance(_PrefabsConfiguration).AsSelf();
             }
 
-            if (_StoreCatalog != null)
+            if (hasStorePurchaseFlow)
             {
-                builder.RegisterInstance(_StoreCatalog).AsSelf();
+                Install(builder, new StoreInstaller(
+                    _StoreCatalog,
+                    _PurchaseStartedEventChannel,
+                    _PurchaseCompletedEventChannel,
+                    _PurchaseFailedEventChannel));
             }
 
             if (_CurrencyAccumulationConfig == null)
@@ -123,7 +137,10 @@ namespace Game.Installers
                 builder.RegisterInstance(_CurrencyAccumulationConfig);
             }
 
-            builder.Register<KnifeSkinService>(Lifetime.Scoped).AsSelf();
+            if (!hasStorePurchaseFlow)
+            {
+                builder.Register<KnifeSkinService>(Lifetime.Scoped).AsSelf();
+            }
 
             if (_CurrencyTypeCatalog != null && _CurrencyBalanceChangedEventChannel != null)
             {
