@@ -28,21 +28,18 @@ namespace Game.UI.Common
         {
             if (!IsValid || amount <= 0)
             {
-                Debug.LogWarning($"[CurrencyBurstAnimator] Invalid burst request. IsValid={IsValid}, Amount={amount}, HasCanvas={_Canvas != null}, HasDestination={_Destination != null}, HasConfig={_Config != null}, HasIcon={_Config?.IconSprite != null}");
                 return;
             }
 
             RectTransform overlayRoot = EnsureOverlayRoot();
             if (overlayRoot == null)
             {
-                Debug.LogWarning("[CurrencyBurstAnimator] Overlay root could not be created.");
                 return;
             }
 
             Camera uiCamera = _Canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _Canvas.worldCamera;
             if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRoot, screenPoint, uiCamera, out Vector2 startPoint))
             {
-                Debug.LogWarning($"[CurrencyBurstAnimator] Failed converting start screen point {screenPoint} into overlay local space.");
                 return;
             }
 
@@ -51,8 +48,6 @@ namespace Game.UI.Common
                 Mathf.CeilToInt(Mathf.Sqrt(amount)) + 2,
                 _Config.MinCoinCount,
                 _Config.MaxCoinCount);
-
-            Debug.Log($"[CurrencyBurstAnimator] Spawning {coinCount} coins. Start={startPoint}, Destination={destinationPoint}, CanvasMode={_Canvas.renderMode}");
 
             for (int i = 0; i < coinCount; i++)
             {
@@ -75,7 +70,6 @@ namespace Game.UI.Common
             _OverlayRoot.offsetMin = Vector2.zero;
             _OverlayRoot.offsetMax = Vector2.zero;
             _OverlayRoot.SetAsLastSibling();
-            Debug.Log("[CurrencyBurstAnimator] Created overlay root.");
             return _OverlayRoot;
         }
 

@@ -60,6 +60,7 @@ namespace Game.Installers
 
             builder.Register<PopupGamePauseController>(Lifetime.Singleton).As<IGamePauseController>();
             builder.Register<SettingsPopupController>(Lifetime.Singleton);
+            builder.Register<CoinAccumulationController>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.RegisterComponentInHierarchy<CoinsUiDisplay>();
             builder.RegisterComponentInHierarchy<PowerUpHudController>();

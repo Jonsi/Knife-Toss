@@ -217,7 +217,6 @@ namespace Game.UI.Store
         {
             if (source == null || amount <= 0 || !EnsureBurstAnimator())
             {
-                Debug.LogWarning($"[StoreBalanceChipView] Skipping accumulation. HasSource={source != null}, Amount={amount}, HasCanvas={_ParentCanvas != null}, HasText={BalanceText != null}, HasConfig={_AccumulationConfig != null}, HasIcon={_AccumulationConfig?.IconSprite != null}", this);
                 return;
             }
 
@@ -225,7 +224,6 @@ namespace Game.UI.Store
                 ? _ParentCanvas.worldCamera
                 : null;
             Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(uiCamera, source.position);
-            Debug.Log($"[StoreBalanceChipView] Playing accumulation from UI source {source.name} at screen point {screenPoint}.", this);
             _BurstAnimator.PlayFromScreenPoint(screenPoint, amount);
         }
 
