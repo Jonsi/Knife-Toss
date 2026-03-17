@@ -10,6 +10,7 @@ using Game.Feedback.Animation;
 using Game.Feedback.Animation.Data;
 using Game.Entities.Target.Data;
 using Game.Pooling;
+using Game.PowerUps.Data;
 using Game.PowerUps.Configs;
 using Game.Store.Services;
 using UnityEngine;
@@ -41,9 +42,9 @@ namespace Game.Entities.Knife.Views
         private PowerUpConfigBase _SourcePowerUpConfig;
         private Sprite _DefaultSprite;
         private Coroutine _FailSequenceCoroutine;
-        private GameObject _SuperKnifeVfxInstance;
-        private ParticleSystem[] _SuperKnifeVfxParticleSystems;
-        private Renderer[] _SuperKnifeVfxRenderers;
+        private GameObject _KnifePowerUpVfxInstance;
+        private ParticleSystem[] _KnifePowerUpVfxParticleSystems;
+        private Renderer[] _KnifePowerUpVfxRenderers;
 
         private IEventChannel<CollisionData> _CollisionChannel;
         private IEventChannel<KnifeImpactEventData> _ImpactChannel;
@@ -80,9 +81,9 @@ namespace Game.Entities.Knife.Views
             _SpriteRenderer.sortingLayerID = sortingLayerId;
             _SpriteRenderer.sortingOrder = sortingOrder;
 
-            if (_SourcePowerUpConfig is SuperKnifeConfig config)
+            if (TryGetKnifeVfxConfig(out var config))
             {
-                ApplySuperKnifeVfxSorting(config);
+                ApplyKnifePowerUpVfxSorting(config);
             }
         }
 
@@ -103,7 +104,7 @@ namespace Game.Entities.Knife.Views
                     return;
 
                 _IsSuperKnife = value;
-                UpdateSuperKnifeVfxState();
+                UpdateKnifePowerUpVfxState();
             }
         }
 
@@ -170,6 +171,7 @@ namespace Game.Entities.Knife.Views
         public void StopMovement()
         {
             _StateMachine.SetState(_StateMachine.Stuck);
+            HandleKnifePowerUpVfxHit();
         }
 
         /// <summary>
@@ -192,6 +194,7 @@ namespace Game.Entities.Knife.Views
             _SuppressOutOfViewMonitoring = false;
             IsSuperKnife = false;
             _SourcePowerUpConfig = null;
+            UpdateKnifePowerUpVfxState();
             RefreshVisualSkin();
             SetSpriteAlpha(1f);
             _StateMachine.SetState(_StateMachine.Loaded);
@@ -307,7 +310,31 @@ namespace Game.Entities.Knife.Views
         internal void SetSourcePowerUpConfig(PowerUpConfigBase config)
         {
             _SourcePowerUpConfig = config;
-            UpdateSuperKnifeVfxState();
+            UpdateKnifePowerUpVfxState();
+        }
+
+        public void RefreshKnifePowerUpVfx()
+        {
+            if (!TryGetKnifeVfxConfig(out var config) || _KnifePowerUpVfxInstance == null)
+                return;
+
+            Transform vfxTransform = _KnifePowerUpVfxInstance.transform;
+            if (config.VfxSpawnMode == KnifePowerUpVfxSpawnMode.Child)
+            {
+                vfxTransform.SetParent(VisualRoot != null ? VisualRoot : transform, false);
+                vfxTransform.localPosition = config.VfxLocalOffset;
+                vfxTransform.localRotation = Quaternion.identity;
+                vfxTransform.localScale = config.VfxLocalScale;
+            }
+            else
+            {
+                vfxTransform.SetParent(null, false);
+                vfxTransform.position = transform.position + config.VfxLocalOffset;
+                vfxTransform.rotation = Quaternion.identity;
+                vfxTransform.localScale = config.VfxLocalScale;
+            }
+
+            ApplyKnifePowerUpVfxSorting(config);
         }
 
         private System.Collections.IEnumerator PlayFailSequence()
@@ -391,61 +418,76 @@ namespace Game.Entities.Knife.Views
             _SpriteRenderer.color = color;
         }
 
-        private void UpdateSuperKnifeVfxState()
+        private void UpdateKnifePowerUpVfxState()
         {
-            if (!_IsSuperKnife)
+            if (!_IsSuperKnife && !TryGetKnifeVfxConfig(out _))
             {
-                StopSuperKnifeVfx();
+                StopKnifePowerUpVfx();
                 return;
             }
 
-            if (_SourcePowerUpConfig is not SuperKnifeConfig config || config.VfxPrefab == null)
+            if (!TryGetKnifeVfxConfig(out var config) || config.VfxPrefab == null)
             {
-                StopSuperKnifeVfx();
+                StopKnifePowerUpVfx();
                 return;
             }
 
-            EnsureSuperKnifeVfxInstance(config);
-            PlaySuperKnifeVfx(config);
+            EnsureKnifePowerUpVfxInstance(config);
+            PlayKnifePowerUpVfx(config);
         }
 
-        private void EnsureSuperKnifeVfxInstance(SuperKnifeConfig config)
+        private void EnsureKnifePowerUpVfxInstance(PowerUpConfigBase config)
         {
-            if (_SuperKnifeVfxInstance == null)
+            if (_KnifePowerUpVfxInstance != null)
             {
-                var parent = VisualRoot != null ? VisualRoot : transform;
-                _SuperKnifeVfxInstance = Instantiate(config.VfxPrefab, parent);
-                _SuperKnifeVfxInstance.name = $"{config.VfxPrefab.name}_KnifeVfx";
-                _SuperKnifeVfxParticleSystems = _SuperKnifeVfxInstance.GetComponentsInChildren<ParticleSystem>(true);
-                _SuperKnifeVfxRenderers = _SuperKnifeVfxInstance.GetComponentsInChildren<Renderer>(true);
+                Destroy(_KnifePowerUpVfxInstance);
+                _KnifePowerUpVfxInstance = null;
+                _KnifePowerUpVfxParticleSystems = null;
+                _KnifePowerUpVfxRenderers = null;
             }
 
-            Transform vfxTransform = _SuperKnifeVfxInstance.transform;
-            vfxTransform.SetParent(VisualRoot != null ? VisualRoot : transform, false);
-            vfxTransform.localPosition = config.VfxLocalOffset;
-            vfxTransform.localRotation = Quaternion.identity;
-            vfxTransform.localScale = config.VfxLocalScale;
-            ApplySuperKnifeVfxSorting(config);
+            var parent = VisualRoot != null ? VisualRoot : transform;
+            _KnifePowerUpVfxInstance = config.VfxSpawnMode == KnifePowerUpVfxSpawnMode.Child
+                ? Instantiate(config.VfxPrefab, parent)
+                : Instantiate(config.VfxPrefab);
+            _KnifePowerUpVfxInstance.name = $"{config.VfxPrefab.name}_KnifeVfx";
+            _KnifePowerUpVfxParticleSystems = _KnifePowerUpVfxInstance.GetComponentsInChildren<ParticleSystem>(true);
+            _KnifePowerUpVfxRenderers = _KnifePowerUpVfxInstance.GetComponentsInChildren<Renderer>(true);
+            ConfigureKnifePowerUpVfxScaling();
+
+            Transform vfxTransform = _KnifePowerUpVfxInstance.transform;
+            if (config.VfxSpawnMode == KnifePowerUpVfxSpawnMode.Child)
+            {
+                vfxTransform.SetParent(VisualRoot != null ? VisualRoot : transform, false);
+                vfxTransform.localPosition = config.VfxLocalOffset;
+                vfxTransform.localRotation = Quaternion.identity;
+                vfxTransform.localScale = config.VfxLocalScale;
+            }
+            else
+            {
+                vfxTransform.SetParent(null, false);
+                vfxTransform.position = transform.position + config.VfxLocalOffset;
+                vfxTransform.rotation = Quaternion.identity;
+                vfxTransform.localScale = config.VfxLocalScale;
+            }
+
+            ApplyKnifePowerUpVfxSorting(config);
         }
 
-        private void PlaySuperKnifeVfx(SuperKnifeConfig config)
+        private void PlayKnifePowerUpVfx(PowerUpConfigBase config)
         {
-            if (_SuperKnifeVfxInstance == null)
+            if (_KnifePowerUpVfxInstance == null)
                 return;
 
-            Transform vfxTransform = _SuperKnifeVfxInstance.transform;
-            vfxTransform.localPosition = config.VfxLocalOffset;
-            vfxTransform.localScale = config.VfxLocalScale;
+            RefreshKnifePowerUpVfx();
+            _KnifePowerUpVfxInstance.SetActive(true);
 
-            ApplySuperKnifeVfxSorting(config);
-            _SuperKnifeVfxInstance.SetActive(true);
-
-            if (_SuperKnifeVfxParticleSystems == null || _SuperKnifeVfxParticleSystems.Length == 0)
+            if (_KnifePowerUpVfxParticleSystems == null || _KnifePowerUpVfxParticleSystems.Length == 0)
                 return;
 
-            for (int i = 0; i < _SuperKnifeVfxParticleSystems.Length; i++)
+            for (int i = 0; i < _KnifePowerUpVfxParticleSystems.Length; i++)
             {
-                var system = _SuperKnifeVfxParticleSystems[i];
+                var system = _KnifePowerUpVfxParticleSystems[i];
                 if (system == null)
                     continue;
 
@@ -454,16 +496,16 @@ namespace Game.Entities.Knife.Views
             }
         }
 
-        private void StopSuperKnifeVfx()
+        private void StopKnifePowerUpVfx()
         {
-            if (_SuperKnifeVfxInstance == null)
+            if (_KnifePowerUpVfxInstance == null)
                 return;
 
-            if (_SuperKnifeVfxParticleSystems != null)
+            if (_KnifePowerUpVfxParticleSystems != null)
             {
-                for (int i = 0; i < _SuperKnifeVfxParticleSystems.Length; i++)
+                for (int i = 0; i < _KnifePowerUpVfxParticleSystems.Length; i++)
                 {
-                    var system = _SuperKnifeVfxParticleSystems[i];
+                    var system = _KnifePowerUpVfxParticleSystems[i];
                     if (system == null)
                         continue;
 
@@ -471,20 +513,42 @@ namespace Game.Entities.Knife.Views
                 }
             }
 
-            _SuperKnifeVfxInstance.SetActive(false);
+            _KnifePowerUpVfxInstance.SetActive(false);
         }
 
-        private void ApplySuperKnifeVfxSorting(SuperKnifeConfig config)
+        private void HandleKnifePowerUpVfxHit()
         {
-            if (_SpriteRenderer == null || _SuperKnifeVfxRenderers == null)
+            if (!TryGetKnifeVfxConfig(out var config) || _KnifePowerUpVfxInstance == null)
+                return;
+
+            if (config.VfxSpawnMode == KnifePowerUpVfxSpawnMode.World)
+            {
+                _KnifePowerUpVfxInstance.transform.SetParent(null, true);
+            }
+
+            if (config.DestroyVfxOnHit)
+            {
+                StopKnifePowerUpVfx();
+                return;
+            }
+
+            if (config.VfxSpawnMode == KnifePowerUpVfxSpawnMode.World)
+            {
+                ClearKnifePowerUpVfxReferences();
+            }
+        }
+
+        private void ApplyKnifePowerUpVfxSorting(PowerUpConfigBase config)
+        {
+            if (_SpriteRenderer == null || _KnifePowerUpVfxRenderers == null)
                 return;
 
             int sortingLayerId = _SpriteRenderer.sortingLayerID;
             int sortingOrder = _SpriteRenderer.sortingOrder + config.VfxSortingOrderOffset;
 
-            for (int i = 0; i < _SuperKnifeVfxRenderers.Length; i++)
+            for (int i = 0; i < _KnifePowerUpVfxRenderers.Length; i++)
             {
-                var renderer = _SuperKnifeVfxRenderers[i];
+                var renderer = _KnifePowerUpVfxRenderers[i];
                 if (renderer == null)
                     continue;
 
@@ -495,9 +559,38 @@ namespace Game.Entities.Knife.Views
 
         private void OnDestroy()
         {
-            if (_SuperKnifeVfxInstance != null)
+            if (_KnifePowerUpVfxInstance != null)
             {
-                Destroy(_SuperKnifeVfxInstance);
+                Destroy(_KnifePowerUpVfxInstance);
+            }
+        }
+
+        private bool TryGetKnifeVfxConfig(out PowerUpConfigBase config)
+        {
+            config = _SourcePowerUpConfig;
+            return config != null && config.VfxPrefab != null;
+        }
+
+        private void ClearKnifePowerUpVfxReferences()
+        {
+            _KnifePowerUpVfxInstance = null;
+            _KnifePowerUpVfxParticleSystems = null;
+            _KnifePowerUpVfxRenderers = null;
+        }
+
+        private void ConfigureKnifePowerUpVfxScaling()
+        {
+            if (_KnifePowerUpVfxParticleSystems == null)
+                return;
+
+            for (int i = 0; i < _KnifePowerUpVfxParticleSystems.Length; i++)
+            {
+                var system = _KnifePowerUpVfxParticleSystems[i];
+                if (system == null)
+                    continue;
+
+                var main = system.main;
+                main.scalingMode = ParticleSystemScalingMode.Hierarchy;
             }
         }
 

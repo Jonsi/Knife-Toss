@@ -71,6 +71,7 @@ namespace Game.PowerUps.Views
                 
                 knife.transform.SetPositionAndRotation(spawnPosition, Quaternion.identity);
                 knife.transform.SetParent(transform, true);
+                knife.RefreshKnifePowerUpVfx();
                 
                 // Ensure the knife follows the current visibility state
                 knife.gameObject.SetActive(_IsVisible);

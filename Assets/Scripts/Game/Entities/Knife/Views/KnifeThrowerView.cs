@@ -82,6 +82,7 @@ namespace Game.Entities.Knife.Views
 
                 // Parent the knife to the thrower for proper hierarchy organization
                 knife.transform.SetParent(transform, true);
+                knife.RefreshKnifePowerUpVfx();
 
                 // Ensure the knife follows the current visibility state
                 knife.gameObject.SetActive(_IsVisible);
