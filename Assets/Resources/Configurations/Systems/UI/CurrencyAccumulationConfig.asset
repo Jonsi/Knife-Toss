@@ -20,7 +20,7 @@ MonoBehaviour:
   <TravelDuration>k__BackingField: 0.45
   <TravelDurationStep>k__BackingField: 0.025
   <ScatterRadius>k__BackingField: 44
-  <IconSize>k__BackingField: 28
-  <EndScale>k__BackingField: 0.45
+  <IconSize>k__BackingField: 35
+  <EndScale>k__BackingField: 1
   <FadeStartNormalized>k__BackingField: 0.78
   <FinalAlpha>k__BackingField: 0.5
