@@ -96,7 +96,7 @@ namespace Game.Flow.Level.States
                     Context.KnivesInFlight = UnityEngine.Mathf.Max(0, Context.KnivesInFlight - 1);
                     break;
                 case KnifeImpactType.Bounced:
-                    Context.HasBounced = true;
+                    Context.HasBounced |= data.CountsAsFailure;
                     break;
             }
 

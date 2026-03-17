@@ -26,9 +26,9 @@ namespace Game.CollisionHandlers
             if (!knife.IsInFlight)
                 return;
 
-            knife.Bounce();
-            
-            _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Bounced, data.ImpactPoint));
+            bool countsAsFailure = knife.SourcePowerUpConfig == null;
+            knife.Bounce(countsAsFailure);
+            _ImpactChannel.Raise(new KnifeImpactEventData(KnifeImpactType.Bounced, data.ImpactPoint, countsAsFailure));
         }
     }
 }

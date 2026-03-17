@@ -124,7 +124,7 @@ namespace Game.PVP.Flow
             }
             else if (data.ImpactType == KnifeImpactType.Bounced)
             {
-                _PendingBounceFailure = true;
+                _PendingBounceFailure |= data.CountsAsFailure;
             }
             else if (data.ImpactType == KnifeImpactType.OutOfView && _PendingBounceFailure)
             {

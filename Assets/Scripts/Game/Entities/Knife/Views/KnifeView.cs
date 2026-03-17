@@ -177,10 +177,16 @@ namespace Game.Entities.Knife.Views
         /// <summary>
         /// Transitions the knife to the bounced state.
         /// </summary>
-        public void Bounce()
+        public void Bounce(bool playFailFeedback = true)
         {
             StopFailSequence(restoreVisuals: true, restoreTimeScale: true);
-            _FailSequenceCoroutine = StartCoroutine(PlayFailSequence());
+
+            BeginBounceMotion();
+
+            if (playFailFeedback)
+            {
+                _FailSequenceCoroutine = StartCoroutine(PlayFailSequence());
+            }
         }
 
 
@@ -337,14 +343,18 @@ namespace Game.Entities.Knife.Views
             ApplyKnifePowerUpVfxSorting(config);
         }
 
+        private void BeginBounceMotion()
+        {
+            var config = GetFailAnimationConfig();
+            SetColliderEnabled(false);
+            _StateMachine.Bounced.ConfigureBounce(config.InitialVelocity, config.AngularVelocity, config.Gravity);
+            _StateMachine.SetState(_StateMachine.Bounced);
+        }
+
         private System.Collections.IEnumerator PlayFailSequence()
         {
             var config = GetFailAnimationConfig();
             _SuppressOutOfViewMonitoring = true;
-            SetColliderEnabled(false);
-
-            _StateMachine.Bounced.ConfigureBounce(config.InitialVelocity, config.AngularVelocity, config.Gravity);
-            _StateMachine.SetState(_StateMachine.Bounced);
 
             float duration = Mathf.Max(0.01f, config.SequenceDuration);
             float flashDuration = Mathf.Max(0f, config.FlashDuration);
