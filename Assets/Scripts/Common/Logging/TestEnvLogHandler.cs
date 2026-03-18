@@ -9,7 +9,7 @@ namespace Common.Logging
     /// </summary>
     public class TestEnvLogHandler : ILogHandler
     {
-#if TEST_ENV
+#if TEST_ENABLED
         private readonly ILogHandler inner;
         private readonly Func<bool> isEnabled;
         private readonly bool includeStackTrace;

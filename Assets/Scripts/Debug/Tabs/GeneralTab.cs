@@ -2,10 +2,10 @@
 using System.ComponentModel;
 using System.Linq;
 using Game.Economy.Interfaces;
-using VContainer;
 using Game.Flow.Game;
 using Game.Persistence.Services;
-using UnityEngine;
+using Game.Settings;
+using VContainer;
 
 namespace Game.Debugging.Tabs
 {
@@ -67,6 +67,14 @@ namespace Game.Debugging.Tabs
             var cheats = TryResolve<GeneralCheats>(resolver);
             cheats?.ClearProgress();
             RequestRefresh();
+        }
+
+        [Category("Debug")]
+        [DisplayName("Enable Test Logging")]
+        public bool EnableTestLogging
+        {
+            get => GameSettingsAccess.IsTestLoggingEnabled;
+            set => GameSettingsAccess.SetTestLoggingEnabled(value);
         }
     }
 }

@@ -99,7 +99,9 @@ namespace Game.Flow.Stage.States
         {
             LevelConfig config = Machine.LevelCatalog.GetLevelConfig(Context.StageIndex, Context.CurrentLevelIndex);
             if (config == null)
+            {
                 return;
+            }
 
             var stageConfig = Machine.LevelCatalog.GetStageConfig(Context.StageIndex);
             if (reloadLevel)
