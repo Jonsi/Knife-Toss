@@ -30,20 +30,27 @@ namespace Game.Installers
         /// <param name="builder">Container builder instance.</param>
         public void Install(IContainerBuilder builder)
         {
+            GameSettingsAccess.Initialize(_Settings);
             builder.RegisterInstance(_Settings);
-            builder.RegisterInstance(CreateLogger()).As<ILogger>();
+            ILogger logger = CreateLogger();
+            GameLogger.SetSharedLogger(logger);
+            builder.RegisterInstance(logger).As<ILogger>();
             builder.Register<GameData>(Lifetime.Singleton);
         }
 
         private ILogger CreateLogger()
         {
-#if TEST_ENV
-            ILogHandler handlerBase = new TestEnvLogHandler(Debug.unityLogger.logHandler, () => GameSettingsAccess.IsTestLoggingEnabled, includeStackTrace: false);
-            return new Logger(handlerBase) { logEnabled = true };
+#if TEST_ENABLED
+            ILogHandler coloredHandler = new ColoredLogHandler(Debug.unityLogger.logHandler);
+            ILogHandler gatedHandler = new TestEnvLogHandler(coloredHandler, () => GameSettingsAccess.IsTestLoggingEnabled, includeStackTrace: false);
+            return new GameLogger(gatedHandler)
+            {
+                logEnabled = true,
+                filterLogType = Debug.unityLogger.filterLogType
+            };
 #else
             return Debug.unityLogger;
 #endif
         }
     }
 }
-

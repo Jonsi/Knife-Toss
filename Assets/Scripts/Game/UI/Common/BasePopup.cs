@@ -15,11 +15,7 @@ namespace Game.UI.Common
         private PopupFadeInAnimation _PopupAnimation;
         private bool _HasPauseRequest;
         private bool _IsHiding;
-
-        private void Awake()
-        {
-            _PopupAnimation = GetComponent<PopupFadeInAnimation>();
-        }
+        private bool _IsInitialized;
 
         [Inject]
         private void Construct(IGamePauseController gamePauseController)
@@ -29,6 +25,8 @@ namespace Game.UI.Common
 
         public virtual void Show()
         {
+            EnsureInitialized();
+
             if (gameObject.activeSelf)
             {
                 if (_IsHiding)
@@ -47,6 +45,8 @@ namespace Game.UI.Common
 
         public virtual void Hide()
         {
+            EnsureInitialized();
+
             if (!gameObject.activeSelf)
             {
                 TryReleasePause();
@@ -106,6 +106,15 @@ namespace Game.UI.Common
 
             _GamePauseController?.ReleasePause(this);
             _HasPauseRequest = false;
+        }
+
+        private void EnsureInitialized()
+        {
+            if (_IsInitialized)
+                return;
+
+            _PopupAnimation = GetComponent<PopupFadeInAnimation>();
+            _IsInitialized = true;
         }
     }
 }

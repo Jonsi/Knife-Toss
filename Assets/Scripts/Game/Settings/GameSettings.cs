@@ -9,7 +9,7 @@ namespace Game.Settings
     public class GameSettings : ScriptableObject
     {
         /// <summary>
-        /// Enables logging when the TEST_ENV scripting define is present.
+        /// Enables test logging when the TEST_ENABLED scripting define is present.
         /// </summary>
         [field: SerializeField] public bool EnableTestLogging { get; private set; }
     }
