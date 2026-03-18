@@ -4,7 +4,6 @@ using Game.Economy.Events;
 using Game.Economy.Interfaces;
 using TMPro;
 using UnityEngine;
-using VContainer;
 
 namespace Game.UI.Common
 {
@@ -35,9 +34,9 @@ namespace Game.UI.Common
         private bool _HasVisualState;
         private Canvas _ParentCanvas;
         private CurrencyBurstAnimator _BurstAnimator;
+        private bool _IsInitialized;
 
-        [Inject]
-        private void Construct(
+        public void Initialize(
             ICurrencyService currencyService,
             CurrencyTypeCatalog currencyTypeCatalog,
             CurrencyAccumulationConfig accumulationConfig)
@@ -55,6 +54,7 @@ namespace Game.UI.Common
             }
 
             _ResolvedCurrencyId = Currency.ToTypeId();
+            _IsInitialized = true;
 
             if (isActiveAndEnabled)
             {
@@ -88,7 +88,7 @@ namespace Game.UI.Common
 
         public void RefreshImmediate()
         {
-            if (_CurrencyService == null || string.IsNullOrEmpty(_ResolvedCurrencyId))
+            if (!_IsInitialized || _CurrencyService == null || string.IsNullOrEmpty(_ResolvedCurrencyId))
             {
                 return;
             }
@@ -149,7 +149,7 @@ namespace Game.UI.Common
 
         private void Subscribe()
         {
-            if (_IsSubscribed || BalanceChangedChannel == null)
+            if (!_IsInitialized || _IsSubscribed || BalanceChangedChannel == null)
             {
                 return;
             }

@@ -1,6 +1,9 @@
+using Game.Economy.Data;
+using Game.Economy.Interfaces;
 using Game.Flow.Events;
 using Game.UI.Common;
 using UnityEngine;
+using VContainer;
 
 namespace Game.UI.HUD
 {
@@ -11,6 +14,16 @@ namespace Game.UI.HUD
     {
         [SerializeField] private CurrencyBalanceDisplay _BalanceDisplay;
         [SerializeField] private LevelStartedEventChannel _LevelStartedChannel;
+
+        [Inject]
+        private void Construct(
+            ICurrencyService currencyService,
+            CurrencyTypeCatalog currencyTypeCatalog,
+            CurrencyAccumulationConfig accumulationConfig)
+        {
+            _BalanceDisplay ??= GetComponent<CurrencyBalanceDisplay>();
+            _BalanceDisplay?.Initialize(currencyService, currencyTypeCatalog, accumulationConfig);
+        }
 
         private void Awake()
         {

@@ -1,5 +1,8 @@
+using Game.Economy.Data;
+using Game.Economy.Interfaces;
 using Game.UI.Common;
 using UnityEngine;
+using VContainer;
 
 namespace Game.UI.Store
 {
@@ -9,6 +12,16 @@ namespace Game.UI.Store
     public class StoreBalanceChipView : MonoBehaviour
     {
         [SerializeField] private CurrencyBalanceDisplay _BalanceDisplay;
+
+        [Inject]
+        private void Construct(
+            ICurrencyService currencyService,
+            CurrencyTypeCatalog currencyTypeCatalog,
+            CurrencyAccumulationConfig accumulationConfig)
+        {
+            _BalanceDisplay ??= GetComponent<CurrencyBalanceDisplay>();
+            _BalanceDisplay?.Initialize(currencyService, currencyTypeCatalog, accumulationConfig);
+        }
 
         private void Awake()
         {
