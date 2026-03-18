@@ -862,6 +862,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   _MainMenuController: {fileID: 1965329575}
+  _CurrencyAccumulationConfig: {fileID: 11400000, guid: b8e3a7d4c7e045c582ba7e0939c7e6f1, type: 2}
 --- !u!4 &973731089
 Transform:
   m_ObjectHideFlags: 0
