@@ -215,7 +215,7 @@ namespace Game.Entities.Target.Views
                 SetInitialWorldPosition(transform.position);
             }
 
-            _WorldBehaviorRuntime.Begin(deltaTime, _InitialWorldPosition, transform.position, true);
+            _WorldBehaviorRuntime.Begin(deltaTime, _InitialWorldPosition, transform.position, true, _SpeedMultiplier);
 
             for (int i = 0; i < _WorldBehaviors.Count; i++)
             {
@@ -246,7 +246,7 @@ namespace Game.Entities.Target.Views
         }
 
         /// <summary>
-        /// Applies a speed multiplier to rotation.
+        /// Applies a speed multiplier to target behaviors.
         /// </summary>
         public void SetSpeedMultiplier(float multiplier)
         {
@@ -254,7 +254,7 @@ namespace Game.Entities.Target.Views
         }
 
         /// <summary>
-        /// Clears all rotation modifiers.
+        /// Clears all behavior speed modifiers.
         /// </summary>
         public void ClearRotationModifiers()
         {

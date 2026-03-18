@@ -15,6 +15,11 @@ namespace Game.Entities.Target.Logic
         public float DeltaTime { get; private set; }
 
         /// <summary>
+        /// Gets the speed multiplier applied to world-space behaviors.
+        /// </summary>
+        public float SpeedMultiplier { get; private set; } = 1f;
+
+        /// <summary>
         /// Gets the world-space center the behavior should operate around.
         /// </summary>
         public Vector3 WorldCenter { get; private set; }
@@ -41,9 +46,11 @@ namespace Game.Entities.Target.Logic
         /// <param name="worldCenter">Center point provided by the factory.</param>
         /// <param name="currentPosition">Current world position.</param>
         /// <param name="hasWorldCenter">Whether the caller provided a valid center reference.</param>
-        public void Begin(float deltaTime, Vector3 worldCenter, Vector3 currentPosition, bool hasWorldCenter)
+        /// <param name="speedMultiplier">Speed multiplier applied to world motion.</param>
+        public void Begin(float deltaTime, Vector3 worldCenter, Vector3 currentPosition, bool hasWorldCenter, float speedMultiplier = 1f)
         {
-            DeltaTime = deltaTime;
+            SpeedMultiplier = Mathf.Max(0f, speedMultiplier);
+            DeltaTime = deltaTime * SpeedMultiplier;
             WorldCenter = worldCenter;
             InitialPosition = currentPosition;
             HasWorldCenter = hasWorldCenter;
