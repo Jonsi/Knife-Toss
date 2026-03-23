@@ -1,0 +1,76 @@
+Implement a specific task or phase from a plan file and keep the plan in sync.
+
+Arguments:
+- Accept a plan file path plus either a task id, a task title, or a phase name.
+- If the user gives only a phase, implement all pending tasks that belong to that phase.
+- If the target is ambiguous, resolve it from the plan contents before editing code.
+
+Operating rules:
+1. Read the target plan file first.
+2. Find the requested task or phase in the `todos` list and in the body of the plan.
+3. Read the relevant project code and architecture before proposing changes.
+4. Identify prerequisites that are required from the user, from Unity Editor, or from external assets/configuration.
+5. If hard prerequisites are missing and implementation cannot proceed safely:
+   - Do not mark the task done.
+   - Stop and output a `Prerequisites Needed From User` section listing exactly what is needed.
+   - Also output a `Blocked Reason` section.
+6. If implementation can proceed:
+   - Implement the task fully in code and files.
+   - If Unity Editor actions are required, make all code-side changes first and then list the exact Unity actions needed.
+   - Keep changes aligned with `.cursor/rules/general-implementation-rules.mdc`.
+7. After implementation:
+   - Update the plan file.
+   - Mark the implemented task or tasks as `completed`.
+   - If only part of a broader phase was completed, mark only the finished todos as `completed`.
+   - Add a short implementation note under a `## Progress Updates` section at the end of the plan if one does not exist.
+   - Each progress entry must include:
+     - date
+     - completed task ids
+     - short summary of what was implemented
+     - remaining follow-ups or Unity-side wiring if any
+8. Never mark a task `completed` unless the implementation is actually finished in the repository for the code side of the work.
+9. If tests or validation are relevant, run them when possible and report the results.
+
+Required output format:
+
+## Target
+- Plan: `<path>`
+- Task or Phase: `<resolved target>`
+
+## Prerequisites Needed From User
+- Write `None` if nothing is required before implementation.
+- Otherwise list the exact prerequisites.
+
+## Implementation
+- Summarize what you changed.
+- Mention important files touched.
+
+## Plan Update
+- List which todo ids were marked `completed`.
+- List any todo ids left pending.
+
+## Post-Implementation Requirements
+- Write `None` if there is nothing the user needs to do after implementation.
+- Otherwise list required Unity Editor wiring, asset creation, inspector assignments, testing steps, or external setup still needed.
+
+## Validation
+- Report tests run, checks performed, or why validation could not be completed.
+
+Behavior details:
+- Prefer implementing one concrete task cleanly rather than partially touching many tasks.
+- If the user asks for a full phase and it is too large to complete safely in one pass, implement as much as is completeable end-to-end, mark only finished todos as completed, and clearly list the remaining pending ones.
+- If the requested work requires scene or prefab changes that cannot be performed fully in code, still implement all supporting runtime code and then list exact Unity steps under `Post-Implementation Requirements`.
+- When updating the plan file, preserve existing structure and metadata.
+- Do not invent new task ids unless you are explicitly asked to rewrite the plan.
+
+Plan progress entry template:
+
+## Progress Updates
+
+### YYYY-MM-DD - <task-id or phase-name>
+- Completed: `<todo-id-1>`, `<todo-id-2>`
+- Summary: `<what was implemented>`
+- Follow-ups: `<remaining Unity/editor/manual requirements or "None">`
+
+Goal:
+- This command should be usable repeatedly for each task or phase in `META_FEATURES_INTEGRATION_PLAN.md` or any other plan file, with the plan always reflecting what has actually been implemented.
