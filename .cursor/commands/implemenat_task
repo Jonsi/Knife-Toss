@@ -9,27 +9,31 @@ Operating rules:
 1. Read the target plan file first.
 2. Find the requested task or phase in the `todos` list and in the body of the plan.
 3. Read the relevant project code and architecture before proposing changes.
-4. Identify prerequisites that are required from the user, from Unity Editor, or from external assets/configuration.
-5. If hard prerequisites are missing and implementation cannot proceed safely:
+4. In Unity projects, default to script/text changes only unless the user explicitly asks for scene, prefab, or other Unity asset edits.
+5. Treat `.unity`, `.prefab`, `.asset`, `.mat`, `.anim`, `.controller`, and `.meta` edits as Unity-side changes unless the user explicitly authorizes them.
+6. Identify prerequisites that are required from the user, from Unity Editor, or from external assets/configuration.
+7. If hard prerequisites are missing and implementation cannot proceed safely:
    - Do not mark the task done.
    - Stop and output a `Prerequisites Needed From User` section listing exactly what is needed.
    - Also output a `Blocked Reason` section.
-6. If implementation can proceed:
+8. If implementation can proceed:
    - Implement the task fully in code and files.
-   - If Unity Editor actions are required, make all code-side changes first and then list the exact Unity actions needed.
+   - If Unity Editor actions are required or the requested task needs scene/prefab wiring, make all code-side changes first and then list the exact Unity actions needed.
+   - If the user did not explicitly allow Unity asset edits, do not edit scene/prefab/asset files even if you could. Leave those as `Post-Implementation Requirements`.
    - Keep changes aligned with `.cursor/rules/general-implementation-rules.mdc`.
-7. After implementation:
+9. After implementation:
    - Update the plan file.
-   - Mark the implemented task or tasks as `completed`.
+   - Mark the implemented task or tasks as `completed` only when the repository-side work for that task is actually finished without requiring still-pending Unity asset edits.
    - If only part of a broader phase was completed, mark only the finished todos as `completed`.
+   - If only supporting script groundwork was completed for a task that still needs Unity-side wiring, keep that task pending and record the groundwork in `## Progress Updates`.
    - Add a short implementation note under a `## Progress Updates` section at the end of the plan if one does not exist.
    - Each progress entry must include:
      - date
      - completed task ids
      - short summary of what was implemented
      - remaining follow-ups or Unity-side wiring if any
-8. Never mark a task `completed` unless the implementation is actually finished in the repository for the code side of the work.
-9. If tests or validation are relevant, run them when possible and report the results.
+10. Never mark a task `completed` unless the implementation is actually finished in the repository for the code side of the work.
+11. If tests or validation are relevant, run them when possible and report the results.
 
 Required output format:
 
@@ -60,6 +64,7 @@ Behavior details:
 - Prefer implementing one concrete task cleanly rather than partially touching many tasks.
 - If the user asks for a full phase and it is too large to complete safely in one pass, implement as much as is completeable end-to-end, mark only finished todos as completed, and clearly list the remaining pending ones.
 - If the requested work requires scene or prefab changes that cannot be performed fully in code, still implement all supporting runtime code and then list exact Unity steps under `Post-Implementation Requirements`.
+- If the user has not explicitly authorized Unity asset edits, never perform those edits as part of this command. Treat them as follow-up requirements.
 - When updating the plan file, preserve existing structure and metadata.
 - Do not invent new task ids unless you are explicitly asked to rewrite the plan.
 

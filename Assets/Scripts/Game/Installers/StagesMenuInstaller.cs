@@ -1,4 +1,3 @@
-using Game.Flow.Game;
 using Game.UI.Stages;
 using UnityEngine;
 using VContainer;
@@ -12,12 +11,9 @@ namespace Game.Installers
     /// </summary>
     public class StagesMenuInstaller : LifetimeScope
     {
-        [Header("Scene References")]
-        [SerializeField] private StagesMenuController _StagesMenuController;
-
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.RegisterComponent(_StagesMenuController);
+            builder.RegisterComponentInHierarchy<StageListController>();
         }
     }
 }

@@ -13,6 +13,9 @@ namespace Game.Persistence.Services
     /// </summary>
     public class PlayerDataService : IInitializable, IDisposable
     {
+        private const int FirstStageIndex = 0;
+        private const int MinimumStageCount = 1;
+
         private readonly IPlayerDataStore _Store;
         private readonly GameData _GameData;
 
@@ -70,6 +73,59 @@ namespace Game.Persistence.Services
         public int GetHighestStageIndex()
         {
             return _CachedData.Progress.HighestStageIndex;
+        }
+
+        /// <summary>
+        /// Gets the current stage index stored in player progress.
+        /// </summary>
+        public int GetCurrentStageIndex()
+        {
+            return _CachedData.Progress.CurrentStageIndex;
+        }
+
+        /// <summary>
+        /// Returns the highest unlocked stage index clamped to the provided catalog size.
+        /// </summary>
+        /// <param name="stageCount">Total stage count in the active catalog.</param>
+        public int GetHighestUnlockedStageIndex(int stageCount)
+        {
+            return ClampStageIndex(GetHighestStageIndex(), stageCount);
+        }
+
+        /// <summary>
+        /// Determines whether a stage is currently unlocked.
+        /// </summary>
+        /// <param name="stageIndex">Zero-based stage index to check.</param>
+        /// <param name="stageCount">Total stage count in the active catalog.</param>
+        public bool IsStageUnlocked(int stageIndex, int stageCount)
+        {
+            if (stageIndex < FirstStageIndex || stageIndex >= GetNormalizedStageCount(stageCount))
+            {
+                return false;
+            }
+
+            return stageIndex <= GetHighestUnlockedStageIndex(stageCount);
+        }
+
+        /// <summary>
+        /// Clamps a stage index into the currently unlocked stage range.
+        /// </summary>
+        /// <param name="stageIndex">Requested stage index.</param>
+        /// <param name="stageCount">Total stage count in the active catalog.</param>
+        public int ClampStageIndexToUnlockedRange(int stageIndex, int stageCount)
+        {
+            int highestUnlockedStageIndex = GetHighestUnlockedStageIndex(stageCount);
+            if (stageIndex < FirstStageIndex)
+            {
+                return FirstStageIndex;
+            }
+
+            if (stageIndex > highestUnlockedStageIndex)
+            {
+                return highestUnlockedStageIndex;
+            }
+
+            return stageIndex;
         }
 
         /// <summary>
@@ -217,6 +273,27 @@ namespace Game.Persistence.Services
         private void SyncGameData()
         {
             _GameData.CurrentStageIndex = _CachedData.Progress.CurrentStageIndex;
+        }
+
+        private int ClampStageIndex(int stageIndex, int stageCount)
+        {
+            int maxStageIndex = GetNormalizedStageCount(stageCount) - MinimumStageCount;
+            if (stageIndex < FirstStageIndex)
+            {
+                return FirstStageIndex;
+            }
+
+            if (stageIndex > maxStageIndex)
+            {
+                return maxStageIndex;
+            }
+
+            return stageIndex;
+        }
+
+        private int GetNormalizedStageCount(int stageCount)
+        {
+            return Math.Max(stageCount, MinimumStageCount);
         }
 
         private void SaveNow()

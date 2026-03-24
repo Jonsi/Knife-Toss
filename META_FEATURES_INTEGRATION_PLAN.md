@@ -855,3 +855,10 @@ You already have the right base systems:
 What is missing is the part that makes players come back and the part that gives spenders clear value.
 
 Build retention first, then monetize the retained users.
+
+## Progress Updates
+
+### 2026-03-24 - Main menu hub script groundwork
+- Completed: `None`
+- Summary: Extracted reusable stage-list presentation and lock-state logic into scripts, updated the stages menu to use that shared presenter, and changed the main menu play flow to respect the current selected stage within unlocked bounds.
+- Follow-ups: Wire the new optional `UiStageItem` lock/current references in Unity, add the reusable stage list to the main menu scene, and complete the header layout there without changing scripts again.

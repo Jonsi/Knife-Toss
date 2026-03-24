@@ -36,6 +36,7 @@ namespace Game.UI.MainMenu
             if (_PowerUpsButton != null)
                 _PowerUpsButton.onClick.AddListener(OnPowerUpsClicked);
 
+            SyncCurrentStageSelection();
             UpdateCurrentStageText();
         }
 
@@ -62,10 +63,11 @@ namespace Game.UI.MainMenu
 
         private void OnPlayClicked()
         {
-            int highestStage = _PlayerDataService.GetHighestStageIndex();
             if (_GameData != null)
             {
-                _GameData.CurrentStageIndex = highestStage;
+                _GameData.CurrentStageIndex = _PlayerDataService.ClampStageIndexToUnlockedRange(
+                    _GameData.CurrentStageIndex,
+                    _PlayerDataService.GetHighestStageIndex() + 1);
             }
 
             _SceneLoaderService.LoadGame().Forget();
@@ -84,6 +86,18 @@ namespace Game.UI.MainMenu
         private void OnPowerUpsClicked()
         {
             _SceneLoaderService.LoadPowerUps().Forget();
+        }
+
+        private void SyncCurrentStageSelection()
+        {
+            if (_GameData == null || _PlayerDataService == null)
+            {
+                return;
+            }
+
+            _GameData.CurrentStageIndex = _PlayerDataService.ClampStageIndexToUnlockedRange(
+                _GameData.CurrentStageIndex,
+                _PlayerDataService.GetHighestStageIndex() + 1);
         }
     }
 }

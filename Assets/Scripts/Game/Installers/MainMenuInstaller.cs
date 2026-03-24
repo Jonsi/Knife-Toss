@@ -1,8 +1,8 @@
-using Game.Flow.Game;
 using Game.Persistence.Services;
 using Game.UI.Common;
 using Game.UI.HUD;
 using Game.UI.MainMenu;
+using Game.UI.Stages;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -27,6 +27,7 @@ namespace Game.Installers
             }
 
             builder.RegisterComponent(_MainMenuController);
+            builder.RegisterComponentInHierarchy<StageListController>();
             builder.RegisterComponentInHierarchy<CoinsUiDisplay>();
         }
     }

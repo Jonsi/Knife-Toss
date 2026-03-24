@@ -22,25 +22,61 @@ namespace Game.UI.Stages
         [Tooltip("Text component to display the stage name.")]
         [SerializeField] private TMP_Text _StageNameText;
 
+        [Tooltip("Optional object enabled for locked stages.")]
+        [SerializeField] private GameObject _LockedStateRoot;
+
+        [Tooltip("Optional object enabled for the current stage.")]
+        [SerializeField] private GameObject _CurrentStateRoot;
+
         /// <summary>
         /// Initializes the stage item with data.
         /// </summary>
-        /// <param name="icon">The icon to display.</param>
-        /// <param name="stageNumber">The number of the stage.</param>
-        /// <param name="stageName">The name of the stage.</param>
-        /// <param name="stageIndex">The index of the stage in the catalog.</param>
+        /// <param name="itemData">The item state to render.</param>
         /// <param name="onClicked">Callback when the item is clicked.</param>
-        public void Initialize(Sprite icon, int stageNumber, string stageName, int stageIndex, Action<int> onClicked)
+        public void Initialize(StageListItemData itemData, Action<int> onClicked)
         {
-             if (_StageIconImage != null) _StageIconImage.sprite = icon;
-             if (_StageNumberText != null) _StageNumberText.text = stageNumber.ToString();
-             if (_StageNameText != null) _StageNameText.text = stageName;
+            if (itemData == null)
+            {
+                return;
+            }
 
-             if (_Button != null)
-             {
-                 _Button.onClick.RemoveAllListeners();
-                 _Button.onClick.AddListener(() => onClicked?.Invoke(stageIndex));
-             }
+            if (_StageIconImage != null)
+            {
+                _StageIconImage.sprite = itemData.Icon;
+            }
+
+            if (_StageNumberText != null)
+            {
+                _StageNumberText.text = itemData.StageNumber.ToString();
+            }
+
+            if (_StageNameText != null)
+            {
+                _StageNameText.text = itemData.StageName;
+            }
+
+            if (_LockedStateRoot != null)
+            {
+                _LockedStateRoot.SetActive(itemData.IsLocked);
+            }
+
+            if (_CurrentStateRoot != null)
+            {
+                _CurrentStateRoot.SetActive(itemData.IsCurrent);
+            }
+
+            if (_Button == null)
+            {
+                return;
+            }
+
+            _Button.onClick.RemoveAllListeners();
+            _Button.interactable = !itemData.IsLocked;
+
+            if (!itemData.IsLocked)
+            {
+                _Button.onClick.AddListener(() => onClicked?.Invoke(itemData.StageIndex));
+            }
         }
     }
 }
