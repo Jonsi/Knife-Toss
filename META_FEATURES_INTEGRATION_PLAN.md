@@ -19,8 +19,8 @@ This is the recommended execution order for the project.
 
 This is the first implementation block and should happen before the rest of the meta work:
 
-1. Move the HUD to the top of the main menu.
-2. Show the current coin balance in that top HUD.
+1. Move the HUD to the top of the main menu. Completed.
+2. Show the current coin balance in that top HUD. Completed.
 3. Add a store icon/button in that top HUD.
 4. Embed the stage list directly into the main menu scene.
 5. Make the stage list scrollable.
@@ -862,3 +862,11 @@ Build retention first, then monetize the retained users.
 - Completed: `None`
 - Summary: Extracted reusable stage-list presentation and lock-state logic into scripts, updated the stages menu to use that shared presenter, and changed the main menu play flow to respect the current selected stage within unlocked bounds.
 - Follow-ups: Wire the new optional `UiStageItem` lock/current references in Unity, add the reusable stage list to the main menu scene, and complete the header layout there without changing scripts again.
+
+### 2026-03-24 - Main menu HUD move
+- Completed: `Move the HUD to the top of the main menu`
+- Summary: Marked the first requested main menu layout task complete.
+
+### 2026-03-24 - Main menu top HUD coin balance
+- Completed: `Show the current coin balance in that top HUD`
+- Summary: Marked the second requested main menu HUD task complete.
