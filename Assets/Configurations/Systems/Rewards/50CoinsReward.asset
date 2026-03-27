@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game::Game.Rewards.Configs.RewardGrantEntry
   <Item>k__BackingField: {fileID: 11400000, guid: b2542714f31c4860a6305ebf6fd4f37f, type: 2}
   <Count>k__BackingField: 50
+  <PresentationIconOverride>k__BackingField: {fileID: 21300000, guid: 82813c074e2854877b1382f0e987511b, type: 3}

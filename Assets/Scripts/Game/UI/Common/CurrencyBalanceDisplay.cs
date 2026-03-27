@@ -135,7 +135,7 @@ namespace Game.UI.Common
 
             if (BalanceText != null)
             {
-                BalanceText.text = _DisplayedValue.ToString();
+                BalanceText.text = FormatBalance(_DisplayedValue);
             }
         }
 
@@ -192,7 +192,7 @@ namespace Game.UI.Common
                 currentValue =>
                 {
                     _DisplayedValue = currentValue;
-                    BalanceText.text = currentValue.ToString();
+                    BalanceText.text = FormatBalance(currentValue);
                 },
                 value,
                 CountTweenDuration).SetEase(Ease.OutQuad);
@@ -206,7 +206,7 @@ namespace Game.UI.Common
             _ActiveSequence.OnComplete(() =>
             {
                 _DisplayedValue = value;
-                BalanceText.text = value.ToString();
+                BalanceText.text = FormatBalance(value);
                 BalanceText.color = _BaseTextColor;
                 BalanceText.rectTransform.localScale = _BaseScale;
                 _ActiveSequence = null;
@@ -260,6 +260,11 @@ namespace Game.UI.Common
                 BalanceText.color = _BaseTextColor;
                 BalanceText.rectTransform.localScale = _BaseScale;
             }
+        }
+
+        private static string FormatBalance(int value)
+        {
+            return value.ToString("N0");
         }
     }
 }
