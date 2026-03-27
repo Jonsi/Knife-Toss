@@ -4,34 +4,34 @@ overview: Design and implement a separated reward system with its contracts in C
 todos:
   - id: common-interfaces
     content: "Create Common/Rewards/ interfaces: IRewardItem, IRewardPresenter, IRewardGrantService"
-    status: pending
+    status: completed
   - id: common-events
     content: "Create Common/Rewards/Events: RewardGrantedEventChannel + RewardGrantedEventData"
-    status: pending
+    status: completed
   - id: update-item-reward
     content: Update ItemReward hierarchy to implement IRewardItem and add Icon support
-    status: pending
+    status: completed
   - id: persistence
     content: Add RewardClaimData + LevelClaimEntry to persistence layer, update PlayerData and PlayerDataService
-    status: pending
+    status: completed
   - id: stage-reward-catalog
     content: Create StageRewardCatalog + StageRewardEntry ScriptableObject configuration
-    status: pending
+    status: completed
   - id: claim-tracker
     content: Create RewardClaimTracker service for checking/marking first-clear and stage-complete claims
-    status: pending
+    status: completed
   - id: grant-service
     content: Create RewardGrantService implementing IRewardGrantService (grant, save, event, present)
-    status: pending
+    status: completed
   - id: reward-popup
     content: Create RewardPopup (BasePopup + IRewardPresenter) and RewardItemView UI components
-    status: pending
+    status: completed
   - id: di-wiring
     content: Create RewardInstaller and integrate into GameInstaller/StageInstaller
-    status: pending
+    status: completed
   - id: stage-connector
     content: Create StageRewardConnector to listen to level/stage events and trigger reward granting
-    status: pending
+    status: completed
 isProject: false
 ---
 

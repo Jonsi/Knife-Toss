@@ -75,5 +75,48 @@ namespace Game.Level.Catalogs
 
             return _ConfigAsset.Stages[stageIndex];
         }
+
+        /// <summary>
+        /// Finds the index of the given stage asset in the collection, or -1 if not found.
+        /// </summary>
+        public int GetStageIndexOrNegative(StageConfig stageConfig)
+        {
+            if (stageConfig == null || _ConfigAsset.Stages == null)
+            {
+                return -1;
+            }
+
+            for (var i = 0; i < _ConfigAsset.Stages.Count; i++)
+            {
+                if (_ConfigAsset.Stages[i] == stageConfig)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
+        /// Finds the level index for the given level asset within the stage, or -1 if not found.
+        /// </summary>
+        public int GetLevelIndexInStageOrNegative(int stageIndex, LevelConfig levelConfig)
+        {
+            var stage = GetStageConfig(stageIndex);
+            if (stage?.Levels == null || levelConfig == null)
+            {
+                return -1;
+            }
+
+            for (var i = 0; i < stage.Levels.Count; i++)
+            {
+                if (stage.Levels[i] == levelConfig)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
     }
 }

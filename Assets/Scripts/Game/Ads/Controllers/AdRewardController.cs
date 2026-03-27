@@ -7,8 +7,8 @@ using Game.Ads.Data;
 using Game.Ads.Extensions;
 using Game.Flow.Events;
 using Game.Flow.Level;
+using Common.Rewards.Interfaces;
 using Game.UI.Popups;
-using VContainer;
 using VContainer.Unity;
 
 namespace Game.Ads.Controllers
@@ -27,7 +27,7 @@ namespace Game.Ads.Controllers
         private readonly IAdService _AdService;
         private readonly AdSettings _AdSettings;
         private readonly RewardedPlacement _ContinuePlacement;
-        private readonly IObjectResolver _Resolver;
+        private readonly IRewardGrantContext _GrantContext;
         private readonly VoidEventChannel _ContinueRequestedChannel;
         private readonly VoidEventChannel _RetryLevelChannel;
         private readonly VoidEventChannel _RestartStageChannel;
@@ -42,7 +42,7 @@ namespace Game.Ads.Controllers
             IAdService adService,
             AdSettings adSettings,
             RewardedPlacement continuePlacement,
-            IObjectResolver resolver,
+            IRewardGrantContext grantContext,
             VoidEventChannel continueRequestedChannel,
             VoidEventChannel retryLevelChannel,
             VoidEventChannel restartStageChannel,
@@ -52,7 +52,7 @@ namespace Game.Ads.Controllers
             _AdService = adService;
             _AdSettings = adSettings;
             _ContinuePlacement = continuePlacement;
-            _Resolver = resolver;
+            _GrantContext = grantContext;
             _ContinueRequestedChannel = continueRequestedChannel;
             _RetryLevelChannel = retryLevelChannel;
             _RestartStageChannel = restartStageChannel;
@@ -112,7 +112,7 @@ namespace Game.Ads.Controllers
 
             if (result.Success)
             {
-                await _ContinuePlacement.TryGrantRewardAsync(_Resolver);
+                await _ContinuePlacement.TryGrantRewardAsync(_GrantContext);
                 _RetryLevelChannel.Raise();
             }
             else

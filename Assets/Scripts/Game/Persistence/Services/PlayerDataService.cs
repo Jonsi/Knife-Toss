@@ -159,6 +159,29 @@ namespace Game.Persistence.Services
         }
 
         /// <summary>
+        /// Ensures reward claim data exists and returns the instance.
+        /// </summary>
+        public RewardClaimData EnsureRewardClaimData()
+        {
+            if (_CachedData.RewardClaims == null)
+            {
+                _CachedData.RewardClaims = new RewardClaimData();
+            }
+
+            if (_CachedData.RewardClaims.ClaimedLevelRewards == null)
+            {
+                _CachedData.RewardClaims.ClaimedLevelRewards = new System.Collections.Generic.List<LevelClaimEntry>();
+            }
+
+            if (_CachedData.RewardClaims.ClaimedStageRewards == null)
+            {
+                _CachedData.RewardClaims.ClaimedStageRewards = new System.Collections.Generic.List<int>();
+            }
+
+            return _CachedData.RewardClaims;
+        }
+
+        /// <summary>
         /// Ensures knife skin collection exists and returns the instance.
         /// </summary>
         public KnifeSkinCollectionData EnsureKnifeSkinCollection()
@@ -250,6 +273,21 @@ namespace Game.Persistence.Services
             {
                 _CachedData.Resources.KnifeSkins = new KnifeSkinCollectionData();
             }
+
+            if (_CachedData.RewardClaims == null)
+            {
+                _CachedData.RewardClaims = new RewardClaimData();
+            }
+
+            if (_CachedData.RewardClaims.ClaimedLevelRewards == null)
+            {
+                _CachedData.RewardClaims.ClaimedLevelRewards = new System.Collections.Generic.List<LevelClaimEntry>();
+            }
+
+            if (_CachedData.RewardClaims.ClaimedStageRewards == null)
+            {
+                _CachedData.RewardClaims.ClaimedStageRewards = new System.Collections.Generic.List<int>();
+            }
         }
 
         private void UpdateProgress()
@@ -268,6 +306,9 @@ namespace Game.Persistence.Services
             _CachedData.Resources.PowerUps ??= new PowerUpInventoryData();
             _CachedData.Resources.Currencies ??= new System.Collections.Generic.List<CurrencyBalanceEntry>();
             _CachedData.Resources.KnifeSkins ??= new KnifeSkinCollectionData();
+            _CachedData.RewardClaims ??= new RewardClaimData();
+            _CachedData.RewardClaims.ClaimedLevelRewards ??= new System.Collections.Generic.List<LevelClaimEntry>();
+            _CachedData.RewardClaims.ClaimedStageRewards ??= new System.Collections.Generic.List<int>();
         }
 
         private void SyncGameData()

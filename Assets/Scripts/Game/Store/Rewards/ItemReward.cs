@@ -1,6 +1,7 @@
 using System;
+using Common.Rewards.Interfaces;
 using Cysharp.Threading.Tasks;
-using VContainer;
+using UnityEngine;
 
 namespace Game.Store.Rewards
 {
@@ -8,13 +9,23 @@ namespace Game.Store.Rewards
     /// Base class for store rewards.
     /// </summary>
     [Serializable]
-    public abstract class ItemReward
+    public abstract class ItemReward : IRewardItem
     {
         /// <summary>
         /// Grants this reward.
         /// </summary>
-        /// <param name="resolver">Container resolver for dependency access.</param>
-        public abstract UniTask GrantAsync(IObjectResolver resolver);
+        /// <param name="context">Grant context for resolving services.</param>
+        public abstract UniTask GrantAsync(IRewardGrantContext context);
+
+        /// <summary>
+        /// Short label for UI and reward popups.
+        /// </summary>
+        public string DisplayText => GetDisplayText();
+
+        /// <summary>
+        /// Icon for reward presentation, or null when not configured.
+        /// </summary>
+        public virtual Sprite Icon => null;
 
         /// <summary>
         /// Returns a short human-readable label describing this reward (e.g. "+50 COIN", "+1 Super Knife").

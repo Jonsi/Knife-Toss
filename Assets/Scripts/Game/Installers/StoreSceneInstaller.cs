@@ -1,5 +1,7 @@
 using Common.Ads.Interfaces;
+using Common.Rewards.Interfaces;
 using Game.Ads.Controllers;
+using Game.Rewards.Services;
 using Game.Ads.Data;
 using Game.Store.Data;
 using Game.Store.Events;
@@ -34,6 +36,8 @@ namespace Game.Installers
 
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.Register<VContainerRewardGrantContext>(Lifetime.Singleton).As<IRewardGrantContext>();
+
             Install(builder, CreateStoreInstaller());
 
             if (_CurrencyAccumulationConfig == null)
@@ -59,7 +63,7 @@ namespace Game.Installers
                 builder.Register(resolver => new StoreAdController(
                     resolver.Resolve<IAdService>(),
                     _StoreAdPlacement,
-                    resolver,
+                    resolver.Resolve<IRewardGrantContext>(),
                     resolver.Resolve<StoreAdCtaView>(),
                     resolver.Resolve<StoreBalanceChipView>()
                 ), Lifetime.Scoped).AsImplementedInterfaces();

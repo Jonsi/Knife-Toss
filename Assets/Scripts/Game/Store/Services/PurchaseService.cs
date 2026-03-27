@@ -1,4 +1,5 @@
 using System;
+using Common.Rewards.Interfaces;
 using Cysharp.Threading.Tasks;
 using Game.Economy.Data;
 using Game.Economy.Interfaces;
@@ -6,7 +7,6 @@ using Game.Store.Data;
 using Game.Store.Events;
 using Game.Store.Interfaces;
 using Game.Store.Rewards;
-using VContainer;
 
 namespace Game.Store.Services
 {
@@ -16,7 +16,7 @@ namespace Game.Store.Services
     public class PurchaseService : IPurchaseService
     {
         private readonly ICurrencyService _CurrencyService;
-        private readonly IObjectResolver _Resolver;
+        private readonly IRewardGrantContext _GrantContext;
         private readonly PurchaseStartedEventChannel _StartedEventChannel;
         private readonly PurchaseCompletedEventChannel _CompletedEventChannel;
         private readonly PurchaseFailedEventChannel _FailedEventChannel;
@@ -25,13 +25,13 @@ namespace Game.Store.Services
 
         public PurchaseService(
             ICurrencyService currencyService,
-            IObjectResolver resolver,
+            IRewardGrantContext grantContext,
             PurchaseStartedEventChannel startedEventChannel,
             PurchaseCompletedEventChannel completedEventChannel,
             PurchaseFailedEventChannel failedEventChannel)
         {
             _CurrencyService = currencyService;
-            _Resolver = resolver;
+            _GrantContext = grantContext;
             _StartedEventChannel = startedEventChannel;
             _CompletedEventChannel = completedEventChannel;
             _FailedEventChannel = failedEventChannel;
@@ -45,7 +45,7 @@ namespace Game.Store.Services
             if (entry == null || entry.Reward == null)
                 return false;
 
-            if (entry.Reward is IUniqueReward uniqueReward && uniqueReward.IsOwned(_Resolver))
+            if (entry.Reward is IUniqueReward uniqueReward && uniqueReward.IsOwned(_GrantContext))
                 return false;
 
             var price = entry.Price;
@@ -63,7 +63,7 @@ namespace Game.Store.Services
             if (entry == null || entry.Reward == null)
                 return Fail(entry, PurchaseResult.InvalidItem);
 
-            if (entry.Reward is IUniqueReward uniqueReward && uniqueReward.IsOwned(_Resolver))
+            if (entry.Reward is IUniqueReward uniqueReward && uniqueReward.IsOwned(_GrantContext))
             {
                 return Fail(entry, PurchaseResult.Error(uniqueReward.AlreadyOwnedReason));
             }
@@ -88,7 +88,7 @@ namespace Game.Store.Services
                         return Fail(entry, PurchaseResult.InsufficientFunds);
                 }
 
-                await entry.Reward.GrantAsync(_Resolver);
+                await entry.Reward.GrantAsync(_GrantContext);
 
                 _CompletedEventChannel?.Raise(new PurchaseCompletedEventData(entry));
                 return PurchaseResult.Succeeded;

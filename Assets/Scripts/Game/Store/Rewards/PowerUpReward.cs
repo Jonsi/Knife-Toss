@@ -1,9 +1,9 @@
 using System;
+using Common.Rewards.Interfaces;
 using Cysharp.Threading.Tasks;
 using Game.Persistence.Services;
 using Game.PowerUps.Configs;
 using UnityEngine;
-using VContainer;
 
 namespace Game.Store.Rewards
 {
@@ -13,8 +13,16 @@ namespace Game.Store.Rewards
     [Serializable]
     public class PowerUpReward : ItemReward
     {
-        [field: SerializeField] public PowerUpConfigBase Config { get; private set; }
-        [field: SerializeField] public int Quantity { get; private set; } = 1;
+        [field: SerializeField]
+        [field: Tooltip("Power-up definition; inventory key and display come from this asset.")]
+        public PowerUpConfigBase Config { get; private set; }
+
+        [field: SerializeField]
+        [field: Tooltip("How many charges to add to saved power-up inventory.")]
+        public int Quantity { get; private set; } = 1;
+
+        /// <inheritdoc/>
+        public override Sprite Icon => Config != null ? Config.Icon : null;
 
         /// <inheritdoc/>
         public override string GetDisplayText() =>
@@ -23,14 +31,14 @@ namespace Game.Store.Rewards
                 : string.Empty;
 
         /// <inheritdoc/>
-        public override UniTask GrantAsync(IObjectResolver resolver)
+        public override UniTask GrantAsync(IRewardGrantContext context)
         {
             if (Config == null || string.IsNullOrEmpty(Config.InventoryKey) || Quantity <= 0)
             {
                 return UniTask.CompletedTask;
             }
 
-            var playerData = resolver.Resolve<PlayerDataService>();
+            var playerData = context.Resolve<PlayerDataService>();
             playerData.EnsurePowerUpInventory().IncrementCount(Config.InventoryKey, Quantity);
             playerData.SavePowerUpInventory();
             return UniTask.CompletedTask;

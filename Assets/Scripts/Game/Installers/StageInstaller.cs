@@ -18,8 +18,12 @@ using Game.UI.Common;
 using Game.UI.Controllers;
 using Game.UI.Data;
 using Game.UI.Popups;
+using Common.Rewards.Events;
+using Common.Rewards.Interfaces;
 using Game.Persistence.Services;
 using Game.Pooling;
+using Game.Rewards.Configs;
+using Game.Rewards.Services;
 using Game.Store.Data;
 using Game.Store.Events;
 using Game.Store.Services;
@@ -38,58 +42,179 @@ namespace Game.Installers
     public class StageInstaller : LifetimeScope
     {
         [Header("Configs")]
-        [SerializeField] private KnifeThrowConfigAsset _KnifeThrowConfig;
-        [SerializeField] private StagesCollection _StagesConfig;
-        [SerializeField] private PrefabsConfiguration _PrefabsConfiguration;
-        [SerializeField] private PowerUpCatalog _PowerUpCatalog;
-        [SerializeField] private PrivacyPolicyContent _PrivacyPolicyContent;
-        
+        [SerializeField]
+        [Tooltip("Throw timing, arcs, and related tuning for the knife thrower.")]
+        private KnifeThrowConfigAsset _KnifeThrowConfig;
+
+        [SerializeField]
+        [Tooltip("Master list of stages and levels used by the stage flow and level catalog.")]
+        private StagesCollection _StagesConfig;
+
+        [SerializeField]
+        [Tooltip("Shared prefabs for targets, knives, VFX, and pooling.")]
+        private PrefabsConfiguration _PrefabsConfiguration;
+
+        [SerializeField]
+        [Tooltip("Definitions for power-ups available during the stage.")]
+        private PowerUpCatalog _PowerUpCatalog;
+
+        [SerializeField]
+        [Tooltip("Policy text asset for the privacy popup from settings.")]
+        private PrivacyPolicyContent _PrivacyPolicyContent;
+
         [Header("Scene References")]
-        [SerializeField] private KnifeThrowerView _KnifeThrowerView;
-        [SerializeField] private Game.PowerUps.Views.PowerUpThrowerView _PowerUpThrowerView;
-        [SerializeField] private Transform _LevelRoot;
-        [SerializeField] private StageFailPopup _StageFailPopup;
-        [SerializeField] private SettingsPopup _SettingsPopup;
-        [SerializeField] private PrivacyPolicyPopup _PrivacyPopup;
-        [SerializeField] private ReportErrorPopup _ReportErrorPopup;
-        [SerializeField] private UIController _UIController;
+        [SerializeField]
+        [Tooltip("Scene knife thrower used for input and throws.")]
+        private KnifeThrowerView _KnifeThrowerView;
+
+        [SerializeField]
+        [Tooltip("Power-up thrower UI / behavior anchor in the stage scene.")]
+        private Game.PowerUps.Views.PowerUpThrowerView _PowerUpThrowerView;
+
+        [SerializeField]
+        [Tooltip("Parent transform where level content is spawned.")]
+        private Transform _LevelRoot;
+
+        [SerializeField]
+        [Tooltip("Fail overlay with retry, restart, continue, and optional power-up store cards.")]
+        private StageFailPopup _StageFailPopup;
+
+        [SerializeField]
+        [Tooltip("In-game settings overlay (audio, privacy, report).")]
+        private SettingsPopup _SettingsPopup;
+
+        [SerializeField]
+        [Tooltip("Full-screen privacy policy view.")]
+        private PrivacyPolicyPopup _PrivacyPopup;
+
+        [SerializeField]
+        [Tooltip("Bug / feedback report flow popup.")]
+        private ReportErrorPopup _ReportErrorPopup;
+
+        [SerializeField]
+        [Tooltip("Stage HUD controller: fail popup, level flow hooks, etc.")]
+        private UIController _UIController;
+
+        [Header("Rewards")]
+        [SerializeField]
+        [Tooltip("Per-stage first-clear and stage-complete reward bundles (optional).")]
+        private StageRewardCatalog _StageRewardCatalog;
+
+        [SerializeField]
+        [Tooltip("Raised after rewards are granted; subscribe for analytics or HUD.")]
+        private RewardGrantedEventChannel _RewardGrantedEventChannel;
+
+        [SerializeField]
+        [Tooltip("Popup that lists granted rewards and waits for Collect (optional; null skips UI).")]
+        private RewardPopup _RewardPopup;
 
         [Header("Event Channels (Must match GameInstaller)")]
-        [SerializeField] private CollisionEventChannel _CollisionEventChannel;
-        [SerializeField] private KnifeImpactEventChannel _KnifeImpactEventChannel;
-        [SerializeField] private KnifeThrownEventChannel _KnifeThrownEventChannel;
-        [SerializeField] private CollectibleHitEventChannel _CollectibleHitEventChannel;
-        
-        [SerializeField] private LevelCompletedEventChannel _LevelCompletedEventChannel;
-        [SerializeField] private LevelFailedEventChannel _LevelFailedEventChannel;
-        [SerializeField] private StageCompletedEventChannel _StageCompletedEventChannel;
-        [SerializeField] private ReturnToMenuEventChannel _ReturnToMenuEventChannel;
-        [SerializeField] private LevelStartedEventChannel _LevelStartedEventChannel;
-        [SerializeField] private VoidEventChannel _LevelFailFlowStartedEventChannel;
+        [SerializeField]
+        [Tooltip("Physics collision events routed to gameplay handlers.")]
+        private CollisionEventChannel _CollisionEventChannel;
 
-        [SerializeField] private VoidEventChannel _RetryLevelClickedChannel;
-        [SerializeField] private VoidEventChannel _RestartStageClickedChannel;
-        
-        [SerializeField] private PowerUpActivatedEventChannel _PowerUpActivatedEventChannel;
-        [SerializeField] private PowerUpUsedEventChannel _PowerUpUsedEventChannel;
-        [SerializeField] private PowerUpCancelledEventChannel _PowerUpCancelledEventChannel;
+        [SerializeField]
+        [Tooltip("Knife hit target events (stuck, bounce, etc.).")]
+        private KnifeImpactEventChannel _KnifeImpactEventChannel;
+
+        [SerializeField]
+        [Tooltip("Fired when a knife is thrown.")]
+        private KnifeThrownEventChannel _KnifeThrownEventChannel;
+
+        [SerializeField]
+        [Tooltip("Collectible hit for currency and persistence.")]
+        private CollectibleHitEventChannel _CollectibleHitEventChannel;
+
+        [SerializeField]
+        [Tooltip("Current level completed successfully.")]
+        private LevelCompletedEventChannel _LevelCompletedEventChannel;
+
+        [SerializeField]
+        [Tooltip("Current level failed (knife miss, etc.).")]
+        private LevelFailedEventChannel _LevelFailedEventChannel;
+
+        [SerializeField]
+        [Tooltip("All levels in the current stage finished.")]
+        private StageCompletedEventChannel _StageCompletedEventChannel;
+
+        [SerializeField]
+        [Tooltip("Player chose to leave the stage to the main menu.")]
+        private ReturnToMenuEventChannel _ReturnToMenuEventChannel;
+
+        [SerializeField]
+        [Tooltip("A level has loaded and play is about to start.")]
+        private LevelStartedEventChannel _LevelStartedEventChannel;
+
+        [SerializeField]
+        [Tooltip("Fail flow UI or logic has started (e.g. before fail popup settles).")]
+        private VoidEventChannel _LevelFailFlowStartedEventChannel;
+
+        [SerializeField]
+        [Tooltip("Retry button on fail: reload current level.")]
+        private VoidEventChannel _RetryLevelClickedChannel;
+
+        [SerializeField]
+        [Tooltip("Restart button on fail: reload whole stage from level 1.")]
+        private VoidEventChannel _RestartStageClickedChannel;
+
+        [SerializeField]
+        [Tooltip("A power-up was activated.")]
+        private PowerUpActivatedEventChannel _PowerUpActivatedEventChannel;
+
+        [SerializeField]
+        [Tooltip("A power-up was consumed / used.")]
+        private PowerUpUsedEventChannel _PowerUpUsedEventChannel;
+
+        [SerializeField]
+        [Tooltip("A power-up activation was cancelled.")]
+        private PowerUpCancelledEventChannel _PowerUpCancelledEventChannel;
 
         [Header("Economy (optional; use when stage runs standalone or parent has none)")]
-        [SerializeField] private CurrencyTypeCatalog _CurrencyTypeCatalog;
-        [SerializeField] private CurrencyBalanceChangedEventChannel _CurrencyBalanceChangedEventChannel;
-        [SerializeField] private StoreCatalog _StoreCatalog;
-        [SerializeField] private CurrencyAccumulationConfig _CurrencyAccumulationConfig;
-        [SerializeField] private PurchaseStartedEventChannel _PurchaseStartedEventChannel;
-        [SerializeField] private PurchaseCompletedEventChannel _PurchaseCompletedEventChannel;
-        [SerializeField] private PurchaseFailedEventChannel _PurchaseFailedEventChannel;
+        [SerializeField]
+        [Tooltip("Currency type metadata and display defaults.")]
+        private CurrencyTypeCatalog _CurrencyTypeCatalog;
+
+        [SerializeField]
+        [Tooltip("Raised when a currency balance changes (HUD, accumulation FX).")]
+        private CurrencyBalanceChangedEventChannel _CurrencyBalanceChangedEventChannel;
+
+        [SerializeField]
+        [Tooltip("Store items for fail-screen power-up cards and in-stage purchases.")]
+        private StoreCatalog _StoreCatalog;
+
+        [SerializeField]
+        [Tooltip("Tuning for coin fly / accumulation animations toward the HUD.")]
+        private CurrencyAccumulationConfig _CurrencyAccumulationConfig;
+
+        [SerializeField]
+        [Tooltip("Purchase flow started (UI lock, analytics).")]
+        private PurchaseStartedEventChannel _PurchaseStartedEventChannel;
+
+        [SerializeField]
+        [Tooltip("Purchase completed successfully.")]
+        private PurchaseCompletedEventChannel _PurchaseCompletedEventChannel;
+
+        [SerializeField]
+        [Tooltip("Purchase failed or was rejected.")]
+        private PurchaseFailedEventChannel _PurchaseFailedEventChannel;
 
         [Header("Ads (optional)")]
-        [SerializeField] private VoidEventChannel _ContinueRequestedChannel;
-        [SerializeField] private RewardedPlacement _ContinuePlacement;
-        [SerializeField] private InterstitialPlacement _InterstitialPlacement;
+        [SerializeField]
+        [Tooltip("Continue after fail: watch rewarded ad to retry the same level.")]
+        private VoidEventChannel _ContinueRequestedChannel;
+
+        [SerializeField]
+        [Tooltip("Rewarded placement for continue (reward optional; may be null for continue-only).")]
+        private RewardedPlacement _ContinuePlacement;
+
+        [SerializeField]
+        [Tooltip("Interstitial placement after fail or stage complete (policy in AdSettings).")]
+        private InterstitialPlacement _InterstitialPlacement;
 
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.Register<VContainerRewardGrantContext>(Lifetime.Singleton).As<IRewardGrantContext>();
+
             var hasStorePurchaseFlow =
                 _StoreCatalog != null &&
                 _PurchaseStartedEventChannel != null &&
@@ -112,6 +237,16 @@ namespace Game.Installers
                 .WithParameter(_LevelCompletedEventChannel)
                 .WithParameter(_StageCompletedEventChannel)
                 .WithParameter(_CollectibleHitEventChannel);
+
+            Install(builder, new RewardInstaller(_RewardGrantedEventChannel, _RewardPopup));
+
+            if (_StageRewardCatalog != null)
+            {
+                builder.RegisterInstance(_StageRewardCatalog).AsSelf();
+            }
+
+            builder.RegisterEntryPoint<StageRewardConnector>()
+                .WithParameter(_StageRewardCatalog);
 
             if (_PrefabsConfiguration != null)
             {
@@ -153,7 +288,7 @@ namespace Game.Installers
                     resolver.Resolve<IAdService>(),
                     resolver.Resolve<AdSettings>(),
                     _ContinuePlacement,
-                    resolver,
+                    resolver.Resolve<IRewardGrantContext>(),
                     _ContinueRequestedChannel,
                     _RetryLevelClickedChannel,
                     _RestartStageClickedChannel,

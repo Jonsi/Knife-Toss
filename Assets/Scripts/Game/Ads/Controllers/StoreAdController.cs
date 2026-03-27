@@ -3,9 +3,9 @@ using Cysharp.Threading.Tasks;
 using Game.Ads.Data;
 using Game.Ads.Extensions;
 using Game.Store.Rewards;
+using Common.Rewards.Interfaces;
 using Game.UI.Store;
 using UnityEngine;
-using VContainer;
 using VContainer.Unity;
 
 namespace Game.Ads.Controllers
@@ -20,7 +20,7 @@ namespace Game.Ads.Controllers
     {
         private readonly IAdService _AdService;
         private readonly RewardedPlacement _Placement;
-        private readonly IObjectResolver _Resolver;
+        private readonly IRewardGrantContext _GrantContext;
         private readonly StoreAdCtaView _View;
         private readonly StoreBalanceChipView _BalanceChipView;
 
@@ -30,13 +30,13 @@ namespace Game.Ads.Controllers
         public StoreAdController(
             IAdService adService,
             RewardedPlacement placement,
-            IObjectResolver resolver,
+            IRewardGrantContext grantContext,
             StoreAdCtaView view,
             StoreBalanceChipView balanceChipView)
         {
             _AdService = adService;
             _Placement = placement;
-            _Resolver = resolver;
+            _GrantContext = grantContext;
             _View = view;
             _BalanceChipView = balanceChipView;
         }
@@ -58,7 +58,7 @@ namespace Game.Ads.Controllers
 
             if (result.Success)
             {
-                await _Placement.TryGrantRewardAsync(_Resolver);
+                await _Placement.TryGrantRewardAsync(_GrantContext);
                 PlayRewardAccumulation();
             }
 

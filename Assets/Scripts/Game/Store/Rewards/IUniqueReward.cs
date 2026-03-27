@@ -1,4 +1,4 @@
-using VContainer;
+using Common.Rewards.Interfaces;
 
 namespace Game.Store.Rewards
 {
@@ -7,7 +7,14 @@ namespace Game.Store.Rewards
     /// </summary>
     public interface IUniqueReward
     {
-        bool IsOwned(IObjectResolver resolver);
+        /// <summary>
+        /// Returns whether the player already owns this reward.
+        /// </summary>
+        bool IsOwned(IRewardGrantContext context);
+
+        /// <summary>
+        /// Message shown when a purchase is rejected because the item is already owned.
+        /// </summary>
         string AlreadyOwnedReason { get; }
     }
 }

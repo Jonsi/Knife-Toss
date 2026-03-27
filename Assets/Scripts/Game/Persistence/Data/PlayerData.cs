@@ -13,6 +13,7 @@ namespace Game.Persistence.Data
         public PlayerProgressData Progress = new PlayerProgressData();
         public PlayerSettingsData Settings = new PlayerSettingsData();
         public PlayerResourcesData Resources = new PlayerResourcesData();
+        public RewardClaimData RewardClaims = new RewardClaimData();
 
         [JsonProperty("PowerUpInventory")]
         private PowerUpInventoryData LegacyPowerUpInventory

@@ -12,6 +12,8 @@ using Game.Settings;
 using Game.UI.Services;
 using Game.Feedback.Audio.Interfaces;
 using Game.Feedback.Audio.Systems;
+using Common.Rewards.Interfaces;
+using Game.Rewards.Services;
 using Game.Store.Data;
 using Game.Store.Services;
 using UnityEngine;
@@ -57,6 +59,8 @@ namespace Game.Installers
 
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.Register<VContainerRewardGrantContext>(Lifetime.Singleton).As<IRewardGrantContext>();
+
             Install(builder, CreateGameFlowInstaller());
             Install(builder, CreatePersistenceInstaller());
             if (_CurrencyTypeCatalog != null && _CurrencyBalanceChangedEventChannel != null)

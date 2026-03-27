@@ -1,6 +1,6 @@
+using Common.Rewards.Interfaces;
 using Cysharp.Threading.Tasks;
 using Game.Ads.Data;
-using VContainer;
 
 namespace Game.Ads.Extensions
 {
@@ -14,12 +14,12 @@ namespace Game.Ads.Extensions
         /// Grants the placement's configured reward via <see cref="Game.Store.Rewards.ItemReward.GrantAsync"/>.
         /// Returns true if a reward was granted, false if the placement has no reward configured.
         /// </summary>
-        public static async UniTask<bool> TryGrantRewardAsync(this RewardedPlacement placement, IObjectResolver resolver)
+        public static async UniTask<bool> TryGrantRewardAsync(this RewardedPlacement placement, IRewardGrantContext context)
         {
             if (placement.Reward == null)
                 return false;
 
-            await placement.Reward.GrantAsync(resolver);
+            await placement.Reward.GrantAsync(context);
             return true;
         }
     }
