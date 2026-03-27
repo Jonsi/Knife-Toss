@@ -2,6 +2,7 @@ using System;
 using Common.Rewards.Interfaces;
 using Cysharp.Threading.Tasks;
 using Game.Economy.Data;
+using Game.Entities.Collectible.Data;
 using Game.Economy.Interfaces;
 using UnityEngine;
 
@@ -22,7 +23,11 @@ namespace Game.Store.Rewards
         private int _Amount;
 
         [SerializeField]
-        [Tooltip("Optional icon for reward popups and UI; leave empty if not shown.")]
+        [Tooltip("Shared currency item config. When set, reward visuals come from this asset instead of a duplicated sprite.")]
+        private CollectibleCurrencyConfig _CurrencyConfig;
+
+        [SerializeField]
+        [Tooltip("Legacy icon fallback. Prefer configuring Currency Config instead.")]
         private Sprite _Icon;
 
         public CurrencyType CurrencyType => _CurrencyType;
@@ -30,25 +35,52 @@ namespace Game.Store.Rewards
         public int Amount => _Amount;
 
         /// <inheritdoc/>
-        public override Sprite Icon => _Icon;
+        public override Sprite Icon => _CurrencyConfig != null && _CurrencyConfig.Sprite != null ? _CurrencyConfig.Sprite : _Icon;
 
         /// <inheritdoc/>
         public override string GetDisplayText() =>
-            _CurrencyType == CurrencyType.None || _Amount <= 0
+            string.IsNullOrEmpty(GetCurrencyTypeId()) || _Amount <= 0
                 ? string.Empty
-                : $"+{_Amount} {_CurrencyType.ToDisplayLabel()}";
+                : $"+{_Amount} {GetDisplayLabel()}";
 
         /// <inheritdoc/>
         public override UniTask GrantAsync(IRewardGrantContext context)
         {
-            if (_CurrencyType == CurrencyType.None || _Amount <= 0)
+            var currencyTypeId = GetCurrencyTypeId();
+            if (string.IsNullOrEmpty(currencyTypeId) || _Amount <= 0)
             {
                 return UniTask.CompletedTask;
             }
 
             var currencyService = context.Resolve<ICurrencyService>();
-            currencyService.AddBalance(_CurrencyType.ToTypeId(), _Amount);
+            currencyService.AddBalance(currencyTypeId, _Amount);
             return UniTask.CompletedTask;
+        }
+
+        private string GetCurrencyTypeId()
+        {
+            if (_CurrencyConfig != null && !string.IsNullOrEmpty(_CurrencyConfig.TypeId))
+            {
+                return _CurrencyConfig.TypeId;
+            }
+
+            return _CurrencyType.ToTypeId();
+        }
+
+        private string GetDisplayLabel()
+        {
+            if (_CurrencyConfig != null && !string.IsNullOrEmpty(_CurrencyConfig.TypeId))
+            {
+                var currencyType = CurrencyTypeExtensions.FromTypeId(_CurrencyConfig.TypeId);
+                if (currencyType != CurrencyType.None)
+                {
+                    return currencyType.ToDisplayLabel();
+                }
+
+                return _CurrencyConfig.name.ToUpperInvariant();
+            }
+
+            return _CurrencyType.ToDisplayLabel();
         }
     }
 }

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: CurrencyTypeCatalog
   m_EditorClassIdentifier: Game::Game.Economy.Data.CurrencyTypeCatalog
   _currencyTypes:
-  - {fileID: 11400000, guid: 1ca1d82dd804abf4bb79ebf4a4e90ecd, type: 2}
+  - {fileID: 11400000, guid: b2542714f31c4860a6305ebf6fd4f37f, type: 2}
   - {fileID: 11400000, guid: 120c28194366edb4dba251f55e37b8a2, type: 2}

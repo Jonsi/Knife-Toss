@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 969b92ea5c341c44393f36d307e41f0c, type: 3}
+  m_Script: {fileID: 11500000, guid: 72f88d72f53843c29005e4a7281690e4, type: 3}
   m_Name: 50CoinsReward
-  m_EditorClassIdentifier: Game::Game.Rewards.Configs.CurrencyRewardGrantEntry
-  _CurrencyType: 1
-  _Amount: 50
+  m_EditorClassIdentifier: Game::Game.Rewards.Configs.RewardGrantEntry
+  <Item>k__BackingField: {fileID: 11400000, guid: b2542714f31c4860a6305ebf6fd4f37f, type: 2}
+  <Count>k__BackingField: 50

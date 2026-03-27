@@ -1,5 +1,9 @@
+using Common.Rewards.Interfaces;
+using Cysharp.Threading.Tasks;
+using Game.Items.Configs;
 using Game.PowerUps.Data;
 using Game.PowerUps.Interfaces;
+using Game.Persistence.Services;
 using UnityEngine;
 
 namespace Game.PowerUps.Configs
@@ -7,7 +11,7 @@ namespace Game.PowerUps.Configs
     /// <summary>
     /// Base configuration for a power-up.
     /// </summary>
-    public abstract class PowerUpConfigBase : ScriptableObject
+    public abstract class PowerUpConfigBase : ItemConfigurationBase
     {
         [field: SerializeField] public string DisplayName { get; private set; }
         [field: SerializeField] public string Description { get; private set; }
@@ -26,6 +30,32 @@ namespace Game.PowerUps.Configs
         /// <param name="context">Execution context containing required services.</param>
         /// <returns>True if execution was successful.</returns>
         public abstract bool Execute(IPowerUpExecutionContext context);
+
+        /// <inheritdoc/>
+        public override string GetItemDisplayName() => DisplayName;
+
+        /// <inheritdoc/>
+        public override Sprite GetItemIcon() => Icon;
+
+        /// <inheritdoc/>
+        public override UniTask GrantAsync(int count, IRewardGrantContext context)
+        {
+            if (string.IsNullOrEmpty(InventoryKey) || count <= 0)
+            {
+                return UniTask.CompletedTask;
+            }
+
+            var playerData = context.Resolve<PlayerDataService>();
+            playerData.EnsurePowerUpInventory().IncrementCount(InventoryKey, count);
+            playerData.SavePowerUpInventory();
+            return UniTask.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public override string GetRewardDisplayText(int count) =>
+            string.IsNullOrEmpty(DisplayName) || count <= 0
+                ? string.Empty
+                : $"+{count} {DisplayName}";
 
         /// <summary>
         /// Optionally prepares the loaded knives for this power-up.
