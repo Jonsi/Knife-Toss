@@ -19,6 +19,10 @@ namespace Game.Rewards.Configs
         [field: Tooltip("How many units of this item to grant. Unique items can ignore this.")]
         public int Count { get; private set; } = 1;
 
+        [field: SerializeField]
+        [field: Tooltip("Optional icon override used only when presenting this reward in UI.")]
+        public Sprite PresentationIconOverride { get; private set; }
+
         /// <inheritdoc/>
         public override bool TryCreateGrantItem(out IRewardItem item)
         {

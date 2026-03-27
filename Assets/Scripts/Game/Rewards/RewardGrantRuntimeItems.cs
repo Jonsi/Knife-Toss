@@ -27,7 +27,10 @@ namespace Game.Rewards
         public string DisplayText => _Entry.Item != null ? _Entry.Item.GetRewardDisplayText(_Entry.Count) : string.Empty;
 
         /// <inheritdoc/>
-        public Sprite Icon => _Entry.Item != null ? _Entry.Item.GetItemIcon() : null;
+        public Sprite Icon =>
+            _Entry.PresentationIconOverride != null
+                ? _Entry.PresentationIconOverride
+                : _Entry.Item != null ? _Entry.Item.GetItemIcon() : null;
 
         /// <inheritdoc/>
         public UniTask GrantAsync(IRewardGrantContext context) =>
