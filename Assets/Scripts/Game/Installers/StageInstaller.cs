@@ -22,7 +22,6 @@ using Common.Rewards.Events;
 using Common.Rewards.Interfaces;
 using Game.Persistence.Services;
 using Game.Pooling;
-using Game.Rewards.Configs;
 using Game.Rewards.Services;
 using Game.Store.Data;
 using Game.Store.Events;
@@ -96,10 +95,6 @@ namespace Game.Installers
         private UIController _UIController;
 
         [Header("Rewards")]
-        [SerializeField]
-        [Tooltip("Per-stage first-clear and stage-complete reward bundles (optional).")]
-        private StageRewardCatalog _StageRewardCatalog;
-
         [SerializeField]
         [Tooltip("Raised after rewards are granted; subscribe for analytics or HUD.")]
         private RewardGrantedEventChannel _RewardGrantedEventChannel;
@@ -240,13 +235,7 @@ namespace Game.Installers
 
             Install(builder, new RewardInstaller(_RewardGrantedEventChannel, _RewardPopup));
 
-            if (_StageRewardCatalog != null)
-            {
-                builder.RegisterInstance(_StageRewardCatalog).AsSelf();
-            }
-
-            builder.RegisterEntryPoint<StageRewardConnector>()
-                .WithParameter(_StageRewardCatalog);
+            builder.RegisterEntryPoint<StageRewardConnector>();
 
             if (_PrefabsConfiguration != null)
             {

@@ -5,7 +5,6 @@ namespace Game.Rewards
     /// </summary>
     public static class RewardPresentationTitles
     {
-        public const string LevelFirstClear = "Level Cleared!";
         public const string StageComplete = "Stage Complete!";
     }
 }

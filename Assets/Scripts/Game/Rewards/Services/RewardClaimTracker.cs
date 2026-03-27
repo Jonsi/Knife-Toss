@@ -20,16 +20,7 @@ namespace Game.Rewards.Services
         }
 
         /// <summary>
-        /// Returns whether first-clear rewards for this level were already claimed.
-        /// </summary>
-        public bool IsLevelFirstClearClaimed(int stageIndex, int levelIndex)
-        {
-            var data = _PlayerDataService.EnsureRewardClaimData();
-            return data.ClaimedLevelRewards.Any(e => e != null && e.StageIndex == stageIndex && e.LevelIndex == levelIndex);
-        }
-
-        /// <summary>
-        /// Returns whether stage-complete rewards for this stage index were already claimed.
+        /// Returns whether stage-completion rewards for this stage index were already claimed.
         /// </summary>
         public bool IsStageCompleteClaimed(int stageIndex)
         {
@@ -38,21 +29,7 @@ namespace Game.Rewards.Services
         }
 
         /// <summary>
-        /// Records that first-clear rewards for this level were claimed.
-        /// </summary>
-        public void MarkLevelFirstClearClaimed(int stageIndex, int levelIndex)
-        {
-            var data = _PlayerDataService.EnsureRewardClaimData();
-            if (IsLevelFirstClearClaimed(stageIndex, levelIndex))
-            {
-                return;
-            }
-
-            data.ClaimedLevelRewards.Add(new LevelClaimEntry { StageIndex = stageIndex, LevelIndex = levelIndex });
-        }
-
-        /// <summary>
-        /// Records that stage-complete rewards for this stage were claimed.
+        /// Records that stage-completion rewards for this stage were claimed.
         /// </summary>
         public void MarkStageCompleteClaimed(int stageIndex)
         {

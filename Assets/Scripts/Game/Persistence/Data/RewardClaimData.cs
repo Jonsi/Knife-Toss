@@ -10,12 +10,7 @@ namespace Game.Persistence.Data
     public class RewardClaimData
     {
         /// <summary>
-        /// Levels whose first-clear rewards have been claimed.
-        /// </summary>
-        public List<LevelClaimEntry> ClaimedLevelRewards = new();
-
-        /// <summary>
-        /// Stage indices whose stage-complete rewards have been claimed.
+        /// Stage indices whose stage-completion rewards have been claimed.
         /// </summary>
         public List<int> ClaimedStageRewards = new();
     }

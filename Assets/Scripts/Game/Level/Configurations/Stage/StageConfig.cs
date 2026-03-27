@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Game.Level.Data;
+using Game.Rewards.Configs;
 using UnityEngine;
 
 namespace Game.Level.Configurations.Stage
@@ -15,6 +16,10 @@ namespace Game.Level.Configurations.Stage
         
         [Tooltip("Visual layout settings for this stage.")]
         [field: SerializeField] public StageLayoutSettings LayoutSettings { get; private set; }
+
+        [field: SerializeField]
+        [field: Tooltip("Granted once when the player completes this stage for the first time. Each slot references a currency, power-up, or knife skin grant asset.")]
+        public List<RewardGrantEntryBase> Rewards { get; private set; } = new();
         
         [Tooltip("List of levels contained in this stage.")]
         [field: SerializeField] public List<LevelConfig> Levels { get; private set; } = new();

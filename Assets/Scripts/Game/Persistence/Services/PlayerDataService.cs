@@ -168,11 +168,6 @@ namespace Game.Persistence.Services
                 _CachedData.RewardClaims = new RewardClaimData();
             }
 
-            if (_CachedData.RewardClaims.ClaimedLevelRewards == null)
-            {
-                _CachedData.RewardClaims.ClaimedLevelRewards = new System.Collections.Generic.List<LevelClaimEntry>();
-            }
-
             if (_CachedData.RewardClaims.ClaimedStageRewards == null)
             {
                 _CachedData.RewardClaims.ClaimedStageRewards = new System.Collections.Generic.List<int>();
@@ -279,11 +274,6 @@ namespace Game.Persistence.Services
                 _CachedData.RewardClaims = new RewardClaimData();
             }
 
-            if (_CachedData.RewardClaims.ClaimedLevelRewards == null)
-            {
-                _CachedData.RewardClaims.ClaimedLevelRewards = new System.Collections.Generic.List<LevelClaimEntry>();
-            }
-
             if (_CachedData.RewardClaims.ClaimedStageRewards == null)
             {
                 _CachedData.RewardClaims.ClaimedStageRewards = new System.Collections.Generic.List<int>();
@@ -307,7 +297,6 @@ namespace Game.Persistence.Services
             _CachedData.Resources.Currencies ??= new System.Collections.Generic.List<CurrencyBalanceEntry>();
             _CachedData.Resources.KnifeSkins ??= new KnifeSkinCollectionData();
             _CachedData.RewardClaims ??= new RewardClaimData();
-            _CachedData.RewardClaims.ClaimedLevelRewards ??= new System.Collections.Generic.List<LevelClaimEntry>();
             _CachedData.RewardClaims.ClaimedStageRewards ??= new System.Collections.Generic.List<int>();
         }
 
