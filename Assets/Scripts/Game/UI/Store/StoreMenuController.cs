@@ -146,6 +146,8 @@ namespace Game.UI.Store
                     Entry = entry
                 });
             }
+
+            RefreshScrollableContentLayout(parent);
         }
 
         private void RefreshCardState()
@@ -213,6 +215,32 @@ namespace Game.UI.Store
             {
                 Destroy(parent.GetChild(i).gameObject);
             }
+        }
+
+        private static void RefreshScrollableContentLayout(Transform parent)
+        {
+            if (parent is not RectTransform contentRect)
+            {
+                return;
+            }
+
+            Canvas.ForceUpdateCanvases();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
+
+            var preferredWidth = LayoutUtility.GetPreferredWidth(contentRect);
+            if (preferredWidth > 0f)
+            {
+                contentRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, preferredWidth);
+            }
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
+
+            if (contentRect.parent is RectTransform viewportRect)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(viewportRect);
+            }
+
+            Canvas.ForceUpdateCanvases();
         }
 
         private void SyncKnifeSkinState()

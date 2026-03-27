@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8458517537594890624
 RectTransform:
   m_ObjectHideFlags: 0
@@ -36,8 +36,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 39.800003}
-  m_SizeDelta: {x: 205.9676, y: 76.053}
+  m_AnchoredPosition: {x: 0, y: 31}
+  m_SizeDelta: {x: 150, y: 44}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6939792515882829735
 CanvasRenderer:
@@ -67,8 +67,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: cb37917483ee24fea8fab306393441e5, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 21300000, guid: 7b6bed5126b974c5e8a38140a3812d06, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -156,7 +156,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 136, y: 38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7584456676661722502
 CanvasRenderer:
@@ -213,8 +213,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 28
+  m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -290,10 +290,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3298304395131141657}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 39}
-  m_SizeDelta: {x: 55, y: 230}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -119}
+  m_SizeDelta: {x: 34, y: 123.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8011787841904888573
 CanvasRenderer:
@@ -365,10 +365,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3298304395131141657}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 15, y: 29}
-  m_SizeDelta: {x: 55, y: 230}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 7, y: -126}
+  m_SizeDelta: {x: 34, y: 123.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5305105663968792972
 CanvasRenderer:
@@ -421,6 +421,7 @@ GameObject:
   - component: {fileID: 8418280241289024434}
   - component: {fileID: 4971484463323686936}
   - component: {fileID: 7717063662442311441}
+  - component: {fileID: 2718441244684184412}
   m_Layer: 5
   m_Name: KnifeItemCardView
   m_TagString: Untagged
@@ -448,8 +449,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 274.45764, y: 0}
+  m_AnchoredPosition: {x: 0, y: 2.6608887}
+  m_SizeDelta: {x: 134.1882, y: 250.7178}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7463964153051742930
 CanvasRenderer:
@@ -479,7 +480,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 0b403f4a7638141ad965efd7adf34c52, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 24519d9e5e416492cb02278ecb464d63, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -550,14 +551,38 @@ MonoBehaviour:
   <IconImage>k__BackingField: {fileID: 6544834098330837281}
   <ShadowImage>k__BackingField: {fileID: 21068861099868819}
   <BuyButton>k__BackingField: {fileID: 4971484463323686936}
-  <ActionLabel>k__BackingField: {fileID: 0}
   _PricePillRoot: {fileID: 1545213068678258224}
   _EquipButton: {fileID: 4029339378318199563}
   _EquipButtonText: {fileID: 6826768603947128780}
+  _BuyButtonLabel: Buy
+  _EquipButtonLabel: Equip
+  _EquippedButtonLabel: Equipped
+  _BuyColor: {r: 1, g: 1, b: 1, a: 1}
+  _BuyTextColor: {r: 1, g: 1, b: 1, a: 1}
   _EquipColor: {r: 0.5803922, g: 0.8000001, b: 0.54509807, a: 1}
   _EquippedColor: {r: 0.5137255, g: 0.5294118, b: 0.5137255, a: 1}
   _EquipTextColor: {r: 1, g: 1, b: 1, a: 1}
   _EquippedTextColor: {r: 0.31132078, g: 0.31132078, b: 0.31132078, a: 1}
+--- !u!114 &2718441244684184412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8582480886536904662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: 134.1882
+  m_MinHeight: 250.7178
+  m_PreferredWidth: 134.1882
+  m_PreferredHeight: 250.7178
+  m_FlexibleWidth: 0
+  m_FlexibleHeight: 0
+  m_LayoutPriority: 1
 --- !u!1001 &3123101158294590273
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -566,13 +591,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3298304395131141657}
     m_Modifications:
+    - target: {fileID: 1958478197899428862, guid: 7d345cc7c218c7c498988c747310d3c3, type: 3}
+      propertyPath: m_fontStyle
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1958478197899428862, guid: 7d345cc7c218c7c498988c747310d3c3, type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4478487802871893361, guid: 7d345cc7c218c7c498988c747310d3c3, type: 3}
       propertyPath: m_Name
       value: PricePillView
-      objectReference: {fileID: 0}
-    - target: {fileID: 6088395313176314181, guid: 7d345cc7c218c7c498988c747310d3c3, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8804795828293828613, guid: 7d345cc7c218c7c498988c747310d3c3, type: 3}
       propertyPath: m_Pivot.x
@@ -600,11 +629,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8804795828293828613, guid: 7d345cc7c218c7c498988c747310d3c3, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 205.9676
+      value: 134.19
       objectReference: {fileID: 0}
     - target: {fileID: 8804795828293828613, guid: 7d345cc7c218c7c498988c747310d3c3, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 76.053
+      value: 53
       objectReference: {fileID: 0}
     - target: {fileID: 8804795828293828613, guid: 7d345cc7c218c7c498988c747310d3c3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -640,7 +669,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8804795828293828613, guid: 7d345cc7c218c7c498988c747310d3c3, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 39.800003
+      value: 26.500015
       objectReference: {fileID: 0}
     - target: {fileID: 8804795828293828613, guid: 7d345cc7c218c7c498988c747310d3c3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

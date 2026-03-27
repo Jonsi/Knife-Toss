@@ -2677,6 +2677,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 267416623}
     m_Modifications:
+    - target: {fileID: 661344703549655501, guid: 5b95ff95fce3cee4b9cb4d75ae243c7f, type: 3}
+      propertyPath: m_fontSize
+      value: 54.15
+      objectReference: {fileID: 0}
     - target: {fileID: 7677046577463503737, guid: 5b95ff95fce3cee4b9cb4d75ae243c7f, type: 3}
       propertyPath: m_SizeDelta.x
       value: 42
@@ -3849,6 +3853,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 267416623}
     m_Modifications:
+    - target: {fileID: 661344703549655501, guid: 5b95ff95fce3cee4b9cb4d75ae243c7f, type: 3}
+      propertyPath: m_fontSize
+      value: 54.15
+      objectReference: {fileID: 0}
     - target: {fileID: 7677046577463503737, guid: 5b95ff95fce3cee4b9cb4d75ae243c7f, type: 3}
       propertyPath: m_SizeDelta.x
       value: 42
@@ -6412,6 +6420,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 267416623}
     m_Modifications:
+    - target: {fileID: 661344703549655501, guid: 5b95ff95fce3cee4b9cb4d75ae243c7f, type: 3}
+      propertyPath: m_fontSize
+      value: 54.15
+      objectReference: {fileID: 0}
     - target: {fileID: 7677046577463503737, guid: 5b95ff95fce3cee4b9cb4d75ae243c7f, type: 3}
       propertyPath: m_SizeDelta.x
       value: 42
@@ -6981,6 +6993,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 267416623}
     m_Modifications:
+    - target: {fileID: 661344703549655501, guid: 5b95ff95fce3cee4b9cb4d75ae243c7f, type: 3}
+      propertyPath: m_fontSize
+      value: 54.15
+      objectReference: {fileID: 0}
     - target: {fileID: 7677046577463503737, guid: 5b95ff95fce3cee4b9cb4d75ae243c7f, type: 3}
       propertyPath: m_SizeDelta.x
       value: 42

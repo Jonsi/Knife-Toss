@@ -20,7 +20,7 @@ namespace Game.UI.Store
 
                 if (RewardAmountText != null)
                 {
-                    RewardAmountText.text = $"+{powerUpReward.Quantity}";
+                    RewardAmountText.text = powerUpReward.Config.GetRewardDisplayText(powerUpReward.Quantity);
                 }
             }
         }
