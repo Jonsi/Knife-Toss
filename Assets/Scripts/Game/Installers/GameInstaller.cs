@@ -19,6 +19,7 @@ using Game.Store.Services;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using Common.Analytics;
 using Common.Services.RemoteConfig;
 
 namespace Game.Installers
@@ -44,6 +45,7 @@ namespace Game.Installers
 
         [Header("Services")]
         [SerializeField] private Common.Services.RemoteConfig.RemoteConfigSettings _RemoteConfigSettings;
+        [SerializeField] private AnalyticsSettings _AnalyticsSettings;
         [SerializeField] private StoreCatalog _StoreCatalog;
 
         [Header("Ads")]
@@ -68,6 +70,7 @@ namespace Game.Installers
                 Install(builder, CreateEconomyInstaller());
             }
             Install(builder, CreateRemoteConfigInstaller());
+            Install(builder, CreateAnalyticsInstaller());
 
             if (_AdInstaller != null)
                 Install(builder, _AdInstaller);
@@ -117,6 +120,11 @@ namespace Game.Installers
         private RemoteConfigInstaller CreateRemoteConfigInstaller()
         {
             return new RemoteConfigInstaller(_RemoteConfigSettings);
+        }
+
+        private AnalyticsInstaller CreateAnalyticsInstaller()
+        {
+            return new AnalyticsInstaller(_AnalyticsSettings);
         }
     }
 }

@@ -1,3 +1,5 @@
+using Common.Analytics;
+using Common.Analytics.Interfaces;
 using Game.Flow.Interfaces;
 using VContainer.Unity;
 
@@ -10,18 +12,23 @@ namespace Game
     public class GameFlowController : IStartable
     {
         private readonly IGameStateMachine _StateMachine;
+        private readonly IAnalyticsService _AnalyticsService;
 
         /// <summary>
         /// Initializes a new instance of the GameFlowController.
         /// </summary>
         /// <param name="stateMachine">The game state machine.</param>
-        public GameFlowController(IGameStateMachine stateMachine)
+        public GameFlowController(
+            IGameStateMachine stateMachine,
+            IAnalyticsService analyticsService)
         {
             _StateMachine = stateMachine;
+            _AnalyticsService = analyticsService;
         }
 
         public void Start()
         {
+            _AnalyticsService?.TrackEvent(new AnalyticsEvent("game_started"));
             _StateMachine.SetState(_StateMachine.Playing);
         }
     }

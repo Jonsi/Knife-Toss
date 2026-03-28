@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace Common.Analytics.Services
 
         public void TrackEvent(AnalyticsEvent analyticsEvent)
         {
-            if (analyticsEvent == null)
+            if (analyticsEvent == null || (_settings != null && !_settings.IsEnabled))
             {
                 return;
             }

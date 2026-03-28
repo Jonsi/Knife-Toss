@@ -1,4 +1,5 @@
 using Common.Config;
+using Common.Analytics.Interfaces;
 using Common.Events;
 using Game.Flow.Events;
 using Game.Flow.Game;
@@ -82,6 +83,7 @@ namespace Game.Installers
                 _StageCompletedChannel,
                 _RetryChannel,
                 _RestartChannel,
+                resolver.Resolve<IAnalyticsService>(),
                 _LevelStartedChannel,
                 resolver.Resolve<IKnifeThrowerView>(),
                 resolver.Resolve<KnifePoolProvider>(),

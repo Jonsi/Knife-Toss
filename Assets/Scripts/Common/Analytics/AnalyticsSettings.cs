@@ -10,8 +10,11 @@ namespace Common.Analytics
     {
         private const string DefaultPrefix = "[Analytics]";
 
+        [SerializeField] private bool _IsEnabled = true;
         [SerializeField] private string _LogPrefix = DefaultPrefix;
         [SerializeField] private Color _LogColor = new Color(0.2f, 0.85f, 1f, 1f);
+
+        public bool IsEnabled => _IsEnabled;
 
         public string LogPrefix => string.IsNullOrWhiteSpace(_LogPrefix) ? DefaultPrefix : _LogPrefix;
 

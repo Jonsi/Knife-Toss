@@ -1,6 +1,7 @@
 using Common.Events;
 using Common.Patterns.State;
 using Common.Config;
+using Common.Analytics.Interfaces;
 using Game.Flow.Events;
 using Game.Flow.Interfaces;
 using Game.KnifeThrower.Configs;
@@ -35,6 +36,7 @@ namespace Game.Flow.Stage.States
             StageCompletedEventChannel stageCompletedChannel,
             VoidEventChannel retryRequestChannel,
             VoidEventChannel restartRequestChannel,
+            IAnalyticsService analyticsService,
             LevelStartedEventChannel levelStartedChannel,
             IKnifeThrowerView knifeThrowerView,
             KnifePoolProvider knifePoolProvider,
@@ -53,11 +55,12 @@ namespace Game.Flow.Stage.States
                 levelFailedChannel,
                 retryRequestChannel,
                 restartRequestChannel,
+                analyticsService,
                 levelStartedChannel,
                 knifeThrowerView,
                 knifePoolProvider,
                 knifeThrowConfigurationProvider);
-            Completed = new StageCompletedState(this);
+            Completed = new StageCompletedState(this, analyticsService);
         }
 
         public void Tick()

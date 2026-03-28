@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using Common.Analytics;
+using Common.Analytics.Interfaces;
 using Common.Events;
 using Common.Config;
 using Game.Entities.Knife.Data;
@@ -18,6 +21,7 @@ namespace Game.Flow.Stage.States
         private readonly LevelFailedEventChannel _LevelFailedChannel;
         private readonly VoidEventChannel _RetryRequestChannel;
         private readonly VoidEventChannel _RestartRequestChannel;
+        private readonly IAnalyticsService _AnalyticsService;
         private readonly LevelStartedEventChannel _LevelStartedChannel;
         private readonly IKnifeThrowerView _KnifeThrowerView;
         private readonly KnifePoolProvider _KnifePoolProvider;
@@ -29,6 +33,7 @@ namespace Game.Flow.Stage.States
             LevelFailedEventChannel levelFailedChannel,
             VoidEventChannel retryRequestChannel,
             VoidEventChannel restartRequestChannel,
+            IAnalyticsService analyticsService,
             LevelStartedEventChannel levelStartedChannel,
             IKnifeThrowerView knifeThrowerView,
             KnifePoolProvider knifePoolProvider,
@@ -38,6 +43,7 @@ namespace Game.Flow.Stage.States
             _LevelFailedChannel = levelFailedChannel;
             _RetryRequestChannel = retryRequestChannel;
             _RestartRequestChannel = restartRequestChannel;
+            _AnalyticsService = analyticsService;
             _LevelStartedChannel = levelStartedChannel;
             _KnifeThrowerView = knifeThrowerView;
             _KnifePoolProvider = knifePoolProvider;
@@ -86,11 +92,24 @@ namespace Game.Flow.Stage.States
 
         private void OnRetryRequested()
         {
+            _AnalyticsService?.TrackEvent(new AnalyticsEvent(
+                "level_retry_requested",
+                new Dictionary<string, object>
+                {
+                    ["stage_index"] = Context.StageIndex,
+                    ["level_index"] = Context.CurrentLevelIndex
+                }));
             StartCurrentLevel(reloadLevel: true);
         }
 
         private void OnRestartRequested()
         {
+            _AnalyticsService?.TrackEvent(new AnalyticsEvent(
+                "stage_restart_requested",
+                new Dictionary<string, object>
+                {
+                    ["stage_index"] = Context.StageIndex
+                }));
             // Transition to Loading state to reset the stage
             Machine.SetState(Machine.Loading);
         }
@@ -115,7 +134,7 @@ namespace Game.Flow.Stage.States
 
         private void RaiseLevelStarted(LevelConfig config)
         {
-            if (_LevelStartedChannel == null || config == null)
+            if (config == null)
                 return;
 
             var data = new LevelStartedEventData
@@ -125,7 +144,16 @@ namespace Game.Flow.Stage.States
                 TotalLevelsInStage = Machine.LevelCatalog.GetLevelCount(Context.StageIndex),
                 TotalKnives = config.KnifeCount
             };
-            _LevelStartedChannel.Raise(data);
+            _AnalyticsService?.TrackEvent(new AnalyticsEvent(
+                "level_started",
+                new Dictionary<string, object>
+                {
+                    ["stage_index"] = data.StageIndex,
+                    ["level_index"] = data.LevelIndex,
+                    ["total_levels_in_stage"] = data.TotalLevelsInStage,
+                    ["total_knives"] = data.TotalKnives
+                }));
+            _LevelStartedChannel?.Raise(data);
         }
 
         private void LoadKnifeForLevel()

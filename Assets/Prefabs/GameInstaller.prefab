@@ -202,6 +202,7 @@ MonoBehaviour:
   _SoundSettings: {fileID: 11400000, guid: 189e658594fd4ea4d8b64463039ef584, type: 2}
   _AudioPlayer: {fileID: 2965484948011319591}
   _RemoteConfigSettings: {fileID: 11400000, guid: b80493aa5f5497b43ab4f14b27878bf3, type: 2}
+  _AnalyticsSettings: {fileID: 11400000, guid: d677b7278f06d92429d78ed796a5483b, type: 2}
   _StoreCatalog: {fileID: 11400000, guid: be6458f09b294b2438f43789174e696f, type: 2}
   _AdInstaller: {fileID: -4086891514864499261}
 --- !u!114 &-4086891514864499261
