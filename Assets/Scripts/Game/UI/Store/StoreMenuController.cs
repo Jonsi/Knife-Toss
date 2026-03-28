@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Game.Flow.Game;
+using Game.Persistence.Services;
 using Game.Store.Data;
 using Game.Store.Events;
 using Game.Store.Interfaces;
@@ -28,6 +29,7 @@ namespace Game.UI.Store
         private IPurchaseService _PurchaseService;
         private KnifeSkinService _KnifeSkinService;
         private SceneLoaderService _SceneLoaderService;
+        private PlayerDataService _PlayerDataService;
         private PurchaseStartedEventChannel _PurchaseStartedChannel;
         private PurchaseCompletedEventChannel _PurchaseCompletedChannel;
         private PurchaseFailedEventChannel _PurchaseFailedChannel;
@@ -41,6 +43,7 @@ namespace Game.UI.Store
             IPurchaseService purchaseService,
             KnifeSkinService knifeSkinService,
             SceneLoaderService sceneLoaderService,
+            PlayerDataService playerDataService,
             PurchaseStartedEventChannel purchaseStartedChannel,
             PurchaseCompletedEventChannel purchaseCompletedChannel,
             PurchaseFailedEventChannel purchaseFailedChannel,
@@ -50,6 +53,7 @@ namespace Game.UI.Store
             _PurchaseService = purchaseService;
             _KnifeSkinService = knifeSkinService;
             _SceneLoaderService = sceneLoaderService;
+            _PlayerDataService = playerDataService;
             _PurchaseStartedChannel = purchaseStartedChannel;
             _PurchaseCompletedChannel = purchaseCompletedChannel;
             _PurchaseFailedChannel = purchaseFailedChannel;
@@ -154,7 +158,7 @@ namespace Game.UI.Store
         {
             var canInteract = _PurchaseService == null || !_PurchaseService.IsPurchaseInProgress;
             RefreshKnifeSkinStates(canInteract);
-            SetBindingsInteractable(_PowerUpBindings, canInteract);
+            RefreshPowerUpStates(canInteract);
             if (CloseButton != null)
             {
                 CloseButton.interactable = canInteract;
@@ -268,6 +272,32 @@ namespace Game.UI.Store
                 {
                     binding.Card.SetInteractable(canInteract && !binding.IsOwned);
                 }
+            }
+        }
+
+        private void RefreshPowerUpStates(bool canInteract)
+        {
+            var inventory = _PlayerDataService?.EnsurePowerUpInventory();
+
+            for (var i = 0; i < _PowerUpBindings.Count; i++)
+            {
+                var binding = _PowerUpBindings[i];
+                if (binding.Card == null)
+                {
+                    continue;
+                }
+
+                binding.Card.SetInteractable(canInteract);
+
+                if (binding.Card is not PowerUpStoreCardView powerUpCard ||
+                    binding.Entry?.Reward is not PowerUpReward powerUpReward ||
+                    powerUpReward.Config == null ||
+                    string.IsNullOrEmpty(powerUpReward.Config.InventoryKey))
+                {
+                    continue;
+                }
+
+                powerUpCard.SetCurrentAmount(inventory?.GetCount(powerUpReward.Config.InventoryKey) ?? 0);
             }
         }
 

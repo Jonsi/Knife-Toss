@@ -11,6 +11,7 @@ namespace Game.UI.Store
     public class PowerUpStoreCardView : StoreCardView
     {
         [field: SerializeField] public TMP_Text RewardAmountText { get; private set; }
+        [field: SerializeField] public TMP_Text CurrentAmountText { get; private set; }
 
         protected override void BindEntry(PurchasableEntry entry)
         {
@@ -20,8 +21,16 @@ namespace Game.UI.Store
 
                 if (RewardAmountText != null)
                 {
-                    RewardAmountText.text = powerUpReward.Config.GetRewardDisplayText(powerUpReward.Quantity);
+                    RewardAmountText.text = powerUpReward.Config.DisplayName;
                 }
+            }
+        }
+
+        public void SetCurrentAmount(int amount)
+        {
+            if (CurrentAmountText != null)
+            {
+                CurrentAmountText.text = amount.ToString();
             }
         }
     }
