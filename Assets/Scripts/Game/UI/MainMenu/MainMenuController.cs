@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using Game.Flow.Game;
 using Game.Persistence.Services;
+using Game.UI.Missions;
 using Game.UI.PowerUps;
 using TMPro;
 using UnityEngine;
@@ -19,11 +20,13 @@ namespace Game.UI.MainMenu
         [SerializeField] private Button _StagesButton;
         [SerializeField] private Button _PvpButton;
         [SerializeField] private Button _PowerUpsButton;
+        [SerializeField] private Button _MissionsButton;
         [SerializeField] private TMP_Text _CurrentStageText;
 
         [Inject] private PlayerDataService _PlayerDataService;
         [Inject] private SceneLoaderService _SceneLoaderService;
         [Inject] private GameData _GameData;
+        [Inject] private DailyMissionPopupController _MissionPopupController;
 
         private void Start()
         {
@@ -35,6 +38,9 @@ namespace Game.UI.MainMenu
 
             if (_PowerUpsButton != null)
                 _PowerUpsButton.onClick.AddListener(OnPowerUpsClicked);
+
+            if (_MissionsButton != null)
+                _MissionsButton.onClick.AddListener(OnMissionsClicked);
 
             SyncCurrentStageSelection();
             UpdateCurrentStageText();
@@ -59,6 +65,9 @@ namespace Game.UI.MainMenu
 
             if (_PowerUpsButton != null)
                 _PowerUpsButton.onClick.RemoveListener(OnPowerUpsClicked);
+
+            if (_MissionsButton != null)
+                _MissionsButton.onClick.RemoveListener(OnMissionsClicked);
         }
 
         private void OnPlayClicked()
@@ -86,6 +95,11 @@ namespace Game.UI.MainMenu
         private void OnPowerUpsClicked()
         {
             _SceneLoaderService.LoadPowerUps().Forget();
+        }
+
+        private void OnMissionsClicked()
+        {
+            _MissionPopupController?.ShowMissions();
         }
 
         private void SyncCurrentStageSelection()

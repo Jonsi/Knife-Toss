@@ -1,4 +1,5 @@
 using Common.Ads.Data;
+using Common.Ads.Events;
 using Common.Ads.Interfaces;
 using Common.Collision.Events;
 using Game.Ads.Controllers;
@@ -13,6 +14,7 @@ using Game.Flow.Events;
 using Game.KnifeThrower.Configs;
 using Game.KnifeThrower.Events;
 using Game.Level.Catalogs;
+using Game.Missions.Services;
 using Game.Settings;
 using Game.UI.Common;
 using Game.UI.Controllers;
@@ -193,6 +195,10 @@ namespace Game.Installers
         [Tooltip("Purchase failed or was rejected.")]
         private PurchaseFailedEventChannel _PurchaseFailedEventChannel;
 
+        [SerializeField]
+        [Tooltip("Rewarded ad completed successfully.")]
+        private AdCompletedEventChannel _AdCompletedEventChannel;
+
         [Header("Ads (optional)")]
         [SerializeField]
         [Tooltip("Continue after fail: watch rewarded ad to retry the same level.")]
@@ -232,6 +238,15 @@ namespace Game.Installers
                 .WithParameter(_LevelCompletedEventChannel)
                 .WithParameter(_StageCompletedEventChannel)
                 .WithParameter(_CollectibleHitEventChannel);
+
+            builder.RegisterEntryPoint<MissionProgressRouter>()
+                .WithParameter(_LevelCompletedEventChannel)
+                .WithParameter(_LevelFailedEventChannel)
+                .WithParameter(_StageCompletedEventChannel)
+                .WithParameter(_CollectibleHitEventChannel)
+                .WithParameter(_PowerUpUsedEventChannel)
+                .WithParameter(_PurchaseCompletedEventChannel)
+                .WithParameter(_AdCompletedEventChannel);
 
             Install(builder, new RewardInstaller(_RewardGrantedEventChannel, _RewardPopup));
 

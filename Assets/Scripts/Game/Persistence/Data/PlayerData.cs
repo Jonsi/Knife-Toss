@@ -1,4 +1,5 @@
 using System;
+using Game.Missions.Daily.Data;
 using Game.PowerUps.Data;
 using Newtonsoft.Json;
 
@@ -14,6 +15,7 @@ namespace Game.Persistence.Data
         public PlayerSettingsData Settings = new PlayerSettingsData();
         public PlayerResourcesData Resources = new PlayerResourcesData();
         public RewardClaimData RewardClaims = new RewardClaimData();
+        public DailyMissionData DailyMissions = new DailyMissionData();
 
         [JsonProperty("PowerUpInventory")]
         private PowerUpInventoryData LegacyPowerUpInventory

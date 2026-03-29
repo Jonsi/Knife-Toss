@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Game.Flow.Game;
+using Game.Missions.Daily.Data;
 using Game.Persistence.Data;
 using Game.Persistence.Interfaces;
 using Game.PowerUps.Data;
@@ -177,6 +179,24 @@ namespace Game.Persistence.Services
         }
 
         /// <summary>
+        /// Ensures daily mission data exists and returns the instance.
+        /// </summary>
+        public DailyMissionData EnsureDailyMissionData()
+        {
+            if (_CachedData.DailyMissions == null)
+            {
+                _CachedData.DailyMissions = new DailyMissionData();
+            }
+
+            if (_CachedData.DailyMissions.ActiveMissions == null)
+            {
+                _CachedData.DailyMissions.ActiveMissions = new List<Game.Missions.Data.ActiveMissionEntry>();
+            }
+
+            return _CachedData.DailyMissions;
+        }
+
+        /// <summary>
         /// Ensures knife skin collection exists and returns the instance.
         /// </summary>
         public KnifeSkinCollectionData EnsureKnifeSkinCollection()
@@ -278,6 +298,16 @@ namespace Game.Persistence.Services
             {
                 _CachedData.RewardClaims.ClaimedStageRewards = new System.Collections.Generic.List<int>();
             }
+
+            if (_CachedData.DailyMissions == null)
+            {
+                _CachedData.DailyMissions = new DailyMissionData();
+            }
+
+            if (_CachedData.DailyMissions.ActiveMissions == null)
+            {
+                _CachedData.DailyMissions.ActiveMissions = new List<Game.Missions.Data.ActiveMissionEntry>();
+            }
         }
 
         private void UpdateProgress()
@@ -298,6 +328,8 @@ namespace Game.Persistence.Services
             _CachedData.Resources.KnifeSkins ??= new KnifeSkinCollectionData();
             _CachedData.RewardClaims ??= new RewardClaimData();
             _CachedData.RewardClaims.ClaimedStageRewards ??= new System.Collections.Generic.List<int>();
+            _CachedData.DailyMissions ??= new DailyMissionData();
+            _CachedData.DailyMissions.ActiveMissions ??= new List<Game.Missions.Data.ActiveMissionEntry>();
         }
 
         private void SyncGameData()

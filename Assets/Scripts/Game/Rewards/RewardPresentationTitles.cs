@@ -6,5 +6,6 @@ namespace Game.Rewards
     public static class RewardPresentationTitles
     {
         public const string StageComplete = "Stage Complete!";
+        public const string DailyMissionComplete = "Daily Mission Complete!";
     }
 }

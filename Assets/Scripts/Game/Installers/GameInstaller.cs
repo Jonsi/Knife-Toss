@@ -8,6 +8,8 @@ using Game.Flow.Game;
 using Game.Flow.Loading;
 using Game.Input;
 using Game.KnifeThrower.Interfaces;
+using Game.Missions.Configs;
+using Game.Missions.Events;
 using Game.Settings;
 using Game.UI.Services;
 using Game.Feedback.Audio.Interfaces;
@@ -48,6 +50,11 @@ namespace Game.Installers
         [SerializeField] private AnalyticsSettings _AnalyticsSettings;
         [SerializeField] private StoreCatalog _StoreCatalog;
 
+        [Header("Missions")]
+        [SerializeField] private MissionCatalog _DailyMissionCatalog;
+        [SerializeField] private MissionProgressChangedEventChannel _MissionProgressChangedEventChannel;
+        [SerializeField] private MissionCompletedEventChannel _MissionCompletedEventChannel;
+
         [Header("Ads")]
         [SerializeField] private AdInstaller _AdInstaller;
 
@@ -69,6 +76,9 @@ namespace Game.Installers
             {
                 Install(builder, CreateEconomyInstaller());
             }
+            Install(builder, CreateMissionInstaller());
+            Install(builder, CreateDailyMissionInstaller());
+            Install(builder, new RewardInstaller(null, null));
             Install(builder, CreateRemoteConfigInstaller());
             Install(builder, CreateAnalyticsInstaller());
 
@@ -115,6 +125,16 @@ namespace Game.Installers
         private EconomyInstaller CreateEconomyInstaller()
         {
             return new EconomyInstaller(_CurrencyTypeCatalog, _CurrencyBalanceChangedEventChannel);
+        }
+
+        private MissionInstaller CreateMissionInstaller()
+        {
+            return new MissionInstaller(_MissionProgressChangedEventChannel, _MissionCompletedEventChannel);
+        }
+
+        private DailyMissionInstaller CreateDailyMissionInstaller()
+        {
+            return new DailyMissionInstaller(_DailyMissionCatalog);
         }
 
         private RemoteConfigInstaller CreateRemoteConfigInstaller()
