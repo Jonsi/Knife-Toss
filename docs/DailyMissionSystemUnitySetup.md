@@ -1,41 +1,45 @@
 # Daily Mission System Unity Setup
 
+This file tracks the Unity-side setup status for the daily mission system.
+
 ## Assets
 
-Create the shared mission assets:
+Done:
 
-- `MissionDefinition` assets under `Assets/Configurations/Systems/Missions/Definitions/`
-- `MissionCatalog` asset at `Assets/Configurations/Systems/Missions/DailyMissionCatalog.asset`
-- `MissionProgressChangedEventChannel` and `MissionCompletedEventChannel` assets under `Assets/Configurations/EventChannels/Missions/`
+- `MissionDefinition` assets created under `Assets/Configurations/Systems/Missions/Definitions/`
+- `MissionCatalog` created at `Assets/Configurations/Systems/Missions/DailyMissionCatalog.asset`
+- `MissionProgressChangedEventChannel` created at `Assets/Configurations/Events/Missions/MissionProgressChangedEventChannel.asset`
+- `MissionCompletedEventChannel` created at `Assets/Configurations/Events/Missions/MissionCompletedEventChannel.asset`
 
-Recommended first-pass mission pool:
+Created mission definitions:
 
-- `CompleteLevels_3`
-- `HitCollectibles_10`
-- `UsePowerUps_2`
-- `WatchAd_1`
-- `CompleteStageNoFail_1`
-- `PurchaseItem_1`
+- `CompleteLevelsDaily`
+- `HitCollectiblesDaily`
+- `UsePowerUpsDaily`
+- `WatchAdDaily`
+- `CompleteStageNoFailDaily`
+- `PurchaseItemDaily`
 
-For each definition:
+Needs verification in the editor:
 
-- Set `ObjectiveTypeKey` to one of the constants in `Assets/Scripts/Game/Missions/Data/MissionObjectiveKeys.cs`
-- Set `TargetCount`, `DescriptionFormat`, `Icon`, and `Rewards`
-- Keep asset names stable because daily save data stores `MissionDefinition.name` as the definition key
+- Confirm each definition has the intended `ObjectiveTypeKey`
+- Confirm each definition has final `TargetCount`, `DescriptionFormat`, `Icon`, and `Rewards`
 
 ## GameInstaller
 
-Wire these fields on the persistent `GameInstaller` prefab:
+Done on `Assets/Prefabs/GameInstaller.prefab`:
 
 - `Daily Mission Catalog`
 - `Mission Progress Changed Event Channel`
 - `Mission Completed Event Channel`
 
-This enables the global tracker, the daily provider, and global reward claiming support.
-
 ## StageInstaller
 
-Wire the ad and gameplay channels on the stage scene `StageInstaller`:
+Already wired before this task and verified for the mission system dependency:
+
+- `Ad Completed Event Channel`
+
+Still editor-verification only from this doc's perspective:
 
 - `Level Completed Event Channel`
 - `Level Failed Event Channel`
@@ -43,43 +47,51 @@ Wire the ad and gameplay channels on the stage scene `StageInstaller`:
 - `Collectible Hit Event Channel`
 - `Power Up Used Event Channel`
 - `Purchase Completed Event Channel`
-- `Ad Completed Event Channel`
-
-The `MissionProgressRouter` is registered from `StageInstaller`, so it depends on these references being assigned.
 
 ## Main Menu UI
 
-Create a `DailyMissionPopup` view in the main menu scene:
+Done in `Assets/Scenes/MainMenu.unity`:
 
-- Root panel with `DailyMissionPopup`
-- Optional `PopupFadeInAnimation`
-- Title `TMP_Text`
-- Refresh timer `TMP_Text`
-- Content root with `VerticalLayoutGroup`
-- Close `Button`
+- `DailyMissionPopup` exists in the scene
+- Popup is inactive by default
+- Popup has `DailyMissionPopup` component
+- Popup has a `Scroll View`
+- Popup content root is wired to `_MissionItemsRoot`
+- Popup close button is wired to `_CloseButton`
+- `MissionItemView` prefab created at `Assets/Prefabs/UI/Missions/MissionItemView.prefab`
+- Popup `_MissionItemPrefab` is wired
+- Main menu missions button exists as `DailyMissionButton`
+- `MainMenuController._MissionsButton` is wired
+- `MainMenuInstaller._DailyMissionPopup` is wired
+- `MainMenuInstaller._MissionProgressChangedEventChannel` is wired
 
-Set the popup inactive by default.
+Still not done:
 
-Create a `MissionItemView` prefab with:
+- Popup title text is not assigned to `DailyMissionPopup._TitleText`
+- Popup refresh timer text is not assigned to `DailyMissionPopup._RefreshTimerText`
+- Final visual polish of the popup layout
+- Final visual polish of the `MissionItemView` prefab
+
+## MissionItemView Prefab
+
+Done:
 
 - Objective icon `Image`
 - Description `TMP_Text`
 - Progress `TMP_Text`
-- Progress `Slider`
 - Claim `Button`
 - Claimed overlay `GameObject`
 - Reward preview root `Transform`
-- Existing `RewardItemView` prefab assigned as the preview prefab
+- Existing `RewardItemView` prefab assigned as preview prefab
 
-Add a missions button to the main menu layout and wire:
+Not done:
 
-- `MainMenuController._MissionsButton`
-- `MainMenuInstaller._DailyMissionPopup`
-- `MainMenuInstaller._MissionProgressChangedEventChannel`
+- Progress `Slider` is still unassigned on the prefab
 
 ## Notes
 
 - Daily refresh uses UTC date boundaries.
 - Mission progress only routes from gameplay events while the stage scene is active.
-- Reward claims from the main menu use the global reward grant service. Stage rewards still use the stage-scoped reward popup presenter.
+- Reward claims from the main menu use the global reward grant service.
+- The popup works without title and timer text assignments, but those fields are still optional and currently empty.
 

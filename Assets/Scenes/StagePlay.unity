@@ -5894,6 +5894,7 @@ MonoBehaviour:
   _PurchaseStartedEventChannel: {fileID: 11400000, guid: b4583ce04d0389047a9f244b1a5906cb, type: 2}
   _PurchaseCompletedEventChannel: {fileID: 11400000, guid: 011128ccdedc67940a2c84e0a6ffc8db, type: 2}
   _PurchaseFailedEventChannel: {fileID: 11400000, guid: 6b2febbf6d5ca7e419d9caae7eebc3a5, type: 2}
+  _AdCompletedEventChannel: {fileID: 11400000, guid: 736ce2f04deb38a45bddfa941e627bac, type: 2}
   _ContinueRequestedChannel: {fileID: 11400000, guid: 6453204750942b04681a7ddbea28c760, type: 2}
   _ContinuePlacement: {fileID: 11400000, guid: 76d6cdadc5220ab4ba197e285414eace, type: 2}
   _InterstitialPlacement: {fileID: 11400000, guid: bc24614acda72f94ab9912ab4a311733, type: 2}
