@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game::Game.Missions.Configs.MissionDefinition
   <ObjectiveTypeKey>k__BackingField: WatchAd
   <TargetCount>k__BackingField: 1
-  <DescriptionFormat>k__BackingField: Watch an ad
+  <DescriptionFormat>k__BackingField: Watch 1 rewarded ad
   <Icon>k__BackingField: {fileID: 21300000, guid: 0caa4313e456e4e37916fa64b01d6bae, type: 3}
   <Rewards>k__BackingField:
-  - {fileID: 11400000, guid: 2e3f071ef9391074a8d9597d424f8b46, type: 2}
+  - {fileID: 11400000, guid: 8657b4d956e348c7b3bab3676b656994, type: 2}
   <SelectionWeight>k__BackingField: 1

@@ -19,7 +19,7 @@ namespace Game.Missions.Daily.Services
     /// </summary>
     public class DailyMissionProvider : IMissionProvider, IInitializable, IDisposable
     {
-        private readonly MissionCatalog _Catalog;
+        private readonly IMissionsProvider _MissionsProvider;
         private readonly MissionTracker _Tracker;
         private readonly PlayerDataService _PlayerDataService;
         private readonly IRewardGrantService _RewardGrantService;
@@ -28,12 +28,12 @@ namespace Game.Missions.Daily.Services
         private DailyMissionData _Data;
 
         public DailyMissionProvider(
-            MissionCatalog catalog,
+            IMissionsProvider missionsProvider,
             MissionTracker tracker,
             PlayerDataService playerDataService,
             IRewardGrantService rewardGrantService)
         {
-            _Catalog = catalog;
+            _MissionsProvider = missionsProvider;
             _Tracker = tracker;
             _PlayerDataService = playerDataService;
             _RewardGrantService = rewardGrantService;
@@ -238,7 +238,7 @@ namespace Game.Missions.Daily.Services
         {
             _DefinitionsByKey.Clear();
 
-            var pool = _Catalog?.MissionPool;
+            var pool = _MissionsProvider?.MissionPool;
             if (pool == null)
             {
                 return;
@@ -265,7 +265,7 @@ namespace Game.Missions.Daily.Services
         private List<MissionDefinition> SelectDefinitions()
         {
             var available = new List<MissionDefinition>();
-            var pool = _Catalog?.MissionPool;
+            var pool = _MissionsProvider?.MissionPool;
             if (pool != null)
             {
                 for (var i = 0; i < pool.Count; i++)
@@ -325,7 +325,7 @@ namespace Game.Missions.Daily.Services
 
         private int GetTargetActiveMissionCount()
         {
-            return Mathf.Max(0, _Catalog != null ? _Catalog.ActiveMissionCount : 0);
+            return Mathf.Max(0, _MissionsProvider != null ? _MissionsProvider.ActiveMissionCount : 0);
         }
 
         private bool TryResolveDefinition(string definitionKey, out MissionDefinition definition)

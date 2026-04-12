@@ -81,7 +81,6 @@ namespace Game.UI.Missions
             var isClaimable = snapshot.IsCompleted && !snapshot.Claimed;
             if (_ClaimButton != null)
             {
-                _ClaimButton.gameObject.SetActive(isClaimable);
                 _ClaimButton.interactable = isClaimable;
             }
 

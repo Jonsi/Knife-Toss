@@ -83,7 +83,10 @@ namespace Game.Missions.Services
 
         private void OnStageCompleted(StageData _)
         {
-            if (_HasFailedCurrentStage)
+            var hasFailedCurrentStage = _HasFailedCurrentStage;
+            _HasFailedCurrentStage = false;
+
+            if (hasFailedCurrentStage)
             {
                 return;
             }

@@ -1,6 +1,7 @@
 using Common.Rewards.Interfaces;
 using Game.Missions.Configs;
 using Game.Missions.Daily.Services;
+using Game.Missions.Interfaces;
 using Game.Missions.Services;
 using Game.Persistence.Services;
 using VContainer;
@@ -22,8 +23,10 @@ namespace Game.Installers
 
         public void Install(IContainerBuilder builder)
         {
+            builder.RegisterInstance<IMissionsProvider>(_DailyCatalog);
+
             builder.Register(resolver => new DailyMissionProvider(
-                _DailyCatalog,
+                resolver.Resolve<IMissionsProvider>(),
                 resolver.Resolve<MissionTracker>(),
                 resolver.Resolve<PlayerDataService>(),
                 resolver.Resolve<IRewardGrantService>()), Lifetime.Singleton).AsSelf();
