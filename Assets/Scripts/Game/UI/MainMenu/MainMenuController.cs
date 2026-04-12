@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Game.Flow.Game;
+using Game.Level.Catalogs;
 using Game.Persistence.Services;
 using Game.UI.Missions;
 using Game.UI.PowerUps;
@@ -22,6 +23,8 @@ namespace Game.UI.MainMenu
         [SerializeField] private Button _PowerUpsButton;
         [SerializeField] private Button _MissionsButton;
         [SerializeField] private TMP_Text _CurrentStageText;
+        [SerializeField] private Image _BackgroundImage;
+        [SerializeField] private StagesCollection _StagesCollection;
 
         [Inject] private PlayerDataService _PlayerDataService;
         [Inject] private SceneLoaderService _SceneLoaderService;
@@ -44,6 +47,7 @@ namespace Game.UI.MainMenu
 
             SyncCurrentStageSelection();
             UpdateCurrentStageText();
+            UpdateBackground();
         }
 
         private void UpdateCurrentStageText()
@@ -112,6 +116,25 @@ namespace Game.UI.MainMenu
             _GameData.CurrentStageIndex = _PlayerDataService.ClampStageIndexToUnlockedRange(
                 _GameData.CurrentStageIndex,
                 _PlayerDataService.GetHighestStageIndex() + 1);
+        }
+
+        private void UpdateBackground()
+        {
+            if (_BackgroundImage == null || _StagesCollection?.Stages == null || _StagesCollection.Stages.Count == 0 || _GameData == null)
+            {
+                return;
+            }
+
+            int stageIndex = Mathf.Clamp(_GameData.CurrentStageIndex, 0, _StagesCollection.Stages.Count - 1);
+            var stageConfig = _StagesCollection.Stages[stageIndex];
+            var backgroundSprite = stageConfig?.LayoutSettings?.BackgroundSprite;
+            if (backgroundSprite == null)
+            {
+                return;
+            }
+
+            _BackgroundImage.sprite = backgroundSprite;
+            _BackgroundImage.preserveAspect = false;
         }
     }
 }

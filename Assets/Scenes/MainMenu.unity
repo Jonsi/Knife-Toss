@@ -2264,6 +2264,8 @@ MonoBehaviour:
   _PowerUpsButton: {fileID: 541413910}
   _MissionsButton: {fileID: 1881409175}
   _CurrentStageText: {fileID: 136455758}
+  _BackgroundImage: {fileID: 108759171}
+  _StagesCollection: {fileID: 11400000, guid: d7b76ea65780b0f4e890085754f0d6bf, type: 2}
 --- !u!1 &1972825410
 GameObject:
   m_ObjectHideFlags: 0
