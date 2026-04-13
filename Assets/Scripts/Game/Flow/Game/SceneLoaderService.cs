@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Game.Flow.Game
@@ -13,6 +14,10 @@ namespace Game.Flow.Game
         private const string POWER_UPS_SCENE = "PowerUpsMenu";
         private const string GAME_SCENE = "StagePlay";
         private const string PVP_SCENE = "PVPPlay";
+
+        private UniTask _PreloadGameTask;
+        private bool _IsPreloadingGame;
+        private bool _IsGamePreloaded;
 
         /// <summary>
         /// Loads the main menu scene.
@@ -44,6 +49,71 @@ namespace Game.Flow.Game
         public async UniTask LoadGame()
         {
             await SceneManager.LoadSceneAsync(GAME_SCENE, LoadSceneMode.Single).ToUniTask();
+        }
+
+        public UniTask PreloadGameFromMainMenu()
+        {
+            if (_IsGamePreloaded)
+            {
+                return UniTask.CompletedTask;
+            }
+
+            if (_IsPreloadingGame)
+            {
+                return _PreloadGameTask;
+            }
+
+            _PreloadGameTask = PreloadGameFromMainMenuInternal();
+            return _PreloadGameTask;
+        }
+
+        public async UniTask RevealPreloadedGameFromMainMenu()
+        {
+            if (!_IsGamePreloaded)
+            {
+                await PreloadGameFromMainMenu();
+            }
+
+            Scene stageScene = SceneManager.GetSceneByName(GAME_SCENE);
+            if (stageScene.IsValid())
+            {
+                SceneManager.SetActiveScene(stageScene);
+            }
+
+            DeferredGameSceneVisibility.RevealLoadedScene();
+
+            AsyncOperation unloadOperation = SceneManager.UnloadSceneAsync(MAIN_MENU_SCENE);
+            if (unloadOperation != null)
+            {
+                await unloadOperation.ToUniTask();
+            }
+
+            _IsGamePreloaded = false;
+            _PreloadGameTask = default;
+        }
+
+        private async UniTask PreloadGameFromMainMenuInternal()
+        {
+            _IsPreloadingGame = true;
+            DeferredGameSceneVisibility.BeginHiddenLoad();
+
+            try
+            {
+                Scene existingScene = SceneManager.GetSceneByName(GAME_SCENE);
+                if (existingScene.IsValid() && existingScene.isLoaded)
+                {
+                    _IsGamePreloaded = true;
+                    return;
+                }
+
+                await SceneManager.LoadSceneAsync(GAME_SCENE, LoadSceneMode.Additive).ToUniTask();
+                await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
+                _IsGamePreloaded = true;
+            }
+            finally
+            {
+                _IsPreloadingGame = false;
+            }
         }
 
         /// <summary>

@@ -2,8 +2,10 @@ using Cysharp.Threading.Tasks;
 using Game.Flow.Game;
 using Game.Level.Catalogs;
 using Game.Persistence.Services;
+using Game.UI.Common;
 using Game.UI.Missions;
 using Game.UI.PowerUps;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,11 +27,14 @@ namespace Game.UI.MainMenu
         [SerializeField] private TMP_Text _CurrentStageText;
         [SerializeField] private Image _BackgroundImage;
         [SerializeField] private StagesCollection _StagesCollection;
+        [SerializeField] private UiElementAnimator[] _MenuAnimators;
 
         [Inject] private PlayerDataService _PlayerDataService;
         [Inject] private SceneLoaderService _SceneLoaderService;
         [Inject] private GameData _GameData;
         [Inject] private DailyMissionPopupController _MissionPopupController;
+
+        private bool _IsNavigating;
 
         private void Start()
         {
@@ -48,6 +53,8 @@ namespace Game.UI.MainMenu
             SyncCurrentStageSelection();
             UpdateCurrentStageText();
             UpdateBackground();
+            PlayMenuIn();
+            _SceneLoaderService.PreloadGameFromMainMenu().Forget();
         }
 
         private void UpdateCurrentStageText()
@@ -83,22 +90,22 @@ namespace Game.UI.MainMenu
                     _PlayerDataService.GetHighestStageIndex() + 1);
             }
 
-            _SceneLoaderService.LoadGame().Forget();
+            LoadGameFromMainMenuAsync().Forget();
         }
 
         private void OnStagesClicked()
         {
-            _SceneLoaderService.LoadStagesMenu().Forget();
+            NavigateAsync(_SceneLoaderService.LoadStagesMenu).Forget();
         }
 
         private void OnPvpClicked()
         {
-            _SceneLoaderService.LoadPVP().Forget();
+            NavigateAsync(_SceneLoaderService.LoadPVP).Forget();
         }
 
         private void OnPowerUpsClicked()
         {
-            _SceneLoaderService.LoadPowerUps().Forget();
+            NavigateAsync(_SceneLoaderService.LoadPowerUps).Forget();
         }
 
         private void OnMissionsClicked()
@@ -135,6 +142,115 @@ namespace Game.UI.MainMenu
 
             _BackgroundImage.sprite = backgroundSprite;
             _BackgroundImage.preserveAspect = false;
+        }
+
+        private void PlayMenuIn()
+        {
+            if (_MenuAnimators == null)
+            {
+                return;
+            }
+
+            foreach (UiElementAnimator animator in _MenuAnimators)
+            {
+                animator?.PlayIn();
+            }
+        }
+
+        private async UniTaskVoid NavigateAsync(Func<UniTask> loadScene)
+        {
+            if (_IsNavigating || loadScene == null)
+            {
+                return;
+            }
+
+            _IsNavigating = true;
+            SetButtonsInteractable(false);
+
+            try
+            {
+                await PlayMenuOutAsync();
+                await loadScene();
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+                _IsNavigating = false;
+                SetButtonsInteractable(true);
+            }
+        }
+
+        private async UniTaskVoid LoadGameFromMainMenuAsync()
+        {
+            if (_IsNavigating)
+            {
+                return;
+            }
+
+            _IsNavigating = true;
+            SetButtonsInteractable(false);
+
+            try
+            {
+                await PlayMenuOutAsync();
+                await _SceneLoaderService.RevealPreloadedGameFromMainMenu();
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+                _IsNavigating = false;
+                SetButtonsInteractable(true);
+            }
+        }
+
+        private void SetButtonsInteractable(bool isInteractable)
+        {
+            if (_PlayButton != null)
+            {
+                _PlayButton.interactable = isInteractable;
+            }
+
+            if (_StagesButton != null)
+            {
+                _StagesButton.interactable = isInteractable;
+            }
+
+            if (_PvpButton != null)
+            {
+                _PvpButton.interactable = isInteractable;
+            }
+
+            if (_PowerUpsButton != null)
+            {
+                _PowerUpsButton.interactable = isInteractable;
+            }
+
+            if (_MissionsButton != null)
+            {
+                _MissionsButton.interactable = isInteractable;
+            }
+        }
+
+        private async UniTask PlayMenuOutAsync()
+        {
+            if (_MenuAnimators == null)
+            {
+                return;
+            }
+
+            var tasks = new System.Collections.Generic.List<UniTask>(_MenuAnimators.Length);
+            foreach (UiElementAnimator animator in _MenuAnimators)
+            {
+                if (animator != null)
+                {
+                    tasks.Add(animator.PlayOutAsync());
+                }
+            }
+
+            if (tasks.Count > 0)
+            {
+                await UniTask.WhenAll(tasks);
+            }
         }
     }
 }

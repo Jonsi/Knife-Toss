@@ -29,7 +29,11 @@ namespace Game.UI.HUD
         private void OnEnable()
         {
             if (_LevelStartedChannel != null)
+            {
                 _LevelStartedChannel.Subscribe(OnLevelStarted);
+                if (_LevelStartedChannel.HasLastEvent)
+                    OnLevelStarted(_LevelStartedChannel.LastEvent);
+            }
             if (_KnifeThrownChannel != null)
                 _KnifeThrownChannel.Subscribe(OnKnifeThrown);
             if (_RetryChannel != null)

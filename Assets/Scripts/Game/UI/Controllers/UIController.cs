@@ -1,6 +1,9 @@
 using Common.Events;
+using Cysharp.Threading.Tasks;
+using Game.Flow.Game;
 using Game.Flow.Events;
 using Game.Flow.Level;
+using Game.UI.Common;
 using Game.UI.Popups;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +17,9 @@ namespace Game.UI.Controllers
 
         [Header("Popups")]
         [SerializeField] private StageFailPopup _StageFailPopup;
+
+        [Header("Startup Animation")]
+        [SerializeField] private UiElementAnimator[] _StartupAnimators;
 
         [Header("Channels")]
         [SerializeField] private LevelFailedEventChannel _LevelFailedChannel;
@@ -42,6 +48,11 @@ namespace Game.UI.Controllers
             {
                 _BackgroundImage.sprite = sprite;
             }
+        }
+
+        private void Start()
+        {
+            PlayStartupAnimationsAsync().Forget();
         }
 
         private void OnEnable()
@@ -78,6 +89,22 @@ namespace Game.UI.Controllers
         {
             if (_StageFailPopup != null)
                 _StageFailPopup.Hide();
+        }
+
+        private async UniTaskVoid PlayStartupAnimationsAsync()
+        {
+            if (_StartupAnimators == null || _StartupAnimators.Length == 0)
+            {
+                return;
+            }
+
+            await DeferredGameSceneVisibility.WaitForReveal();
+            await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
+
+            foreach (UiElementAnimator animator in _StartupAnimators)
+            {
+                animator?.PlayIn();
+            }
         }
     }
 }

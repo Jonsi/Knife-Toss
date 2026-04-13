@@ -1,5 +1,7 @@
 using Common.Analytics;
 using Common.Analytics.Interfaces;
+using Cysharp.Threading.Tasks;
+using Game.Flow.Game;
 using Game.Flow.Interfaces;
 using VContainer.Unity;
 
@@ -28,6 +30,12 @@ namespace Game
 
         public void Start()
         {
+            StartGameFlowAsync().Forget();
+        }
+
+        private async UniTaskVoid StartGameFlowAsync()
+        {
+            await DeferredGameSceneVisibility.WaitForReveal();
             _AnalyticsService?.TrackEvent(new AnalyticsEvent("game_started"));
             _StateMachine.SetState(_StateMachine.Playing);
         }

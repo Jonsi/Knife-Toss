@@ -130,13 +130,14 @@ GameObject:
   - component: {fileID: 41204891}
   - component: {fileID: 41204892}
   - component: {fileID: 41204893}
+  - component: {fileID: 41204894}
   m_Layer: 5
   m_Name: PowerUps
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &41204891
 RectTransform:
   m_ObjectHideFlags: 0
@@ -202,6 +203,42 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &41204894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 41204890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c39b31b8dcb46aabdf1b6f1f66273a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Common.UiElementAnimator
+  _RectTransform: {fileID: 41204891}
+  _Graphic: {fileID: 0}
+  _PlayInOnEnable: 0
+  _UseUnscaledTime: 1
+  _EnableGameObjectOnPlayIn: 1
+  _DisableGameObjectOnPlayOut: 1
+  _In:
+    _PositionOffset: {x: 22, y: 0}
+    _ScaleMultiplier: {x: 0.98, y: 0.98, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.18
+    _Delay: 0.02
+    _Ease: 26
+  _Out:
+    _PositionOffset: {x: 22, y: 0}
+    _ScaleMultiplier: {x: 0.98, y: 0.98, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.14
+    _Delay: 0
+    _Ease: 26
 --- !u!1001 &66447398
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -469,13 +506,57 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7918986150529725774, guid: c750b4c493b959a45a2bdf11f423d2ac, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 213178507}
   m_SourcePrefab: {fileID: 100100000, guid: c750b4c493b959a45a2bdf11f423d2ac, type: 3}
 --- !u!224 &213178505 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6912700536744318829, guid: c750b4c493b959a45a2bdf11f423d2ac, type: 3}
   m_PrefabInstance: {fileID: 213178504}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &213178506 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7918986150529725774, guid: c750b4c493b959a45a2bdf11f423d2ac, type: 3}
+  m_PrefabInstance: {fileID: 213178504}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &213178507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 213178506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c39b31b8dcb46aabdf1b6f1f66273a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Common.UiElementAnimator
+  _RectTransform: {fileID: 213178505}
+  _Graphic: {fileID: 0}
+  _PlayInOnEnable: 0
+  _UseUnscaledTime: 1
+  _EnableGameObjectOnPlayIn: 0
+  _DisableGameObjectOnPlayOut: 0
+  _In:
+    _PositionOffset: {x: 0, y: 18}
+    _ScaleMultiplier: {x: 0.98, y: 0.98, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.18
+    _Delay: 0.04
+    _Ease: 26
+  _Out:
+    _PositionOffset: {x: 0, y: 18}
+    _ScaleMultiplier: {x: 0.98, y: 0.98, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.14
+    _Delay: 0
+    _Ease: 26
 --- !u!1 &239220519
 GameObject:
   m_ObjectHideFlags: 0
@@ -489,13 +570,14 @@ GameObject:
   - component: {fileID: 239220523}
   - component: {fileID: 239220522}
   - component: {fileID: 239220525}
+  - component: {fileID: 239220526}
   m_Layer: 5
   m_Name: KnifeMagazine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &239220520
 RectTransform:
   m_ObjectHideFlags: 0
@@ -599,6 +681,42 @@ MonoBehaviour:
   _KnifeThrownChannel: {fileID: 11400000, guid: 80b1350cead05974f808ed72efda1384, type: 2}
   _RetryChannel: {fileID: 11400000, guid: a8aafdd4ae42ad145876819d5f37bedb, type: 2}
   _RestartChannel: {fileID: 11400000, guid: eef8d9c482392e74bb97e0df72cf980b, type: 2}
+--- !u!114 &239220526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 239220519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c39b31b8dcb46aabdf1b6f1f66273a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Common.UiElementAnimator
+  _RectTransform: {fileID: 239220520}
+  _Graphic: {fileID: 239220523}
+  _PlayInOnEnable: 0
+  _UseUnscaledTime: 1
+  _EnableGameObjectOnPlayIn: 1
+  _DisableGameObjectOnPlayOut: 1
+  _In:
+    _PositionOffset: {x: -22, y: 0}
+    _ScaleMultiplier: {x: 0.98, y: 0.98, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.18
+    _Delay: 0
+    _Ease: 26
+  _Out:
+    _PositionOffset: {x: -22, y: 0}
+    _ScaleMultiplier: {x: 0.98, y: 0.98, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.14
+    _Delay: 0
+    _Ease: 26
 --- !u!1 &267416622
 GameObject:
   m_ObjectHideFlags: 0
@@ -1019,7 +1137,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 29, y: 0}
-  m_SizeDelta: {x: 62, y: 0}
+  m_SizeDelta: {x: 62, y: 62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &450363080
 MonoBehaviour:
@@ -1663,6 +1781,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: KnifeToss.Presentation::KnifeToss.Presentation.UI.UIController
   _BackgroundImage: {fileID: 1186863425}
   _StageFailPopup: {fileID: 1957040492}
+  _StartupAnimators:
+  - {fileID: 239220526}
+  - {fileID: 41204894}
+  - {fileID: 213178507}
+  - {fileID: 4610044046254210592}
+  - {fileID: 1419487723}
   _LevelFailedChannel: {fileID: 11400000, guid: 604458cf20b3869489fbff706e752db8, type: 2}
   _RetryLevelChannel: {fileID: 11400000, guid: eef8d9c482392e74bb97e0df72cf980b, type: 2}
   _RestartStageChannel: {fileID: 11400000, guid: a8aafdd4ae42ad145876819d5f37bedb, type: 2}
@@ -4626,13 +4750,14 @@ GameObject:
   - component: {fileID: 1419487720}
   - component: {fileID: 1419487722}
   - component: {fileID: 1419487721}
+  - component: {fileID: 1419487723}
   m_Layer: 5
   m_Name: StageProgressBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1419487719
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4715,6 +4840,42 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1419487718}
   m_CullTransparentMesh: 1
+--- !u!114 &1419487723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1419487718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c39b31b8dcb46aabdf1b6f1f66273a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Common.UiElementAnimator
+  _RectTransform: {fileID: 1419487719}
+  _Graphic: {fileID: 0}
+  _PlayInOnEnable: 0
+  _UseUnscaledTime: 1
+  _EnableGameObjectOnPlayIn: 1
+  _DisableGameObjectOnPlayOut: 1
+  _In:
+    _PositionOffset: {x: 28, y: 0}
+    _ScaleMultiplier: {x: 0.99, y: 0.99, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.18
+    _Delay: 0.08
+    _Ease: 26
+  _Out:
+    _PositionOffset: {x: 28, y: 0}
+    _ScaleMultiplier: {x: 0.99, y: 0.99, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.14
+    _Delay: 0
+    _Ease: 26
 --- !u!1 &1485787341
 GameObject:
   m_ObjectHideFlags: 0
@@ -4753,7 +4914,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -29, y: 0}
-  m_SizeDelta: {x: 62, y: 0}
+  m_SizeDelta: {x: 62, y: 62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1485787343
 MonoBehaviour:
@@ -5819,6 +5980,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1928512257}
   - component: {fileID: 1928512258}
+  - component: {fileID: 1928512259}
   m_Layer: 0
   m_Name: StageInstaller
   m_TagString: Untagged
@@ -5898,6 +6060,26 @@ MonoBehaviour:
   _ContinueRequestedChannel: {fileID: 11400000, guid: 6453204750942b04681a7ddbea28c760, type: 2}
   _ContinuePlacement: {fileID: 11400000, guid: 76d6cdadc5220ab4ba197e285414eace, type: 2}
   _InterstitialPlacement: {fileID: 11400000, guid: bc24614acda72f94ab9912ab4a311733, type: 2}
+--- !u!114 &1928512259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928512255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f8c7730a9114b7e9ae70bc0ec1bd2da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.Flow.Game.DeferredSceneActivationGate
+  _RootsToHide:
+  - {fileID: 777620290}
+  - {fileID: 1083244133}
+  - {fileID: 1089390829}
+  - {fileID: 1099422711}
+  - {fileID: 1230634448}
+  - {fileID: 1312406826}
+  - {fileID: 1991986295}
 --- !u!1 &1957040490 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2036229646191269102, guid: 58353aba8a65cb9479373360a5731a0b, type: 3}
@@ -7191,8 +7373,52 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 527600414810306286, guid: 70cdeaa4f8466ad44bb5ff6ad05e8317, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4610044046254210592}
   m_SourcePrefab: {fileID: 100100000, guid: 70cdeaa4f8466ad44bb5ff6ad05e8317, type: 3}
+--- !u!1 &4610044046254210591 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 527600414810306286, guid: 70cdeaa4f8466ad44bb5ff6ad05e8317, type: 3}
+  m_PrefabInstance: {fileID: 4610044046254210590}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4610044046254210592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4610044046254210591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c39b31b8dcb46aabdf1b6f1f66273a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Common.UiElementAnimator
+  _RectTransform: {fileID: 8461934521052762732}
+  _Graphic: {fileID: 0}
+  _PlayInOnEnable: 0
+  _UseUnscaledTime: 1
+  _EnableGameObjectOnPlayIn: 0
+  _DisableGameObjectOnPlayOut: 0
+  _In:
+    _PositionOffset: {x: 0, y: -18}
+    _ScaleMultiplier: {x: 0.98, y: 0.98, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.18
+    _Delay: 0.06
+    _Ease: 26
+  _Out:
+    _PositionOffset: {x: 0, y: -18}
+    _ScaleMultiplier: {x: 0.98, y: 0.98, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.14
+    _Delay: 0
+    _Ease: 26
 --- !u!224 &8461934521052762732 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4781810108337644206, guid: 70cdeaa4f8466ad44bb5ff6ad05e8317, type: 3}

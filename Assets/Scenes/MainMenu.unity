@@ -643,6 +643,7 @@ GameObject:
   - component: {fileID: 483006162}
   - component: {fileID: 483006164}
   - component: {fileID: 483006163}
+  - component: {fileID: 483006165}
   m_Layer: 5
   m_Name: Logo
   m_TagString: Untagged
@@ -707,6 +708,40 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 483006161}
   m_CullTransparentMesh: 1
+--- !u!114 &483006165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 483006161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c39b31b8dcb46aabdf1b6f1f66273a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Common.UiElementAnimator
+  _RectTransform: {fileID: 483006162}
+  _Graphic: {fileID: 483006163}
+  _PlayInOnEnable: 0
+  _UseUnscaledTime: 1
+  _In:
+    _PositionOffset: {x: 0, y: 180}
+    _ScaleMultiplier: {x: 0.9, y: 0.9, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.42
+    _Delay: 0.06
+    _Ease: 27
+  _Out:
+    _PositionOffset: {x: 0, y: 150}
+    _ScaleMultiplier: {x: 0.92, y: 0.92, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.2
+    _Delay: 0.08
+    _Ease: 26
 --- !u!1 &797213547
 GameObject:
   m_ObjectHideFlags: 0
@@ -1089,6 +1124,7 @@ GameObject:
   - component: {fileID: 1197863337}
   - component: {fileID: 1197863336}
   - component: {fileID: 1197863335}
+  - component: {fileID: 1197863338}
   m_Layer: 5
   m_Name: StagesButton
   m_TagString: Untagged
@@ -1198,6 +1234,40 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1197863333}
   m_CullTransparentMesh: 1
+--- !u!114 &1197863338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197863333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c39b31b8dcb46aabdf1b6f1f66273a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Common.UiElementAnimator
+  _RectTransform: {fileID: 1197863334}
+  _Graphic: {fileID: 1197863336}
+  _PlayInOnEnable: 0
+  _UseUnscaledTime: 1
+  _In:
+    _PositionOffset: {x: 0, y: -180}
+    _ScaleMultiplier: {x: 0.88, y: 0.88, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 0.82, b: 0.7, a: 1}
+    _Alpha: 0
+    _Duration: 0.38
+    _Delay: 0.14
+    _Ease: 27
+  _Out:
+    _PositionOffset: {x: 0, y: -140}
+    _ScaleMultiplier: {x: 0.92, y: 0.92, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 0.82, b: 0.7, a: 1}
+    _Alpha: 0
+    _Duration: 0.2
+    _Delay: 0
+    _Ease: 26
 --- !u!1 &1291041990
 GameObject:
   m_ObjectHideFlags: 0
@@ -1567,6 +1637,7 @@ GameObject:
   - component: {fileID: 1881409177}
   - component: {fileID: 1881409176}
   - component: {fileID: 1881409175}
+  - component: {fileID: 1881409178}
   m_Layer: 5
   m_Name: DailyMissionButton
   m_TagString: Untagged
@@ -1675,6 +1746,40 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1881409173}
   m_CullTransparentMesh: 1
+--- !u!114 &1881409178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881409173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c39b31b8dcb46aabdf1b6f1f66273a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Common.UiElementAnimator
+  _RectTransform: {fileID: 1881409174}
+  _Graphic: {fileID: 1881409176}
+  _PlayInOnEnable: 0
+  _UseUnscaledTime: 1
+  _In:
+    _PositionOffset: {x: 120, y: 0}
+    _ScaleMultiplier: {x: 0.85, y: 0.85, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: -12}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.34
+    _Delay: 0.22
+    _Ease: 27
+  _Out:
+    _PositionOffset: {x: 90, y: 0}
+    _ScaleMultiplier: {x: 0.9, y: 0.9, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 12}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.18
+    _Delay: 0.02
+    _Ease: 26
 --- !u!1 &1900910882
 GameObject:
   m_ObjectHideFlags: 0
@@ -1884,6 +1989,13 @@ MonoBehaviour:
   _CurrentStageText: {fileID: 136455758}
   _BackgroundImage: {fileID: 108759171}
   _StagesCollection: {fileID: 11400000, guid: d7b76ea65780b0f4e890085754f0d6bf, type: 2}
+  _MenuAnimators:
+  - {fileID: 0}
+  - {fileID: 483006165}
+  - {fileID: 1972825414}
+  - {fileID: 1990090261}
+  - {fileID: 1197863338}
+  - {fileID: 1881409178}
 --- !u!1 &1972825410
 GameObject:
   m_ObjectHideFlags: 0
@@ -1895,6 +2007,7 @@ GameObject:
   - component: {fileID: 1972825411}
   - component: {fileID: 1972825413}
   - component: {fileID: 1972825412}
+  - component: {fileID: 1972825414}
   m_Layer: 5
   m_Name: StageSign
   m_TagString: Untagged
@@ -1960,6 +2073,40 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1972825410}
   m_CullTransparentMesh: 1
+--- !u!114 &1972825414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1972825410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c39b31b8dcb46aabdf1b6f1f66273a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Common.UiElementAnimator
+  _RectTransform: {fileID: 1972825411}
+  _Graphic: {fileID: 1972825412}
+  _PlayInOnEnable: 0
+  _UseUnscaledTime: 1
+  _In:
+    _PositionOffset: {x: -100, y: 0}
+    _ScaleMultiplier: {x: 0.9, y: 0.9, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: -10}
+    _Color: {r: 0.9, g: 0.9, b: 0.9, a: 1}
+    _Alpha: 0
+    _Duration: 0.36
+    _Delay: 0.1
+    _Ease: 27
+  _Out:
+    _PositionOffset: {x: -80, y: 0}
+    _ScaleMultiplier: {x: 0.94, y: 0.94, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: -6}
+    _Color: {r: 0.9, g: 0.9, b: 0.9, a: 1}
+    _Alpha: 0
+    _Duration: 0.18
+    _Delay: 0.04
+    _Ease: 26
 --- !u!1 &1979444084
 GameObject:
   m_ObjectHideFlags: 0
@@ -2109,6 +2256,7 @@ GameObject:
   - component: {fileID: 1990090260}
   - component: {fileID: 1990090259}
   - component: {fileID: 1990090258}
+  - component: {fileID: 1990090261}
   m_Layer: 5
   m_Name: ContinueButton
   m_TagString: Untagged
@@ -2218,6 +2366,40 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1990090256}
   m_CullTransparentMesh: 1
+--- !u!114 &1990090261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990090256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c39b31b8dcb46aabdf1b6f1f66273a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Common.UiElementAnimator
+  _RectTransform: {fileID: 1990090257}
+  _Graphic: {fileID: 1990090259}
+  _PlayInOnEnable: 0
+  _UseUnscaledTime: 1
+  _In:
+    _PositionOffset: {x: 0, y: -180}
+    _ScaleMultiplier: {x: 0.88, y: 0.88, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 0.82, b: 0.7, a: 1}
+    _Alpha: 0
+    _Duration: 0.38
+    _Delay: 0.14
+    _Ease: 27
+  _Out:
+    _PositionOffset: {x: 0, y: -140}
+    _ScaleMultiplier: {x: 0.92, y: 0.92, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 0.82, b: 0.7, a: 1}
+    _Alpha: 0
+    _Duration: 0.2
+    _Delay: 0
+    _Ease: 26
 --- !u!1001 &2097353285
 PrefabInstance:
   m_ObjectHideFlags: 0
