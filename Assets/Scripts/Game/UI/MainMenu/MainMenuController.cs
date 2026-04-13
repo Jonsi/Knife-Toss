@@ -21,6 +21,7 @@ namespace Game.UI.MainMenu
         [Header("UI References")]
         [SerializeField] private Button _PlayButton;
         [SerializeField] private Button _StagesButton;
+        [SerializeField] private Button _ShopButton;
         [SerializeField] private Button _PvpButton;
         [SerializeField] private Button _PowerUpsButton;
         [SerializeField] private Button _MissionsButton;
@@ -40,6 +41,9 @@ namespace Game.UI.MainMenu
         {
             _PlayButton.onClick.AddListener(OnPlayClicked);
             _StagesButton.onClick.AddListener(OnStagesClicked);
+
+            if (_ShopButton != null)
+                _ShopButton.onClick.AddListener(OnShopClicked);
             
             if (_PvpButton != null)
                 _PvpButton.onClick.AddListener(OnPvpClicked);
@@ -70,6 +74,9 @@ namespace Game.UI.MainMenu
         {
             _PlayButton.onClick.RemoveListener(OnPlayClicked);
             _StagesButton.onClick.RemoveListener(OnStagesClicked);
+
+            if (_ShopButton != null)
+                _ShopButton.onClick.RemoveListener(OnShopClicked);
             
             if (_PvpButton != null)
                 _PvpButton.onClick.RemoveListener(OnPvpClicked);
@@ -96,6 +103,11 @@ namespace Game.UI.MainMenu
         private void OnStagesClicked()
         {
             NavigateAsync(_SceneLoaderService.LoadStagesMenu).Forget();
+        }
+
+        private void OnShopClicked()
+        {
+            NavigateAsync(_SceneLoaderService.LoadStore).Forget();
         }
 
         private void OnPvpClicked()
@@ -213,6 +225,11 @@ namespace Game.UI.MainMenu
             if (_StagesButton != null)
             {
                 _StagesButton.interactable = isInteractable;
+            }
+
+            if (_ShopButton != null)
+            {
+                _ShopButton.interactable = isInteractable;
             }
 
             if (_PvpButton != null)

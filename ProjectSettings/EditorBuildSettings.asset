@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/StagesMenu.unity
     guid: 6d28933bfa0ac144cb2b722b05ef805b
   - enabled: 1
+    path: Assets/Scenes/StoreScene.unity
+    guid: 661d62b877c76814a87133a8e9b47d69
+  - enabled: 1
     path: Assets/Scenes/StagePlay.unity
     guid: 840bdae4a9f63bd4e86823fc371ee6ac
   m_configObjects:

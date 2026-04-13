@@ -11,6 +11,7 @@ namespace Game.Flow.Game
     {
         private const string MAIN_MENU_SCENE = "MainMenu";
         private const string STAGES_MENU_SCENE = "StagesMenu";
+        private const string STORE_SCENE = "StoreScene";
         private const string POWER_UPS_SCENE = "PowerUpsMenu";
         private const string GAME_SCENE = "StagePlay";
         private const string PVP_SCENE = "PVPPlay";
@@ -18,12 +19,14 @@ namespace Game.Flow.Game
         private UniTask _PreloadGameTask;
         private bool _IsPreloadingGame;
         private bool _IsGamePreloaded;
+        private int _PreloadGeneration;
 
         /// <summary>
         /// Loads the main menu scene.
         /// </summary>
         public async UniTask LoadMainMenu()
         {
+            InvalidatePreloadedGameState();
             await SceneManager.LoadSceneAsync(MAIN_MENU_SCENE, LoadSceneMode.Single).ToUniTask();
         }
 
@@ -32,7 +35,17 @@ namespace Game.Flow.Game
         /// </summary>
         public async UniTask LoadStagesMenu()
         {
+            InvalidatePreloadedGameState();
             await SceneManager.LoadSceneAsync(STAGES_MENU_SCENE, LoadSceneMode.Single).ToUniTask();
+        }
+
+        /// <summary>
+        /// Loads the store scene.
+        /// </summary>
+        public async UniTask LoadStore()
+        {
+            InvalidatePreloadedGameState();
+            await SceneManager.LoadSceneAsync(STORE_SCENE, LoadSceneMode.Single).ToUniTask();
         }
 
         /// <summary>
@@ -40,6 +53,7 @@ namespace Game.Flow.Game
         /// </summary>
         public async UniTask LoadPowerUps()
         {
+            InvalidatePreloadedGameState();
             await SceneManager.LoadSceneAsync(POWER_UPS_SCENE, LoadSceneMode.Single).ToUniTask();
         }
 
@@ -48,6 +62,7 @@ namespace Game.Flow.Game
         /// </summary>
         public async UniTask LoadGame()
         {
+            InvalidatePreloadedGameState();
             await SceneManager.LoadSceneAsync(GAME_SCENE, LoadSceneMode.Single).ToUniTask();
         }
 
@@ -69,12 +84,23 @@ namespace Game.Flow.Game
 
         public async UniTask RevealPreloadedGameFromMainMenu()
         {
+            if (!HasLoadedGameScene())
+            {
+                _IsGamePreloaded = false;
+            }
+
             if (!_IsGamePreloaded)
             {
                 await PreloadGameFromMainMenu();
             }
 
             Scene stageScene = SceneManager.GetSceneByName(GAME_SCENE);
+            if (!stageScene.IsValid() || !stageScene.isLoaded)
+            {
+                await LoadGame();
+                return;
+            }
+
             if (stageScene.IsValid())
             {
                 SceneManager.SetActiveScene(stageScene);
@@ -82,10 +108,14 @@ namespace Game.Flow.Game
 
             DeferredGameSceneVisibility.RevealLoadedScene();
 
-            AsyncOperation unloadOperation = SceneManager.UnloadSceneAsync(MAIN_MENU_SCENE);
-            if (unloadOperation != null)
+            Scene mainMenuScene = SceneManager.GetSceneByName(MAIN_MENU_SCENE);
+            if (mainMenuScene.IsValid() && mainMenuScene.isLoaded && SceneManager.sceneCount > 1)
             {
-                await unloadOperation.ToUniTask();
+                AsyncOperation unloadOperation = SceneManager.UnloadSceneAsync(MAIN_MENU_SCENE);
+                if (unloadOperation != null)
+                {
+                    await unloadOperation.ToUniTask();
+                }
             }
 
             _IsGamePreloaded = false;
@@ -94,6 +124,7 @@ namespace Game.Flow.Game
 
         private async UniTask PreloadGameFromMainMenuInternal()
         {
+            int preloadGeneration = _PreloadGeneration;
             _IsPreloadingGame = true;
             DeferredGameSceneVisibility.BeginHiddenLoad();
 
@@ -102,17 +133,28 @@ namespace Game.Flow.Game
                 Scene existingScene = SceneManager.GetSceneByName(GAME_SCENE);
                 if (existingScene.IsValid() && existingScene.isLoaded)
                 {
-                    _IsGamePreloaded = true;
+                    if (preloadGeneration == _PreloadGeneration)
+                    {
+                        _IsGamePreloaded = true;
+                    }
+
                     return;
                 }
 
                 await SceneManager.LoadSceneAsync(GAME_SCENE, LoadSceneMode.Additive).ToUniTask();
                 await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
-                _IsGamePreloaded = true;
+
+                if (preloadGeneration == _PreloadGeneration && HasLoadedGameScene())
+                {
+                    _IsGamePreloaded = true;
+                }
             }
             finally
             {
-                _IsPreloadingGame = false;
+                if (preloadGeneration == _PreloadGeneration)
+                {
+                    _IsPreloadingGame = false;
+                }
             }
         }
 
@@ -121,7 +163,23 @@ namespace Game.Flow.Game
         /// </summary>
         public async UniTask LoadPVP()
         {
+            InvalidatePreloadedGameState();
             await SceneManager.LoadSceneAsync(PVP_SCENE, LoadSceneMode.Single).ToUniTask();
+        }
+
+        private bool HasLoadedGameScene()
+        {
+            Scene gameScene = SceneManager.GetSceneByName(GAME_SCENE);
+            return gameScene.IsValid() && gameScene.isLoaded;
+        }
+
+        private void InvalidatePreloadedGameState()
+        {
+            _PreloadGeneration++;
+            _IsPreloadingGame = false;
+            _IsGamePreloaded = false;
+            _PreloadGameTask = default;
+            DeferredGameSceneVisibility.Reset();
         }
     }
 }
