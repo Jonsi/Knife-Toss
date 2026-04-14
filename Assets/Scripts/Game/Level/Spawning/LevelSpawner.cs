@@ -28,9 +28,17 @@ namespace Game.Level.Spawning
         /// </summary>
         public void ClearLevel()
         {
+            if (_LevelRoot == null)
+            {
+                return;
+            }
+
             foreach (Transform child in _LevelRoot)
             {
-                Object.Destroy(child.gameObject);
+                if (child != null)
+                {
+                    Object.Destroy(child.gameObject);
+                }
             }
         }
 
@@ -39,6 +47,12 @@ namespace Game.Level.Spawning
         /// </summary>
         public List<ITargetView> SpawnTargets(LevelConfig config)
         {
+            if (_LevelRoot == null)
+            {
+                Debug.LogWarning("Level root is no longer available. Skipping target spawn.");
+                return new List<ITargetView>();
+            }
+
             ClearLevel();
 
             var spawnedTargets = new List<ITargetView>(config.Targets.Count);

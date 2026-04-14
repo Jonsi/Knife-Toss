@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using Common.Analytics;
 using Common.Analytics.Interfaces;
 using Game.Flow.Interfaces;
@@ -7,7 +8,7 @@ using VContainer.Unity;
 
 namespace Game.Flow.Stage
 {
-    public class StageFlowController : IStageFlowController
+    public class StageFlowController : IStageFlowController, IDisposable
     {
         private readonly StageStateMachine _StateMachine;
         private readonly IAnalyticsService _AnalyticsService;
@@ -31,6 +32,11 @@ namespace Game.Flow.Stage
                 }));
             _StateMachine.Context.StageIndex = stageIndex;
             _StateMachine.SetState(_StateMachine.Loading);
+        }
+
+        public void Dispose()
+        {
+            _StateMachine?.Shutdown();
         }
     }
 }

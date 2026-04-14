@@ -17,12 +17,14 @@ namespace Game.UI.Controllers
 
         [Header("Popups")]
         [SerializeField] private StageFailPopup _StageFailPopup;
+        [SerializeField] private UiElementAnimator _ReturnButtonAnimator;
 
         [Header("Startup Animation")]
         [SerializeField] private UiElementAnimator[] _StartupAnimators;
 
         [Header("Channels")]
         [SerializeField] private LevelFailedEventChannel _LevelFailedChannel;
+        [SerializeField] private LevelStartedEventChannel _LevelStartedChannel;
         [SerializeField] private VoidEventChannel _RetryLevelChannel;
         [SerializeField] private VoidEventChannel _RestartStageChannel;
 
@@ -52,6 +54,7 @@ namespace Game.UI.Controllers
 
         private void Start()
         {
+            HideReturnButton(immediate: true);
             PlayStartupAnimationsAsync().Forget();
         }
 
@@ -59,6 +62,9 @@ namespace Game.UI.Controllers
         {
             if (_LevelFailedChannel != null)
                 _LevelFailedChannel.Subscribe(OnLevelFailed);
+
+            if (_LevelStartedChannel != null)
+                _LevelStartedChannel.Subscribe(OnLevelStarted);
             
             if (_RetryLevelChannel != null)
                 _RetryLevelChannel.Subscribe(OnRetryOrRestart);
@@ -72,6 +78,9 @@ namespace Game.UI.Controllers
             if (_LevelFailedChannel != null)
                 _LevelFailedChannel.Unsubscribe(OnLevelFailed);
 
+            if (_LevelStartedChannel != null)
+                _LevelStartedChannel.Unsubscribe(OnLevelStarted);
+
             if (_RetryLevelChannel != null)
                 _RetryLevelChannel.Unsubscribe(OnRetryOrRestart);
 
@@ -83,12 +92,21 @@ namespace Game.UI.Controllers
         {
             if (_StageFailPopup != null)
                 _StageFailPopup.Show();
+
+            ShowReturnButton();
+        }
+
+        private void OnLevelStarted(LevelStartedEventData data)
+        {
+            HideReturnButton();
         }
 
         private void OnRetryOrRestart()
         {
             if (_StageFailPopup != null)
                 _StageFailPopup.Hide();
+
+            HideReturnButton();
         }
 
         private async UniTaskVoid PlayStartupAnimationsAsync()
@@ -105,6 +123,27 @@ namespace Game.UI.Controllers
             {
                 animator?.PlayIn();
             }
+        }
+
+        private void ShowReturnButton()
+        {
+            _ReturnButtonAnimator?.PlayIn();
+        }
+
+        private void HideReturnButton(bool immediate = false)
+        {
+            if (_ReturnButtonAnimator == null)
+            {
+                return;
+            }
+
+            if (immediate)
+            {
+                _ReturnButtonAnimator.gameObject.SetActive(false);
+                return;
+            }
+
+            _ReturnButtonAnimator.PlayOutAsync().Forget();
         }
     }
 }

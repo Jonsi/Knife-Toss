@@ -1,3 +1,5 @@
+using System;
+using Common.Patterns.State;
 using Common.Analytics;
 using Common.Analytics.Interfaces;
 using Cysharp.Threading.Tasks;
@@ -11,7 +13,7 @@ namespace Game
     /// Top-level flow controller.
     /// Manages the GameStateMachine.
     /// </summary>
-    public class GameFlowController : IStartable
+    public class GameFlowController : IStartable, IDisposable
     {
         private readonly IGameStateMachine _StateMachine;
         private readonly IAnalyticsService _AnalyticsService;
@@ -38,6 +40,14 @@ namespace Game
             await DeferredGameSceneVisibility.WaitForReveal();
             _AnalyticsService?.TrackEvent(new AnalyticsEvent("game_started"));
             _StateMachine.SetState(_StateMachine.Playing);
+        }
+
+        public void Dispose()
+        {
+            if (_StateMachine is StateMachine stateMachine)
+            {
+                stateMachine.Shutdown();
+            }
         }
     }
 }

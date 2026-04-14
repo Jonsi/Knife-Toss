@@ -1782,6 +1782,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: KnifeToss.Presentation::KnifeToss.Presentation.UI.UIController
   _BackgroundImage: {fileID: 1186863425}
   _StageFailPopup: {fileID: 1957040492}
+  _ReturnButtonAnimator: {fileID: 7106381721015004106}
   _StartupAnimators:
   - {fileID: 239220526}
   - {fileID: 41204894}
@@ -1789,6 +1790,7 @@ MonoBehaviour:
   - {fileID: 4610044046254210592}
   - {fileID: 1419487723}
   _LevelFailedChannel: {fileID: 11400000, guid: 604458cf20b3869489fbff706e752db8, type: 2}
+  _LevelStartedChannel: {fileID: 11400000, guid: 8016f38368e175c479eb37bb6b1726fd, type: 2}
   _RetryLevelChannel: {fileID: 11400000, guid: eef8d9c482392e74bb97e0df72cf980b, type: 2}
   _RestartStageChannel: {fileID: 11400000, guid: a8aafdd4ae42ad145876819d5f37bedb, type: 2}
 --- !u!1 &777620290
@@ -7019,7 +7021,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2036229646191269102, guid: 58353aba8a65cb9479373360a5731a0b, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4812087714442154825, guid: 58353aba8a65cb9479373360a5731a0b, type: 3}
       propertyPath: m_Pivot.x
@@ -7126,45 +7128,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2510593192903460413, guid: 58353aba8a65cb9479373360a5731a0b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 895392726202964282}
-    - targetCorrespondingSourceObject: {fileID: 2510593192903460413, guid: 58353aba8a65cb9479373360a5731a0b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 895392726202964281}
   m_SourcePrefab: {fileID: 100100000, guid: 58353aba8a65cb9479373360a5731a0b, type: 3}
 --- !u!1 &895392726202964280 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2510593192903460413, guid: 58353aba8a65cb9479373360a5731a0b, type: 3}
   m_PrefabInstance: {fileID: 895392726202964279}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &895392726202964281
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 895392726202964280}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: -1264001090994096265, guid: aed766853126c8b43b86c1d9c590147a, type: 3}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &895392726202964282
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7519,13 +7488,73 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1389502087507450272, guid: c7fa24327d8ca134282c6928e94ce0e6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7106381721015004106}
+    - targetCorrespondingSourceObject: {fileID: 1389502087507450272, guid: c7fa24327d8ca134282c6928e94ce0e6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7106381721015004107}
   m_SourcePrefab: {fileID: 100100000, guid: c7fa24327d8ca134282c6928e94ce0e6, type: 3}
 --- !u!224 &7106381721015004104 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5608068049859634373, guid: c7fa24327d8ca134282c6928e94ce0e6, type: 3}
   m_PrefabInstance: {fileID: 7106381721015004103}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7106381721015004105 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1389502087507450272, guid: c7fa24327d8ca134282c6928e94ce0e6, type: 3}
+  m_PrefabInstance: {fileID: 7106381721015004103}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7106381721015004106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7106381721015004105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c39b31b8dcb46aabdf1b6f1f66273a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Common.UiElementAnimator
+  _RectTransform: {fileID: 7106381721015004104}
+  _Graphic: {fileID: 0}
+  _PlayInOnEnable: 0
+  _UseUnscaledTime: 1
+  _EnableGameObjectOnPlayIn: 1
+  _DisableGameObjectOnPlayOut: 1
+  _In:
+    _PositionOffset: {x: -18, y: 0}
+    _ScaleMultiplier: {x: 0.98, y: 0.98, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.18
+    _Delay: 0
+    _Ease: 26
+  _Out:
+    _PositionOffset: {x: -18, y: 0}
+    _ScaleMultiplier: {x: 0.98, y: 0.98, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.14
+    _Delay: 0
+    _Ease: 26
+--- !u!114 &7106381721015004107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7106381721015004105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 206ca343f0c9181459b5d9283e4e8958, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Common.LoadMainMenuButton
+  _Button: {fileID: 0}
 --- !u!224 &8461934521052762732 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4781810108337644206, guid: 70cdeaa4f8466ad44bb5ff6ad05e8317, type: 3}

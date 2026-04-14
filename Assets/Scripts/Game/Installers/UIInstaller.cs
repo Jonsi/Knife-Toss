@@ -1,5 +1,6 @@
 using Game.PowerUps.Views;
 using Game.UI.Controllers;
+using Game.UI.Common;
 using Game.UI.Data;
 using Game.UI.HUD;
 using Game.UI.Interfaces;
@@ -63,6 +64,7 @@ namespace Game.Installers
             builder.Register<CoinAccumulationController>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.RegisterComponentInHierarchy<CoinsUiDisplay>();
+            builder.RegisterComponentInHierarchy<LoadMainMenuButton>();
             builder.RegisterComponentInHierarchy<PowerUpHudController>();
             builder.RegisterComponentInHierarchy<SettingsButtonView>();
         }

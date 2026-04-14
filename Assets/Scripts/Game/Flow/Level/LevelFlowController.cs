@@ -2,6 +2,7 @@ using Game.Flow.Interfaces;
 using Game.Flow.Level.States;
 using Game.Level.Configurations.Stage;
 using Game.Level.Data;
+using System;
 using VContainer.Unity;
 
 namespace Game.Flow.Level
@@ -10,7 +11,7 @@ namespace Game.Flow.Level
     /// Manages the flow of a single level.
     /// Controls the LevelStateMachine and exposes commands via ILevelFlowController.
     /// </summary>
-    public class LevelFlowController : ILevelFlowController
+    public class LevelFlowController : ILevelFlowController, IDisposable
     {
         private readonly LevelStateMachine _StateMachine;
 
@@ -32,6 +33,11 @@ namespace Game.Flow.Level
             {
                 _StateMachine.SetState(_StateMachine.Loading);
             }
+        }
+
+        public void Dispose()
+        {
+            _StateMachine?.Shutdown();
         }
     }
 }

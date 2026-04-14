@@ -48,6 +48,14 @@ namespace Common.Patterns.State
         {
             CurrentState?.Update(deltaTime);
         }
+
+        /// <summary>
+        /// Exits the current state and clears it without entering a replacement.
+        /// </summary>
+        public void Shutdown()
+        {
+            CurrentState?.Exit();
+            CurrentState = null;
+        }
     }
 }
-

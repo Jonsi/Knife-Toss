@@ -15,6 +15,14 @@ namespace Game.UI.Common
 
         [Inject] private SceneLoaderService _SceneLoaderService;
 
+        private void Awake()
+        {
+            if (_Button == null)
+            {
+                _Button = GetComponent<Button>();
+            }
+        }
+
         private void Start()
         {
             if (_Button != null)
