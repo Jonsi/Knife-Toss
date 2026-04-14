@@ -17,5 +17,5 @@ MonoBehaviour:
   <DescriptionFormat>k__BackingField: Watch 1 rewarded ad
   <Icon>k__BackingField: {fileID: 21300000, guid: 0caa4313e456e4e37916fa64b01d6bae, type: 3}
   <Rewards>k__BackingField:
-  - {fileID: 11400000, guid: 8657b4d956e348c7b3bab3676b656994, type: 2}
+  - {fileID: 11400000, guid: bfb2ce991f8746a69da3e5284df61481, type: 2}
   <SelectionWeight>k__BackingField: 1

@@ -22,17 +22,7 @@ MonoBehaviour:
       <Currency>k__BackingField: 1
       <Amount>k__BackingField: 250
     <Reward>k__BackingField:
-      rid: 3416527798640915507
-  - <Price>k__BackingField:
-      <Currency>k__BackingField: 1
-      <Amount>k__BackingField: 250
-    <Reward>k__BackingField:
       rid: 6094320976635818241
-  - <Price>k__BackingField:
-      <Currency>k__BackingField: 1
-      <Amount>k__BackingField: 250
-    <Reward>k__BackingField:
-      rid: 2658493414951381988
   <CurrencyPacks>k__BackingField: []
   <Skins>k__BackingField:
   - <Price>k__BackingField:
@@ -103,20 +93,10 @@ MonoBehaviour:
       data:
         <Config>k__BackingField: {fileID: 11400000, guid: 3a7a84bba57c2384b9d72d20c044fcc8, type: 2}
         <Quantity>k__BackingField: 6
-    - rid: 3416527798640915507
-      type: {class: PowerUpReward, ns: Game.Store.Rewards, asm: Game}
-      data:
-        <Config>k__BackingField: {fileID: 11400000, guid: 1876321fac7032f4686bc75a7d13d80e, type: 2}
-        <Quantity>k__BackingField: 6
     - rid: 6094320976635818241
       type: {class: PowerUpReward, ns: Game.Store.Rewards, asm: Game}
       data:
         <Config>k__BackingField: {fileID: 11400000, guid: 6967f4aaf4944e44d951eb0c224f82c6, type: 2}
-        <Quantity>k__BackingField: 6
-    - rid: 2658493414951381988
-      type: {class: PowerUpReward, ns: Game.Store.Rewards, asm: Game}
-      data:
-        <Config>k__BackingField: {fileID: 11400000, guid: 19efc049a25d635499304b0b35176b58, type: 2}
         <Quantity>k__BackingField: 6
     - rid: 8566979025762517408
       type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
