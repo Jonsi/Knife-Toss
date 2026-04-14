@@ -204,6 +204,7 @@ MonoBehaviour:
   _RemoteConfigSettings: {fileID: 11400000, guid: b80493aa5f5497b43ab4f14b27878bf3, type: 2}
   _AnalyticsSettings: {fileID: 11400000, guid: d677b7278f06d92429d78ed796a5483b, type: 2}
   _StoreCatalog: {fileID: 11400000, guid: be6458f09b294b2438f43789174e696f, type: 2}
+  _PrefabsConfiguration: {fileID: 11400000, guid: 89c8339ac5c03a8469b04f345c441a2f, type: 2}
   _DailyMissionCatalog: {fileID: 11400000, guid: d3d2c3e4f5678901a2b3c4d5e6f70890, type: 2}
   _MissionProgressChangedEventChannel: {fileID: 11400000, guid: d1d2c3e4f5678901a2b3c4d5e6f70894, type: 2}
   _MissionCompletedEventChannel: {fileID: 11400000, guid: d2d2c3e4f5678901a2b3c4d5e6f70895, type: 2}
@@ -343,6 +344,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game::Game.Ads.UI.MockAdPopupBridge
   _Popup: {fileID: 5736173070702135766}
+  _CanvasScaler: {fileID: 0}
 --- !u!1001 &3261063516739122302
 PrefabInstance:
   m_ObjectHideFlags: 0

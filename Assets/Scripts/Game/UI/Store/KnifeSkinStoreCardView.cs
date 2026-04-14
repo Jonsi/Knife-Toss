@@ -1,6 +1,7 @@
 using Game.Store.Data;
 using Game.Store.Rewards;
-using TMPro;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,69 +15,114 @@ namespace Game.UI.Store
         [Header("Knife Skin State UI")]
         [SerializeField] private GameObject _PricePillRoot;
         [SerializeField] private Button _EquipButton;
-        [SerializeField] private TMP_Text _EquipButtonText;
-        [SerializeField] private string _BuyButtonLabel = "Buy";
-        [SerializeField] private string _EquipButtonLabel = "Equip";
-        [SerializeField] private string _EquippedButtonLabel = "Equipped";
-        [SerializeField] private Color _BuyColor = Color.white;
-        [SerializeField] private Color _BuyTextColor = Color.white;
-        [SerializeField] private Color _EquipColor = Color.white;
-        [SerializeField] private Color _EquippedColor = Color.gray;
-        [SerializeField] private Color _EquipTextColor = Color.white;
-        [SerializeField] private Color _EquippedTextColor = Color.white;
+        [SerializeField] private float _PurchasedOutDuration = 0.26f;
+        [SerializeField] private float _PurchasedCollapseDuration = 0.18f;
+        [SerializeField] private float _PurchasedOutOffsetY = 48f;
 
-        private void OnEnable()
+        private CanvasGroup _CanvasGroup;
+        private RectTransform _RectTransform;
+        private LayoutElement _LayoutElement;
+        private Vector3 _BaseScale;
+        private Vector2 _BaseSizeDelta;
+        private float _BaseMinWidth;
+        private float _BasePreferredWidth;
+        private bool _HasCachedTransformState;
+        private bool _IsPurchasedOut;
+
+        private void Awake()
         {
             if (_EquipButton != null)
             {
-                _EquipButton.onClick.RemoveListener(OnEquipPressed);
-                _EquipButton.onClick.AddListener(OnEquipPressed);
+                _EquipButton.gameObject.SetActive(false);
+            }
+        }
+
+        public void SetAvailableState(bool canInteract)
+        {
+            if (_IsPurchasedOut)
+            {
+                return;
+            }
+
+            gameObject.SetActive(true);
+            EnsureAnimationState();
+            _RectTransform.localScale = _BaseScale;
+            _RectTransform.sizeDelta = _BaseSizeDelta;
+            _CanvasGroup.alpha = 1f;
+            if (_LayoutElement != null)
+            {
+                _LayoutElement.minWidth = _BaseMinWidth;
+                _LayoutElement.preferredWidth = _BasePreferredWidth;
+            }
+            SetPricePillVisible(true);
+            SetInteractable(canInteract);
+        }
+
+        public async UniTask PlayPurchasedOutAsync()
+        {
+            if (_IsPurchasedOut)
+            {
+                return;
+            }
+
+            _IsPurchasedOut = true;
+            EnsureAnimationState();
+            SetInteractable(false);
+            SetPricePillVisible(false);
+
+            var startPosition = _RectTransform.anchoredPosition;
+            var targetPosition = startPosition + Vector2.up * _PurchasedOutOffsetY;
+            var sequence = DOTween.Sequence().SetTarget(this).SetUpdate(true);
+            sequence.Join(_RectTransform.DOAnchorPos(targetPosition, _PurchasedOutDuration).SetEase(Ease.InQuad));
+            sequence.Join(_CanvasGroup.DOFade(0f, _PurchasedOutDuration).SetEase(Ease.InQuad));
+
+            await UniTask.Delay(Mathf.CeilToInt(_PurchasedOutDuration * 1000f), ignoreTimeScale: true);
+
+            if (sequence.IsActive())
+            {
+                sequence.Kill();
+            }
+
+            if (_LayoutElement != null)
+            {
+                var collapsedSize = _BaseSizeDelta;
+                collapsedSize.x = 0f;
+                var collapseSequence = DOTween.Sequence().SetTarget(this).SetUpdate(true);
+                collapseSequence.Join(_RectTransform.DOSizeDelta(collapsedSize, _PurchasedCollapseDuration).SetEase(Ease.InQuad));
+                collapseSequence.Join(DOTween.To(
+                    () => _LayoutElement.preferredWidth,
+                    width => _LayoutElement.preferredWidth = width,
+                    0f,
+                    _PurchasedCollapseDuration).SetEase(Ease.InQuad));
+                collapseSequence.Join(DOTween.To(
+                    () => _LayoutElement.minWidth,
+                    width => _LayoutElement.minWidth = width,
+                    0f,
+                    _PurchasedCollapseDuration).SetEase(Ease.InQuad));
+
+                await UniTask.Delay(Mathf.CeilToInt(_PurchasedCollapseDuration * 1000f), ignoreTimeScale: true);
+
+                if (collapseSequence.IsActive())
+                {
+                    collapseSequence.Kill();
+                }
+            }
+
+            Destroy(gameObject);
+        }
+
+        protected override void BindEntry(PurchasableEntry entry)
+        {
+            if (entry?.Reward is KnifeSkinReward knifeSkinReward && knifeSkinReward.Config != null)
+            {
+                SetDisplaySprite(knifeSkinReward.Config.Icon);
             }
         }
 
         protected override void OnDisable()
         {
-            if (_EquipButton != null)
-            {
-                _EquipButton.onClick.RemoveListener(OnEquipPressed);
-            }
-
+            DOTween.Kill(this);
             base.OnDisable();
-        }
-
-        public void SetState(bool isOwned, bool isEquipped, bool canInteract)
-        {
-            SetPricePillVisible(!isOwned);
-            SetButtonVisible(isOwned);
-
-            if (!isOwned)
-            {
-                SetInteractable(canInteract);
-                SetButtonLabel(_BuyButtonLabel);
-                return;
-            }
-
-            if (isEquipped)
-            {
-                ApplyEquippedState();
-                return;
-            }
-
-            ApplyEquipState(canInteract);
-        }
-
-        private void ApplyEquipState(bool canInteract)
-        {
-            SetButtonLabel(_EquipButtonLabel);
-            SetButtonStyle(_EquipColor, _EquipTextColor);
-            SetActionInteractable(canInteract);
-        }
-
-        private void ApplyEquippedState()
-        {
-            SetButtonLabel(_EquippedButtonLabel);
-            SetButtonStyle(_EquippedColor, _EquippedTextColor);
-            SetActionInteractable(false);
         }
 
         private void SetPricePillVisible(bool visible)
@@ -89,73 +135,37 @@ namespace Game.UI.Store
             PricePill?.SetVisible(visible);
         }
 
-        private void SetButtonVisible(bool visible)
+        private void EnsureAnimationState()
         {
-            if (_EquipButton != null)
+            if (_RectTransform == null)
             {
-                _EquipButton.gameObject.SetActive(visible);
-            }
-        }
-
-        private void SetButtonLabel(string label)
-        {
-            if (_EquipButtonText != null)
-            {
-                _EquipButtonText.text = label;
-            }
-        }
-
-        private void SetButtonStyle(Color buttonColor, Color textColor)
-        {
-            if (_EquipButton != null)
-            {
-                SetButtonColors(_EquipButton, buttonColor);
+                _RectTransform = transform as RectTransform;
             }
 
-            if (_EquipButtonText != null)
+            if (_CanvasGroup == null)
             {
-                _EquipButtonText.color = textColor;
+                _CanvasGroup = GetComponent<CanvasGroup>();
+                if (_CanvasGroup == null)
+                {
+                    _CanvasGroup = gameObject.AddComponent<CanvasGroup>();
+                }
             }
-        }
 
-        private void SetActionInteractable(bool canInteract)
-        {
-            SetInteractable(canInteract);
+            _LayoutElement ??= GetComponent<LayoutElement>();
 
-            if (_EquipButton != null)
-            {
-                _EquipButton.interactable = canInteract;
-            }
-        }
-
-        private void OnEquipPressed()
-        {
-            if (BuyButton == null || ReferenceEquals(BuyButton, _EquipButton))
+            if (_HasCachedTransformState || _RectTransform == null)
             {
                 return;
             }
 
-            BuyButton.onClick.Invoke();
-        }
-
-        private static void SetButtonColors(Button button, Color baseColor)
-        {
-            var colors = button.colors;
-            colors.normalColor = baseColor;
-            colors.highlightedColor = baseColor;
-            colors.pressedColor = baseColor;
-            colors.selectedColor = baseColor;
-            colors.disabledColor = baseColor;
-            colors.colorMultiplier = 1f;
-            button.colors = colors;
-        }
-
-        protected override void BindEntry(PurchasableEntry entry)
-        {
-            if (entry?.Reward is KnifeSkinReward knifeSkinReward && knifeSkinReward.Config != null)
+            _BaseScale = _RectTransform.localScale;
+            _BaseSizeDelta = _RectTransform.sizeDelta;
+            if (_LayoutElement != null)
             {
-                SetDisplaySprite(knifeSkinReward.Config.Icon);
+                _BaseMinWidth = _LayoutElement.minWidth;
+                _BasePreferredWidth = _LayoutElement.preferredWidth;
             }
+            _HasCachedTransformState = true;
         }
     }
 }

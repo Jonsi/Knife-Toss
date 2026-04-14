@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using Game.Persistence.Services;
+using Game.Pooling;
 using Game.Store.Configs;
 using Game.Store.Data;
 using Game.Store.Rewards;
+using UnityEngine;
 using VContainer;
 
 namespace Game.Store.Services
@@ -15,9 +17,13 @@ namespace Game.Store.Services
         private readonly PlayerDataService _PlayerDataService;
         private readonly IObjectResolver _Resolver;
         private readonly Dictionary<string, KnifeSkinConfig> _ConfigLookup = new Dictionary<string, KnifeSkinConfig>();
+        private readonly List<KnifeSkinConfig> _OrderedConfigs = new List<KnifeSkinConfig>();
 
         private StoreCatalog _CachedCatalog;
+        private PrefabsConfiguration _CachedPrefabsConfiguration;
         private bool _HasResolvedCatalog;
+        private bool _HasResolvedPrefabsConfiguration;
+        private const string DefaultKnifeDisplayName = "Default";
 
         public KnifeSkinService(PlayerDataService playerDataService, IObjectResolver resolver)
         {
@@ -32,16 +38,6 @@ namespace Game.Store.Services
                 _PlayerDataService.EnsureKnifeSkinCollection().IsUnlocked(skinId);
         }
 
-        public bool IsEquipped(string skinId)
-        {
-            if (string.IsNullOrEmpty(skinId) || _PlayerDataService == null)
-            {
-                return false;
-            }
-
-            return _PlayerDataService.EnsureKnifeSkinCollection().EquippedId == skinId;
-        }
-
         public string GetEquippedId()
         {
             return _PlayerDataService != null
@@ -51,13 +47,20 @@ namespace Game.Store.Services
 
         public bool TryEquip(string skinId)
         {
-            if (string.IsNullOrEmpty(skinId) || _PlayerDataService == null)
+            if (_PlayerDataService == null)
             {
                 return false;
             }
 
             var collection = _PlayerDataService.EnsureKnifeSkinCollection();
-            if (!collection.Equip(skinId))
+            skinId ??= string.Empty;
+
+            if (collection.EquippedId == skinId)
+            {
+                return true;
+            }
+
+            if (!collection.SetEquipped(skinId))
             {
                 return false;
             }
@@ -69,6 +72,52 @@ namespace Game.Store.Services
         public void ReloadState()
         {
             _PlayerDataService?.ReloadKnifeSkinCollection();
+        }
+
+        public IReadOnlyList<KnifeSkinSelectionOption> GetSelectableOptions()
+        {
+            var options = new List<KnifeSkinSelectionOption>
+            {
+                new KnifeSkinSelectionOption(string.Empty, DefaultKnifeDisplayName, GetDefaultKnifeSprite())
+            };
+
+            EnsureConfigLookup();
+
+            for (var i = 0; i < _OrderedConfigs.Count; i++)
+            {
+                var config = _OrderedConfigs[i];
+                if (config == null || string.IsNullOrEmpty(config.Id) || !IsUnlocked(config.Id))
+                {
+                    continue;
+                }
+
+                options.Add(new KnifeSkinSelectionOption(
+                    config.Id,
+                    config.GetItemDisplayName(),
+                    config.GetKnifeSprite(),
+                    config));
+            }
+
+            return options;
+        }
+
+        public int GetSelectedOptionIndex(IReadOnlyList<KnifeSkinSelectionOption> options)
+        {
+            if (options == null || options.Count == 0)
+            {
+                return -1;
+            }
+
+            var equippedId = GetEquippedId();
+            for (var i = 0; i < options.Count; i++)
+            {
+                if (options[i].SkinId == equippedId)
+                {
+                    return i;
+                }
+            }
+
+            return 0;
         }
 
         public KnifeSkinConfig GetEquippedConfig()
@@ -121,6 +170,7 @@ namespace Game.Store.Services
                 }
 
                 _ConfigLookup.Add(config.Id, config);
+                _OrderedConfigs.Add(config);
             }
         }
 
@@ -148,6 +198,38 @@ namespace Game.Store.Services
             }
 
             return _CachedCatalog;
+        }
+
+        private Sprite GetDefaultKnifeSprite()
+        {
+            var prefabsConfiguration = TryResolvePrefabsConfiguration();
+            return prefabsConfiguration?.GetDefaultKnifePrefab()?.SpriteRenderer?.sprite;
+        }
+
+        private PrefabsConfiguration TryResolvePrefabsConfiguration()
+        {
+            if (_HasResolvedPrefabsConfiguration)
+            {
+                return _CachedPrefabsConfiguration;
+            }
+
+            _HasResolvedPrefabsConfiguration = true;
+
+            if (_Resolver == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                _CachedPrefabsConfiguration = _Resolver.Resolve<PrefabsConfiguration>();
+            }
+            catch
+            {
+                _CachedPrefabsConfiguration = null;
+            }
+
+            return _CachedPrefabsConfiguration;
         }
     }
 }

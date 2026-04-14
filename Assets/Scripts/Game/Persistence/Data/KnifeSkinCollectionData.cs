@@ -30,7 +30,14 @@ namespace Game.Persistence.Data
 
         public bool Equip(string skinId)
         {
-            if (!IsUnlocked(skinId))
+            return SetEquipped(skinId);
+        }
+
+        public bool SetEquipped(string skinId)
+        {
+            skinId ??= string.Empty;
+
+            if (!string.IsNullOrEmpty(skinId) && !IsUnlocked(skinId))
             {
                 return false;
             }

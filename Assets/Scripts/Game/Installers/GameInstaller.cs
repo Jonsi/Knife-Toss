@@ -10,6 +10,7 @@ using Game.Input;
 using Game.KnifeThrower.Interfaces;
 using Game.Missions.Configs;
 using Game.Missions.Events;
+using Game.Pooling;
 using Game.Settings;
 using Game.UI.Services;
 using Game.Feedback.Audio.Interfaces;
@@ -49,6 +50,7 @@ namespace Game.Installers
         [SerializeField] private Common.Services.RemoteConfig.RemoteConfigSettings _RemoteConfigSettings;
         [SerializeField] private AnalyticsSettings _AnalyticsSettings;
         [SerializeField] private StoreCatalog _StoreCatalog;
+        [SerializeField] private PrefabsConfiguration _PrefabsConfiguration;
 
         [Header("Missions")]
         [SerializeField] private MissionCatalog _DailyMissionCatalog;
@@ -98,6 +100,11 @@ namespace Game.Installers
             if (_StoreCatalog != null)
             {
                 builder.RegisterInstance(_StoreCatalog).AsSelf();
+            }
+
+            if (_PrefabsConfiguration != null)
+            {
+                builder.RegisterInstance(_PrefabsConfiguration).AsSelf();
             }
 
 #if TEST_ENABLED

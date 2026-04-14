@@ -21,6 +21,7 @@ namespace Game.UI.Common
         [field: SerializeField] public Color IncreaseFlashColor { get; private set; } = new Color(1f, 0.9f, 0.35f, 1f);
         [field: SerializeField] public Color DecreaseFlashColor { get; private set; } = new Color(1f, 0.45f, 0.35f, 1f);
         [field: SerializeField] public float ColorFlashDuration { get; private set; } = 0.2f;
+        [field: SerializeField] public bool UseUnscaledTime { get; private set; } = true;
 
         private ICurrencyService _CurrencyService;
         private CurrencyAccumulationConfig _AccumulationConfig;
@@ -187,6 +188,7 @@ namespace Game.UI.Common
             }
 
             _ActiveSequence = DOTween.Sequence();
+            _ActiveSequence.SetUpdate(UseUnscaledTime);
             _ValueTween = DOTween.To(
                 () => _DisplayedValue,
                 currentValue =>
@@ -195,14 +197,14 @@ namespace Game.UI.Common
                     BalanceText.text = FormatBalance(currentValue);
                 },
                 value,
-                CountTweenDuration).SetEase(Ease.OutQuad);
+                CountTweenDuration).SetEase(Ease.OutQuad).SetUpdate(UseUnscaledTime);
 
             _ActiveSequence.Join(_ValueTween);
-            _ActiveSequence.Join(BalanceText.rectTransform.DOScale(_BaseScale * ScalePulseMultiplier, ScalePulseDuration).SetLoops(2, LoopType.Yoyo).SetEase(Ease.OutQuad));
+            _ActiveSequence.Join(BalanceText.rectTransform.DOScale(_BaseScale * ScalePulseMultiplier, ScalePulseDuration).SetLoops(2, LoopType.Yoyo).SetEase(Ease.OutQuad).SetUpdate(UseUnscaledTime));
 
             Color flashColor = amountChanged > 0 ? IncreaseFlashColor : DecreaseFlashColor;
-            _ActiveSequence.Join(BalanceText.DOColor(flashColor, ColorFlashDuration));
-            _ActiveSequence.Append(BalanceText.DOColor(_BaseTextColor, ColorFlashDuration));
+            _ActiveSequence.Join(BalanceText.DOColor(flashColor, ColorFlashDuration).SetUpdate(UseUnscaledTime));
+            _ActiveSequence.Append(BalanceText.DOColor(_BaseTextColor, ColorFlashDuration).SetUpdate(UseUnscaledTime));
             _ActiveSequence.OnComplete(() =>
             {
                 _DisplayedValue = value;
@@ -243,7 +245,7 @@ namespace Game.UI.Common
                 return false;
             }
 
-            _BurstAnimator = new CurrencyBurstAnimator(_ParentCanvas, BalanceText.rectTransform, _AccumulationConfig);
+            _BurstAnimator = new CurrencyBurstAnimator(_ParentCanvas, BalanceText.rectTransform, _AccumulationConfig, UseUnscaledTime);
             return _BurstAnimator.IsValid;
         }
 

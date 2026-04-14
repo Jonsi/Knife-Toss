@@ -1,7 +1,9 @@
+using System;
 using Common.Ads.Data;
 using Common.Ads.Providers;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game.Ads.UI
 {
@@ -21,9 +23,24 @@ namespace Game.Ads.UI
     public class MockAdPopupBridge : MonoBehaviour
     {
         [SerializeField] private MockAdPopup _Popup;
+        [SerializeField] private CanvasScaler _CanvasScaler;
 
         private MockAdProvider _Provider;
         private MockAdSettings _Settings;
+
+        private void Awake()
+        {
+            if (_CanvasScaler == null)
+                _CanvasScaler = GetComponent<CanvasScaler>();
+
+            if (_CanvasScaler == null)
+                return;
+
+            _CanvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            _CanvasScaler.referenceResolution = new Vector2(800f, 600f);
+            _CanvasScaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+            _CanvasScaler.matchWidthOrHeight = 0f;
+        }
 
         /// <summary>
         /// Receives dependencies from VContainer injection.
@@ -44,6 +61,10 @@ namespace Game.Ads.UI
 
         private UniTaskCompletionSource<AdResult> OnAdRequested(AdPlacement placement)
         {
+            Debug.Log(
+                $"[MockAdPopupBridge] Presenting mock ad popup. Placement={placement?.PlacementKey}, Type={placement?.GetType().Name}\n" +
+                $"{Environment.StackTrace}");
+
             var tcs = new UniTaskCompletionSource<AdResult>();
 
             if (_Popup != null)

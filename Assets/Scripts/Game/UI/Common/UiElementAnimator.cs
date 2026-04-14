@@ -20,11 +20,13 @@ namespace Game.UI.Common
         [SerializeField] private bool _UseUnscaledTime = true;
         [SerializeField] private bool _EnableGameObjectOnPlayIn = true;
         [SerializeField] private bool _DisableGameObjectOnPlayOut = true;
+        [SerializeField] private IdleAnimationSettings _IdleAnimation = IdleAnimationSettings.Disabled();
         [SerializeField] private AnimationSettings _In = AnimationSettings.DefaultIn();
         [SerializeField] private AnimationSettings _Out = AnimationSettings.DefaultOut();
 
         private CanvasGroup _CanvasGroup;
         private Sequence _ActiveSequence;
+        private Tween _IdleAnimationTween;
         private bool _HasCachedState;
         private Vector2 _BaseAnchoredPosition;
         private Vector3 _BaseScale;
@@ -101,6 +103,7 @@ namespace Game.UI.Common
             KillSequence();
             ApplyState(_In);
             _ActiveSequence = CreateTweenToBaseState(_In);
+            _ActiveSequence.OnComplete(StartIdleAnimationIfNeeded);
             return _ActiveSequence;
         }
 
@@ -257,6 +260,8 @@ namespace Game.UI.Common
 
         private void KillSequence()
         {
+            KillIdleAnimation();
+
             if (_ActiveSequence != null)
             {
                 _ActiveSequence.Kill();
@@ -277,6 +282,66 @@ namespace Game.UI.Common
             {
                 DOTween.Kill(_CanvasGroup);
             }
+        }
+
+        private void StartIdleAnimationIfNeeded()
+        {
+            KillIdleAnimation();
+
+            if (_IdleAnimation.Mode == IdleAnimationMode.None || _RectTransform == null)
+            {
+                return;
+            }
+
+            switch (_IdleAnimation.Mode)
+            {
+                case IdleAnimationMode.Heartbeat:
+                    _IdleAnimationTween = CreateHeartbeatIdleTween();
+                    break;
+            }
+        }
+
+        private Tween CreateHeartbeatIdleTween()
+        {
+            Sequence sequence = DOTween.Sequence();
+
+            if (_UseUnscaledTime)
+            {
+                sequence.SetUpdate(true);
+            }
+
+            sequence.AppendInterval(Mathf.Max(0f, _IdleAnimation.InitialDelay));
+            sequence.Append(_RectTransform.DOScale(_BaseScale * _IdleAnimation.PrimaryScaleMultiplier, _IdleAnimation.UpDuration).SetEase(_IdleAnimation.UpEase));
+            sequence.Append(_RectTransform.DOScale(_BaseScale, _IdleAnimation.DownDuration).SetEase(_IdleAnimation.DownEase));
+            sequence.Append(_RectTransform.DOScale(_BaseScale * _IdleAnimation.SecondaryScaleMultiplier, _IdleAnimation.SecondaryUpDuration).SetEase(_IdleAnimation.UpEase));
+            sequence.Append(_RectTransform.DOScale(_BaseScale, _IdleAnimation.SecondaryDownDuration).SetEase(_IdleAnimation.DownEase));
+            sequence.AppendInterval(Mathf.Max(0f, _IdleAnimation.BetweenLoopsDelay));
+            sequence.SetLoops(-1, LoopType.Restart);
+            sequence.OnKill(() =>
+            {
+                if (_RectTransform != null)
+                {
+                    _RectTransform.localScale = _BaseScale;
+                }
+
+                if (_IdleAnimationTween == sequence)
+                {
+                    _IdleAnimationTween = null;
+                }
+            });
+
+            return sequence;
+        }
+
+        private void KillIdleAnimation()
+        {
+            if (_IdleAnimationTween == null)
+            {
+                return;
+            }
+
+            _IdleAnimationTween.Kill();
+            _IdleAnimationTween = null;
         }
 
         [Serializable]
@@ -319,6 +384,49 @@ namespace Game.UI.Common
                     _Alpha = 0f,
                     _Duration = 0.22f,
                     _Ease = Ease.InBack
+                };
+            }
+        }
+
+        [Serializable]
+        public enum IdleAnimationMode
+        {
+            None = 0,
+            Heartbeat = 1
+        }
+
+        [Serializable]
+        public sealed class IdleAnimationSettings
+        {
+            [SerializeField] private IdleAnimationMode _Mode;
+            [SerializeField, Min(1f)] private float _PrimaryScaleMultiplier = 1.04f;
+            [SerializeField, Min(1f)] private float _SecondaryScaleMultiplier = 1.02f;
+            [SerializeField, Min(0f)] private float _UpDuration = 0.12f;
+            [SerializeField, Min(0f)] private float _DownDuration = 0.1f;
+            [SerializeField, Min(0f)] private float _SecondaryUpDuration = 0.09f;
+            [SerializeField, Min(0f)] private float _SecondaryDownDuration = 0.08f;
+            [SerializeField, Min(0f)] private float _BetweenLoopsDelay = 0.72f;
+            [SerializeField, Min(0f)] private float _InitialDelay = 0.18f;
+            [SerializeField] private Ease _UpEase = Ease.OutQuad;
+            [SerializeField] private Ease _DownEase = Ease.InQuad;
+
+            public IdleAnimationMode Mode => _Mode;
+            public float PrimaryScaleMultiplier => _PrimaryScaleMultiplier;
+            public float SecondaryScaleMultiplier => _SecondaryScaleMultiplier;
+            public float UpDuration => _UpDuration;
+            public float DownDuration => _DownDuration;
+            public float SecondaryUpDuration => _SecondaryUpDuration;
+            public float SecondaryDownDuration => _SecondaryDownDuration;
+            public float BetweenLoopsDelay => _BetweenLoopsDelay;
+            public float InitialDelay => _InitialDelay;
+            public Ease UpEase => _UpEase;
+            public Ease DownEase => _DownEase;
+
+            public static IdleAnimationSettings Disabled()
+            {
+                return new IdleAnimationSettings
+                {
+                    _Mode = IdleAnimationMode.None
                 };
             }
         }

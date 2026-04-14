@@ -223,6 +223,18 @@ MonoBehaviour:
   _UseUnscaledTime: 1
   _EnableGameObjectOnPlayIn: 1
   _DisableGameObjectOnPlayOut: 1
+  _IdleAnimation:
+    _Mode: 0
+    _PrimaryScaleMultiplier: 1.04
+    _SecondaryScaleMultiplier: 1.02
+    _UpDuration: 0.12
+    _DownDuration: 0.1
+    _SecondaryUpDuration: 0.09
+    _SecondaryDownDuration: 0.08
+    _BetweenLoopsDelay: 0.72
+    _InitialDelay: 0.18
+    _UpEase: 6
+    _DownEase: 5
   _In:
     _PositionOffset: {x: 22, y: 0}
     _ScaleMultiplier: {x: 0.98, y: 0.98, z: 1}
@@ -541,6 +553,18 @@ MonoBehaviour:
   _UseUnscaledTime: 1
   _EnableGameObjectOnPlayIn: 0
   _DisableGameObjectOnPlayOut: 0
+  _IdleAnimation:
+    _Mode: 0
+    _PrimaryScaleMultiplier: 1.04
+    _SecondaryScaleMultiplier: 1.02
+    _UpDuration: 0.12
+    _DownDuration: 0.1
+    _SecondaryUpDuration: 0.09
+    _SecondaryDownDuration: 0.08
+    _BetweenLoopsDelay: 0.72
+    _InitialDelay: 0.18
+    _UpEase: 6
+    _DownEase: 5
   _In:
     _PositionOffset: {x: 0, y: 18}
     _ScaleMultiplier: {x: 0.98, y: 0.98, z: 1}
@@ -701,6 +725,18 @@ MonoBehaviour:
   _UseUnscaledTime: 1
   _EnableGameObjectOnPlayIn: 1
   _DisableGameObjectOnPlayOut: 1
+  _IdleAnimation:
+    _Mode: 0
+    _PrimaryScaleMultiplier: 1.04
+    _SecondaryScaleMultiplier: 1.02
+    _UpDuration: 0.12
+    _DownDuration: 0.1
+    _SecondaryUpDuration: 0.09
+    _SecondaryDownDuration: 0.08
+    _BetweenLoopsDelay: 0.72
+    _InitialDelay: 0.18
+    _UpEase: 6
+    _DownEase: 5
   _In:
     _PositionOffset: {x: -22, y: 0}
     _ScaleMultiplier: {x: 0.98, y: 0.98, z: 1}
@@ -1767,8 +1803,9 @@ GameObject:
   - component: {fileID: 733735963}
   - component: {fileID: 733735965}
   - component: {fileID: 733735964}
+  - component: {fileID: 733735966}
   m_Layer: 5
-  m_Name: Image
+  m_Name: KnivesImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1831,6 +1868,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 733735962}
   m_CullTransparentMesh: 1
+--- !u!114 &733735966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 733735962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c39b31b8dcb46aabdf1b6f1f66273a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Common.UiElementAnimator
+  _RectTransform: {fileID: 733735963}
+  _Graphic: {fileID: 733735964}
+  _PlayInOnEnable: 1
+  _UseUnscaledTime: 1
+  _EnableGameObjectOnPlayIn: 1
+  _DisableGameObjectOnPlayOut: 0
+  _IdleAnimation:
+    _Mode: 1
+    _PrimaryScaleMultiplier: 1.035
+    _SecondaryScaleMultiplier: 1.015
+    _UpDuration: 0.11
+    _DownDuration: 0.08
+    _SecondaryUpDuration: 0.06
+    _SecondaryDownDuration: 0.06
+    _BetweenLoopsDelay: 0.78
+    _InitialDelay: 0.22
+    _UpEase: 26
+    _DownEase: 25
+  _In:
+    _PositionOffset: {x: 0, y: 28}
+    _ScaleMultiplier: {x: 0.88, y: 0.88, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.2
+    _Delay: 0
+    _Ease: 27
+  _Out:
+    _PositionOffset: {x: 0, y: 18}
+    _ScaleMultiplier: {x: 0.94, y: 0.94, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 0}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.14
+    _Delay: 0
+    _Ease: 26
 --- !u!1 &777620290
 GameObject:
   m_ObjectHideFlags: 0
@@ -4787,6 +4872,18 @@ MonoBehaviour:
   _UseUnscaledTime: 1
   _EnableGameObjectOnPlayIn: 1
   _DisableGameObjectOnPlayOut: 1
+  _IdleAnimation:
+    _Mode: 0
+    _PrimaryScaleMultiplier: 1.04
+    _SecondaryScaleMultiplier: 1.02
+    _UpDuration: 0.12
+    _DownDuration: 0.1
+    _SecondaryUpDuration: 0.09
+    _SecondaryDownDuration: 0.08
+    _BetweenLoopsDelay: 0.72
+    _InitialDelay: 0.18
+    _UpEase: 6
+    _DownEase: 5
   _In:
     _PositionOffset: {x: 28, y: 0}
     _ScaleMultiplier: {x: 0.99, y: 0.99, z: 1}
@@ -6971,7 +7068,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2036229646191269102, guid: 58353aba8a65cb9479373360a5731a0b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4812087714442154825, guid: 58353aba8a65cb9479373360a5731a0b, type: 3}
       propertyPath: m_Pivot.x
@@ -7220,6 +7317,18 @@ MonoBehaviour:
   _UseUnscaledTime: 1
   _EnableGameObjectOnPlayIn: 0
   _DisableGameObjectOnPlayOut: 0
+  _IdleAnimation:
+    _Mode: 0
+    _PrimaryScaleMultiplier: 1.04
+    _SecondaryScaleMultiplier: 1.02
+    _UpDuration: 0.12
+    _DownDuration: 0.1
+    _SecondaryUpDuration: 0.09
+    _SecondaryDownDuration: 0.08
+    _BetweenLoopsDelay: 0.72
+    _InitialDelay: 0.18
+    _UpEase: 6
+    _DownEase: 5
   _In:
     _PositionOffset: {x: 0, y: -18}
     _ScaleMultiplier: {x: 0.98, y: 0.98, z: 1}
@@ -7502,6 +7611,18 @@ MonoBehaviour:
   _UseUnscaledTime: 1
   _EnableGameObjectOnPlayIn: 1
   _DisableGameObjectOnPlayOut: 1
+  _IdleAnimation:
+    _Mode: 0
+    _PrimaryScaleMultiplier: 1.04
+    _SecondaryScaleMultiplier: 1.02
+    _UpDuration: 0.12
+    _DownDuration: 0.1
+    _SecondaryUpDuration: 0.09
+    _SecondaryDownDuration: 0.08
+    _BetweenLoopsDelay: 0.72
+    _InitialDelay: 0.18
+    _UpEase: 6
+    _DownEase: 5
   _In:
     _PositionOffset: {x: -18, y: 0}
     _ScaleMultiplier: {x: 0.98, y: 0.98, z: 1}
