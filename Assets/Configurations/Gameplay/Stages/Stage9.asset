@@ -19,6 +19,12 @@ MonoBehaviour:
     <StageIcon>k__BackingField: {fileID: 650656284835190746, guid: cbb99ac174ee80b4aa2130f2640805ef, type: 3}
   <Rewards>k__BackingField:
   - {fileID: 11400000, guid: 2e3f071ef9391074a8d9597d424f8b46, type: 2}
+  <ContinueCosts>k__BackingField:
+  - 0
+  - 50
+  - 100
+  - 150
+  - 200
   <Levels>k__BackingField:
   - <KnifeCount>k__BackingField: 0
     <ExtraKnives>k__BackingField: 0

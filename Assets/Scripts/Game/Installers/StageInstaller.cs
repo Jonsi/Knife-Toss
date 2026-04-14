@@ -289,14 +289,15 @@ namespace Game.Installers
             if (_ContinuePlacement != null && _ContinueRequestedChannel != null)
             {
                 builder.Register(resolver => new AdRewardController(
-                    resolver.Resolve<IAdService>(),
-                    resolver.Resolve<AdSettings>(),
-                    _ContinuePlacement,
-                    resolver.Resolve<IRewardGrantContext>(),
                     _ContinueRequestedChannel,
                     _RetryLevelClickedChannel,
                     _RestartStageClickedChannel,
                     resolver.Resolve<LevelFailedEventChannel>(),
+                    _CurrencyBalanceChangedEventChannel,
+                    resolver.Resolve<Game.Economy.Interfaces.ICurrencyService>(),
+                    resolver.Resolve<Game.Level.Interfaces.ILevelCatalog>(),
+                    resolver.Resolve<Game.Flow.Stage.StageData>(),
+                    _ContinuePlacement,
                     resolver.Resolve<StageFailPopup>()
                 ), Lifetime.Scoped).AsImplementedInterfaces();
             }

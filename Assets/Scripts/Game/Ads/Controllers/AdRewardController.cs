@@ -1,62 +1,60 @@
 using System;
-using Common.Ads.Data;
-using Common.Ads.Interfaces;
 using Common.Events;
-using Cysharp.Threading.Tasks;
 using Game.Ads.Data;
-using Game.Ads.Extensions;
+using Game.Economy.Data;
+using Game.Economy.Events;
+using Game.Economy.Interfaces;
 using Game.Flow.Events;
 using Game.Flow.Level;
-using Common.Rewards.Interfaces;
+using Game.Flow.Stage;
+using Game.Level.Interfaces;
 using Game.UI.Popups;
 using VContainer.Unity;
 
 namespace Game.Ads.Controllers
 {
     /// <summary>
-    /// Orchestrates the rewarded-ad "Continue after failure" flow.
-    /// Listens for the player requesting a continue, shows a rewarded ad via <see cref="IAdService"/>,
-    /// and on success grants any configured reward and triggers a level retry
-    /// using the existing retry channel — which reloads the current level without resetting stage progress.
-    /// On ad failure (e.g. user taps Fail, network error), triggers stage restart so the player
-    /// does not continue from the same level.
-    /// Also refreshes the continue button's availability each time the fail popup appears.
+    /// Orchestrates the paid "Continue after failure" flow.
+    /// Spends the configured per-level coin cost and retriggers the current level without resetting stage progress.
     /// </summary>
     public class AdRewardController : IStartable, IDisposable
     {
-        private readonly IAdService _AdService;
-        private readonly AdSettings _AdSettings;
-        private readonly RewardedPlacement _ContinuePlacement;
-        private readonly IRewardGrantContext _GrantContext;
         private readonly VoidEventChannel _ContinueRequestedChannel;
         private readonly VoidEventChannel _RetryLevelChannel;
         private readonly VoidEventChannel _RestartStageChannel;
         private readonly LevelFailedEventChannel _LevelFailedChannel;
+        private readonly CurrencyBalanceChangedEventChannel _CurrencyBalanceChangedChannel;
+        private readonly ICurrencyService _CurrencyService;
+        private readonly ILevelCatalog _LevelCatalog;
+        private readonly StageData _StageData;
+        private readonly RewardedPlacement _ContinuePlacement;
         private readonly StageFailPopup _FailPopup;
-        private bool _HasConsumedDisabledContinue;
+        private bool _HasConsumedContinue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AdRewardController"/> class.
         /// </summary>
         public AdRewardController(
-            IAdService adService,
-            AdSettings adSettings,
-            RewardedPlacement continuePlacement,
-            IRewardGrantContext grantContext,
             VoidEventChannel continueRequestedChannel,
             VoidEventChannel retryLevelChannel,
             VoidEventChannel restartStageChannel,
             LevelFailedEventChannel levelFailedChannel,
+            CurrencyBalanceChangedEventChannel currencyBalanceChangedChannel,
+            ICurrencyService currencyService,
+            ILevelCatalog levelCatalog,
+            StageData stageData,
+            RewardedPlacement continuePlacement,
             StageFailPopup failPopup)
         {
-            _AdService = adService;
-            _AdSettings = adSettings;
-            _ContinuePlacement = continuePlacement;
-            _GrantContext = grantContext;
             _ContinueRequestedChannel = continueRequestedChannel;
             _RetryLevelChannel = retryLevelChannel;
             _RestartStageChannel = restartStageChannel;
             _LevelFailedChannel = levelFailedChannel;
+            _CurrencyBalanceChangedChannel = currencyBalanceChangedChannel;
+            _CurrencyService = currencyService;
+            _LevelCatalog = levelCatalog;
+            _StageData = stageData;
+            _ContinuePlacement = continuePlacement;
             _FailPopup = failPopup;
         }
 
@@ -68,6 +66,7 @@ namespace Game.Ads.Controllers
             _ContinueRequestedChannel.Subscribe(OnContinueRequested);
             _LevelFailedChannel.Subscribe(OnLevelFailed);
             _RestartStageChannel?.Subscribe(OnRestartStageRequested);
+            _CurrencyBalanceChangedChannel?.Subscribe(OnCurrencyBalanceChanged);
         }
 
         /// <summary>
@@ -78,71 +77,83 @@ namespace Game.Ads.Controllers
             _ContinueRequestedChannel.Unsubscribe(OnContinueRequested);
             _LevelFailedChannel.Unsubscribe(OnLevelFailed);
             _RestartStageChannel?.Unsubscribe(OnRestartStageRequested);
+            _CurrencyBalanceChangedChannel?.Unsubscribe(OnCurrencyBalanceChanged);
         }
 
         private void OnLevelFailed(LevelData _)
         {
-            _FailPopup.SetContinueAvailable(CanContinueAfterFailure());
+            RefreshContinueState();
         }
 
-        private async void OnContinueRequested()
+        private void OnContinueRequested()
         {
-            if (!_AdSettings.AdsEnabled)
+            int cost = GetCurrentContinueCost();
+            if (!CanContinueAfterFailure(cost))
             {
-                if (!CanUseDisabledAdsFallback())
-                {
-                    _FailPopup.SetContinueAvailable(false);
-                    return;
-                }
-
-                ConsumeDisabledAdsFallback();
-                _RetryLevelChannel.Raise();
+                RefreshContinueState();
                 return;
             }
 
-            if (!_AdService.CanShowAd(_ContinuePlacement))
+            if (cost > 0 && !_CurrencyService.TrySpend(CoinCurrencyId, cost))
             {
-                _FailPopup.SetContinueAvailable(false);
+                RefreshContinueState();
                 return;
             }
 
-            _FailPopup.SetContinueAvailable(false);
-
-            var result = await _AdService.ShowRewardedAsync(_ContinuePlacement);
-
-            if (result.Success)
-            {
-                await _ContinuePlacement.TryGrantRewardAsync(_GrantContext);
-                _RetryLevelChannel.Raise();
-            }
-            else
-            {
-                _RestartStageChannel?.Raise();
-            }
+            ConsumeContinue();
+            _RetryLevelChannel.Raise();
         }
 
         private void OnRestartStageRequested()
         {
-            _HasConsumedDisabledContinue = false;
+            _HasConsumedContinue = false;
         }
 
-        private bool CanContinueAfterFailure()
+        private void OnCurrencyBalanceChanged(CurrencyBalanceChangedEventData data)
         {
-            if (!_AdSettings.AdsEnabled)
-                return CanUseDisabledAdsFallback();
+            if (data.CurrencyId != CoinCurrencyId)
+            {
+                return;
+            }
 
-            return _AdService.CanShowAd(_ContinuePlacement);
+            RefreshContinueState();
         }
 
-        private bool CanUseDisabledAdsFallback() =>
-            !_ContinuePlacement.OncePerRun || !_HasConsumedDisabledContinue;
-
-        private void ConsumeDisabledAdsFallback()
+        private void RefreshContinueState()
         {
-            if (_ContinuePlacement.OncePerRun)
-                _HasConsumedDisabledContinue = true;
+            int cost = GetCurrentContinueCost();
+            bool visible = !HasConsumedContinueAccess();
+            bool interactable = visible && CanAfford(cost);
 
-            _FailPopup.SetContinueAvailable(false);
+            _FailPopup.SetContinueState(visible, interactable, cost);
         }
+
+        private bool CanContinueAfterFailure(int cost) =>
+            !HasConsumedContinueAccess() && CanAfford(cost);
+
+        private bool CanAfford(int cost) =>
+            cost <= 0 || _CurrencyService.CanAfford(CoinCurrencyId, cost);
+
+        private int GetCurrentContinueCost()
+        {
+            return _LevelCatalog
+                .GetStageConfig(_StageData.StageIndex)?
+                .GetContinueCost(_StageData.CurrentLevelIndex) ?? 0;
+        }
+
+        private bool HasConsumedContinueAccess() =>
+            _ContinuePlacement != null && _ContinuePlacement.OncePerRun && _HasConsumedContinue;
+
+        private void ConsumeContinue()
+        {
+            if (_ContinuePlacement != null && _ContinuePlacement.OncePerRun)
+            {
+                _HasConsumedContinue = true;
+            }
+
+            RefreshContinueState();
+        }
+
+        private static readonly string CoinCurrencyId = CurrencyType.Coin.ToTypeId();
     }
 }

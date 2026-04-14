@@ -20,12 +20,54 @@ namespace Game.Level.Configurations.Stage
         [field: SerializeField]
         [field: Tooltip("Granted once when the player completes this stage for the first time. Each slot references a currency, power-up, or knife skin grant asset.")]
         public List<RewardGrantEntryBase> Rewards { get; private set; } = new();
+
+        [field: SerializeField]
+        [field: Tooltip("Coin cost to continue after failing each level in this stage. Index 0 is Level 1 and defaults to 0.")]
+        public List<int> ContinueCosts { get; private set; } = new() { 0 };
         
         [Tooltip("List of levels contained in this stage.")]
         [field: SerializeField] public List<LevelConfig> Levels { get; private set; } = new();
 
+        public int GetContinueCost(int levelIndex)
+        {
+            if (ContinueCosts == null || levelIndex < 0 || levelIndex >= ContinueCosts.Count)
+            {
+                return 0;
+            }
+
+            return Mathf.Max(0, ContinueCosts[levelIndex]);
+        }
+
         private void OnValidate()
         {
+            if (ContinueCosts == null)
+            {
+                ContinueCosts = new List<int>();
+            }
+
+            if (Levels != null)
+            {
+                while (ContinueCosts.Count < Levels.Count)
+                {
+                    ContinueCosts.Add(0);
+                }
+
+                while (ContinueCosts.Count > Levels.Count)
+                {
+                    ContinueCosts.RemoveAt(ContinueCosts.Count - 1);
+                }
+            }
+
+            if (ContinueCosts.Count > 0)
+            {
+                ContinueCosts[0] = 0;
+            }
+
+            for (int i = 1; i < ContinueCosts.Count; i++)
+            {
+                ContinueCosts[i] = Mathf.Max(0, ContinueCosts[i]);
+            }
+
             if (Levels == null) return;
 
             foreach (var level in Levels)
