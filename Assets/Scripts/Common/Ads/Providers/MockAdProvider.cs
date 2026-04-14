@@ -4,6 +4,7 @@ using System.Threading;
 using Common.Ads.Data;
 using Common.Ads.Interfaces;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Common.Ads.Providers
 {
@@ -61,8 +62,12 @@ namespace Common.Ads.Providers
         /// <inheritdoc/>
         public async UniTask<AdResult> ShowAsync(AdPlacement placement, CancellationToken ct = default)
         {
+            Debug.Log(
+                $"[MockAdProvider] ShowAsync called. Placement={placement?.PlacementKey}, Type={placement?.GetType().Name}, PopupCallbackSet={PopupCallback != null}");
+
             if (PopupCallback != null)
             {
+                Debug.Log($"[MockAdProvider] Forwarding placement {placement?.PlacementKey} to popup callback.");
                 var tcs = PopupCallback.Invoke(placement);
                 return await tcs.Task;
             }

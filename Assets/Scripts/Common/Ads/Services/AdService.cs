@@ -6,6 +6,7 @@ using Common.Ads.Events;
 using Common.Ads.Interfaces;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using StackTrace = System.Diagnostics.StackTrace;
 
 namespace Common.Ads.Services
 {
@@ -99,6 +100,10 @@ namespace Common.Ads.Services
 
         private async UniTask<AdResult> ShowAdAsync(AdPlacement placement, CancellationToken ct)
         {
+            Debug.Log(
+                $"[AdService] Show requested. Placement={placement?.PlacementKey}, Type={placement?.GetType().Name}, OncePerRun={placement?.OncePerRun}, Cooldown={placement?.CooldownSeconds}, AttemptsRequired={placement?.MinAttemptsBetweenAds}\n" +
+                $"{GetCallerStackTrace()}");
+
             if (!_Settings.AdsEnabled) return AdResult.Disabled;
 
             if (_UsedOncePerRunPlacements.Contains(placement.PlacementKey)) return AdResult.OnCooldown;
@@ -136,8 +141,15 @@ namespace Common.Ads.Services
 
         private void RaiseAdRequested(AdPlacement placement)
         {
+            Debug.Log($"[AdService] Raising ad requested event for placement {placement?.PlacementKey}.");
             _RequestedChannel.Raise(new AdEventData(placement, default));
             _Telemetry?.OnAdRequested(placement);
+        }
+
+        private static string GetCallerStackTrace()
+        {
+            var stackTrace = new StackTrace(2, true);
+            return stackTrace.ToString();
         }
 
         private void DispatchResult(AdPlacement placement, AdResult result)

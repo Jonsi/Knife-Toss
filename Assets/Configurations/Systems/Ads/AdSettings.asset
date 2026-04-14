@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9870a15280c07d7469ed147c7e38d244, type: 3}
   m_Name: AdSettings
   m_EditorClassIdentifier: Common::Common.Ads.Data.AdSettings
-  <AdsEnabled>k__BackingField: 0
+  <AdsEnabled>k__BackingField: 1
   <UseMockProvider>k__BackingField: 1
   <GlobalTimeoutSeconds>k__BackingField: 30
   <DefaultCooldownSeconds>k__BackingField: 0

@@ -343,6 +343,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game::Game.Ads.UI.MockAdPopupBridge
   _Popup: {fileID: 5736173070702135766}
+  _CanvasScaler: {fileID: 0}
 --- !u!1001 &3261063516739122302
 PrefabInstance:
   m_ObjectHideFlags: 0

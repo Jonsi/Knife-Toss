@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Common.Ads.Data;
 using Cysharp.Threading.Tasks;
@@ -33,9 +34,37 @@ namespace Game.Ads.UI
         private UniTaskCompletionSource<AdResult> _Tcs;
         private AdMockOutcome _AutoDismissOutcome;
         private CancellationTokenSource _TimerCts;
+        private Canvas _Canvas;
+        private GraphicRaycaster _GraphicRaycaster;
+
+        private void Awake()
+        {
+            _Canvas = GetComponent<Canvas>();
+            _GraphicRaycaster = GetComponent<GraphicRaycaster>();
+
+            if (_Canvas != null)
+            {
+                _Canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                _Canvas.overrideSorting = true;
+                _Canvas.sortingOrder = 999;
+            }
+
+            if (_GraphicRaycaster == null)
+            {
+                _GraphicRaycaster = gameObject.AddComponent<GraphicRaycaster>();
+            }
+
+            Debug.Log($"[MockAdPopup] Awake. ActiveSelf={gameObject.activeSelf}, ActiveInHierarchy={gameObject.activeInHierarchy}");
+        }
+
+        private void Start()
+        {
+            Debug.Log($"[MockAdPopup] Start. ActiveSelf={gameObject.activeSelf}, ActiveInHierarchy={gameObject.activeInHierarchy}");
+        }
 
         private void OnEnable()
         {
+            Debug.Log($"[MockAdPopup] OnEnable.\n{Environment.StackTrace}");
             _CompleteButton.onClick.AddListener(OnCompleteClicked);
             _SkipButton.onClick.AddListener(OnSkipClicked);
             _FailButton.onClick.AddListener(OnFailClicked);
@@ -43,6 +72,7 @@ namespace Game.Ads.UI
 
         private void OnDisable()
         {
+            Debug.Log("[MockAdPopup] OnDisable.");
             _CompleteButton.onClick.RemoveListener(OnCompleteClicked);
             _SkipButton.onClick.RemoveListener(OnSkipClicked);
             _FailButton.onClick.RemoveListener(OnFailClicked);
@@ -63,6 +93,9 @@ namespace Game.Ads.UI
             float autoCloseSeconds,
             AdMockOutcome defaultOutcome)
         {
+            Debug.Log(
+                $"[MockAdPopup] Present called. Placement={placement?.PlacementKey}, Type={placement?.GetType().Name}, AutoCloseSeconds={autoCloseSeconds}, DefaultOutcome={defaultOutcome}");
+
             _Tcs = tcs;
             _AutoDismissOutcome = defaultOutcome;
 
