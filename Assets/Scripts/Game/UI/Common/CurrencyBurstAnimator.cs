@@ -12,14 +12,16 @@ namespace Game.UI.Common
         private readonly Canvas _Canvas;
         private readonly RectTransform _Destination;
         private readonly CurrencyAccumulationConfig _Config;
+        private readonly bool _UseUnscaledTime;
 
         private RectTransform _OverlayRoot;
 
-        public CurrencyBurstAnimator(Canvas canvas, RectTransform destination, CurrencyAccumulationConfig config)
+        public CurrencyBurstAnimator(Canvas canvas, RectTransform destination, CurrencyAccumulationConfig config, bool useUnscaledTime = true)
         {
             _Canvas = canvas;
             _Destination = destination;
             _Config = config;
+            _UseUnscaledTime = useUnscaledTime;
         }
 
         public bool IsValid => _Canvas != null && _Destination != null && _Config != null && _Config.IconSprite != null;
@@ -105,15 +107,16 @@ namespace Game.UI.Common
 
             Sequence sequence = DOTween.Sequence();
             sequence.SetLink(coinObject);
+            sequence.SetUpdate(_UseUnscaledTime);
             sequence.AppendInterval(delay);
-            sequence.Append(canvasGroup.DOFade(1f, 0.08f));
-            sequence.Join(rectTransform.DOAnchorPos(arcPoint, _Config.PopDuration).SetEase(Ease.OutQuad));
-            sequence.Join(rectTransform.DOScale(1.2f, _Config.PopDuration).SetEase(Ease.OutBack));
-            sequence.Append(rectTransform.DOAnchorPos(destinationPoint, travelDuration).SetEase(Ease.InQuad));
-            sequence.Join(rectTransform.DOScale(_Config.EndScale, travelDuration).SetEase(Ease.InBack));
+            sequence.Append(canvasGroup.DOFade(1f, 0.08f).SetUpdate(_UseUnscaledTime));
+            sequence.Join(rectTransform.DOAnchorPos(arcPoint, _Config.PopDuration).SetEase(Ease.OutQuad).SetUpdate(_UseUnscaledTime));
+            sequence.Join(rectTransform.DOScale(1.2f, _Config.PopDuration).SetEase(Ease.OutBack).SetUpdate(_UseUnscaledTime));
+            sequence.Append(rectTransform.DOAnchorPos(destinationPoint, travelDuration).SetEase(Ease.InQuad).SetUpdate(_UseUnscaledTime));
+            sequence.Join(rectTransform.DOScale(_Config.EndScale, travelDuration).SetEase(Ease.InBack).SetUpdate(_UseUnscaledTime));
             float fadeStartTime = travelDuration * _Config.FadeStartNormalized;
             float fadeDuration = Mathf.Max(0.01f, travelDuration - fadeStartTime);
-            sequence.Join(canvasGroup.DOFade(_Config.FinalAlpha, fadeDuration).SetDelay(fadeStartTime));
+            sequence.Join(canvasGroup.DOFade(_Config.FinalAlpha, fadeDuration).SetDelay(fadeStartTime).SetUpdate(_UseUnscaledTime));
             sequence.OnComplete(() => Object.Destroy(coinObject));
             sequence.OnKill(() =>
             {
