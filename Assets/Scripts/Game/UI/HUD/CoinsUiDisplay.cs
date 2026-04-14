@@ -55,5 +55,10 @@ namespace Game.UI.HUD
         {
             _BalanceDisplay?.PlayAccumulationFromWorld(worldPosition, amount);
         }
+
+        public void PlayAccumulationFromUiElement(RectTransform source, int amount)
+        {
+            _BalanceDisplay?.PlayAccumulationFromUiElement(source, amount);
+        }
     }
 }

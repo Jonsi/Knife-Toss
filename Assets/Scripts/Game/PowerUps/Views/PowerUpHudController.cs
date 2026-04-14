@@ -6,8 +6,12 @@ using Game.PowerUps.Data;
 using Game.PowerUps.Events;
 using Game.PowerUps.Interfaces;
 using Game.Persistence.Services;
+using Game.Store.Data;
+using Game.Store.Rewards;
+using Game.UI.Popups;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
 namespace Game.PowerUps.Views
 {
@@ -24,18 +28,26 @@ namespace Game.PowerUps.Views
         [SerializeField] private PowerUpCancelledEventChannel _CancelledChannel;
         [SerializeField] private LevelStartedEventChannel _LevelStartedChannel;
         [SerializeField] private VoidEventChannel _FailFlowStartedChannel;
+        [SerializeField] private AddPowerUpPopup _AddPowerUpPopupPrefab;
 
         private readonly List<PowerUpButtonView> _Buttons = new List<PowerUpButtonView>();
         private IPowerUpService _PowerUpService;
         private PlayerDataService _PlayerDataService;
+        private StoreCatalog _StoreCatalog;
+        private IObjectResolver _Resolver;
+        private AddPowerUpPopup _PopupInstance;
 
         [Inject]
         private void Construct(
             IPowerUpService powerUpService,
-            PlayerDataService playerDataService)
+            PlayerDataService playerDataService,
+            StoreCatalog storeCatalog,
+            IObjectResolver resolver)
         {
             _PowerUpService = powerUpService;
             _PlayerDataService = playerDataService;
+            _StoreCatalog = storeCatalog;
+            _Resolver = resolver;
             RefreshCounts();
         }
 
@@ -50,6 +62,14 @@ namespace Game.PowerUps.Views
         private void OnDisable()
         {
             Unsubscribe();
+        }
+
+        private void OnDestroy()
+        {
+            if (_PopupInstance != null)
+            {
+                _PopupInstance.InventoryChanged -= OnPopupInventoryChanged;
+            }
         }
 
         private void Subscribe()
@@ -83,7 +103,12 @@ namespace Game.PowerUps.Views
                     continue;
 
                 var view = Instantiate(_ButtonPrefab, _Container);
-                view.Initialize(config, OnButtonClicked, _LevelStartedChannel, _FailFlowStartedChannel);
+                view.Initialize(
+                    config,
+                    OnButtonClicked,
+                    _AddPowerUpPopupPrefab != null ? OnAddButtonClicked : null,
+                    _LevelStartedChannel,
+                    _FailFlowStartedChannel);
                 _Buttons.Add(view);
             }
         }
@@ -103,6 +128,15 @@ namespace Game.PowerUps.Views
             {
                 Select(config);
             }
+        }
+
+        private void OnAddButtonClicked(PowerUpConfigBase config)
+        {
+            if (_AddPowerUpPopupPrefab == null)
+                return;
+
+            var popup = GetOrCreatePopup();
+            popup?.ShowFor(config);
         }
 
         private void RefreshCounts()
@@ -192,6 +226,50 @@ namespace Game.PowerUps.Views
             }
 
             RefreshCounts();
+        }
+
+        private bool CanOpenAddPopup(PowerUpConfigBase config)
+        {
+            return _AddPowerUpPopupPrefab != null;
+        }
+
+        private PurchasableEntry FindStoreEntry(PowerUpConfigBase config)
+        {
+            if (config == null || _StoreCatalog?.PowerUps == null)
+                return null;
+
+            for (int i = 0; i < _StoreCatalog.PowerUps.Count; i++)
+            {
+                var entry = _StoreCatalog.PowerUps[i];
+                if (entry?.Reward is PowerUpReward powerUpReward && powerUpReward.Config == config)
+                {
+                    return entry;
+                }
+            }
+
+            return null;
+        }
+
+        private AddPowerUpPopup GetOrCreatePopup()
+        {
+            if (_PopupInstance != null)
+                return _PopupInstance;
+
+            if (_AddPowerUpPopupPrefab == null || _Resolver == null)
+                return null;
+
+            var parent = GetComponentInParent<Canvas>()?.transform;
+            _PopupInstance = parent != null
+                ? _Resolver.Instantiate(_AddPowerUpPopupPrefab, parent)
+                : _Resolver.Instantiate(_AddPowerUpPopupPrefab);
+            _PopupInstance.InventoryChanged += OnPopupInventoryChanged;
+            _PopupInstance.gameObject.SetActive(false);
+            return _PopupInstance;
+        }
+
+        private void OnPopupInventoryChanged()
+        {
+            RefreshInventoryAndCounts();
         }
     }
 }

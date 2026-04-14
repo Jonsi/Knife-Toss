@@ -16,12 +16,15 @@ namespace Game.PowerUps.Views
         [SerializeField] private Button _Button;
         [SerializeField] private Image _Icon;
         [SerializeField] private TMP_Text _CountText;
+        [SerializeField] private GameObject _CountRoot;
+        [SerializeField] private GameObject _PlusRoot;
         [SerializeField] private Color _SelectedColor = Color.white;
         [SerializeField] private Color _UnselectedColor = Color.gray;
         [SerializeField] private Color _UnavailableColor = new Color(0.3f, 0.3f, 0.3f, 0.5f);
 
         private PowerUpConfigBase _Config;
         private Action<PowerUpConfigBase> _ClickHandler;
+        private Action<PowerUpConfigBase> _AddHandler;
         private int _CurrentCount;
         private bool _IsSelected;
         private bool _IsGameplayActive = true;
@@ -34,11 +37,13 @@ namespace Game.PowerUps.Views
         public void Initialize(
             PowerUpConfigBase config,
             Action<PowerUpConfigBase> clickHandler,
+            Action<PowerUpConfigBase> addHandler,
             LevelStartedEventChannel levelStartedChannel,
             VoidEventChannel failFlowStartedChannel)
         {
             _Config = config;
             _ClickHandler = clickHandler;
+            _AddHandler = addHandler;
             _LevelStartedChannel = levelStartedChannel;
             _FailFlowStartedChannel = failFlowStartedChannel;
             if (_Icon != null)
@@ -75,9 +80,19 @@ namespace Game.PowerUps.Views
                 _CountText.text = count.ToString();
             }
 
+            if (_CountRoot != null)
+            {
+                _CountRoot.SetActive(count > 0);
+            }
+
+            if (_PlusRoot != null)
+            {
+                _PlusRoot.SetActive(count <= 0);
+            }
+
             if (_Button != null)
             {
-                _Button.interactable = count > 0;
+                _Button.interactable = count > 0 || _AddHandler != null;
             }
 
             UpdateVisualState();
@@ -94,6 +109,12 @@ namespace Game.PowerUps.Views
 
         private void HandleClick()
         {
+            if (_CurrentCount <= 0)
+            {
+                _AddHandler?.Invoke(_Config);
+                return;
+            }
+
             if (!_IsGameplayActive)
                 return;
 
@@ -134,7 +155,7 @@ namespace Game.PowerUps.Views
 
             if (_CurrentCount <= 0)
             {
-                targetGraphic.color = _UnavailableColor;
+                targetGraphic.color = _AddHandler != null ? _UnselectedColor : _UnavailableColor;
                 return;
             }
 

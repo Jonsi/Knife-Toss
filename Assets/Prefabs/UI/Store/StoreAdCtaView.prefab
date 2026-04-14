@@ -350,6 +350,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game::Game.UI.Store.StoreAdCtaView
   <RewardText>k__BackingField: {fileID: 1550016193085573315}
   <ActionButton>k__BackingField: {fileID: 810207400041265943}
+  _PriceConfig: {fileID: 11400000, guid: 2098cc7b6f064ef299ff29f7fdc39e93, type: 2}
 --- !u!1 &8282421844865592016
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 using System;
+using Game.Store.Data;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +13,7 @@ namespace Game.UI.Store
     {
         [field: SerializeField] public TMP_Text RewardText { get; private set; }
         [field: SerializeField] public Button ActionButton { get; private set; }
+        [SerializeField] private StoreAdPriceConfig _PriceConfig;
 
         private Action _OnClicked;
 
@@ -21,7 +23,9 @@ namespace Game.UI.Store
 
             if (RewardText != null)
             {
-                RewardText.text = displayText;
+                RewardText.text = _PriceConfig != null
+                    ? _PriceConfig.CoinAmount.ToString()
+                    : displayText;
             }
 
             if (ActionButton != null)

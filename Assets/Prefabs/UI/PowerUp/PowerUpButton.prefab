@@ -138,6 +138,8 @@ MonoBehaviour:
   _Button: {fileID: 4789120506888318113}
   _Icon: {fileID: 5348943589440110421}
   _CountText: {fileID: 8372112440922188575}
+  _CountRoot: {fileID: 5968204196235328082}
+  _PlusRoot: {fileID: 6878600192731945185}
   _SelectedColor: {r: 1, g: 1, b: 1, a: 1}
   _UnselectedColor: {r: 0.6037736, g: 0.6037736, b: 0.6037736, a: 1}
   _UnavailableColor: {r: 0.3, g: 0.3, b: 0.3, a: 0.5}

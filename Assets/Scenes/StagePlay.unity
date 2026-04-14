@@ -177,6 +177,7 @@ MonoBehaviour:
   _CancelledChannel: {fileID: 11400000, guid: 548ba72244a87c54d8f107bd1c3effb0, type: 2}
   _LevelStartedChannel: {fileID: 11400000, guid: 8016f38368e175c479eb37bb6b1726fd, type: 2}
   _FailFlowStartedChannel: {fileID: 11400000, guid: 7aa6ba38667d4d97991a83b360f13d03, type: 2}
+  _AddPowerUpPopupPrefab: {fileID: 6385021448201187342, guid: 7993fc053efc3184d9fce2a679da5f0b, type: 3}
 --- !u!114 &41204893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7082,9 +7083,45 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4735553576763426404, guid: 7993fc053efc3184d9fce2a679da5f0b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4735553576763426404, guid: 7993fc053efc3184d9fce2a679da5f0b, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4735553576763426404, guid: 7993fc053efc3184d9fce2a679da5f0b, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 648
+      objectReference: {fileID: 0}
+    - target: {fileID: 4735553576763426404, guid: 7993fc053efc3184d9fce2a679da5f0b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -282.8495
+      objectReference: {fileID: 0}
+    - target: {fileID: 5772493198829324266, guid: 7993fc053efc3184d9fce2a679da5f0b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5772493198829324266, guid: 7993fc053efc3184d9fce2a679da5f0b, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5772493198829324266, guid: 7993fc053efc3184d9fce2a679da5f0b, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 216
+      objectReference: {fileID: 0}
+    - target: {fileID: 5772493198829324266, guid: 7993fc053efc3184d9fce2a679da5f0b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -282.8495
+      objectReference: {fileID: 0}
     - target: {fileID: 8342596120538031746, guid: 7993fc053efc3184d9fce2a679da5f0b, type: 3}
       propertyPath: m_Name
       value: AddPowerUpPopup
+      objectReference: {fileID: 0}
+    - target: {fileID: 8342596120538031746, guid: 7993fc053efc3184d9fce2a679da5f0b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

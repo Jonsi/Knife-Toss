@@ -2366,6 +2366,7 @@ GameObject:
   - component: {fileID: 14563543707009780}
   - component: {fileID: 290413167596764040}
   - component: {fileID: 2447338529205621700}
+  - component: {fileID: 6385021448201187342}
   m_Layer: 5
   m_Name: AddPowerUpPopup
   m_TagString: Untagged
@@ -2432,6 +2433,22 @@ MonoBehaviour:
     EndAlpha: 0
     StartScale: 1
     EndScale: 0.5
+--- !u!114 &6385021448201187342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8342596120538031746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fb4b54b31bb41249f8869569c7fa01b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Popups.AddPowerUpPopup
+  _CloseButton: {fileID: 0}
+  _AdCtaView: {fileID: 0}
+  _AdPlacement: {fileID: 11400000, guid: 09f59c675cc91fb46a83cffe2caf49c2, type: 2}
+  _PowerUpCards: []
 --- !u!1 &8515962200238555264
 GameObject:
   m_ObjectHideFlags: 0
