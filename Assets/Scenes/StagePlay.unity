@@ -178,6 +178,7 @@ MonoBehaviour:
   _LevelStartedChannel: {fileID: 11400000, guid: 8016f38368e175c479eb37bb6b1726fd, type: 2}
   _FailFlowStartedChannel: {fileID: 11400000, guid: 7aa6ba38667d4d97991a83b360f13d03, type: 2}
   _AddPowerUpPopupPrefab: {fileID: 6385021448201187342, guid: 7993fc053efc3184d9fce2a679da5f0b, type: 3}
+  _PopupParent: {fileID: 1230634449}
 --- !u!114 &41204893
 MonoBehaviour:
   m_ObjectHideFlags: 0
