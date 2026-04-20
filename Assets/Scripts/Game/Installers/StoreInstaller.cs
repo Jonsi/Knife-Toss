@@ -37,6 +37,7 @@ namespace Game.Installers
             builder.RegisterInstance(_FailedEventChannel).AsSelf();
             builder.Register<KnifeSkinService>(Lifetime.Singleton).AsSelf();
             builder.Register<PurchaseService>(Lifetime.Singleton).As<IPurchaseService>();
+            builder.Register<StorePurchaseRouter>(Lifetime.Singleton).As<IStorePurchaseRouter>();
         }
     }
 }

@@ -215,6 +215,24 @@ namespace Game.Persistence.Services
         }
 
         /// <summary>
+        /// Ensures IAP entitlements data exists and returns the instance.
+        /// </summary>
+        public IapEntitlementsData EnsureIapEntitlements()
+        {
+            if (_CachedData.Resources.IapEntitlements == null)
+            {
+                _CachedData.Resources.IapEntitlements = new IapEntitlementsData();
+            }
+
+            if (_CachedData.Resources.IapEntitlements.OwnedProductKeys == null)
+            {
+                _CachedData.Resources.IapEntitlements.OwnedProductKeys = new List<string>();
+            }
+
+            return _CachedData.Resources.IapEntitlements;
+        }
+
+        /// <summary>
         /// Reloads persisted data and updates only the knife skin collection.
         /// </summary>
         public void ReloadKnifeSkinCollection()
@@ -262,6 +280,14 @@ namespace Game.Persistence.Services
         }
 
         /// <summary>
+        /// Schedules a save for updated IAP entitlement data.
+        /// </summary>
+        public void SaveIapEntitlements()
+        {
+            SaveNow();
+        }
+
+        /// <summary>
         /// Resets all persisted player data to defaults and syncs runtime state.
         /// </summary>
         public void ResetAllData()
@@ -292,6 +318,16 @@ namespace Game.Persistence.Services
             if (_CachedData.Resources.KnifeSkins == null)
             {
                 _CachedData.Resources.KnifeSkins = new KnifeSkinCollectionData();
+            }
+
+            if (_CachedData.Resources.IapEntitlements == null)
+            {
+                _CachedData.Resources.IapEntitlements = new IapEntitlementsData();
+            }
+
+            if (_CachedData.Resources.IapEntitlements.OwnedProductKeys == null)
+            {
+                _CachedData.Resources.IapEntitlements.OwnedProductKeys = new List<string>();
             }
 
             if (_CachedData.RewardClaims == null)
@@ -336,6 +372,8 @@ namespace Game.Persistence.Services
             _CachedData.Resources.PowerUps ??= new PowerUpInventoryData();
             _CachedData.Resources.Currencies ??= new System.Collections.Generic.List<CurrencyBalanceEntry>();
             _CachedData.Resources.KnifeSkins ??= new KnifeSkinCollectionData();
+            _CachedData.Resources.IapEntitlements ??= new IapEntitlementsData();
+            _CachedData.Resources.IapEntitlements.OwnedProductKeys ??= new List<string>();
             _CachedData.RewardClaims ??= new RewardClaimData();
             _CachedData.RewardClaims.AvailableStageRewards ??= new System.Collections.Generic.List<int>();
             _CachedData.RewardClaims.ClaimedStageRewards ??= new System.Collections.Generic.List<int>();

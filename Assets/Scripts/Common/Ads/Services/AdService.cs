@@ -23,6 +23,7 @@ namespace Common.Ads.Services
         private readonly AdCompletedEventChannel _CompletedChannel;
         private readonly AdFailedEventChannel _FailedChannel;
         private readonly IAdTelemetryListener _Telemetry;
+        private readonly IAdEntitlementGate _EntitlementGate;
 
         private readonly Dictionary<AdPlacementKey, float> _LastShownTimestamps = new();
         private readonly Dictionary<AdPlacementKey, int> _AttemptCounters = new();
@@ -38,7 +39,8 @@ namespace Common.Ads.Services
             AdRequestedEventChannel requestedChannel,
             AdCompletedEventChannel completedChannel,
             AdFailedEventChannel failedChannel,
-            IAdTelemetryListener telemetry)
+            IAdTelemetryListener telemetry,
+            IAdEntitlementGate entitlementGate)
         {
             _Provider = provider;
             _Settings = settings;
@@ -46,7 +48,17 @@ namespace Common.Ads.Services
             _CompletedChannel = completedChannel;
             _FailedChannel = failedChannel;
             _Telemetry = telemetry;
+            _EntitlementGate = entitlementGate;
         }
+
+        public AdService(
+            IAdProvider provider,
+            AdSettings settings,
+            AdRequestedEventChannel requestedChannel,
+            AdCompletedEventChannel completedChannel,
+            AdFailedEventChannel failedChannel,
+            IAdTelemetryListener telemetry)
+            : this(provider, settings, requestedChannel, completedChannel, failedChannel, telemetry, null) { }
 
         /// <summary>
         /// Constructor overload for contexts where no telemetry listener is available.
@@ -59,7 +71,7 @@ namespace Common.Ads.Services
             AdRequestedEventChannel requestedChannel,
             AdCompletedEventChannel completedChannel,
             AdFailedEventChannel failedChannel)
-            : this(provider, settings, requestedChannel, completedChannel, failedChannel, null) { }
+            : this(provider, settings, requestedChannel, completedChannel, failedChannel, null, null) { }
 
         /// <inheritdoc/>
         public bool IsAdAvailable(AdPlacement placement) => _Provider.IsLoaded(placement);
@@ -68,6 +80,7 @@ namespace Common.Ads.Services
         public bool CanShowAd(AdPlacement placement)
         {
             if (!_Settings.AdsEnabled) return false;
+            if (IsInterstitialBlockedByEntitlement(placement)) return false;
             if (_UsedOncePerRunPlacements.Contains(placement.PlacementKey)) return false;
             if (IsCooldownActive(placement)) return false;
             if (IsFrequencyGateBlocking(placement)) return false;
@@ -105,6 +118,7 @@ namespace Common.Ads.Services
                 $"{GetCallerStackTrace()}");
 
             if (!_Settings.AdsEnabled) return AdResult.Disabled;
+            if (IsInterstitialBlockedByEntitlement(placement)) return AdResult.Disabled;
 
             if (_UsedOncePerRunPlacements.Contains(placement.PlacementKey)) return AdResult.OnCooldown;
             if (IsCooldownActive(placement)) return AdResult.OnCooldown;
@@ -190,6 +204,13 @@ namespace Common.Ads.Services
         {
             if (placement.MinAttemptsBetweenAds <= 0) return false;
             return GetAttemptCount(placement.PlacementKey) < placement.MinAttemptsBetweenAds;
+        }
+
+        private bool IsInterstitialBlockedByEntitlement(AdPlacement placement)
+        {
+            return placement is InterstitialPlacement &&
+                   _EntitlementGate != null &&
+                   !_EntitlementGate.CanShowInterstitial();
         }
 
         private int GetAttemptCount(AdPlacementKey key) =>

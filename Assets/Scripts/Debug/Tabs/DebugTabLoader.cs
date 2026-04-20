@@ -59,6 +59,7 @@ namespace Game.Debugging.Tabs
                         DebugTabRegistry.Register(new ResourcesTab(resolver));
                         DebugTabRegistry.Register(new PlayerDataTab(resolver));
                         DebugTabRegistry.Register(new AdCheatsTab());
+                        DebugTabRegistry.Register(new IapCheatsTab());
 
                         _TabsCreated = true;
                     }

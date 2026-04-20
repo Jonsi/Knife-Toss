@@ -1,9 +1,8 @@
 using System;
-using System.IO;
+using Game.Store.Interfaces;
 using Game.UI.Data;
 using Game.UI.Popups;
 using Game.UI.Services;
-using UnityEngine;
 using VContainer;
 
 namespace Game.UI.Controllers
@@ -15,6 +14,7 @@ namespace Game.UI.Controllers
         private readonly ReportErrorPopup _ReportErrorPopup;
         private readonly SettingsService _SettingsService;
         private readonly PrivacyPolicyContent _PrivacyContent;
+        private readonly IObjectResolver _Resolver;
 
         [Inject]
         public SettingsPopupController(
@@ -22,13 +22,15 @@ namespace Game.UI.Controllers
             PrivacyPolicyPopup privacyPopup,
             ReportErrorPopup reportErrorPopup,
             SettingsService settingsService,
-            PrivacyPolicyContent privacyContent)
+            PrivacyPolicyContent privacyContent,
+            IObjectResolver resolver)
         {
             _SettingsPopup = settingsPopup;
             _PrivacyPopup = privacyPopup;
             _ReportErrorPopup = reportErrorPopup;
             _SettingsService = settingsService;
             _PrivacyContent = privacyContent;
+            _Resolver = resolver;
 
             Subscribe();
         }
@@ -68,6 +70,7 @@ namespace Game.UI.Controllers
                 _SettingsPopup.OnSoundToggled += OnSoundToggled;
                 _SettingsPopup.OnPrivacyPolicyRequested += OnPrivacyPolicyRequested;
                 _SettingsPopup.OnReportErrorRequested += OnReportErrorRequested;
+                _SettingsPopup.OnRestorePurchasesRequested += OnRestorePurchasesRequested;
                 _SettingsPopup.OnCloseRequested += OnSettingsCloseRequested;
             }
 
@@ -89,6 +92,7 @@ namespace Game.UI.Controllers
                 _SettingsPopup.OnSoundToggled -= OnSoundToggled;
                 _SettingsPopup.OnPrivacyPolicyRequested -= OnPrivacyPolicyRequested;
                 _SettingsPopup.OnReportErrorRequested -= OnReportErrorRequested;
+                _SettingsPopup.OnRestorePurchasesRequested -= OnRestorePurchasesRequested;
                 _SettingsPopup.OnCloseRequested -= OnSettingsCloseRequested;
             }
 
@@ -123,6 +127,27 @@ namespace Game.UI.Controllers
             _SettingsPopup.Hide();
             _ReportErrorPopup.Clear();
             _ReportErrorPopup.Show();
+        }
+
+        private async void OnRestorePurchasesRequested()
+        {
+            if (_Resolver == null)
+            {
+                return;
+            }
+
+            try
+            {
+                var purchaseRouter = _Resolver.Resolve<IStorePurchaseRouter>();
+                if (purchaseRouter != null)
+                {
+                    await purchaseRouter.RestorePurchasesAsync();
+                }
+            }
+            catch
+            {
+                // Restore is optional when no store router is registered in the current scene scope.
+            }
         }
 
         private void OnSettingsCloseRequested()

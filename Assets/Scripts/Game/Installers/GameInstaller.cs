@@ -1,5 +1,8 @@
 using Game.Ads.Installers;
+using Game.Ads.Services;
 using Game.Economy.Data;
+using Common.IAP.Installers;
+using Common.IAP.Interfaces;
 using Common.Events;
 using Game.Economy.Events;
 using Game.Feedback.Audio.Data;
@@ -19,11 +22,18 @@ using Common.Rewards.Interfaces;
 using Game.Rewards.Services;
 using Game.Store.Data;
 using Game.Store.Services;
+using Game.IAP.Services;
+#if TEST_ENABLED
+using Common.IAP.Data;
+using Game.IAP.Mock.Installers;
+using Game.IAP.UI;
+#endif
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using Common.Analytics;
 using Common.Services.RemoteConfig;
+using System;
 
 namespace Game.Installers
 {
@@ -60,6 +70,13 @@ namespace Game.Installers
         [Header("Ads")]
         [SerializeField] private AdInstaller _AdInstaller;
 
+        [Header("IAP")]
+        [SerializeField] private IapInstaller _IapInstaller;
+#if TEST_ENABLED
+        [SerializeField] private MockIapSettings _MockIapSettings;
+        [SerializeField] private MockIapPopupBridge _MockIapPopupBridge;
+#endif
+
         protected override void Awake()
         {
             base.Awake();
@@ -70,6 +87,8 @@ namespace Game.Installers
 
         protected override void Configure(IContainerBuilder builder)
         {
+            ValidateRequiredSetup();
+
             builder.Register<VContainerRewardGrantContext>(Lifetime.Singleton).As<IRewardGrantContext>();
 
             Install(builder, CreateGameFlowInstaller());
@@ -84,6 +103,15 @@ namespace Game.Installers
             builder.Register<StageRewardClaimService>(Lifetime.Singleton);
             Install(builder, CreateRemoteConfigInstaller());
             Install(builder, CreateAnalyticsInstaller());
+
+            if (_IapInstaller != null)
+            {
+                builder.Register<PlayerDataIapEntitlementStore>(Lifetime.Singleton).As<IIapEntitlementStore>().AsSelf();
+                Install(builder, _IapInstaller);
+                builder.Register<IapAnalyticsTelemetryListener>(Lifetime.Singleton).As<Common.IAP.Interfaces.IIapTelemetryListener>();
+                builder.Register<IapAdEntitlementGate>(Lifetime.Singleton).As<Common.Ads.Interfaces.IAdEntitlementGate>();
+                builder.Register<MainMenuRemoveAdsFlow>(Lifetime.Singleton).AsSelf();
+            }
 
             if (_AdInstaller != null)
                 Install(builder, _AdInstaller);
@@ -103,6 +131,13 @@ namespace Game.Installers
                 builder.RegisterInstance(_StoreCatalog).AsSelf();
             }
 
+#if TEST_ENABLED
+            if (_IapInstaller != null && _MockIapSettings != null)
+            {
+                Install(builder, new IapMockInstaller(_MockIapSettings, _MockIapPopupBridge));
+            }
+#endif
+
             if (_PrefabsConfiguration != null)
             {
                 builder.RegisterInstance(_PrefabsConfiguration).AsSelf();
@@ -118,6 +153,19 @@ namespace Game.Installers
         private static void Install(IContainerBuilder builder, IInstaller installer)
         {
             installer.Install(builder);
+        }
+
+        private void ValidateRequiredSetup()
+        {
+            if (_IapInstaller == null)
+            {
+                throw new InvalidOperationException("GameInstaller requires IapInstaller for production IAP flow.");
+            }
+
+            if (_StoreCatalog == null)
+            {
+                throw new InvalidOperationException("GameInstaller requires StoreCatalog for production IAP flow.");
+            }
         }
 
         private GameFlowInstaller CreateGameFlowInstaller()

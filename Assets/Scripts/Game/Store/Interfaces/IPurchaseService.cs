@@ -4,7 +4,7 @@ using Game.Store.Data;
 namespace Game.Store.Interfaces
 {
     /// <summary>
-    /// Coordinates store purchases.
+    /// Coordinates in-game soft-currency store purchases.
     /// </summary>
     public interface IPurchaseService
     {

@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Game.Flow.Game;
+using Game.IAP.Services;
 using Game.Level.Catalogs;
 using Game.Persistence.Services;
 using Game.Store.Data;
@@ -24,6 +25,7 @@ namespace Game.UI.MainMenu
         [SerializeField] private Button _PlayButton;
         [SerializeField] private Button _StagesButton;
         [SerializeField] private Button _ShopButton;
+        [SerializeField] private Button _RemoveAdsButton;
         [SerializeField] private Button _PvpButton;
         [SerializeField] private Button _PowerUpsButton;
         [SerializeField] private Button _MissionsButton;
@@ -38,10 +40,19 @@ namespace Game.UI.MainMenu
         [Inject] private GameData _GameData;
         [Inject] private DailyMissionPopupController _MissionPopupController;
         [Inject] private KnifeSkinService _KnifeSkinService;
+        [Inject] private MainMenuRemoveAdsFlow _RemoveAdsFlow;
 
         private bool _IsNavigating;
         private readonly List<KnifeSkinSelectionOption> _KnifeSkinOptions = new List<KnifeSkinSelectionOption>();
         private int _SelectedKnifeSkinIndex;
+
+        private void Awake()
+        {
+            if (_RemoveAdsButton == null)
+            {
+                _RemoveAdsButton = FindButton("RemoveAdsButton");
+            }
+        }
 
         private void Start()
         {
@@ -50,6 +61,9 @@ namespace Game.UI.MainMenu
 
             if (_ShopButton != null)
                 _ShopButton.onClick.AddListener(OnShopClicked);
+
+            if (_RemoveAdsButton != null)
+                _RemoveAdsButton.onClick.AddListener(OnRemoveAdsClicked);
             
             if (_PvpButton != null)
                 _PvpButton.onClick.AddListener(OnPvpClicked);
@@ -63,6 +77,7 @@ namespace Game.UI.MainMenu
             SyncCurrentStageSelection();
             UpdateCurrentStageText();
             UpdateBackground();
+            RefreshRemoveAdsButtonState();
             InitializeKnifeSkinSelector();
             PlayMenuIn();
             _SceneLoaderService.PreloadGameFromMainMenu().Forget();
@@ -84,6 +99,9 @@ namespace Game.UI.MainMenu
 
             if (_ShopButton != null)
                 _ShopButton.onClick.RemoveListener(OnShopClicked);
+
+            if (_RemoveAdsButton != null)
+                _RemoveAdsButton.onClick.RemoveListener(OnRemoveAdsClicked);
             
             if (_PvpButton != null)
                 _PvpButton.onClick.RemoveListener(OnPvpClicked);
@@ -115,6 +133,16 @@ namespace Game.UI.MainMenu
         private void OnShopClicked()
         {
             NavigateAsync(_SceneLoaderService.LoadStore).Forget();
+        }
+
+        private void OnRemoveAdsClicked()
+        {
+            if (_IsNavigating)
+            {
+                return;
+            }
+
+            TryPurchaseRemoveAdsAsync().Forget();
         }
 
         private void OnPvpClicked()
@@ -252,6 +280,11 @@ namespace Game.UI.MainMenu
                 _ShopButton.interactable = isInteractable;
             }
 
+            if (_RemoveAdsButton != null)
+            {
+                _RemoveAdsButton.interactable = isInteractable && _RemoveAdsFlow.CanPurchase;
+            }
+
             if (_PvpButton != null)
             {
                 _PvpButton.interactable = isInteractable;
@@ -268,6 +301,25 @@ namespace Game.UI.MainMenu
             }
 
             RefreshKnifeSkinSelector(isInteractable);
+        }
+
+        private async UniTaskVoid TryPurchaseRemoveAdsAsync()
+        {
+            if (_IsNavigating)
+            {
+                return;
+            }
+
+            SetButtonsInteractable(false);
+            try
+            {
+                await _RemoveAdsFlow.TryPurchaseAsync();
+            }
+            finally
+            {
+                SetButtonsInteractable(true);
+                RefreshRemoveAdsButtonState();
+            }
         }
 
         private async UniTask PlayMenuOutAsync()
@@ -350,6 +402,31 @@ namespace Game.UI.MainMenu
             {
                 RefreshKnifeSkinSelector(!_IsNavigating);
             }
+        }
+
+        private Button FindButton(string objectName)
+        {
+            var buttons = GetComponentsInChildren<Button>(true);
+            for (var i = 0; i < buttons.Length; i++)
+            {
+                if (buttons[i] != null && buttons[i].gameObject.name == objectName)
+                {
+                    return buttons[i];
+                }
+            }
+
+            return null;
+        }
+
+        private void RefreshRemoveAdsButtonState()
+        {
+            if (_RemoveAdsButton == null)
+            {
+                return;
+            }
+
+            _RemoveAdsButton.gameObject.SetActive(_RemoveAdsFlow.IsAvailable);
+            _RemoveAdsButton.interactable = !_IsNavigating && _RemoveAdsFlow.CanPurchase;
         }
     }
 }

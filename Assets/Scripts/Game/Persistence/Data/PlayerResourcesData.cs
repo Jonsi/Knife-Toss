@@ -13,5 +13,6 @@ namespace Game.Persistence.Data
         public PowerUpInventoryData PowerUps = new();
         public List<CurrencyBalanceEntry> Currencies = new();
         public KnifeSkinCollectionData KnifeSkins = new();
+        public IapEntitlementsData IapEntitlements = new();
     }
 }

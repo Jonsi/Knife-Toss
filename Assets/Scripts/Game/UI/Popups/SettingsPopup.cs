@@ -10,11 +10,13 @@ namespace Game.UI.Popups
         [SerializeField] private Toggle _SoundToggle;
         [SerializeField] private Button _PrivacyPolicyButton;
         [SerializeField] private Button _ReportErrorButton;
+        [SerializeField] private Button _RestorePurchasesButton;
         [SerializeField] private Button _CloseButton;
         
         public event Action<bool> OnSoundToggled;
         public event Action OnPrivacyPolicyRequested;
         public event Action OnReportErrorRequested;
+        public event Action OnRestorePurchasesRequested;
         public event Action OnCloseRequested;
 
         private void Awake()
@@ -27,6 +29,9 @@ namespace Game.UI.Popups
             
             if (_ReportErrorButton != null)
                 _ReportErrorButton.onClick.AddListener(() => OnReportErrorRequested?.Invoke());
+
+            if (_RestorePurchasesButton != null)
+                _RestorePurchasesButton.onClick.AddListener(() => OnRestorePurchasesRequested?.Invoke());
             
             if (_CloseButton != null)
                 _CloseButton.onClick.AddListener(() => OnCloseRequested?.Invoke());

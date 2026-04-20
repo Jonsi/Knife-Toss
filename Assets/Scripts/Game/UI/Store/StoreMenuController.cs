@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using Game.Flow.Game;
 using Game.Persistence.Services;
@@ -25,7 +26,7 @@ namespace Game.UI.Store
         [field: SerializeField] public Button CloseButton { get; private set; }
 
         private StoreCatalog _StoreCatalog;
-        private IPurchaseService _PurchaseService;
+        private IStorePurchaseRouter _PurchaseRouter;
         private KnifeSkinService _KnifeSkinService;
         private SceneLoaderService _SceneLoaderService;
         private PlayerDataService _PlayerDataService;
@@ -36,14 +37,14 @@ namespace Game.UI.Store
         [Inject]
         private void Construct(
             StoreCatalog storeCatalog,
-            IPurchaseService purchaseService,
+            IStorePurchaseRouter purchaseRouter,
             KnifeSkinService knifeSkinService,
             SceneLoaderService sceneLoaderService,
             PlayerDataService playerDataService,
             StoreBalanceChipView storeBalanceChipView)
         {
             _StoreCatalog = storeCatalog;
-            _PurchaseService = purchaseService;
+            _PurchaseRouter = purchaseRouter;
             _KnifeSkinService = knifeSkinService;
             _SceneLoaderService = sceneLoaderService;
             _PlayerDataService = playerDataService;
@@ -79,7 +80,19 @@ namespace Game.UI.Store
         private void BindCatalog()
         {
             BindKnifeSkinEntries(_StoreCatalog?.Skins);
-            BindPowerUpEntries(_StoreCatalog?.PowerUps);
+            BindPowerUpEntries(BuildPowerUpEntries());
+        }
+
+        private IReadOnlyList<PurchasableEntry> BuildPowerUpEntries()
+        {
+            if (_StoreCatalog == null)
+            {
+                return null;
+            }
+
+            return (_StoreCatalog.PowerUps ?? new List<PurchasableEntry>())
+                .Concat(_StoreCatalog.IapEntries ?? new List<PurchasableEntry>())
+                .ToList();
         }
 
         private void BindKnifeSkinEntries(IReadOnlyList<PurchasableEntry> entries)
@@ -166,7 +179,7 @@ namespace Game.UI.Store
 
         private void RefreshCardState()
         {
-            var canInteract = _PurchaseService == null || !_PurchaseService.IsPurchaseInProgress;
+            var canInteract = _PurchaseRouter == null || !_PurchaseRouter.IsPurchaseInProgress;
             RefreshKnifeSkinStates(canInteract);
             RefreshPowerUpStates(canInteract);
             if (CloseButton != null)
@@ -182,13 +195,13 @@ namespace Game.UI.Store
 
         private async UniTaskVoid TryPurchaseAsync(PurchasableEntry entry)
         {
-            if (_PurchaseService == null || entry == null)
+            if (_PurchaseRouter == null || entry == null)
             {
                 return;
             }
 
             RefreshCardState();
-            var result = await _PurchaseService.TryPurchaseAsync(entry);
+            var result = await _PurchaseRouter.TryPurchaseAsync(entry);
             if (result.Success)
             {
                 SyncKnifeSkinState();
@@ -254,11 +267,13 @@ namespace Game.UI.Store
 
                 if (binding.Card is KnifeSkinStoreCardView knifeSkinCard)
                 {
-                    knifeSkinCard.SetAvailableState(canInteract);
+                    var canPurchase = binding.Entry != null && _PurchaseRouter != null && _PurchaseRouter.CanPurchase(binding.Entry);
+                    knifeSkinCard.SetAvailableState(canInteract && canPurchase);
                 }
                 else
                 {
-                    binding.Card.SetInteractable(canInteract);
+                    var canPurchase = binding.Entry != null && _PurchaseRouter != null && _PurchaseRouter.CanPurchase(binding.Entry);
+                    binding.Card.SetInteractable(canInteract && canPurchase);
                 }
             }
         }
@@ -275,7 +290,8 @@ namespace Game.UI.Store
                     continue;
                 }
 
-                binding.Card.SetInteractable(canInteract);
+                var canPurchase = binding.Entry != null && _PurchaseRouter != null && _PurchaseRouter.CanPurchase(binding.Entry);
+                binding.Card.SetInteractable(canInteract && canPurchase);
 
                 if (binding.Card is not PowerUpStoreCardView powerUpCard ||
                     binding.Entry?.Reward is not PowerUpReward powerUpReward ||

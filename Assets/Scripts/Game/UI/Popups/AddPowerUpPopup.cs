@@ -30,7 +30,7 @@ namespace Game.UI.Popups
         [SerializeField] private PowerUpStoreCardView[] _PowerUpCards;
 
         private StoreCatalog _StoreCatalog;
-        private IPurchaseService _PurchaseService;
+        private IStorePurchaseRouter _PurchaseRouter;
         private PlayerDataService _PlayerDataService;
         private IAdService _AdService;
         private IRewardGrantContext _GrantContext;
@@ -43,14 +43,14 @@ namespace Game.UI.Popups
         [Inject]
         private void Construct(
             StoreCatalog storeCatalog,
-            IPurchaseService purchaseService,
+            IStorePurchaseRouter purchaseRouter,
             PlayerDataService playerDataService,
             IAdService adService,
             IRewardGrantContext grantContext,
             CoinsUiDisplay coinsUiDisplay)
         {
             _StoreCatalog = storeCatalog;
-            _PurchaseService = purchaseService;
+            _PurchaseRouter = purchaseRouter;
             _PlayerDataService = playerDataService;
             _AdService = adService;
             _GrantContext = grantContext;
@@ -168,7 +168,7 @@ namespace Game.UI.Popups
 
         private void RefreshCardState()
         {
-            var canInteract = _PurchaseService == null || !_PurchaseService.IsPurchaseInProgress;
+            var canInteract = _PurchaseRouter == null || !_PurchaseRouter.IsPurchaseInProgress;
 
             if (_PowerUpCards != null)
             {
@@ -181,7 +181,7 @@ namespace Game.UI.Popups
                     }
 
                     var entry = i < _VisibleEntries.Count ? _VisibleEntries[i] : null;
-                    card.SetInteractable(canInteract && entry != null && _PurchaseService != null && _PurchaseService.CanPurchase(entry));
+                    card.SetInteractable(canInteract && entry != null && _PurchaseRouter != null && _PurchaseRouter.CanPurchase(entry));
                     card.SetCurrentAmount(GetCurrentAmount(entry));
                 }
             }
@@ -199,12 +199,12 @@ namespace Game.UI.Popups
 
         private async UniTaskVoid TryPurchaseAsync(PurchasableEntry entry)
         {
-            if (_PurchaseService == null || entry == null)
+            if (_PurchaseRouter == null || entry == null)
                 return;
 
             RefreshCardState();
 
-            var result = await _PurchaseService.TryPurchaseAsync(entry);
+            var result = await _PurchaseRouter.TryPurchaseAsync(entry);
             if (result.Success)
             {
                 InventoryChanged?.Invoke();

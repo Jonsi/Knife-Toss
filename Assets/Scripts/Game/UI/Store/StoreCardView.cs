@@ -27,7 +27,14 @@ namespace Game.UI.Store
 
             if (PricePill != null)
             {
-                PricePill.SetPrice(entry?.Price?.Amount ?? 0, entry?.Price?.Currency ?? CurrencyType.None);
+                if (entry?.Price != null && entry.Price.IsIapPrice)
+                {
+                    PricePill.SetCustomPrice(string.Empty);
+                }
+                else
+                {
+                    PricePill.SetPrice(entry?.Price?.Amount ?? 0, entry?.Price?.Currency ?? CurrencyType.None);
+                }
             }
 
             BindEntry(entry);
@@ -104,6 +111,14 @@ namespace Game.UI.Store
                     ? AmountText.transform.parent.gameObject
                     : AmountText.gameObject;
                 root.SetActive(visible);
+            }
+
+            public void SetCustomPrice(string text)
+            {
+                if (AmountText == null)
+                    return;
+
+                AmountText.text = text ?? string.Empty;
             }
         }
     }

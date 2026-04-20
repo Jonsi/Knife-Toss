@@ -154,6 +154,7 @@ GameObject:
   - component: {fileID: 7408866668377621628}
   - component: {fileID: 3943260562783012267}
   - component: {fileID: -4086891514864499261}
+  - component: {fileID: -911165353040658700}
   m_Layer: 0
   m_Name: GameInstaller
   m_TagString: Untagged
@@ -209,6 +210,9 @@ MonoBehaviour:
   _MissionProgressChangedEventChannel: {fileID: 11400000, guid: d1d2c3e4f5678901a2b3c4d5e6f70894, type: 2}
   _MissionCompletedEventChannel: {fileID: 11400000, guid: d2d2c3e4f5678901a2b3c4d5e6f70895, type: 2}
   _AdInstaller: {fileID: -4086891514864499261}
+  _IapInstaller: {fileID: -911165353040658700}
+  _MockIapSettings: {fileID: 11400000, guid: e512f7f84df84224bc63f2fed8ce473f, type: 2}
+  _MockIapPopupBridge: {fileID: 0}
 --- !u!114 &-4086891514864499261
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -227,6 +231,24 @@ MonoBehaviour:
   _AdCompletedChannel: {fileID: 11400000, guid: 736ce2f04deb38a45bddfa941e627bac, type: 2}
   _AdFailedChannel: {fileID: 11400000, guid: c2a25d8625e3f724fa37359710030286, type: 2}
   _MockAdPopupBridge: {fileID: 3250773014761587041}
+--- !u!114 &-911165353040658700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5668796331276819120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9af034da7a4033146b03aa79f0c11775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Common::Common.IAP.Installers.IapInstaller
+  _IapCatalog: {fileID: 11400000, guid: 2d9c6891bb8b4ccb9df03cd0b53f5e42, type: 2}
+  _IapSettings: {fileID: 11400000, guid: c8df1f0d7f81404cb0a97bc468ad9e56, type: 2}
+  _PurchaseStartedChannel: {fileID: 11400000, guid: 9e176303fae64f35945c3f60b33db62f, type: 2}
+  _PurchaseCompletedChannel: {fileID: 11400000, guid: ebdce4d2b9b340638ce7396fd2db6f05, type: 2}
+  _PurchaseFailedChannel: {fileID: 11400000, guid: 958fd4e8afc041e3af2ab2cc552065ca, type: 2}
+  _PurchaseRestoredChannel: {fileID: 11400000, guid: 6af914427b8a4ee99e03e8395d478090, type: 2}
 --- !u!1 &8877332448767065865
 GameObject:
   m_ObjectHideFlags: 0
