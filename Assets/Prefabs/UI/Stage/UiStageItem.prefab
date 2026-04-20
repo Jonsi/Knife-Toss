@@ -644,6 +644,7 @@ MonoBehaviour:
   _ClaimButton: {fileID: 501100010}
   _ClaimedStateRoot: {fileID: 501100019}
   _ClaimedChestSprite: {fileID: 21300000, guid: 9c54a7d5022bb44049bfe3894b088f1d, type: 3}
+  _ClaimEffectPrefab: {fileID: 8712674505664611057, guid: 1367eca88176409408cc8901ea064688, type: 3}
   _RewardUnavailableColor: {r: 0.55, g: 0.55, b: 0.55, a: 1}
   _RewardAvailableColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1990837211172779653

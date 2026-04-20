@@ -43,6 +43,9 @@ namespace Game.UI.Stages
         [Tooltip("Sprite used for the chest once the reward was claimed.")]
         [SerializeField] private Sprite _ClaimedChestSprite;
 
+        [Tooltip("Optional effect prefab spawned at the chest position when the reward is claimed.")]
+        [SerializeField] private GameObject _ClaimEffectPrefab;
+
         [Tooltip("Tint used when the stage reward cannot be claimed yet.")]
         [SerializeField] private Color _RewardUnavailableColor = new(0.55f, 0.55f, 0.55f, 1f);
 
@@ -50,6 +53,8 @@ namespace Game.UI.Stages
         [SerializeField] private Color _RewardAvailableColor = Color.white;
 
         private Sprite _DefaultChestSprite;
+        private bool _HasInitialized;
+        private bool _WasRewardClaimed;
 
         /// <summary>
         /// Initializes the stage item with data.
@@ -65,6 +70,7 @@ namespace Game.UI.Stages
             }
 
             RefreshRewardReferences();
+            bool shouldPlayClaimEffect = _HasInitialized && !_WasRewardClaimed && itemData.IsRewardClaimed;
 
             if (_StageIconImage != null)
             {
@@ -140,6 +146,14 @@ namespace Game.UI.Stages
             {
                 _Button.onClick.AddListener(() => onClicked?.Invoke(itemData.StageIndex));
             }
+
+            if (shouldPlayClaimEffect)
+            {
+                SpawnClaimEffect();
+            }
+
+            _WasRewardClaimed = itemData.IsRewardClaimed;
+            _HasInitialized = true;
         }
 
         private void RefreshRewardReferences()
@@ -182,6 +196,40 @@ namespace Game.UI.Stages
             {
                 return false;
             }
+        }
+
+        private void SpawnClaimEffect()
+        {
+            if (_ClaimEffectPrefab == null || _RewardChestImage == null)
+            {
+                return;
+            }
+
+            var effectInstance = UnityEngine.Object.Instantiate(_ClaimEffectPrefab);
+            effectInstance.transform.SetPositionAndRotation(GetClaimEffectPosition(), Quaternion.identity);
+        }
+
+        private Vector3 GetClaimEffectPosition()
+        {
+            if (_RewardChestImage == null)
+            {
+                return Vector3.zero;
+            }
+
+            Camera mainCamera = Camera.main;
+            if (mainCamera == null)
+            {
+                return _RewardChestImage.transform.position;
+            }
+
+            Canvas canvas = _RewardChestImage.canvas;
+            Camera eventCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+                ? canvas.worldCamera
+                : null;
+
+            Vector3 screenPoint = RectTransformUtility.WorldToScreenPoint(eventCamera, _RewardChestImage.rectTransform.position);
+            screenPoint.z = Mathf.Abs(mainCamera.transform.position.z);
+            return mainCamera.ScreenToWorldPoint(screenPoint);
         }
     }
 }
