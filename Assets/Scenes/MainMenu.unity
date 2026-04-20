@@ -618,7 +618,7 @@ MonoBehaviour:
   _RefreshTimerText: {fileID: 0}
   _MissionItemsRoot: {fileID: 1900910883}
   _MissionItemPrefab: {fileID: 7230949621685071924, guid: 1acbbb0a274541a47a97e385a162f8a1, type: 3}
-  _CloseButton: {fileID: 0}
+  _CloseButton: {fileID: 1622742298}
 --- !u!224 &200662123 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3207458631617955686, guid: 58353aba8a65cb9479373360a5731a0b, type: 3}
