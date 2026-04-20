@@ -17,10 +17,6 @@ namespace Game.Store.Rewards
         [field: Tooltip("Skin definition to unlock; persisted id comes from this asset.")]
         public KnifeSkinConfig Config { get; private set; }
 
-        [field: SerializeField]
-        [field: Tooltip("If true, equips this skin immediately when newly unlocked.")]
-        public bool AutoEquipOnPurchase { get; private set; }
-
         /// <inheritdoc/>
         public override Sprite Icon => Config != null ? Config.Icon : null;
 
@@ -51,11 +47,6 @@ namespace Game.Store.Rewards
             var playerData = context.Resolve<PlayerDataService>();
             var collection = playerData.EnsureKnifeSkinCollection();
             var didUnlock = collection.Unlock(Config.Id);
-
-            if (didUnlock && AutoEquipOnPurchase)
-            {
-                collection.Equip(Config.Id);
-            }
 
             if (didUnlock)
             {

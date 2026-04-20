@@ -2,10 +2,12 @@ using Cysharp.Threading.Tasks;
 using Game.Flow.Game;
 using Game.Level.Catalogs;
 using Game.Persistence.Services;
+using Game.Store.Data;
+using Game.Store.Services;
 using Game.UI.Common;
 using Game.UI.Missions;
-using Game.UI.PowerUps;
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,13 +31,17 @@ namespace Game.UI.MainMenu
         [SerializeField] private Image _BackgroundImage;
         [SerializeField] private StagesCollection _StagesCollection;
         [SerializeField] private UiElementAnimator[] _MenuAnimators;
+        [SerializeField] private KnifeSkinSelectorView _KnifeSkinSelectorView;
 
         [Inject] private PlayerDataService _PlayerDataService;
         [Inject] private SceneLoaderService _SceneLoaderService;
         [Inject] private GameData _GameData;
         [Inject] private DailyMissionPopupController _MissionPopupController;
+        [Inject] private KnifeSkinService _KnifeSkinService;
 
         private bool _IsNavigating;
+        private readonly List<KnifeSkinSelectionOption> _KnifeSkinOptions = new List<KnifeSkinSelectionOption>();
+        private int _SelectedKnifeSkinIndex;
 
         private void Start()
         {
@@ -57,6 +63,7 @@ namespace Game.UI.MainMenu
             SyncCurrentStageSelection();
             UpdateCurrentStageText();
             UpdateBackground();
+            InitializeKnifeSkinSelector();
             PlayMenuIn();
             _SceneLoaderService.PreloadGameFromMainMenu().Forget();
         }
@@ -125,6 +132,16 @@ namespace Game.UI.MainMenu
             _MissionPopupController?.ShowMissions();
         }
 
+        private void OnPreviousKnifeSkinClicked()
+        {
+            CycleKnifeSkin(-1);
+        }
+
+        private void OnNextKnifeSkinClicked()
+        {
+            CycleKnifeSkin(1);
+        }
+
         private void SyncCurrentStageSelection()
         {
             if (_GameData == null || _PlayerDataService == null)
@@ -160,6 +177,7 @@ namespace Game.UI.MainMenu
         {
             if (_MenuAnimators == null)
             {
+                _KnifeSkinSelectorView?.PlayIn();
                 return;
             }
 
@@ -167,6 +185,8 @@ namespace Game.UI.MainMenu
             {
                 animator?.PlayIn();
             }
+
+            _KnifeSkinSelectorView?.PlayIn();
         }
 
         private async UniTaskVoid NavigateAsync(Func<UniTask> loadScene)
@@ -246,27 +266,89 @@ namespace Game.UI.MainMenu
             {
                 _MissionsButton.interactable = isInteractable;
             }
+
+            RefreshKnifeSkinSelector(isInteractable);
         }
 
         private async UniTask PlayMenuOutAsync()
         {
-            if (_MenuAnimators == null)
+            var tasks = new List<UniTask>();
+
+            if (_MenuAnimators != null)
             {
-                return;
+                for (var i = 0; i < _MenuAnimators.Length; i++)
+                {
+                    var animator = _MenuAnimators[i];
+                    if (animator != null)
+                    {
+                        tasks.Add(animator.PlayOutAsync());
+                    }
+                }
             }
 
-            var tasks = new System.Collections.Generic.List<UniTask>(_MenuAnimators.Length);
-            foreach (UiElementAnimator animator in _MenuAnimators)
+            if (_KnifeSkinSelectorView != null)
             {
-                if (animator != null)
-                {
-                    tasks.Add(animator.PlayOutAsync());
-                }
+                tasks.Add(_KnifeSkinSelectorView.PlayOutAsync());
             }
 
             if (tasks.Count > 0)
             {
                 await UniTask.WhenAll(tasks);
+            }
+        }
+
+        private void InitializeKnifeSkinSelector()
+        {
+            if (_KnifeSkinService == null || _KnifeSkinSelectorView == null)
+            {
+                return;
+            }
+
+            _KnifeSkinSelectorView.Bind(OnPreviousKnifeSkinClicked, OnNextKnifeSkinClicked);
+            RefreshKnifeSkinSelector(!_IsNavigating);
+        }
+
+        private void RefreshKnifeSkinSelector(bool canInteract)
+        {
+            if (_KnifeSkinSelectorView == null || _KnifeSkinService == null)
+            {
+                return;
+            }
+
+            _KnifeSkinOptions.Clear();
+            var options = _KnifeSkinService.GetSelectableOptions();
+            for (var i = 0; i < options.Count; i++)
+            {
+                _KnifeSkinOptions.Add(options[i]);
+            }
+
+            if (_KnifeSkinOptions.Count == 0)
+            {
+                _KnifeSkinSelectorView.gameObject.SetActive(false);
+                return;
+            }
+
+            _SelectedKnifeSkinIndex = Mathf.Clamp(_KnifeSkinService.GetSelectedOptionIndex(_KnifeSkinOptions), 0, _KnifeSkinOptions.Count - 1);
+            var selectedOption = _KnifeSkinOptions[_SelectedKnifeSkinIndex];
+            _KnifeSkinSelectorView.gameObject.SetActive(true);
+            _KnifeSkinSelectorView.SetDisplay(
+                selectedOption.PreviewSprite,
+                _KnifeSkinOptions.Count > 1,
+                canInteract);
+        }
+
+        private void CycleKnifeSkin(int direction)
+        {
+            if (_KnifeSkinService == null || _KnifeSkinOptions.Count <= 1)
+            {
+                return;
+            }
+
+            _SelectedKnifeSkinIndex = (_SelectedKnifeSkinIndex + direction + _KnifeSkinOptions.Count) % _KnifeSkinOptions.Count;
+            var selectedOption = _KnifeSkinOptions[_SelectedKnifeSkinIndex];
+            if (_KnifeSkinService.TryEquip(selectedOption.SkinId))
+            {
+                RefreshKnifeSkinSelector(!_IsNavigating);
             }
         }
     }
