@@ -11,9 +11,18 @@ namespace Game.Installers
     /// </summary>
     public class StagesMenuInstaller : LifetimeScope
     {
+        [SerializeField] private StagesMenuController _StagesMenuController;
+
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.RegisterComponentInHierarchy<StageListController>();
+            if (_StagesMenuController != null)
+            {
+                builder.RegisterComponent(_StagesMenuController);
+            }
+            else
+            {
+                builder.RegisterComponentInHierarchy<StagesMenuController>();
+            }
         }
     }
 }

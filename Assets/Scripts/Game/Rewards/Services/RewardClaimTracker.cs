@@ -29,6 +29,29 @@ namespace Game.Rewards.Services
         }
 
         /// <summary>
+        /// Returns whether stage-completion rewards for this stage are available to claim.
+        /// </summary>
+        public bool IsStageCompleteAvailable(int stageIndex)
+        {
+            var data = _PlayerDataService.EnsureRewardClaimData();
+            return data.AvailableStageRewards.Contains(stageIndex);
+        }
+
+        /// <summary>
+        /// Records that stage-completion rewards for this stage became available.
+        /// </summary>
+        public void MarkStageCompleteAvailable(int stageIndex)
+        {
+            var data = _PlayerDataService.EnsureRewardClaimData();
+            if (data.AvailableStageRewards.Contains(stageIndex) || data.ClaimedStageRewards.Contains(stageIndex))
+            {
+                return;
+            }
+
+            data.AvailableStageRewards.Add(stageIndex);
+        }
+
+        /// <summary>
         /// Records that stage-completion rewards for this stage were claimed.
         /// </summary>
         public void MarkStageCompleteClaimed(int stageIndex)
@@ -40,6 +63,16 @@ namespace Game.Rewards.Services
             }
 
             data.ClaimedStageRewards.Add(stageIndex);
+            data.AvailableStageRewards.Remove(stageIndex);
+        }
+
+        /// <summary>
+        /// Clears the claimable state for a stage reward without marking it as claimed.
+        /// </summary>
+        public void ClearStageCompleteAvailable(int stageIndex)
+        {
+            var data = _PlayerDataService.EnsureRewardClaimData();
+            data.AvailableStageRewards.Remove(stageIndex);
         }
     }
 }

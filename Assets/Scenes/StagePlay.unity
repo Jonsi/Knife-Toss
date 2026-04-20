@@ -6059,7 +6059,7 @@ MonoBehaviour:
   _ReportErrorPopup: {fileID: 521085517}
   _UIController: {fileID: 633680713}
   _RewardGrantedEventChannel: {fileID: 11400000, guid: 8e17abd79622fd94393f6aa575e2f574, type: 2}
-  _RewardPopup: {fileID: 910000004}
+  _RewardPopup: {fileID: 0}
   _CollisionEventChannel: {fileID: 11400000, guid: 550df89ae380ec743af103ed588ae1b1, type: 2}
   _KnifeImpactEventChannel: {fileID: 11400000, guid: f05ddbed278f4b14cac948a5951b4fe9, type: 2}
   _KnifeThrownEventChannel: {fileID: 11400000, guid: 80b1350cead05974f808ed72efda1384, type: 2}

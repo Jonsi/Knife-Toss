@@ -10,6 +10,11 @@ namespace Game.Persistence.Data
     public class RewardClaimData
     {
         /// <summary>
+        /// Stage indices whose stage-completion rewards are available to claim.
+        /// </summary>
+        public List<int> AvailableStageRewards = new();
+
+        /// <summary>
         /// Stage indices whose stage-completion rewards have been claimed.
         /// </summary>
         public List<int> ClaimedStageRewards = new();

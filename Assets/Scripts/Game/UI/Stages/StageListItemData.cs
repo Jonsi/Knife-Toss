@@ -36,5 +36,20 @@ namespace Game.UI.Stages
         /// Whether the stage is the current selected stage.
         /// </summary>
         public bool IsCurrent { get; set; }
+
+        /// <summary>
+        /// Whether the stage has a configured reward chest.
+        /// </summary>
+        public bool HasReward { get; set; }
+
+        /// <summary>
+        /// Whether the stage reward can currently be claimed.
+        /// </summary>
+        public bool CanClaimReward { get; set; }
+
+        /// <summary>
+        /// Whether the stage reward was already claimed.
+        /// </summary>
+        public bool IsRewardClaimed { get; set; }
     }
 }

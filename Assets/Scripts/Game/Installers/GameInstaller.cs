@@ -81,6 +81,7 @@ namespace Game.Installers
             Install(builder, CreateMissionInstaller());
             Install(builder, CreateDailyMissionInstaller());
             Install(builder, new RewardInstaller(null, null));
+            builder.Register<StageRewardClaimService>(Lifetime.Singleton);
             Install(builder, CreateRemoteConfigInstaller());
             Install(builder, CreateAnalyticsInstaller());
 
