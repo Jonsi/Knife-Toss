@@ -3,6 +3,7 @@ using Game.Flow.Game;
 using Game.Level.Catalogs;
 using Game.Level.Configurations.Stage;
 using Game.Persistence.Services;
+using Game.Rewards.Services;
 using UnityEngine;
 
 namespace Game.UI.Stages
@@ -16,6 +17,7 @@ namespace Game.UI.Stages
 
         private readonly PlayerDataService _PlayerDataService;
         private readonly GameData _GameData;
+        private readonly RewardClaimTracker _RewardClaimTracker;
 
         /// <summary>
         /// Creates a presenter for stage list UI.
@@ -24,10 +26,12 @@ namespace Game.UI.Stages
         /// <param name="gameData">Runtime stage selection state.</param>
         public StageListPresenter(
             PlayerDataService playerDataService,
-            GameData gameData)
+            GameData gameData,
+            RewardClaimTracker rewardClaimTracker)
         {
             _PlayerDataService = playerDataService;
             _GameData = gameData;
+            _RewardClaimTracker = rewardClaimTracker;
         }
 
         /// <summary>
@@ -38,48 +42,33 @@ namespace Game.UI.Stages
         public int GetFocusedStageIndex(StagesCollection stagesCollection)
         {
             int stageCount = GetStageCount(stagesCollection);
+            if (_PlayerDataService == null || _GameData == null)
+            {
+                return 0;
+            }
+
             return _PlayerDataService.ClampStageIndexToUnlockedRange(_GameData.CurrentStageIndex, stageCount);
         }
 
         /// <summary>
-        /// Rebuilds the stage list under the provided content root.
+        /// Builds UI data for a single stage item.
         /// </summary>
-        /// <param name="stagesCollection">Catalog used to build items.</param>
-        /// <param name="stageItemPrefab">Prefab used for each item.</param>
-        /// <param name="contentRoot">Parent transform for instantiated items.</param>
-        /// <param name="onStageSelected">Callback invoked for unlocked selections.</param>
-        public void Rebuild(
-            StagesCollection stagesCollection,
-            UiStageItem stageItemPrefab,
-            Transform contentRoot,
-            Action<int> onStageSelected)
+        /// <param name="stagesCollection">Catalog used to resolve the stage.</param>
+        /// <param name="stageIndex">Zero-based stage index.</param>
+        public StageListItemData GetItemData(StagesCollection stagesCollection, int stageIndex)
         {
-            if (stagesCollection == null || stageItemPrefab == null || contentRoot == null)
+            var stages = stagesCollection?.Stages;
+            if (stages == null || stageIndex < 0 || stageIndex >= stages.Count)
             {
-                return;
+                return null;
             }
-
-            Clear(contentRoot);
 
             int stageCount = GetStageCount(stagesCollection);
             int focusedStageIndex = GetFocusedStageIndex(stagesCollection);
-            var stages = stagesCollection.Stages;
-            if (stages == null)
-            {
-                return;
-            }
-
-            for (int stageIndex = 0; stageIndex < stageCount; stageIndex++)
-            {
-                StageConfig stageConfig = stages[stageIndex];
-                if (stageConfig == null)
-                {
-                    continue;
-                }
-
-                var item = UnityEngine.Object.Instantiate(stageItemPrefab, contentRoot);
-                item.Initialize(BuildItemData(stageConfig, stageIndex, stageCount, focusedStageIndex), onStageSelected);
-            }
+            StageConfig stageConfig = stages[stageIndex];
+            return stageConfig == null
+                ? null
+                : BuildItemData(stageConfig, stageIndex, stageCount, focusedStageIndex);
         }
 
         /// <summary>
@@ -90,6 +79,11 @@ namespace Game.UI.Stages
         /// <returns>True when the selection was accepted.</returns>
         public bool TrySelectStage(StagesCollection stagesCollection, int stageIndex)
         {
+            if (_PlayerDataService == null || _GameData == null)
+            {
+                return false;
+            }
+
             int stageCount = GetStageCount(stagesCollection);
             if (!_PlayerDataService.IsStageUnlocked(stageIndex, stageCount))
             {
@@ -109,6 +103,7 @@ namespace Game.UI.Stages
             Sprite icon = stageConfig.LayoutSettings != null
                 ? stageConfig.LayoutSettings.StageIcon
                 : null;
+            bool hasReward = HasConfiguredRewards(stageConfig);
 
             return new StageListItemData
             {
@@ -116,17 +111,31 @@ namespace Game.UI.Stages
                 StageIndex = stageIndex,
                 StageNumber = stageIndex + StageNumberOffset,
                 StageName = stageConfig.StageName,
-                IsLocked = !_PlayerDataService.IsStageUnlocked(stageIndex, stageCount),
+                IsLocked = _PlayerDataService == null || !_PlayerDataService.IsStageUnlocked(stageIndex, stageCount),
                 IsCurrent = stageIndex == focusedStageIndex,
+                HasReward = hasReward,
+                CanClaimReward = hasReward && _RewardClaimTracker != null && _RewardClaimTracker.IsStageCompleteAvailable(stageIndex),
+                IsRewardClaimed = hasReward && _RewardClaimTracker != null && _RewardClaimTracker.IsStageCompleteClaimed(stageIndex),
             };
         }
 
-        private void Clear(Transform contentRoot)
+        private static bool HasConfiguredRewards(StageConfig stageConfig)
         {
-            foreach (Transform child in contentRoot)
+            var rewards = stageConfig?.Rewards;
+            if (rewards == null)
             {
-                UnityEngine.Object.Destroy(child.gameObject);
+                return false;
             }
+
+            for (var i = 0; i < rewards.Count; i++)
+            {
+                if (rewards[i] != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private int GetStageCount(StagesCollection stagesCollection)

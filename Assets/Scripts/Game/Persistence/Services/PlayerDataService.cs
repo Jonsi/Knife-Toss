@@ -170,6 +170,11 @@ namespace Game.Persistence.Services
                 _CachedData.RewardClaims = new RewardClaimData();
             }
 
+            if (_CachedData.RewardClaims.AvailableStageRewards == null)
+            {
+                _CachedData.RewardClaims.AvailableStageRewards = new System.Collections.Generic.List<int>();
+            }
+
             if (_CachedData.RewardClaims.ClaimedStageRewards == null)
             {
                 _CachedData.RewardClaims.ClaimedStageRewards = new System.Collections.Generic.List<int>();
@@ -294,6 +299,11 @@ namespace Game.Persistence.Services
                 _CachedData.RewardClaims = new RewardClaimData();
             }
 
+            if (_CachedData.RewardClaims.AvailableStageRewards == null)
+            {
+                _CachedData.RewardClaims.AvailableStageRewards = new System.Collections.Generic.List<int>();
+            }
+
             if (_CachedData.RewardClaims.ClaimedStageRewards == null)
             {
                 _CachedData.RewardClaims.ClaimedStageRewards = new System.Collections.Generic.List<int>();
@@ -327,6 +337,7 @@ namespace Game.Persistence.Services
             _CachedData.Resources.Currencies ??= new System.Collections.Generic.List<CurrencyBalanceEntry>();
             _CachedData.Resources.KnifeSkins ??= new KnifeSkinCollectionData();
             _CachedData.RewardClaims ??= new RewardClaimData();
+            _CachedData.RewardClaims.AvailableStageRewards ??= new System.Collections.Generic.List<int>();
             _CachedData.RewardClaims.ClaimedStageRewards ??= new System.Collections.Generic.List<int>();
             _CachedData.DailyMissions ??= new DailyMissionData();
             _CachedData.DailyMissions.ActiveMissions ??= new List<Game.Missions.Data.ActiveMissionEntry>();

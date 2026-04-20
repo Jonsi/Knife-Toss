@@ -69,6 +69,18 @@ namespace Game.Debugging.Tabs
             RequestRefresh();
         }
 
+        [Category("Progress")]
+        [DisplayName("Unlock All Stages As Won")]
+        public void UnlockAllStagesAsWon()
+        {
+            var resolver = CurrentResolver;
+            if (resolver == null) return;
+
+            var cheats = TryResolve<GeneralCheats>(resolver);
+            cheats?.UnlockAllStagesAsWon();
+            RequestRefresh();
+        }
+
         [Category("Debug")]
         [DisplayName("Enable Test Logging")]
         public bool EnableTestLogging

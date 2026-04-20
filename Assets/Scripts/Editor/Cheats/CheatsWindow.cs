@@ -1,6 +1,9 @@
 using Common.Events;
 using Game.Entities.Knife.Data;
 using Game.Entities.Knife.Events;
+using Game.Level.Catalogs;
+using Game.Persistence.Data;
+using Game.Persistence.Storage;
 using UnityEditor;
 using UnityEngine;
 using VContainer;
@@ -20,6 +23,7 @@ namespace Game.EditorTools
         private const string RestartChannelPath = "Assets/Configurations/EventChannels/UI/LevelFailedPopup/RestartStageClicked.asset";
         private const string KnifeImpactChannelPath = "Assets/Configurations/EventChannels/Knife/KnifeImpactEventChannel.asset";
         private const string CurrencyTypeCatalogPath = "Assets/Configurations/Systems/Economy/CurrencyTypeCatalog.asset";
+        private const string StagesCollectionPath = "Assets/Configurations/Gameplay/StagesCollection.asset";
 
         [SerializeField] private VoidEventChannel _RetryLevelChannel;
         [SerializeField] private VoidEventChannel _RestartStageChannel;
@@ -52,6 +56,7 @@ namespace Game.EditorTools
             public static readonly GUIContent PrevLevelButton = new GUIContent("Prev Level");
             public static readonly GUIContent JumpToStageButton = new GUIContent("Jump to Stage");
             public static readonly GUIContent ClearProgressButton = new GUIContent("Clear All Progress");
+            public static readonly GUIContent UnlockAllStagesButton = new GUIContent("Unlock All Stages As Won");
             public static readonly GUIContent AddCoinsButton = new GUIContent("Add Coins");
             public static readonly GUIContent SetButton = new GUIContent("Set");
             public static readonly GUIContent RefreshButton = new GUIContent("Refresh");
@@ -161,6 +166,22 @@ namespace Game.EditorTools
             {
 #if TEST_ENABLED
                 GetGeneralCheats()?.ClearProgress();
+                RefreshPowerUpCache();
+#endif
+            }
+
+            if (GUILayout.Button(Styles.UnlockAllStagesButton))
+            {
+#if TEST_ENABLED
+                if (EditorApplication.isPlaying)
+                {
+                    GetGeneralCheats()?.UnlockAllStagesAsWon();
+                }
+                else
+                {
+                    UnlockAllStagesAsWonInEditMode();
+                }
+
                 RefreshPowerUpCache();
 #endif
             }
@@ -368,6 +389,73 @@ namespace Game.EditorTools
             }
 
             return string.Empty;
+        }
+
+        private void UnlockAllStagesAsWonInEditMode()
+        {
+            var stagesCollection = AssetDatabase.LoadAssetAtPath<StagesCollection>(StagesCollectionPath);
+            if (stagesCollection == null)
+            {
+                string[] guids = AssetDatabase.FindAssets("t:StagesCollection");
+                if (guids.Length > 0)
+                {
+                    string assetPath = AssetDatabase.GUIDToAssetPath(guids[0]);
+                    stagesCollection = AssetDatabase.LoadAssetAtPath<StagesCollection>(assetPath);
+                }
+            }
+
+            int stageCount = stagesCollection?.Stages?.Count ?? 0;
+            if (stageCount <= 0)
+            {
+                Debug.LogWarning("Cheats Window: Could not find a stages collection asset.");
+                return;
+            }
+
+            int lastStageIndex = stageCount - 1;
+            var store = new FilePlayerDataStore();
+            var playerData = store.Load() ?? new PlayerData();
+
+            playerData.Progress ??= new PlayerProgressData();
+            playerData.Progress.CurrentStageIndex = lastStageIndex;
+            playerData.Progress.HighestStageIndex = lastStageIndex;
+            playerData.RewardClaims ??= new RewardClaimData();
+            playerData.RewardClaims.AvailableStageRewards ??= new System.Collections.Generic.List<int>();
+            playerData.RewardClaims.ClaimedStageRewards ??= new System.Collections.Generic.List<int>();
+
+            for (int stageIndex = 0; stageIndex < stageCount; stageIndex++)
+            {
+                var stageConfig = stagesCollection.Stages[stageIndex];
+                if (!HasConfiguredRewards(stageConfig) ||
+                    playerData.RewardClaims.ClaimedStageRewards.Contains(stageIndex) ||
+                    playerData.RewardClaims.AvailableStageRewards.Contains(stageIndex))
+                {
+                    continue;
+                }
+
+                playerData.RewardClaims.AvailableStageRewards.Add(stageIndex);
+            }
+
+            store.Save(playerData);
+            Debug.Log($"Cheats Window: Unlocked all {stageCount} stages as won.");
+        }
+
+        private static bool HasConfiguredRewards(Game.Level.Configurations.Stage.StageConfig stageConfig)
+        {
+            var rewards = stageConfig?.Rewards;
+            if (rewards == null)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < rewards.Count; i++)
+            {
+                if (rewards[i] != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void UpdateImpactSubscription()

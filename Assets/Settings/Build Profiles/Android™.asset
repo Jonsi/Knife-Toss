@@ -22,10 +22,16 @@ MonoBehaviour:
   m_Scenes:
   - m_enabled: 1
     m_path: Assets/Scenes/MainMenu.unity
+    m_guid: 2b4ae98b91a7a694b80c59b234661bb8
   - m_enabled: 1
     m_path: Assets/Scenes/StagePlay.unity
+    m_guid: 840bdae4a9f63bd4e86823fc371ee6ac
   - m_enabled: 1
     m_path: Assets/Scenes/StoreScene.unity
+    m_guid: 661d62b877c76814a87133a8e9b47d69
+  - m_enabled: 1
+    m_path: Assets/Scenes/StagesMenu.unity
+    m_guid: 6d28933bfa0ac144cb2b722b05ef805b
   m_HasScriptingDefines: 0
   m_ScriptingDefines: []
   m_PlayerSettingsYaml:
@@ -55,7 +61,7 @@ MonoBehaviour:
         m_ExportAsGoogleAndroidProject: 0
         m_DebugSymbolLevel: 1
         m_DebugSymbolFormat: 5
-        m_CurrentDeploymentTargetId: R5CY312TRHN
+        m_CurrentDeploymentTargetId: __builtin__target_default
         m_BuildType: 2
         m_LinkTimeOptimization: 0
         m_BuildAppBundle: 0
