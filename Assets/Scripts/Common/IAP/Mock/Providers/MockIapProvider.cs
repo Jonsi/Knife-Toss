@@ -14,8 +14,8 @@ namespace Common.IAP.Providers
     public class MockIapProvider : IIapProvider
     {
         private readonly MockIapSettings _Settings;
-        private readonly HashSet<IapProduct> _OwnedProducts = new HashSet<IapProduct>();
-        private readonly Dictionary<IapProduct, int> _SequenceIndices = new Dictionary<IapProduct, int>();
+        private readonly HashSet<string> _OwnedProductKeys = new HashSet<string>();
+        private readonly Dictionary<string, int> _SequenceIndices = new Dictionary<string, int>();
 
         private IapCatalog _Catalog;
         private IapMockOutcome? _ForcedNextOutcome;
@@ -30,7 +30,7 @@ namespace Common.IAP.Providers
         public UniTask InitializeAsync(IapCatalog catalog, CancellationToken ct = default)
         {
             _Catalog = catalog;
-            _OwnedProducts.Clear();
+            _OwnedProductKeys.Clear();
             _SequenceIndices.Clear();
 
             if (_Settings.SeededOwnedProducts != null)
@@ -38,8 +38,8 @@ namespace Common.IAP.Providers
                 for (var i = 0; i < _Settings.SeededOwnedProducts.Count; i++)
                 {
                     var seeded = _Settings.SeededOwnedProducts[i];
-                    if (seeded != null)
-                        _OwnedProducts.Add(seeded);
+                    if (!string.IsNullOrEmpty(seeded?.ProductKey))
+                        _OwnedProductKeys.Add(seeded.ProductKey);
                 }
             }
 
@@ -60,7 +60,7 @@ namespace Common.IAP.Providers
 
             await SimulateDelayAsync(ct);
 
-            if (!product.IsConsumable && _OwnedProducts.Contains(product))
+            if (!product.IsConsumable && _OwnedProductKeys.Contains(product.ProductKey))
                 return IapPurchaseResult.ProductAlreadyOwned;
 
             var outcome = ResolveNextOutcome(product);
@@ -79,7 +79,7 @@ namespace Common.IAP.Providers
             for (var i = 0; i < _Catalog.Products.Count; i++)
             {
                 var product = _Catalog.Products[i];
-                if (product != null && !product.IsConsumable && _OwnedProducts.Contains(product))
+                if (product != null && !product.IsConsumable && _OwnedProductKeys.Contains(product.ProductKey))
                     restored.Add(product);
             }
 
@@ -88,7 +88,7 @@ namespace Common.IAP.Providers
 
         public UniTask<IapProductInfo> GetProductInfoAsync(IapProduct product, CancellationToken ct = default)
         {
-            var isOwned = product != null && _OwnedProducts.Contains(product);
+            var isOwned = product != null && _OwnedProductKeys.Contains(product.ProductKey);
             var price = _Settings != null ? _Settings.DefaultLocalizedPriceLabel : string.Empty;
             return UniTask.FromResult(new IapProductInfo(product, product != null, isOwned, price));
         }
@@ -97,29 +97,29 @@ namespace Common.IAP.Providers
 
         public void SetOwnedForDebug(IapProduct product, bool owned)
         {
-            if (product == null)
+            if (product == null || string.IsNullOrEmpty(product.ProductKey))
                 return;
 
             if (owned)
-                _OwnedProducts.Add(product);
+                _OwnedProductKeys.Add(product.ProductKey);
             else
-                _OwnedProducts.Remove(product);
+                _OwnedProductKeys.Remove(product.ProductKey);
         }
 
         public void Dispose()
         {
-            _OwnedProducts.Clear();
+            _OwnedProductKeys.Clear();
             _SequenceIndices.Clear();
             PopupCallback = null;
         }
 
         private IapPurchaseResult ApplyOwnership(IapProduct product, IapPurchaseResult result)
         {
-            if (product == null)
+            if (product == null || string.IsNullOrEmpty(product.ProductKey))
                 return result;
 
             if (!product.IsConsumable && (result.Success || result.AlreadyOwned))
-                _OwnedProducts.Add(product);
+                _OwnedProductKeys.Add(product.ProductKey);
 
             return result;
         }
@@ -142,11 +142,12 @@ namespace Common.IAP.Providers
             if (sequenced == null || sequenced.Count == 0)
                 return _Settings.DefaultOutcome;
 
-            if (!_SequenceIndices.TryGetValue(product, out var index))
+            var productKey = product?.ProductKey ?? string.Empty;
+            if (!_SequenceIndices.TryGetValue(productKey, out var index))
                 index = 0;
 
             var outcome = sequenced[index % sequenced.Count];
-            _SequenceIndices[product] = (index + 1) % sequenced.Count;
+            _SequenceIndices[productKey] = (index + 1) % sequenced.Count;
             return outcome;
         }
 

@@ -1,4 +1,3 @@
-using System.Linq;
 using Game.Persistence.Data;
 using Game.Persistence.Services;
 

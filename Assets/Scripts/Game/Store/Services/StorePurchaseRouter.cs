@@ -7,6 +7,7 @@ using Game.Store.Data;
 using Game.Store.Events;
 using Game.Store.Interfaces;
 using Game.Store.Rewards;
+using UnityEngine;
 
 namespace Game.Store.Services
 {
@@ -67,7 +68,7 @@ namespace Game.Store.Services
             if (!IsIapEntry(entry))
                 return _PurchaseService != null && _PurchaseService.CanPurchase(entry);
 
-            var product = entry.Price?.IapProduct;
+            var product = entry.GetIapProduct();
             if (_IapService == null || product == null)
                 return false;
 
@@ -93,12 +94,15 @@ namespace Game.Store.Services
             if (IsPurchaseInProgress)
                 return Fail(entry, PurchaseResult.PurchaseInProgress);
 
+            var product = entry.GetIapProduct();
+            if (product == null)
+                return Fail(entry, PurchaseResult.InvalidItem);
+
             if (entry.Reward is IUniqueReward uniqueReward && uniqueReward.IsOwned(_GrantContext))
                 return Fail(entry, PurchaseResult.Error(uniqueReward.AlreadyOwnedReason));
 
-            var product = entry.Price?.IapProduct;
-            if (product == null)
-                return Fail(entry, PurchaseResult.InvalidItem);
+            if (!product.IsConsumable && _IapService.IsOwned(product))
+                return Fail(entry, PurchaseResult.AlreadyOwned);
 
             try
             {
@@ -108,7 +112,15 @@ namespace Game.Store.Services
                 if (!iapResult.Success)
                     return Fail(entry, MapIapFailure(iapResult));
 
-                await entry.Reward.GrantAsync(_GrantContext);
+                try
+                {
+                    await entry.Reward.GrantAsync(_GrantContext);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"IAP purchase succeeded but reward grant failed for product {product.ProductKey}: {ex}");
+                    return Fail(entry, PurchaseResult.Error("Reward grant failed - entitlement preserved. Please restart and contact support."));
+                }
 
                 _CompletedEventChannel?.Raise(new PurchaseCompletedEventData(entry));
                 return PurchaseResult.Succeeded;
@@ -147,7 +159,7 @@ namespace Game.Store.Services
 
         private static bool IsIapEntry(PurchasableEntry entry)
         {
-            return entry?.Price?.IapProduct != null;
+            return entry?.GetIapProduct() != null || entry?.Reward is RemoveAdsReward;
         }
     }
 }

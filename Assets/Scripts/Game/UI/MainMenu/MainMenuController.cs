@@ -313,7 +313,7 @@ namespace Game.UI.MainMenu
             SetButtonsInteractable(false);
             try
             {
-                await _RemoveAdsFlow.TryPurchaseAsync();
+                await _RemoveAdsFlow.TryPurchaseAsync(this.GetCancellationTokenOnDestroy());
             }
             finally
             {

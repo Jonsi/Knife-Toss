@@ -118,7 +118,6 @@ namespace Game.Installers
 
             builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
             builder.Register<SceneLoaderService>(Lifetime.Singleton);
-            builder.Register<KnifeSkinService>(Lifetime.Singleton).AsSelf();
 
             builder.RegisterEntryPoint<SettingsService>().AsSelf();
 
@@ -126,10 +125,7 @@ namespace Game.Installers
             builder.RegisterComponent(_AudioPlayer).As<IAudioPlayer>();
 
             builder.RegisterInstance(_ReturnToMenuEventChannel);
-            if (_StoreCatalog != null)
-            {
-                builder.RegisterInstance(_StoreCatalog).AsSelf();
-            }
+            builder.RegisterInstance(_StoreCatalog).AsSelf();
 
 #if TEST_ENABLED
             if (_IapInstaller != null && _MockIapSettings != null)

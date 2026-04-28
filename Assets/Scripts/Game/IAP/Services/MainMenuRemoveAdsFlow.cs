@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using Common.Analytics;
 using Common.Analytics.Interfaces;
 using Common.IAP.Data;
@@ -36,7 +37,7 @@ namespace Game.IAP.Services
             !_IapService.IsPurchaseInProgress &&
             !_IapService.IsOwned(_RemoveAdsProduct);
 
-        public async UniTask TryPurchaseAsync()
+        public async UniTask TryPurchaseAsync(CancellationToken ct = default)
         {
             _AnalyticsService?.TrackEvent(new AnalyticsEvent("main_menu_remove_ads_clicked"));
 
@@ -66,7 +67,7 @@ namespace Game.IAP.Services
 
             try
             {
-                var result = await _IapService.PurchaseAsync(_RemoveAdsProduct);
+                var result = await _IapService.PurchaseAsync(_RemoveAdsProduct, ct);
                 _AnalyticsService?.TrackEvent(new AnalyticsEvent(
                     "main_menu_remove_ads_purchase_result",
                     new Dictionary<string, object>
@@ -99,12 +100,12 @@ namespace Game.IAP.Services
             for (var i = 0; i < storeCatalog.IapEntries.Count; i++)
             {
                 var entry = storeCatalog.IapEntries[i];
-                if (entry?.Reward is not RemoveAdsReward removeAdsReward)
+                if (entry?.Reward is not RemoveAdsReward)
                 {
                     continue;
                 }
 
-                var product = removeAdsReward.Product ?? entry.Price?.IapProduct;
+                var product = entry.GetIapProduct();
                 if (product != null)
                 {
                     return product;

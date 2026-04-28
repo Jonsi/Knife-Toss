@@ -3,6 +3,7 @@ using Common.IAP.Data;
 using Common.IAP.Interfaces;
 using Common.Rewards.Interfaces;
 using Cysharp.Threading.Tasks;
+using Game.Store.Data;
 using UnityEngine;
 
 namespace Game.Store.Rewards
@@ -14,8 +15,6 @@ namespace Game.Store.Rewards
     [Serializable]
     public class RemoveAdsReward : ItemReward, IUniqueReward
     {
-        [field: SerializeField] public IapProduct Product { get; private set; }
-
         public string AlreadyOwnedReason => "Ads already removed.";
 
         public bool IsOwned(IRewardGrantContext context)
@@ -24,13 +23,17 @@ namespace Game.Store.Rewards
             try
             {
                 entitlementStore = context.Resolve<IIapEntitlementStore>();
+                var storeCatalog = context.Resolve<StoreCatalog>();
+                var product = FindConfiguredProduct(storeCatalog);
+                return entitlementStore != null && product != null && entitlementStore.HasEntitlement(product);
             }
-            catch
+            catch (Exception ex)
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.LogWarning($"Unable to resolve Remove Ads entitlement state: {ex.Message}");
+#endif
                 return false;
             }
-
-            return entitlementStore != null && Product != null && entitlementStore.HasEntitlement(Product);
         }
 
         public override UniTask GrantAsync(IRewardGrantContext context)
@@ -41,6 +44,23 @@ namespace Game.Store.Rewards
         public override string GetDisplayText()
         {
             return "Remove Ads";
+        }
+
+        private IapProduct FindConfiguredProduct(StoreCatalog storeCatalog)
+        {
+            if (storeCatalog?.IapEntries == null)
+                return null;
+
+            for (var i = 0; i < storeCatalog.IapEntries.Count; i++)
+            {
+                var entry = storeCatalog.IapEntries[i];
+                if (!ReferenceEquals(entry?.Reward, this))
+                    continue;
+
+                return entry.GetIapProduct();
+            }
+
+            return null;
         }
     }
 }

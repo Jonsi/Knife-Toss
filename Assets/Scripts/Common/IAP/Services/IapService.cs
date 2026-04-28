@@ -24,6 +24,9 @@ namespace Common.IAP.Services
         private readonly IIapTelemetryListener _Telemetry;
 
         private bool _Initialized;
+        private bool _IsInitializing;
+        private UniTaskCompletionSource _InitializationCompletionSource;
+        private bool _IsRestoreInProgress;
 
         public bool IsPurchaseInProgress { get; private set; }
 
@@ -84,6 +87,8 @@ namespace Common.IAP.Services
                 return alreadyOwnedResult;
             }
 
+            var timedOut = false;
+
             try
             {
                 IsPurchaseInProgress = true;
@@ -92,7 +97,10 @@ namespace Common.IAP.Services
                 _StartedChannel?.Raise(new IapPurchaseEventData(product, default));
                 _Telemetry?.OnPurchaseStarted(product);
 
-                var result = await ExecuteWithTimeoutAsync(token => _Provider.PurchaseAsync(product, token), ct);
+                var result = await ExecuteWithTimeoutAsync(
+                    token => _Provider.PurchaseAsync(product, token),
+                    ct,
+                    () => timedOut = true);
 
                 if (result.Success)
                 {
@@ -112,6 +120,13 @@ namespace Common.IAP.Services
                 _FailedChannel?.Raise(new IapPurchaseEventData(product, result));
                 _Telemetry?.OnPurchaseFailed(product, result.FailureReason);
                 return result;
+            }
+            catch (OperationCanceledException) when (!timedOut)
+            {
+                var cancelledResult = IapPurchaseResult.CancelledByUser;
+                _FailedChannel?.Raise(new IapPurchaseEventData(product, cancelledResult));
+                _Telemetry?.OnPurchaseFailed(product, cancelledResult.FailureReason);
+                return cancelledResult;
             }
             catch (OperationCanceledException)
             {
@@ -135,29 +150,40 @@ namespace Common.IAP.Services
 
         public async UniTask<IReadOnlyList<IapProduct>> RestorePurchasesAsync(CancellationToken ct = default)
         {
+            if (IsPurchaseInProgress || _IsRestoreInProgress)
+                return Array.Empty<IapProduct>();
+
             if (!_Settings.IapEnabled)
                 return Array.Empty<IapProduct>();
 
-            await EnsureInitializedAsync(ct);
-
-            var restoredProducts = await ExecuteWithTimeoutAsync(token => _Provider.RestorePurchasesAsync(token), ct);
-            if (restoredProducts == null || restoredProducts.Count == 0)
+            try
             {
-                _Telemetry?.OnPurchasesRestored(0);
-                _RestoredChannel?.Raise(new IapPurchaseEventData(null, default, Array.Empty<IapProduct>()));
-                return Array.Empty<IapProduct>();
-            }
+                _IsRestoreInProgress = true;
+                await EnsureInitializedAsync(ct);
 
-            for (var i = 0; i < restoredProducts.Count; i++)
+                var restoredProducts = await ExecuteWithTimeoutAsync(token => _Provider.RestorePurchasesAsync(token), ct);
+                if (restoredProducts == null || restoredProducts.Count == 0)
+                {
+                    _Telemetry?.OnPurchasesRestored(0);
+                    _RestoredChannel?.Raise(new IapPurchaseEventData(null, default, Array.Empty<IapProduct>()));
+                    return Array.Empty<IapProduct>();
+                }
+
+                for (var i = 0; i < restoredProducts.Count; i++)
+                {
+                    var product = restoredProducts[i];
+                    if (product != null && !product.IsConsumable)
+                        _EntitlementStore?.SetOwned(product, true);
+                }
+
+                _Telemetry?.OnPurchasesRestored(restoredProducts.Count);
+                _RestoredChannel?.Raise(new IapPurchaseEventData(null, default, restoredProducts));
+                return restoredProducts;
+            }
+            finally
             {
-                var product = restoredProducts[i];
-                if (product != null && !product.IsConsumable)
-                    _EntitlementStore?.SetOwned(product, true);
+                _IsRestoreInProgress = false;
             }
-
-            _Telemetry?.OnPurchasesRestored(restoredProducts.Count);
-            _RestoredChannel?.Raise(new IapPurchaseEventData(null, default, restoredProducts));
-            return restoredProducts;
         }
 
         public async UniTask<IapProductInfo> GetProductInfoAsync(IapProduct product, CancellationToken ct = default)
@@ -176,15 +202,53 @@ namespace Common.IAP.Services
             if (_Initialized)
                 return;
 
-            await _Provider.InitializeAsync(_Catalog, ct);
-            _Initialized = true;
+            if (_IsInitializing)
+            {
+                await _InitializationCompletionSource.Task.AttachExternalCancellation(ct);
+                return;
+            }
+
+            _IsInitializing = true;
+            _InitializationCompletionSource = new UniTaskCompletionSource();
+
+            try
+            {
+                await _Provider.InitializeAsync(_Catalog, ct);
+                _Initialized = true;
+                _InitializationCompletionSource.TrySetResult();
+            }
+            catch (Exception ex)
+            {
+                _InitializationCompletionSource.TrySetException(ex);
+                throw;
+            }
+            finally
+            {
+                _IsInitializing = false;
+            }
         }
 
-        private async UniTask<T> ExecuteWithTimeoutAsync<T>(Func<CancellationToken, UniTask<T>> action, CancellationToken ct)
+        private UniTask<T> ExecuteWithTimeoutAsync<T>(Func<CancellationToken, UniTask<T>> action, CancellationToken ct)
         {
+            return ExecuteWithTimeoutAsync(action, ct, null);
+        }
+
+        private async UniTask<T> ExecuteWithTimeoutAsync<T>(Func<CancellationToken, UniTask<T>> action, CancellationToken ct, Action onTimeout)
+        {
+            if (_Settings.GlobalTimeoutSeconds <= 0f)
+                return await action(ct);
+
             using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(_Settings.GlobalTimeoutSeconds));
             using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct, timeoutCts.Token);
-            return await action(linkedCts.Token);
+            try
+            {
+                return await action(linkedCts.Token);
+            }
+            catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested)
+            {
+                onTimeout?.Invoke();
+                throw;
+            }
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using Common.IAP.Data;
 using Common.IAP.Interfaces;
 using Game.Persistence.Services;
@@ -10,6 +11,8 @@ namespace Game.IAP.Services
     public class PlayerDataIapEntitlementStore : IIapEntitlementStore
     {
         private readonly PlayerDataService _PlayerDataService;
+
+        public event Action EntitlementsChanged;
 
         public PlayerDataIapEntitlementStore(PlayerDataService playerDataService)
         {
@@ -31,7 +34,10 @@ namespace Game.IAP.Services
 
             var changed = _PlayerDataService.EnsureIapEntitlements().SetOwned(product.ProductKey, owned);
             if (changed)
+            {
                 _PlayerDataService.SaveIapEntitlements();
+                EntitlementsChanged?.Invoke();
+            }
         }
     }
 }

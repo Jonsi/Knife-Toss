@@ -1,4 +1,5 @@
 using System;
+using Common.IAP.Data;
 using Game.Store.Attributes;
 using Game.Store.Rewards;
 using UnityEngine;
@@ -16,5 +17,10 @@ namespace Game.Store.Data
         [field: SerializeReference]
         [field: SerializeReferenceDropdown]
         public ItemReward Reward { get; private set; }
+
+        public IapProduct GetIapProduct()
+        {
+            return Price?.IapProduct;
+        }
     }
 }

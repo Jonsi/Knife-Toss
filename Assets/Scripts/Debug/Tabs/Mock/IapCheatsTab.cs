@@ -84,10 +84,10 @@ namespace Game.Debugging.Tabs
             for (var i = 0; i < storeCatalog.IapEntries.Count; i++)
             {
                 var entry = storeCatalog.IapEntries[i];
-                if (entry?.Reward is not RemoveAdsReward removeAdsReward)
+                if (entry?.Reward is not RemoveAdsReward)
                     continue;
 
-                var product = removeAdsReward.Product ?? entry.Price?.IapProduct;
+                var product = entry.GetIapProduct();
                 if (product != null)
                 {
                     return product;
