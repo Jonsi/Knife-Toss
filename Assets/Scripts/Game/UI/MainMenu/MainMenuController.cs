@@ -425,6 +425,12 @@ namespace Game.UI.MainMenu
                 return;
             }
 
+            if (_RemoveAdsFlow == null)
+            {
+                _RemoveAdsButton.gameObject.SetActive(false);
+                return;
+            }
+
             _RemoveAdsButton.gameObject.SetActive(_RemoveAdsFlow.IsAvailable);
             _RemoveAdsButton.interactable = !_IsNavigating && _RemoveAdsFlow.CanPurchase;
         }

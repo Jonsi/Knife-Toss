@@ -6,6 +6,7 @@ using Game.UI.MainMenu;
 using Game.UI.Missions;
 using Game.UI.Services;
 using Game.Missions.Events;
+using Game.Store.Services;
 using Game.UI.Stages;
 using UnityEngine;
 using VContainer;
@@ -33,6 +34,8 @@ namespace Game.Installers
             }
 
             builder.RegisterComponent(_MainMenuController);
+            builder.Register<KnifeSkinService>(Lifetime.Scoped).AsSelf();
+
             if (_DailyMissionPopup != null)
             {
                 builder.RegisterComponent(_DailyMissionPopup);

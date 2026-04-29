@@ -15,7 +15,6 @@ MonoBehaviour:
   <DefaultOutcome>k__BackingField:
     <Type>k__BackingField: 0
     <FailureReason>k__BackingField: 
-  <SimulatedDelaySeconds>k__BackingField: 0
+  <SimulatedDelaySeconds>k__BackingField: 0.5
   <SequencedOutcomes>k__BackingField: []
-  <SeededOwnedProducts>k__BackingField:
-  - {fileID: 11400000, guid: 7c93350244dd4a7a9f53db880e73d940, type: 2}
+  <SeededOwnedProducts>k__BackingField: []

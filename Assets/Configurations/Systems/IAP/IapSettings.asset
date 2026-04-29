@@ -13,5 +13,4 @@ MonoBehaviour:
   m_Name: IapSettings
   m_EditorClassIdentifier: Common::Common.IAP.Data.IapSettings
   <IapEnabled>k__BackingField: 1
-  <UseMockProvider>k__BackingField: 1
   <GlobalTimeoutSeconds>k__BackingField: 30

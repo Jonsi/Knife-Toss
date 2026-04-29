@@ -167,5 +167,4 @@ MonoBehaviour:
         <AutoEquipOnPurchase>k__BackingField: 1
     - rid: 1405318739432303954
       type: {class: RemoveAdsReward, ns: Game.Store.Rewards, asm: Game}
-      data:
-        <Product>k__BackingField: {fileID: 11400000, guid: 7c93350244dd4a7a9f53db880e73d940, type: 2}
+      data: {}
