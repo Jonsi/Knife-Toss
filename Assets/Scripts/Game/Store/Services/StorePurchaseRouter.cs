@@ -118,7 +118,7 @@ namespace Game.Store.Services
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"IAP purchase succeeded but reward grant failed for product {product.ProductKey}: {ex}");
+                    Debug.LogError($"IAP purchase succeeded but reward grant failed for product {product.ProductKey}: {ex.Message}");
                     return Fail(entry, PurchaseResult.Error("Reward grant failed - entitlement preserved. Please restart and contact support."));
                 }
 

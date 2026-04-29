@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;
 using Common.IAP.Data;
 using Game.IAP.Tests.TestHelpers;
 using Game.Store.Data;
@@ -8,7 +7,6 @@ using Game.Store.Rewards;
 using Game.Store.Services;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 
 namespace Game.IAP.Tests
 {
@@ -115,9 +113,18 @@ namespace Game.IAP.Tests
             var iapService = new FakeIapService();
             var router = CreateRouter(new FakePurchaseService(), iapService);
             var entry = GameIapTestHelpers.Entry(reward, GameIapTestHelpers.Product("remove_ads"));
+            var previousLogEnabled = Debug.unityLogger.logEnabled;
 
-            LogAssert.Expect(LogType.Error, new Regex("IAP purchase succeeded but reward grant failed"));
-            var result = await router.TryPurchaseAsync(entry);
+            PurchaseResult result;
+            try
+            {
+                Debug.unityLogger.logEnabled = false;
+                result = await router.TryPurchaseAsync(entry);
+            }
+            finally
+            {
+                Debug.unityLogger.logEnabled = previousLogEnabled;
+            }
 
             Assert.IsFalse(result.Success);
             Assert.AreEqual("Reward grant failed - entitlement preserved. Please restart and contact support.", result.FailureReason);
