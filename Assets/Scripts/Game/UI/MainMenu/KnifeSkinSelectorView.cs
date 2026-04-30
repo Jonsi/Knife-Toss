@@ -17,16 +17,27 @@ namespace Game.UI.MainMenu
         [SerializeField] private Image _PreviewImage;
         [SerializeField] private Button _PreviousButton;
         [SerializeField] private Button _NextButton;
+        [SerializeField] private float _PreviewFloatDistance = 14f;
+        [SerializeField] private float _PreviewFloatDuration = 1.25f;
 
         private RectTransform _RectTransform;
+        private RectTransform _PreviewRectTransform;
         private Vector2 _BaseAnchoredPosition;
+        private Vector2 _PreviewBaseAnchoredPosition;
         private Vector3 _BaseScale;
         private bool _HasCachedState;
+        private bool _HasCachedPreviewState;
+        private Tween _PreviewFloatTween;
 
         private void Awake()
         {
             EnsureReferences();
             CacheState();
+        }
+
+        private void OnDisable()
+        {
+            StopPreviewFloat(resetPosition: true);
         }
 
         private void OnDestroy()
@@ -63,6 +74,8 @@ namespace Game.UI.MainMenu
                 _PreviewImage.enabled = previewSprite != null;
             }
 
+            StartPreviewFloatIfNeeded();
+
             var arrowsInteractable = canCycle && canInteract;
             if (_PreviousButton != null)
             {
@@ -94,6 +107,7 @@ namespace Game.UI.MainMenu
             sequence.Join(_RectTransform.DOAnchorPos(_BaseAnchoredPosition, FadeDuration).SetEase(Ease.OutBack));
             sequence.Join(_RectTransform.DOScale(_BaseScale, FadeDuration).SetEase(Ease.OutBack));
             sequence.Join(_CanvasGroup.DOFade(1f, FadeDuration).SetEase(Ease.OutQuad));
+            sequence.OnComplete(StartPreviewFloatIfNeeded);
         }
 
         public async UniTask PlayOutAsync()
@@ -106,6 +120,7 @@ namespace Game.UI.MainMenu
             EnsureReferences();
             CacheState();
             DOTween.Kill(this);
+            StopPreviewFloat(resetPosition: true);
 
             var sequence = DOTween.Sequence().SetTarget(this).SetUpdate(true);
             sequence.Join(_RectTransform.DOAnchorPos(_BaseAnchoredPosition + Vector2.down * 32f, FadeDuration).SetEase(Ease.InQuad));
@@ -123,6 +138,7 @@ namespace Game.UI.MainMenu
         private void EnsureReferences()
         {
             _RectTransform ??= transform as RectTransform;
+            _PreviewRectTransform ??= _PreviewImage != null ? _PreviewImage.rectTransform : null;
 
             if (_CanvasGroup == null)
             {
@@ -136,14 +152,59 @@ namespace Game.UI.MainMenu
 
         private void CacheState()
         {
-            if (_HasCachedState || _RectTransform == null)
+            if (!_HasCachedState && _RectTransform != null)
             {
+                _BaseAnchoredPosition = _RectTransform.anchoredPosition;
+                _BaseScale = _RectTransform.localScale;
+                _HasCachedState = true;
+            }
+
+            if (!_HasCachedPreviewState && _PreviewRectTransform != null)
+            {
+                _PreviewBaseAnchoredPosition = _PreviewRectTransform.anchoredPosition;
+                _HasCachedPreviewState = true;
+            }
+        }
+
+        private void StartPreviewFloatIfNeeded()
+        {
+            EnsureReferences();
+            CacheState();
+
+            if (!gameObject.activeInHierarchy ||
+                _PreviewImage == null ||
+                !_PreviewImage.enabled ||
+                _PreviewRectTransform == null ||
+                _PreviewFloatDistance <= 0f ||
+                _PreviewFloatDuration <= 0f)
+            {
+                StopPreviewFloat(resetPosition: true);
                 return;
             }
 
-            _BaseAnchoredPosition = _RectTransform.anchoredPosition;
-            _BaseScale = _RectTransform.localScale;
-            _HasCachedState = true;
+            StopPreviewFloat(resetPosition: true);
+
+            _PreviewFloatTween = _PreviewRectTransform
+                .DOAnchorPosY(_PreviewBaseAnchoredPosition.y + _PreviewFloatDistance, _PreviewFloatDuration)
+                .SetEase(Ease.InOutSine)
+                .SetLoops(-1, LoopType.Yoyo)
+                .SetTarget(this)
+                .SetUpdate(true);
+        }
+
+        private void StopPreviewFloat(bool resetPosition)
+        {
+            if (_PreviewFloatTween != null && _PreviewFloatTween.IsActive())
+            {
+                _PreviewFloatTween.Kill();
+            }
+
+            _PreviewFloatTween = null;
+
+            if (resetPosition && _HasCachedPreviewState && _PreviewRectTransform != null)
+            {
+                _PreviewRectTransform.anchoredPosition = _PreviewBaseAnchoredPosition;
+            }
         }
     }
 }

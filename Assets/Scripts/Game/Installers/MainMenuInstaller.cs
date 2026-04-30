@@ -7,7 +7,6 @@ using Game.UI.Missions;
 using Game.UI.Services;
 using Game.Missions.Events;
 using Game.Store.Services;
-using Game.UI.Stages;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -46,7 +45,6 @@ namespace Game.Installers
                 _DailyMissionPopup,
                 resolver.Resolve<Game.Missions.Daily.Services.DailyMissionProvider>(),
                 _MissionProgressChangedEventChannel), Lifetime.Scoped).AsSelf();
-            builder.RegisterComponentInHierarchy<StageListController>();
             builder.RegisterComponentInHierarchy<CoinsUiDisplay>();
         }
     }
