@@ -33,6 +33,7 @@ namespace Game.UI.Common
         private Vector3 _BaseEulerAngles;
         private Color _BaseColor = Color.white;
         private float _BaseAlpha = 1f;
+        private DirectChildIdleState[] _DirectChildIdleStates;
 
         private void Awake()
         {
@@ -298,6 +299,9 @@ namespace Game.UI.Common
                 case IdleAnimationMode.Heartbeat:
                     _IdleAnimationTween = CreateHeartbeatIdleTween();
                     break;
+                case IdleAnimationMode.HorizontalSway:
+                    _IdleAnimationTween = CreateHorizontalSwayIdleTween();
+                    break;
             }
         }
 
@@ -331,6 +335,179 @@ namespace Game.UI.Common
             });
 
             return sequence;
+        }
+
+        private Tween CreateHorizontalSwayIdleTween()
+        {
+            if (_IdleAnimation.AnimateChildrenSeparately && TryCacheDirectChildIdleStates())
+            {
+                return CreateChildHorizontalSwayIdleTween();
+            }
+
+            var phase = 0f;
+            Tweener tween = DOTween.To(
+                () => phase,
+                value =>
+                {
+                    phase = value;
+
+                    if (_RectTransform == null)
+                    {
+                        return;
+                    }
+
+                    float offset = Mathf.Sin(phase) * _IdleAnimation.HorizontalTravel;
+                    float tilt = Mathf.Sin(phase) * _IdleAnimation.HorizontalTilt;
+                    _RectTransform.anchoredPosition = _BaseAnchoredPosition + Vector2.right * offset;
+                    _RectTransform.localEulerAngles = _BaseEulerAngles + Vector3.forward * tilt;
+                },
+                Mathf.PI * 2f,
+                Mathf.Max(0.01f, _IdleAnimation.HorizontalCycleDuration));
+
+            tween.SetEase(Ease.Linear);
+            tween.SetLoops(-1, LoopType.Restart);
+
+            if (_UseUnscaledTime)
+            {
+                tween.SetUpdate(true);
+            }
+
+            if (_IdleAnimation.InitialDelay > 0f)
+            {
+                tween.SetDelay(_IdleAnimation.InitialDelay);
+            }
+
+            tween.OnKill(() =>
+            {
+                if (_RectTransform != null)
+                {
+                    _RectTransform.anchoredPosition = _BaseAnchoredPosition;
+                    _RectTransform.localEulerAngles = _BaseEulerAngles;
+                }
+
+                if (_IdleAnimationTween == tween)
+                {
+                    _IdleAnimationTween = null;
+                }
+            });
+
+            return tween;
+        }
+
+        private Tween CreateChildHorizontalSwayIdleTween()
+        {
+            if (_RectTransform != null)
+            {
+                _RectTransform.anchoredPosition = _BaseAnchoredPosition;
+                _RectTransform.localEulerAngles = _BaseEulerAngles;
+            }
+
+            var phase = 0f;
+            float cycleDuration = Mathf.Max(0.01f, _IdleAnimation.HorizontalCycleDuration);
+            Tweener tween = DOTween.To(
+                () => phase,
+                value =>
+                {
+                    phase = value;
+                    UpdateChildHorizontalSway(phase);
+                },
+                Mathf.PI * 2000f,
+                cycleDuration * 1000f);
+
+            tween.SetEase(Ease.Linear);
+            tween.SetLoops(-1, LoopType.Restart);
+
+            if (_UseUnscaledTime)
+            {
+                tween.SetUpdate(true);
+            }
+
+            if (_IdleAnimation.InitialDelay > 0f)
+            {
+                tween.SetDelay(_IdleAnimation.InitialDelay);
+            }
+
+            tween.OnKill(() =>
+            {
+                RestoreChildIdleStates();
+
+                if (_IdleAnimationTween == tween)
+                {
+                    _IdleAnimationTween = null;
+                }
+            });
+
+            return tween;
+        }
+
+        private void UpdateChildHorizontalSway(float phase)
+        {
+            if (_DirectChildIdleStates == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < _DirectChildIdleStates.Length; i++)
+            {
+                DirectChildIdleState childState = _DirectChildIdleStates[i];
+                if (childState.RectTransform == null)
+                {
+                    continue;
+                }
+
+                float childCycleMultiplier = 1f + _IdleAnimation.ChildCycleDurationVariance * i;
+                float basePhase = _IdleAnimation.ChildPhaseOffset * i;
+                float childPhase = phase / Mathf.Max(0.1f, childCycleMultiplier) + basePhase;
+                float travel = _IdleAnimation.HorizontalTravel * Mathf.Max(0f, 1f - _IdleAnimation.ChildTravelFalloff * i);
+                float offset = (Mathf.Sin(childPhase) - Mathf.Sin(basePhase)) * travel;
+                float verticalOffset = (Mathf.Cos(childPhase * 0.5f) - Mathf.Cos(basePhase * 0.5f)) * _IdleAnimation.ChildVerticalTravel;
+                float tilt = (Mathf.Sin(childPhase + Mathf.PI * 0.35f) - Mathf.Sin(basePhase + Mathf.PI * 0.35f)) * _IdleAnimation.HorizontalTilt;
+
+                childState.RectTransform.anchoredPosition = childState.AnchoredPosition + new Vector2(offset, verticalOffset);
+                childState.RectTransform.localEulerAngles = childState.EulerAngles + Vector3.forward * tilt;
+            }
+        }
+
+        private bool TryCacheDirectChildIdleStates()
+        {
+            if (_RectTransform == null || _RectTransform.childCount == 0)
+            {
+                return false;
+            }
+
+            _DirectChildIdleStates = new DirectChildIdleState[_RectTransform.childCount];
+            for (var i = 0; i < _RectTransform.childCount; i++)
+            {
+                var child = _RectTransform.GetChild(i) as RectTransform;
+                if (child == null)
+                {
+                    return false;
+                }
+
+                _DirectChildIdleStates[i] = new DirectChildIdleState(child);
+            }
+
+            return true;
+        }
+
+        private void RestoreChildIdleStates()
+        {
+            if (_DirectChildIdleStates == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < _DirectChildIdleStates.Length; i++)
+            {
+                DirectChildIdleState childState = _DirectChildIdleStates[i];
+                if (childState.RectTransform == null)
+                {
+                    continue;
+                }
+
+                childState.RectTransform.anchoredPosition = childState.AnchoredPosition;
+                childState.RectTransform.localEulerAngles = childState.EulerAngles;
+            }
         }
 
         private void KillIdleAnimation()
@@ -392,7 +569,8 @@ namespace Game.UI.Common
         public enum IdleAnimationMode
         {
             None = 0,
-            Heartbeat = 1
+            Heartbeat = 1,
+            HorizontalSway = 2
         }
 
         [Serializable]
@@ -407,6 +585,14 @@ namespace Game.UI.Common
             [SerializeField, Min(0f)] private float _SecondaryDownDuration = 0.08f;
             [SerializeField, Min(0f)] private float _BetweenLoopsDelay = 0.72f;
             [SerializeField, Min(0f)] private float _InitialDelay = 0.18f;
+            [SerializeField, Min(0f)] private float _HorizontalTravel = 28f;
+            [SerializeField, Min(0.01f)] private float _HorizontalCycleDuration = 5.6f;
+            [SerializeField] private float _HorizontalTilt = 1.2f;
+            [SerializeField] private bool _AnimateChildrenSeparately;
+            [SerializeField, Min(0f)] private float _ChildPhaseOffset = 1.35f;
+            [SerializeField, Min(0f)] private float _ChildCycleDurationVariance = 0.18f;
+            [SerializeField, Min(0f)] private float _ChildTravelFalloff = 0.18f;
+            [SerializeField, Min(0f)] private float _ChildVerticalTravel = 3f;
             [SerializeField] private Ease _UpEase = Ease.OutQuad;
             [SerializeField] private Ease _DownEase = Ease.InQuad;
 
@@ -419,6 +605,14 @@ namespace Game.UI.Common
             public float SecondaryDownDuration => _SecondaryDownDuration;
             public float BetweenLoopsDelay => _BetweenLoopsDelay;
             public float InitialDelay => _InitialDelay;
+            public float HorizontalTravel => _HorizontalTravel;
+            public float HorizontalCycleDuration => _HorizontalCycleDuration;
+            public float HorizontalTilt => _HorizontalTilt;
+            public bool AnimateChildrenSeparately => _AnimateChildrenSeparately;
+            public float ChildPhaseOffset => _ChildPhaseOffset;
+            public float ChildCycleDurationVariance => _ChildCycleDurationVariance;
+            public float ChildTravelFalloff => _ChildTravelFalloff;
+            public float ChildVerticalTravel => _ChildVerticalTravel;
             public Ease UpEase => _UpEase;
             public Ease DownEase => _DownEase;
 
@@ -428,6 +622,20 @@ namespace Game.UI.Common
                 {
                     _Mode = IdleAnimationMode.None
                 };
+            }
+        }
+
+        private readonly struct DirectChildIdleState
+        {
+            public readonly RectTransform RectTransform;
+            public readonly Vector2 AnchoredPosition;
+            public readonly Vector3 EulerAngles;
+
+            public DirectChildIdleState(RectTransform rectTransform)
+            {
+                RectTransform = rectTransform;
+                AnchoredPosition = rectTransform.anchoredPosition;
+                EulerAngles = rectTransform.localEulerAngles;
             }
         }
     }
