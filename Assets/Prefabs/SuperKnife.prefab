@@ -83,7 +83,10 @@ MonoBehaviour:
   _SpriteRenderer: {fileID: 5543959450069452106}
   _VisualRoot: {fileID: 6845354428870092820}
   _Collider: {fileID: 359776916962366960}
+  _HitCollider: {fileID: 0}
   _ShatterController: {fileID: 2931372984952118166}
+  _FailAnimationConfig: {fileID: 0}
+  _SuperKnifeMaterial: {fileID: 0}
 --- !u!212 &5543959450069452106
 SpriteRenderer:
   serializedVersion: 2
@@ -110,7 +113,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a621b906a1dcbdc4f8cc81fd2c9a2e76, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
