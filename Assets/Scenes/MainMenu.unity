@@ -155,7 +155,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -63.54603}
+  m_AnchoredPosition: {x: 0, y: -63.54602}
   m_SizeDelta: {x: 0, y: -127.09}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &45112552
@@ -2691,7 +2691,7 @@ GameObject:
   - component: {fileID: 1740993444}
   - component: {fileID: 1740993443}
   m_Layer: 5
-  m_Name: RightButton
+  m_Name: LeftButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2714,7 +2714,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 64, y: 53.000076}
-  m_SizeDelta: {x: 128, y: 128}
+  m_SizeDelta: {x: 256, y: 256}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1740993443
 MonoBehaviour:
@@ -2773,14 +2773,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9960785, g: 0.9294118, b: 0.53333336, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f1737b486a23f634bb246de79b8d4f4b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1c16ffc8a7a484e0bac31141260b79da, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3120,8 +3120,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game::Game.UI.MainMenu.KnifeSkinSelectorView
   _CanvasGroup: {fileID: 1915672170}
   _PreviewImage: {fileID: 1256337824}
-  _PreviousButton: {fileID: 2079193911}
-  _NextButton: {fileID: 1740993443}
+  _PreviousButton: {fileID: 1740993443}
+  _NextButton: {fileID: 2079193911}
   _PreviewFloatDistance: 14
   _PreviewFloatDuration: 1.25
 --- !u!1 &1965329570
@@ -3897,7 +3897,7 @@ GameObject:
   - component: {fileID: 2079193912}
   - component: {fileID: 2079193911}
   m_Layer: 5
-  m_Name: LeftButton
+  m_Name: RightButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3920,7 +3920,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -64, y: 53.000076}
-  m_SizeDelta: {x: 128, y: 128}
+  m_SizeDelta: {x: 256, y: 256}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2079193911
 MonoBehaviour:
@@ -3979,14 +3979,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9960785, g: 0.9294118, b: 0.53333336, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b0b13fccedbbc0243acde6180912a042, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f68ad9967571c44759536e586a5101de, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
