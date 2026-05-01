@@ -434,6 +434,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5608068049859634373, guid: c7fa24327d8ca134282c6928e94ce0e6, type: 3}
   m_PrefabInstance: {fileID: 1904610130}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1904610132 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1376334030654520120, guid: c7fa24327d8ca134282c6928e94ce0e6, type: 3}
+  m_PrefabInstance: {fileID: 1904610130}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1 &1965329570
 GameObject:
   m_ObjectHideFlags: 0
@@ -555,7 +566,7 @@ MonoBehaviour:
   _StagesCollection: {fileID: 11400000, guid: d7b76ea65780b0f4e890085754f0d6bf, type: 2}
   _StageItemPrefab: {fileID: 8112384512892005357, guid: e122e9ef826bc5549a185e0f031bf1fd, type: 3}
   _ContentRoot: {fileID: 559338492}
-  _BackButton: {fileID: 0}
+  _BackButton: {fileID: 1904610132}
 --- !u!1 &1979444084
 GameObject:
   m_ObjectHideFlags: 0
