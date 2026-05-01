@@ -27,8 +27,10 @@ namespace Game.EditorTools
             public static readonly GUIContent SaveButton = new GUIContent("Save");
             public static readonly GUIContent ResetButton = new GUIContent("Reset");
             public static readonly GUIContent ProgressHeader = new GUIContent("Progress");
-            public static readonly GUIContent CurrentStage = new GUIContent("Current Stage");
-            public static readonly GUIContent HighestStage = new GUIContent("Highest Stage");
+            public static readonly GUIContent CurrentCollection = new GUIContent("Current Collection");
+            public static readonly GUIContent CurrentStage = new GUIContent("Current Stage (local)");
+            public static readonly GUIContent HighestCollection = new GUIContent("Highest Collection");
+            public static readonly GUIContent HighestStage = new GUIContent("Highest Stage (local)");
             public static readonly GUIContent SettingsHeader = new GUIContent("Settings");
             public static readonly GUIContent Muted = new GUIContent("Muted");
             public static readonly GUIContent ResourcesHeader = new GUIContent("Resources");
@@ -128,12 +130,16 @@ namespace Game.EditorTools
             var progress = EnsureProgressData();
 
             EditorGUI.BeginChangeCheck();
+            int currentCollection = EditorGUILayout.IntField(Styles.CurrentCollection, progress.CurrentCollectionIndex);
             int currentStage = EditorGUILayout.IntField(Styles.CurrentStage, progress.CurrentStageIndex);
+            int highestCollection = EditorGUILayout.IntField(Styles.HighestCollection, progress.HighestCollectionIndex);
             int highestStage = EditorGUILayout.IntField(Styles.HighestStage, progress.HighestStageIndex);
 
             if (EditorGUI.EndChangeCheck())
             {
+                progress.CurrentCollectionIndex = Mathf.Max(0, currentCollection);
                 progress.CurrentStageIndex = Mathf.Max(0, currentStage);
+                progress.HighestCollectionIndex = Mathf.Max(0, highestCollection);
                 progress.HighestStageIndex = Mathf.Max(0, highestStage);
                 MarkDirty();
             }

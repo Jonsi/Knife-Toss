@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using Game.Economy.Interfaces;
 using Game.Flow.Game;
+using Game.Level.Catalogs;
 using Game.Persistence.Services;
 using Game.Settings;
 using VContainer;
@@ -24,8 +25,19 @@ namespace Game.Debugging.Tabs
         }
 
         [Category("Progress")]
-        [DisplayName("Highest Stage")]
-        public int HighestStage
+        [DisplayName("Highest Collection")]
+        public int HighestCollection
+        {
+            get
+            {
+                var resolver = CurrentResolver;
+                return (TryResolve<PlayerDataService>(resolver)?.GetHighestCollectionIndex() ?? 0) + 1;
+            }
+        }
+
+        [Category("Progress")]
+        [DisplayName("Highest Stage (local)")]
+        public int HighestStageLocal
         {
             get
             {
@@ -35,13 +47,31 @@ namespace Game.Debugging.Tabs
         }
 
         [Category("Progress")]
-        [DisplayName("Current Stage")]
+        [DisplayName("Current Collection")]
+        public int CurrentCollection
+        {
+            get
+            {
+                var resolver = CurrentResolver;
+                return (TryResolve<GameData>(resolver)?.CurrentCollectionIndex ?? 0) + 1;
+            }
+        }
+
+        [Category("Progress")]
+        [DisplayName("Current Stage (display #)")]
         public int CurrentStage
         {
             get
             {
                 var resolver = CurrentResolver;
-                return (TryResolve<GameData>(resolver)?.CurrentStageIndex ?? 0) + 1;
+                var gameData = TryResolve<GameData>(resolver);
+                var composite = TryResolve<StagesCollectionComposite>(resolver);
+                if (gameData == null || composite == null)
+                {
+                    return 1;
+                }
+
+                return composite.GetCumulativeStageNumberDisplay(gameData.CurrentCollectionIndex, gameData.CurrentStageIndex);
             }
         }
 

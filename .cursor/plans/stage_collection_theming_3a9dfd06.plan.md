@@ -4,37 +4,37 @@ overview: Refactor the stage system from a single flat StagesCollection into mul
 todos:
   - id: create-composite-so
     content: Create StagesCollectionComposite ScriptableObject with ordered collection list
-    status: pending
+    status: completed
   - id: add-theme-fields
     content: Add ThemeName, StageSelectBackground, and MenuParticleEffectPrefab fields to StagesCollection
-    status: pending
+    status: completed
   - id: update-game-data
     content: Add CurrentCollectionIndex to GameData; make CurrentStageIndex per-collection
     status: pending
   - id: create-resolver
     content: Create StagesCollectionResolver (reads GameData.CurrentCollectionIndex from composite)
-    status: pending
+    status: completed
   - id: create-bg-effect-service
     content: Create BackgroundEffectService to manage particle effect instantiation/cleanup in MainMenu
-    status: pending
+    status: completed
   - id: update-catalog
     content: Refactor StagesConfigCatalog to work with composite + GameData (active collection only)
-    status: pending
+    status: completed
   - id: update-game-installer
     content: Register composite, resolver, and BackgroundEffectService in GameInstaller
-    status: pending
+    status: completed
   - id: update-main-menu
     content: Update MainMenuController to use resolver and BackgroundEffectService
-    status: pending
+    status: completed
   - id: update-stages-menu
     content: Refactor StagesMenuController/StageListController to render world rows per collection
-    status: pending
+    status: completed
   - id: update-stage-flow
     content: Update StageFlowInstaller, StageInstaller, and PlayerDataService for composite
-    status: pending
+    status: completed
   - id: unity-setup-instructions
     content: Write Unity Editor setup instructions for creating assets and wiring references
-    status: pending
+    status: completed
 isProject: false
 ---
 

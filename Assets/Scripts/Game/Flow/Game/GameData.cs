@@ -6,7 +6,12 @@ namespace Game.Flow.Game
     public class GameData
     {
         /// <summary>
-        /// Current stage index in progression.
+        /// Active stage collection (world) index.
+        /// </summary>
+        public int CurrentCollectionIndex { get; internal set; }
+
+        /// <summary>
+        /// Current stage index within the active collection.
         /// </summary>
         public int CurrentStageIndex { get; internal set; }
 
@@ -15,6 +20,7 @@ namespace Game.Flow.Game
         /// </summary>
         public void Reset()
         {
+            CurrentCollectionIndex = 0;
             CurrentStageIndex = 0;
         }
     }

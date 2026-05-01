@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using Game.Flow.Game;
 using Game.IAP.Services;
 using Game.Level.Catalogs;
+using Game.Level.Configurations.Stage;
 using Game.Persistence.Services;
 using Game.Store.Data;
 using Game.Store.Services;
@@ -31,7 +32,7 @@ namespace Game.UI.MainMenu
         [SerializeField] private Button _MissionsButton;
         [SerializeField] private TMP_Text _CurrentStageText;
         [SerializeField] private Image _BackgroundImage;
-        [SerializeField] private StagesCollection _StagesCollection;
+        [SerializeField] private Transform _BackgroundEffectHolder;
         [SerializeField] private UiElementAnimator[] _MenuAnimators;
         [SerializeField] private KnifeSkinSelectorView _KnifeSkinSelectorView;
 
@@ -41,6 +42,9 @@ namespace Game.UI.MainMenu
         [Inject] private DailyMissionPopupController _MissionPopupController;
         [Inject] private KnifeSkinService _KnifeSkinService;
         [Inject] private MainMenuRemoveAdsFlow _RemoveAdsFlow;
+        [Inject] private StagesCollectionComposite _StagesComposite;
+        [Inject] private StagesCollectionResolver _StagesCollectionResolver;
+        [Inject] private BackgroundEffectService _BackgroundEffectService;
 
         private bool _IsNavigating;
         private readonly List<KnifeSkinSelectionOption> _KnifeSkinOptions = new List<KnifeSkinSelectionOption>();
@@ -77,6 +81,7 @@ namespace Game.UI.MainMenu
             SyncCurrentStageSelection();
             UpdateCurrentStageText();
             UpdateBackground();
+            _BackgroundEffectService?.ApplyEffect(_StagesCollectionResolver?.GetActiveCollection(), _BackgroundEffectHolder);
             RefreshRemoveAdsButtonState();
             InitializeKnifeSkinSelector();
             PlayMenuIn();
@@ -85,9 +90,11 @@ namespace Game.UI.MainMenu
 
         private void UpdateCurrentStageText()
         {
-            if (_CurrentStageText != null && _GameData != null)
+            if (_CurrentStageText != null && _GameData != null && _StagesComposite != null)
             {
-                int stageNumber = _GameData.CurrentStageIndex + 1;
+                int stageNumber = _StagesComposite.GetCumulativeStageNumberDisplay(
+                    _GameData.CurrentCollectionIndex,
+                    _GameData.CurrentStageIndex);
                 _CurrentStageText.text = $"Stage {stageNumber}";
             }
         }
@@ -115,11 +122,9 @@ namespace Game.UI.MainMenu
 
         private void OnPlayClicked()
         {
-            if (_GameData != null)
+            if (_GameData != null && _PlayerDataService != null && _StagesComposite != null)
             {
-                _GameData.CurrentStageIndex = _PlayerDataService.ClampStageIndexToUnlockedRange(
-                    _GameData.CurrentStageIndex,
-                    _PlayerDataService.GetHighestStageIndex() + 1);
+                _PlayerDataService.ClampSelectionToUnlocked(_StagesComposite);
             }
 
             LoadGameFromMainMenuAsync().Forget();
@@ -172,25 +177,24 @@ namespace Game.UI.MainMenu
 
         private void SyncCurrentStageSelection()
         {
-            if (_GameData == null || _PlayerDataService == null)
+            if (_GameData == null || _PlayerDataService == null || _StagesComposite == null)
             {
                 return;
             }
 
-            _GameData.CurrentStageIndex = _PlayerDataService.ClampStageIndexToUnlockedRange(
-                _GameData.CurrentStageIndex,
-                _PlayerDataService.GetHighestStageIndex() + 1);
+            _PlayerDataService.ClampSelectionToUnlocked(_StagesComposite);
         }
 
         private void UpdateBackground()
         {
-            if (_BackgroundImage == null || _StagesCollection?.Stages == null || _StagesCollection.Stages.Count == 0 || _GameData == null)
+            StagesCollection active = _StagesCollectionResolver?.GetActiveCollection();
+            if (_BackgroundImage == null || active?.Stages == null || active.Stages.Count == 0 || _GameData == null)
             {
                 return;
             }
 
-            int stageIndex = Mathf.Clamp(_GameData.CurrentStageIndex, 0, _StagesCollection.Stages.Count - 1);
-            var stageConfig = _StagesCollection.Stages[stageIndex];
+            int stageIndex = Mathf.Clamp(_GameData.CurrentStageIndex, 0, active.Stages.Count - 1);
+            var stageConfig = active.Stages[stageIndex];
             var backgroundSprite = stageConfig?.LayoutSettings?.BackgroundSprite;
             if (backgroundSprite == null)
             {

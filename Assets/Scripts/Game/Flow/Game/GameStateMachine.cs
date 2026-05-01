@@ -2,6 +2,7 @@ using Common.Patterns.State;
 using Game.Flow.Events;
 using Game.Flow.Game.States;
 using Game.Flow.Interfaces;
+using Game.Level.Catalogs;
 using Game.Level.Interfaces;
 using VContainer.Unity;
 
@@ -17,6 +18,11 @@ namespace Game.Flow.Game
         /// </summary>
         public GameData Context { get; }
 
+        /// <summary>
+        /// Ordered worlds configuration for progression after a collection is completed.
+        /// </summary>
+        public StagesCollectionComposite StagesCollectionComposite { get; }
+
         private readonly GamePlayingState _Playing;
 
         /// <summary>
@@ -27,16 +33,21 @@ namespace Game.Flow.Game
         public readonly IStageFlowController StageFlowController;
         public readonly ILevelCatalog LevelCatalog;
 
+        /// <summary>
+        /// Creates the game state machine with flow dependencies.
+        /// </summary>
         public GameStateMachine(
             GameData context,
             IStageFlowController stageFlowController,
             ILevelCatalog levelCatalog,
+            StagesCollectionComposite stagesCollectionComposite,
             StageCompletedEventChannel stageCompletedChannel,
             ReturnToMenuEventChannel returnToMenuChannel)
         {
             Context = context;
             StageFlowController = stageFlowController;
             LevelCatalog = levelCatalog;
+            StagesCollectionComposite = stagesCollectionComposite;
 
             _Playing = new GamePlayingState(this, stageCompletedChannel, returnToMenuChannel);
         }

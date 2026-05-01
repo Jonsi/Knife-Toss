@@ -23,7 +23,7 @@ namespace Game.Installers
     /// </summary>
     public class StageFlowInstaller : IInstaller
     {
-        private readonly StagesCollection _StagesConfig;
+        private readonly StagesCollectionComposite _StagesComposite;
         private readonly StageCompletedEventChannel _StageCompletedChannel;
         private readonly ReturnToMenuEventChannel _ReturnToMenuChannel;
         private readonly VoidEventChannel _RetryChannel;
@@ -34,14 +34,14 @@ namespace Game.Installers
         /// Initializes a new instance of the <see cref="StageFlowInstaller"/> class.
         /// </summary>
         public StageFlowInstaller(
-            StagesCollection stagesConfig,
+            StagesCollectionComposite stagesComposite,
             StageCompletedEventChannel stageCompletedChannel,
             ReturnToMenuEventChannel returnToMenuChannel,
             VoidEventChannel retryChannel,
             VoidEventChannel restartChannel,
             LevelStartedEventChannel levelStartedChannel)
         {
-            _StagesConfig = stagesConfig;
+            _StagesComposite = stagesComposite;
             _StageCompletedChannel = stageCompletedChannel;
             _ReturnToMenuChannel = returnToMenuChannel;
             _RetryChannel = retryChannel;
@@ -54,9 +54,8 @@ namespace Game.Installers
         /// </summary>
         public void Install(IContainerBuilder builder)
         {
-            builder.RegisterInstance(_StagesConfig);
             builder.Register<StagesConfigCatalog>(Lifetime.Singleton).As<ILevelCatalog>().AsSelf();
-            builder.Register<StageData>(Lifetime.Singleton).WithParameter(0);
+            builder.Register<StageData>(Lifetime.Singleton).WithParameter(0).WithParameter(0);
             builder.Register(CreateStageStateMachine, Lifetime.Singleton);
             builder.RegisterEntryPoint<StageFlowController>().As<IStageFlowController>();
             builder.RegisterInstance(_StageCompletedChannel);
@@ -91,4 +90,3 @@ namespace Game.Installers
         }
     }
 }
-

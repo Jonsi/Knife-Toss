@@ -6,8 +6,10 @@ namespace Game.Flow.Interfaces
     public interface IStageFlowController
     {
         /// <summary>
-        /// Starts the stage at the specified index.
+        /// Starts the stage at the given collection and local stage indices.
         /// </summary>
-        void LoadStage(int stageIndex);
+        /// <param name="collectionIndex">World (stage collection) index.</param>
+        /// <param name="stageIndex">Stage index within that collection.</param>
+        void LoadStage(int collectionIndex, int stageIndex);
     }
 }

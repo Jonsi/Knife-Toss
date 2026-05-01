@@ -49,7 +49,7 @@ namespace Game.Installers
 
         [SerializeField]
         [Tooltip("Master list of stages and levels used by the stage flow and level catalog.")]
-        private StagesCollection _StagesConfig;
+        private StagesCollectionComposite _StagesComposite;
 
         [SerializeField]
         [Tooltip("Shared prefabs for targets, knives, VFX, and pooling.")]
@@ -363,7 +363,7 @@ namespace Game.Installers
         private StageFlowInstaller CreateStageFlowInstaller()
         {
             return new StageFlowInstaller(
-                _StagesConfig,
+                _StagesComposite,
                 _StageCompletedEventChannel,
                 _ReturnToMenuEventChannel,
                 _RetryLevelClickedChannel,

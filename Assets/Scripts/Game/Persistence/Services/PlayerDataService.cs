@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Game.Flow.Game;
+using Game.Level.Catalogs;
 using Game.Missions.Daily.Data;
 using Game.Persistence.Data;
 using Game.Persistence.Interfaces;
@@ -23,6 +24,9 @@ namespace Game.Persistence.Services
 
         private PlayerData _CachedData;
 
+        /// <summary>
+        /// Creates the service with persistence and session state.
+        /// </summary>
         public PlayerDataService(
             IPlayerDataStore store,
             GameData gameData)
@@ -31,6 +35,7 @@ namespace Game.Persistence.Services
             _GameData = gameData;
         }
 
+        /// <inheritdoc />
         public void Initialize()
         {
             _CachedData = _Store.Load() ?? new PlayerData();
@@ -39,6 +44,7 @@ namespace Game.Persistence.Services
             SyncGameData();
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
         }
@@ -70,7 +76,15 @@ namespace Game.Persistence.Services
         }
 
         /// <summary>
-        /// Gets the highest stage index the player has reached.
+        /// Highest unlocked collection index (world frontier).
+        /// </summary>
+        public int GetHighestCollectionIndex()
+        {
+            return _CachedData.Progress.HighestCollectionIndex;
+        }
+
+        /// <summary>
+        /// Highest unlocked stage index within the highest unlocked collection.
         /// </summary>
         public int GetHighestStageIndex()
         {
@@ -78,7 +92,15 @@ namespace Game.Persistence.Services
         }
 
         /// <summary>
-        /// Gets the current stage index stored in player progress.
+        /// Current collection index in saved progress.
+        /// </summary>
+        public int GetCurrentCollectionIndex()
+        {
+            return _CachedData.Progress.CurrentCollectionIndex;
+        }
+
+        /// <summary>
+        /// Current stage index within the current collection in saved progress.
         /// </summary>
         public int GetCurrentStageIndex()
         {
@@ -86,48 +108,76 @@ namespace Game.Persistence.Services
         }
 
         /// <summary>
-        /// Returns the highest unlocked stage index clamped to the provided catalog size.
+        /// Highest unlocked local stage index in the given collection, capped by stage count.
         /// </summary>
-        /// <param name="stageCount">Total stage count in the active catalog.</param>
-        public int GetHighestUnlockedStageIndex(int stageCount)
+        public int GetHighestUnlockedLocalStageIndex(int collectionIndex, int stageCountInCollection, StagesCollectionComposite composite)
         {
-            return ClampStageIndex(GetHighestStageIndex(), stageCount);
+            int normalizedCount = GetNormalizedStageCount(stageCountInCollection);
+            int maxStageIndex = normalizedCount - MinimumStageCount;
+            int highestC = GetHighestCollectionIndex();
+            int highestS = GetHighestStageIndex();
+
+            if (collectionIndex < highestC)
+            {
+                return maxStageIndex;
+            }
+
+            if (collectionIndex > highestC)
+            {
+                return FirstStageIndex - 1;
+            }
+
+            return Math.Min(highestS, maxStageIndex);
         }
 
         /// <summary>
-        /// Determines whether a stage is currently unlocked.
+        /// Whether the stage at the given world and local index is unlocked.
         /// </summary>
-        /// <param name="stageIndex">Zero-based stage index to check.</param>
-        /// <param name="stageCount">Total stage count in the active catalog.</param>
-        public bool IsStageUnlocked(int stageIndex, int stageCount)
+        public bool IsStageUnlocked(int collectionIndex, int localStageIndex, StagesCollectionComposite composite)
         {
-            if (stageIndex < FirstStageIndex || stageIndex >= GetNormalizedStageCount(stageCount))
+            if (composite == null)
             {
                 return false;
             }
 
-            return stageIndex <= GetHighestUnlockedStageIndex(stageCount);
+            int stageCount = composite.GetCollection(collectionIndex)?.Stages?.Count ?? 0;
+            int normalized = GetNormalizedStageCount(stageCount);
+            if (localStageIndex < FirstStageIndex || localStageIndex >= normalized)
+            {
+                return false;
+            }
+
+            int highestC = GetHighestCollectionIndex();
+            int highestS = GetHighestStageIndex();
+            return CompareProgress(collectionIndex, localStageIndex, highestC, highestS) <= 0;
         }
 
         /// <summary>
-        /// Clamps a stage index into the currently unlocked stage range.
+        /// Clamps a local stage index to the unlocked range for that collection.
         /// </summary>
-        /// <param name="stageIndex">Requested stage index.</param>
-        /// <param name="stageCount">Total stage count in the active catalog.</param>
-        public int ClampStageIndexToUnlockedRange(int stageIndex, int stageCount)
+        public int ClampLocalStageToUnlockedRange(
+            int collectionIndex,
+            int localStageIndex,
+            int stageCountInCollection,
+            StagesCollectionComposite composite)
         {
-            int highestUnlockedStageIndex = GetHighestUnlockedStageIndex(stageCount);
-            if (stageIndex < FirstStageIndex)
+            int maxUnlocked = GetHighestUnlockedLocalStageIndex(collectionIndex, stageCountInCollection, composite);
+            if (maxUnlocked < FirstStageIndex)
             {
                 return FirstStageIndex;
             }
 
-            if (stageIndex > highestUnlockedStageIndex)
+            if (localStageIndex < FirstStageIndex)
             {
-                return highestUnlockedStageIndex;
+                return FirstStageIndex;
             }
 
-            return stageIndex;
+            if (localStageIndex > maxUnlocked)
+            {
+                return maxUnlocked;
+            }
+
+            return localStageIndex;
         }
 
         /// <summary>
@@ -172,12 +222,12 @@ namespace Game.Persistence.Services
 
             if (_CachedData.RewardClaims.AvailableStageRewards == null)
             {
-                _CachedData.RewardClaims.AvailableStageRewards = new System.Collections.Generic.List<int>();
+                _CachedData.RewardClaims.AvailableStageRewards = new List<StageRewardKey>();
             }
 
             if (_CachedData.RewardClaims.ClaimedStageRewards == null)
             {
-                _CachedData.RewardClaims.ClaimedStageRewards = new System.Collections.Generic.List<int>();
+                _CachedData.RewardClaims.ClaimedStageRewards = new List<StageRewardKey>();
             }
 
             return _CachedData.RewardClaims;
@@ -298,6 +348,17 @@ namespace Game.Persistence.Services
             SaveNow();
         }
 
+        private static int CompareProgress(int collectionIndexA, int stageIndexA, int collectionIndexB, int stageIndexB)
+        {
+            int collectionCompare = collectionIndexA.CompareTo(collectionIndexB);
+            if (collectionCompare != 0)
+            {
+                return collectionCompare;
+            }
+
+            return stageIndexA.CompareTo(stageIndexB);
+        }
+
         private void MigrateFromLegacyStructure()
         {
             if (_CachedData.Resources == null)
@@ -312,7 +373,7 @@ namespace Game.Persistence.Services
 
             if (_CachedData.Resources.Currencies == null)
             {
-                _CachedData.Resources.Currencies = new System.Collections.Generic.List<CurrencyBalanceEntry>();
+                _CachedData.Resources.Currencies = new List<CurrencyBalanceEntry>();
             }
 
             if (_CachedData.Resources.KnifeSkins == null)
@@ -337,12 +398,12 @@ namespace Game.Persistence.Services
 
             if (_CachedData.RewardClaims.AvailableStageRewards == null)
             {
-                _CachedData.RewardClaims.AvailableStageRewards = new System.Collections.Generic.List<int>();
+                _CachedData.RewardClaims.AvailableStageRewards = new List<StageRewardKey>();
             }
 
             if (_CachedData.RewardClaims.ClaimedStageRewards == null)
             {
-                _CachedData.RewardClaims.ClaimedStageRewards = new System.Collections.Generic.List<int>();
+                _CachedData.RewardClaims.ClaimedStageRewards = new List<StageRewardKey>();
             }
 
             if (_CachedData.DailyMissions == null)
@@ -358,10 +419,17 @@ namespace Game.Persistence.Services
 
         private void UpdateProgress()
         {
+            _CachedData.Progress.CurrentCollectionIndex = _GameData.CurrentCollectionIndex;
             _CachedData.Progress.CurrentStageIndex = _GameData.CurrentStageIndex;
-            _CachedData.Progress.HighestStageIndex = Math.Max(
-                _CachedData.Progress.HighestStageIndex,
-                _GameData.CurrentStageIndex);
+            if (CompareProgress(
+                    _GameData.CurrentCollectionIndex,
+                    _GameData.CurrentStageIndex,
+                    _CachedData.Progress.HighestCollectionIndex,
+                    _CachedData.Progress.HighestStageIndex) > 0)
+            {
+                _CachedData.Progress.HighestCollectionIndex = _GameData.CurrentCollectionIndex;
+                _CachedData.Progress.HighestStageIndex = _GameData.CurrentStageIndex;
+            }
         }
 
         private void EnsureDataIntegrity()
@@ -370,36 +438,53 @@ namespace Game.Persistence.Services
             _CachedData.Settings ??= new PlayerSettingsData();
             _CachedData.Resources ??= new PlayerResourcesData();
             _CachedData.Resources.PowerUps ??= new PowerUpInventoryData();
-            _CachedData.Resources.Currencies ??= new System.Collections.Generic.List<CurrencyBalanceEntry>();
+            _CachedData.Resources.Currencies ??= new List<CurrencyBalanceEntry>();
             _CachedData.Resources.KnifeSkins ??= new KnifeSkinCollectionData();
             _CachedData.Resources.IapEntitlements ??= new IapEntitlementsData();
             _CachedData.Resources.IapEntitlements.OwnedProductKeys ??= new List<string>();
             _CachedData.RewardClaims ??= new RewardClaimData();
-            _CachedData.RewardClaims.AvailableStageRewards ??= new System.Collections.Generic.List<int>();
-            _CachedData.RewardClaims.ClaimedStageRewards ??= new System.Collections.Generic.List<int>();
+            _CachedData.RewardClaims.AvailableStageRewards ??= new List<StageRewardKey>();
+            _CachedData.RewardClaims.ClaimedStageRewards ??= new List<StageRewardKey>();
             _CachedData.DailyMissions ??= new DailyMissionData();
             _CachedData.DailyMissions.ActiveMissions ??= new List<Game.Missions.Data.ActiveMissionEntry>();
         }
 
         private void SyncGameData()
         {
+            _GameData.CurrentCollectionIndex = _CachedData.Progress.CurrentCollectionIndex;
             _GameData.CurrentStageIndex = _CachedData.Progress.CurrentStageIndex;
         }
 
-        private int ClampStageIndex(int stageIndex, int stageCount)
+        /// <summary>
+        /// Clamps session collection and stage indices to the unlocked frontier and valid catalog bounds.
+        /// </summary>
+        public void ClampSelectionToUnlocked(StagesCollectionComposite composite)
         {
-            int maxStageIndex = GetNormalizedStageCount(stageCount) - MinimumStageCount;
-            if (stageIndex < FirstStageIndex)
+            if (_GameData == null || composite == null)
             {
-                return FirstStageIndex;
+                return;
             }
 
-            if (stageIndex > maxStageIndex)
+            int highestC = _CachedData.Progress.HighestCollectionIndex;
+            int highestS = _CachedData.Progress.HighestStageIndex;
+            int c = _GameData.CurrentCollectionIndex;
+            int s = _GameData.CurrentStageIndex;
+
+            if (CompareProgress(c, s, highestC, highestS) > 0)
             {
-                return maxStageIndex;
+                _GameData.CurrentCollectionIndex = highestC;
+                _GameData.CurrentStageIndex = highestS;
+                c = highestC;
+                s = highestS;
             }
 
-            return stageIndex;
+            int maxCol = Math.Max(0, composite.CollectionsCount - 1);
+            c = Mathf.Clamp(c, 0, maxCol);
+            _GameData.CurrentCollectionIndex = c;
+
+            StagesCollection collection = composite.GetCollection(c);
+            int stageCount = collection?.Stages?.Count ?? MinimumStageCount;
+            _GameData.CurrentStageIndex = ClampLocalStageToUnlockedRange(c, s, stageCount, composite);
         }
 
         private int GetNormalizedStageCount(int stageCount)

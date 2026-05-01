@@ -1,3 +1,4 @@
+using Game.Flow.Game;
 using Game.Level.Configurations.Stage;
 using Game.Level.Data;
 using Game.Level.Interfaces;
@@ -5,90 +6,97 @@ using Game.Level.Interfaces;
 namespace Game.Level.Catalogs
 {
     /// <summary>
-    /// Implementation of ILevelCatalog using the scriptable object StagesCollection.
+    /// Implementation of ILevelCatalog for the active stage collection in the current session.
     /// </summary>
     public class StagesConfigCatalog : ILevelCatalog
     {
-        private readonly StagesCollection _ConfigAsset;
+        private readonly StagesCollectionComposite _Composite;
+        private readonly GameData _GameData;
 
         /// <summary>
-        /// Initializes a new instance of the StagesConfigCatalog class.
+        /// Creates a catalog bound to the composite and session collection index.
         /// </summary>
-        /// <param name="configAsset">The StagesCollection containing the game stages data.</param>
-        public StagesConfigCatalog(StagesCollection configAsset)
+        public StagesConfigCatalog(StagesCollectionComposite composite, GameData gameData)
         {
-            _ConfigAsset = configAsset;
+            _Composite = composite;
+            _GameData = gameData;
         }
 
-        /// <summary>
-        /// Gets the total number of stages available in the configuration.
-        /// </summary>
-        public int StageCount => _ConfigAsset.Stages.Count;
+        private StagesCollection ActiveCollection => _Composite?.GetCollection(_GameData.CurrentCollectionIndex);
 
-        /// <summary>
-        /// Gets the number of levels for a specific stage.
-        /// </summary>
-        /// <param name="stageIndex">The index of the stage to query.</param>
-        /// <returns>The number of levels in the specified stage, or 0 if the stage index is invalid.</returns>
+        /// <inheritdoc />
+        public int StageCount
+        {
+            get
+            {
+                var stages = ActiveCollection?.Stages;
+                return stages != null ? stages.Count : 0;
+            }
+        }
+
+        /// <inheritdoc />
         public int GetLevelCount(int stageIndex)
         {
-            if (stageIndex < 0 || stageIndex >= _ConfigAsset.Stages.Count)
+            var stages = ActiveCollection?.Stages;
+            if (stages == null || stageIndex < 0 || stageIndex >= stages.Count)
+            {
                 return 0;
-            
-            // Check for null stage asset
-            var stage = _ConfigAsset.Stages[stageIndex];
-            if (stage == null) return 0;
+            }
 
-            return stage.Levels.Count;
+            var stage = stages[stageIndex];
+            return stage == null ? 0 : stage.Levels.Count;
         }
 
-        /// <summary>
-        /// Retrieves the configuration for a specific level.
-        /// </summary>
-        /// <param name="stageIndex">The index of the stage.</param>
-        /// <param name="levelIndex">The index of the level within the stage.</param>
-        /// <returns>The level configuration, or null if not found.</returns>
+        /// <inheritdoc />
         public LevelConfig GetLevelConfig(int stageIndex, int levelIndex)
         {
-            if (stageIndex < 0 || stageIndex >= _ConfigAsset.Stages.Count)
+            var stages = ActiveCollection?.Stages;
+            if (stages == null || stageIndex < 0 || stageIndex >= stages.Count)
+            {
                 return null;
-            
-            var stage = _ConfigAsset.Stages[stageIndex];
-            if (stage == null) return null;
+            }
+
+            var stage = stages[stageIndex];
+            if (stage == null)
+            {
+                return null;
+            }
 
             var levels = stage.Levels;
             if (levelIndex < 0 || levelIndex >= levels.Count)
+            {
                 return null;
+            }
 
             return levels[levelIndex];
         }
 
-        /// <summary>
-        /// Retrieves the configuration for the specified stage index.
-        /// </summary>
-        /// <param name="stageIndex">The stage index to look up.</param>
-        /// <returns>The stage configuration, or null if the index is invalid.</returns>
+        /// <inheritdoc />
         public StageConfig GetStageConfig(int stageIndex)
         {
-            if (stageIndex < 0 || stageIndex >= _ConfigAsset.Stages.Count)
+            var stages = ActiveCollection?.Stages;
+            if (stages == null || stageIndex < 0 || stageIndex >= stages.Count)
+            {
                 return null;
+            }
 
-            return _ConfigAsset.Stages[stageIndex];
+            return stages[stageIndex];
         }
 
         /// <summary>
-        /// Finds the index of the given stage asset in the collection, or -1 if not found.
+        /// Finds the stage index of the asset in the active collection, or -1 if not found.
         /// </summary>
         public int GetStageIndexOrNegative(StageConfig stageConfig)
         {
-            if (stageConfig == null || _ConfigAsset.Stages == null)
+            var stages = ActiveCollection?.Stages;
+            if (stageConfig == null || stages == null)
             {
                 return -1;
             }
 
-            for (var i = 0; i < _ConfigAsset.Stages.Count; i++)
+            for (var i = 0; i < stages.Count; i++)
             {
-                if (_ConfigAsset.Stages[i] == stageConfig)
+                if (stages[i] == stageConfig)
                 {
                     return i;
                 }

@@ -52,7 +52,8 @@ namespace Game.Rewards.Services
             }
 
             int stageIndex = data.StageIndex;
-            if (_ClaimTracker.IsStageCompleteClaimed(stageIndex) || _ClaimTracker.IsStageCompleteAvailable(stageIndex))
+            int collectionIndex = data.CollectionIndex;
+            if (_ClaimTracker.IsStageCompleteClaimed(collectionIndex, stageIndex) || _ClaimTracker.IsStageCompleteAvailable(collectionIndex, stageIndex))
             {
                 return;
             }
@@ -69,7 +70,7 @@ namespace Game.Rewards.Services
                 var grant = entries[i];
                 if (grant != null && grant.TryCreateGrantItem(out IRewardItem item) && item != null)
                 {
-                    _ClaimTracker.MarkStageCompleteAvailable(stageIndex);
+                    _ClaimTracker.MarkStageCompleteAvailable(collectionIndex, stageIndex);
                     _PlayerDataService.ForceSave();
                     return;
                 }

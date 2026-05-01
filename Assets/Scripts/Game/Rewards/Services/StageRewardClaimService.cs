@@ -15,6 +15,9 @@ namespace Game.Rewards.Services
         private readonly RewardClaimTracker _RewardClaimTracker;
         private readonly PlayerDataService _PlayerDataService;
 
+        /// <summary>
+        /// Creates the claim service with reward and persistence dependencies.
+        /// </summary>
         public StageRewardClaimService(
             IRewardGrantService rewardGrantService,
             RewardClaimTracker rewardClaimTracker,
@@ -25,11 +28,14 @@ namespace Game.Rewards.Services
             _PlayerDataService = playerDataService;
         }
 
-        public async UniTask<bool> ClaimAsync(StageConfig stageConfig, int stageIndex)
+        /// <summary>
+        /// Grants configured rewards for a stage if the claim tracker allows it.
+        /// </summary>
+        public async UniTask<bool> ClaimAsync(StageConfig stageConfig, int collectionIndex, int stageIndex)
         {
             if (stageConfig == null ||
-                !_RewardClaimTracker.IsStageCompleteAvailable(stageIndex) ||
-                _RewardClaimTracker.IsStageCompleteClaimed(stageIndex))
+                !_RewardClaimTracker.IsStageCompleteAvailable(collectionIndex, stageIndex) ||
+                _RewardClaimTracker.IsStageCompleteClaimed(collectionIndex, stageIndex))
             {
                 return false;
             }
@@ -37,13 +43,13 @@ namespace Game.Rewards.Services
             var rewards = BuildRewards(stageConfig);
             if (rewards.Count == 0)
             {
-                _RewardClaimTracker.ClearStageCompleteAvailable(stageIndex);
+                _RewardClaimTracker.ClearStageCompleteAvailable(collectionIndex, stageIndex);
                 _PlayerDataService.ForceSave();
                 return false;
             }
 
             await _RewardGrantService.GrantAsync(rewards);
-            _RewardClaimTracker.MarkStageCompleteClaimed(stageIndex);
+            _RewardClaimTracker.MarkStageCompleteClaimed(collectionIndex, stageIndex);
             _PlayerDataService.ForceSave();
             return true;
         }

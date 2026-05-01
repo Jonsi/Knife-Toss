@@ -23,7 +23,7 @@ namespace Game.EditorTools
         private const string RestartChannelPath = "Assets/Configurations/EventChannels/UI/LevelFailedPopup/RestartStageClicked.asset";
         private const string KnifeImpactChannelPath = "Assets/Configurations/EventChannels/Knife/KnifeImpactEventChannel.asset";
         private const string CurrencyTypeCatalogPath = "Assets/Configurations/Systems/Economy/CurrencyTypeCatalog.asset";
-        private const string StagesCollectionPath = "Assets/Configurations/Gameplay/StagesCollection.asset";
+        private const string StagesCollectionCompositePath = "Assets/Configurations/Gameplay/StagesCollectionComposite.asset";
 
         [SerializeField] private VoidEventChannel _RetryLevelChannel;
         [SerializeField] private VoidEventChannel _RestartStageChannel;
@@ -393,50 +393,79 @@ namespace Game.EditorTools
 
         private void UnlockAllStagesAsWonInEditMode()
         {
-            var stagesCollection = AssetDatabase.LoadAssetAtPath<StagesCollection>(StagesCollectionPath);
-            if (stagesCollection == null)
+            StagesCollectionComposite composite = AssetDatabase.LoadAssetAtPath<StagesCollectionComposite>(StagesCollectionCompositePath);
+            if (composite == null)
             {
-                string[] guids = AssetDatabase.FindAssets("t:StagesCollection");
+                string[] guids = AssetDatabase.FindAssets("t:StagesCollectionComposite");
                 if (guids.Length > 0)
                 {
                     string assetPath = AssetDatabase.GUIDToAssetPath(guids[0]);
-                    stagesCollection = AssetDatabase.LoadAssetAtPath<StagesCollection>(assetPath);
+                    composite = AssetDatabase.LoadAssetAtPath<StagesCollectionComposite>(assetPath);
                 }
             }
 
-            int stageCount = stagesCollection?.Stages?.Count ?? 0;
-            if (stageCount <= 0)
+            int lastCollectionIndex = (composite?.CollectionsCount ?? 0) - 1;
+            StagesCollection lastCollection = composite?.GetCollection(lastCollectionIndex);
+            int lastLocal = (lastCollection?.Stages?.Count ?? 0) - 1;
+            if (composite == null || lastCollectionIndex < 0 || lastLocal < 0)
             {
-                Debug.LogWarning("Cheats Window: Could not find a stages collection asset.");
                 return;
             }
 
-            int lastStageIndex = stageCount - 1;
             var store = new FilePlayerDataStore();
             var playerData = store.Load() ?? new PlayerData();
 
             playerData.Progress ??= new PlayerProgressData();
-            playerData.Progress.CurrentStageIndex = lastStageIndex;
-            playerData.Progress.HighestStageIndex = lastStageIndex;
+            playerData.Progress.CurrentCollectionIndex = lastCollectionIndex;
+            playerData.Progress.CurrentStageIndex = lastLocal;
+            playerData.Progress.HighestCollectionIndex = lastCollectionIndex;
+            playerData.Progress.HighestStageIndex = lastLocal;
             playerData.RewardClaims ??= new RewardClaimData();
-            playerData.RewardClaims.AvailableStageRewards ??= new System.Collections.Generic.List<int>();
-            playerData.RewardClaims.ClaimedStageRewards ??= new System.Collections.Generic.List<int>();
+            playerData.RewardClaims.AvailableStageRewards ??= new System.Collections.Generic.List<StageRewardKey>();
+            playerData.RewardClaims.ClaimedStageRewards ??= new System.Collections.Generic.List<StageRewardKey>();
 
-            for (int stageIndex = 0; stageIndex < stageCount; stageIndex++)
+            for (int c = 0; c < composite.CollectionsCount; c++)
             {
-                var stageConfig = stagesCollection.Stages[stageIndex];
-                if (!HasConfiguredRewards(stageConfig) ||
-                    playerData.RewardClaims.ClaimedStageRewards.Contains(stageIndex) ||
-                    playerData.RewardClaims.AvailableStageRewards.Contains(stageIndex))
+                StagesCollection col = composite.GetCollection(c);
+                if (col?.Stages == null)
                 {
                     continue;
                 }
 
-                playerData.RewardClaims.AvailableStageRewards.Add(stageIndex);
+                for (int s = 0; s < col.Stages.Count; s++)
+                {
+                    var stageConfig = col.Stages[s];
+                    if (!HasConfiguredRewards(stageConfig) ||
+                        RewardListContains(playerData.RewardClaims.ClaimedStageRewards, c, s) ||
+                        RewardListContains(playerData.RewardClaims.AvailableStageRewards, c, s))
+                    {
+                        continue;
+                    }
+
+                    playerData.RewardClaims.AvailableStageRewards.Add(new StageRewardKey { CollectionIndex = c, StageIndex = s });
+                }
             }
 
             store.Save(playerData);
-            Debug.Log($"Cheats Window: Unlocked all {stageCount} stages as won.");
+        }
+
+        private static bool RewardListContains(System.Collections.Generic.List<StageRewardKey> list, int c, int s)
+        {
+            if (list == null)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < list.Count; i++)
+            {
+                StageRewardKey k = list[i];
+                if (k != null && k.CollectionIndex == c && k.StageIndex == s)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static bool HasConfiguredRewards(Game.Level.Configurations.Stage.StageConfig stageConfig)

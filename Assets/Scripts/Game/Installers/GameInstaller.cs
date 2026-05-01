@@ -28,6 +28,8 @@ using Common.IAP.Data;
 using Game.IAP.Mock.Installers;
 using Game.IAP.UI;
 #endif
+using Game.Level.Catalogs;
+using Game.Level.Configurations.Stage;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -69,6 +71,9 @@ namespace Game.Installers
 
         [Header("Ads")]
         [SerializeField] private AdInstaller _AdInstaller;
+
+        [Header("Stages")]
+        [SerializeField] private StagesCollectionComposite _StagesCollectionComposite;
 
         [Header("IAP")]
         [SerializeField] private IapInstaller _IapInstaller;
@@ -119,6 +124,10 @@ namespace Game.Installers
             builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
             builder.Register<SceneLoaderService>(Lifetime.Singleton);
 
+            builder.RegisterInstance(_StagesCollectionComposite);
+            builder.Register<StagesCollectionResolver>(Lifetime.Singleton).AsSelf();
+            builder.Register<BackgroundEffectService>(Lifetime.Singleton).AsSelf();
+
             builder.RegisterEntryPoint<SettingsService>().AsSelf();
 
             builder.RegisterInstance(_SoundSettings);
@@ -161,6 +170,11 @@ namespace Game.Installers
             if (_StoreCatalog == null)
             {
                 throw new InvalidOperationException("GameInstaller requires StoreCatalog for production IAP flow.");
+            }
+
+            if (_StagesCollectionComposite == null)
+            {
+                throw new InvalidOperationException("GameInstaller requires StagesCollectionComposite.");
             }
         }
 

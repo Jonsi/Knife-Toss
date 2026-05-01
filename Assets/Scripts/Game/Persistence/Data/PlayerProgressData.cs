@@ -8,7 +8,9 @@ namespace Game.Persistence.Data
     [Serializable]
     public class PlayerProgressData
     {
+        public int CurrentCollectionIndex;
         public int CurrentStageIndex;
+        public int HighestCollectionIndex;
         public int HighestStageIndex;
     }
 }

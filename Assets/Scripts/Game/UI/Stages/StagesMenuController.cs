@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using Game.Flow.Game;
 using Game.Level.Catalogs;
+using Game.Level.Configurations.Stage;
 using Game.Persistence.Services;
 using Game.Rewards.Services;
 using UnityEngine;
@@ -15,8 +16,8 @@ namespace Game.UI.Stages
     /// </summary>
     public class StagesMenuController : MonoBehaviour
     {
-        [SerializeField] private StagesCollection _StagesCollection;
-        [SerializeField] private UiStageItem _StageItemPrefab;
+        [SerializeField] private StagesCollectionComposite _StagesComposite;
+        [SerializeField] private UiWorldStageRow _WorldRowPrefab;
         [SerializeField] private Transform _ContentRoot;
         [SerializeField] private Button _BackButton;
 
@@ -27,26 +28,24 @@ namespace Game.UI.Stages
         [Inject] private StageRewardClaimService _StageRewardClaimService;
 
         private StageListPresenter _StageListPresenter;
-        private readonly List<UiStageItem> _StageItems = new();
+        private readonly List<UiWorldStageRow> _WorldRows = new List<UiWorldStageRow>();
 
         private void Start()
         {
-            if (_StagesCollection == null || _StageItemPrefab == null || _ContentRoot == null)
+            if (_StagesComposite == null || _WorldRowPrefab == null || _ContentRoot == null)
             {
-                Debug.LogError("StagesMenuController is missing required stage list references.");
                 enabled = false;
                 return;
             }
 
             if (_PlayerDataService == null || _GameData == null)
             {
-                Debug.LogError("StagesMenuController is missing injected progression services.");
                 enabled = false;
                 return;
             }
 
-            _StageListPresenter = new StageListPresenter(_PlayerDataService, _GameData, _RewardClaimTracker);
-            BuildStageItems();
+            _StageListPresenter = new StageListPresenter(_PlayerDataService, _GameData, _RewardClaimTracker, _StagesComposite);
+            BuildWorldRows();
         }
 
         private void OnEnable()
@@ -65,33 +64,28 @@ namespace Game.UI.Stages
             }
         }
 
-        private void BuildStageItems()
+        private void BuildWorldRows()
         {
-            if (_StageListPresenter == null || _StagesCollection == null || _StageItemPrefab == null || _ContentRoot == null)
-            {
-                return;
-            }
+            ClearWorldRows();
 
-            ClearStageItems();
-
-            var stages = _StagesCollection.Stages;
-            if (stages == null)
+            int count = _StagesComposite.CollectionsCount;
+            for (int collectionIndex = 0; collectionIndex < count; collectionIndex++)
             {
-                return;
-            }
-
-            for (int stageIndex = 0; stageIndex < stages.Count; stageIndex++)
-            {
-                var itemData = _StageListPresenter.GetItemData(_StagesCollection, stageIndex);
-                if (itemData == null)
+                StagesCollection collection = _StagesComposite.GetCollection(collectionIndex);
+                if (collection == null)
                 {
-                    _StageItems.Add(null);
                     continue;
                 }
 
-                var item = Instantiate(_StageItemPrefab, _ContentRoot);
-                item.Initialize(itemData, OnStageSelected, OnStageRewardClaimed);
-                _StageItems.Add(item);
+                UiWorldStageRow row = Instantiate(_WorldRowPrefab, _ContentRoot);
+                int capturedCollection = collectionIndex;
+                row.Initialize(
+                    collection,
+                    collectionIndex,
+                    _StageListPresenter,
+                    local => OnStageSelected(capturedCollection, local),
+                    local => OnStageRewardClaimed(capturedCollection, local));
+                _WorldRows.Add(row);
             }
         }
 
@@ -100,9 +94,20 @@ namespace Game.UI.Stages
             _SceneLoaderService.LoadMainMenu().Forget();
         }
 
-        private void OnStageSelected(int stageIndex)
+        private void OnStageSelected(int collectionIndex, int localStageIndex)
         {
-            if (_StageListPresenter == null || !_StageListPresenter.TrySelectStage(_StagesCollection, stageIndex))
+            if (_StageListPresenter == null || _StagesComposite == null)
+            {
+                return;
+            }
+
+            StagesCollection collection = _StagesComposite.GetCollection(collectionIndex);
+            if (collection == null)
+            {
+                return;
+            }
+
+            if (!_StageListPresenter.TrySelectStage(collection, collectionIndex, localStageIndex))
             {
                 return;
             }
@@ -110,50 +115,37 @@ namespace Game.UI.Stages
             _SceneLoaderService.LoadGame().Forget();
         }
 
-        private void OnStageRewardClaimed(int stageIndex)
+        private void OnStageRewardClaimed(int collectionIndex, int localStageIndex)
         {
-            ClaimStageRewardAsync(stageIndex).Forget();
+            ClaimStageRewardAsync(collectionIndex, localStageIndex).Forget();
         }
 
-        private async UniTaskVoid ClaimStageRewardAsync(int stageIndex)
+        private async UniTaskVoid ClaimStageRewardAsync(int collectionIndex, int localStageIndex)
         {
-            if (_StagesCollection?.Stages == null || stageIndex < 0 || stageIndex >= _StagesCollection.Stages.Count)
+            StagesCollection collection = _StagesComposite?.GetCollection(collectionIndex);
+            if (collection?.Stages == null || localStageIndex < 0 || localStageIndex >= collection.Stages.Count)
             {
                 return;
             }
 
-            bool claimed = await _StageRewardClaimService.ClaimAsync(_StagesCollection.Stages[stageIndex], stageIndex);
-            if (claimed)
+            bool claimed = await _StageRewardClaimService.ClaimAsync(
+                collection.Stages[localStageIndex],
+                collectionIndex,
+                localStageIndex);
+            if (claimed && collectionIndex < _WorldRows.Count)
             {
-                UpdateStageItem(stageIndex);
+                UiWorldStageRow row = _WorldRows[collectionIndex];
+                row?.RefreshLocalStage(
+                    localStageIndex,
+                    _StageListPresenter,
+                    local => OnStageSelected(collectionIndex, local),
+                    local => OnStageRewardClaimed(collectionIndex, local));
             }
         }
 
-        private void UpdateStageItem(int stageIndex)
+        private void ClearWorldRows()
         {
-            if (_StageListPresenter == null || _StagesCollection == null || stageIndex < 0 || stageIndex >= _StageItems.Count)
-            {
-                return;
-            }
-
-            UiStageItem item = _StageItems[stageIndex];
-            if (item == null)
-            {
-                return;
-            }
-
-            var itemData = _StageListPresenter.GetItemData(_StagesCollection, stageIndex);
-            if (itemData == null)
-            {
-                return;
-            }
-
-            item.Initialize(itemData, OnStageSelected, OnStageRewardClaimed);
-        }
-
-        private void ClearStageItems()
-        {
-            _StageItems.Clear();
+            _WorldRows.Clear();
 
             if (_ContentRoot == null)
             {

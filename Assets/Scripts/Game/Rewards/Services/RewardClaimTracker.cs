@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Game.Persistence.Data;
 using Game.Persistence.Services;
 
@@ -19,59 +20,96 @@ namespace Game.Rewards.Services
         }
 
         /// <summary>
-        /// Returns whether stage-completion rewards for this stage index were already claimed.
+        /// Returns whether stage-completion rewards for this stage were already claimed.
         /// </summary>
-        public bool IsStageCompleteClaimed(int stageIndex)
+        public bool IsStageCompleteClaimed(int collectionIndex, int stageIndex)
         {
             var data = _PlayerDataService.EnsureRewardClaimData();
-            return data.ClaimedStageRewards.Contains(stageIndex);
+            return ListContains(data.ClaimedStageRewards, collectionIndex, stageIndex);
         }
 
         /// <summary>
         /// Returns whether stage-completion rewards for this stage are available to claim.
         /// </summary>
-        public bool IsStageCompleteAvailable(int stageIndex)
+        public bool IsStageCompleteAvailable(int collectionIndex, int stageIndex)
         {
             var data = _PlayerDataService.EnsureRewardClaimData();
-            return data.AvailableStageRewards.Contains(stageIndex);
+            return ListContains(data.AvailableStageRewards, collectionIndex, stageIndex);
         }
 
         /// <summary>
         /// Records that stage-completion rewards for this stage became available.
         /// </summary>
-        public void MarkStageCompleteAvailable(int stageIndex)
+        public void MarkStageCompleteAvailable(int collectionIndex, int stageIndex)
         {
             var data = _PlayerDataService.EnsureRewardClaimData();
-            if (data.AvailableStageRewards.Contains(stageIndex) || data.ClaimedStageRewards.Contains(stageIndex))
+            if (ListContains(data.AvailableStageRewards, collectionIndex, stageIndex) ||
+                ListContains(data.ClaimedStageRewards, collectionIndex, stageIndex))
             {
                 return;
             }
 
-            data.AvailableStageRewards.Add(stageIndex);
+            data.AvailableStageRewards.Add(new StageRewardKey { CollectionIndex = collectionIndex, StageIndex = stageIndex });
         }
 
         /// <summary>
         /// Records that stage-completion rewards for this stage were claimed.
         /// </summary>
-        public void MarkStageCompleteClaimed(int stageIndex)
+        public void MarkStageCompleteClaimed(int collectionIndex, int stageIndex)
         {
             var data = _PlayerDataService.EnsureRewardClaimData();
-            if (data.ClaimedStageRewards.Contains(stageIndex))
+            if (ListContains(data.ClaimedStageRewards, collectionIndex, stageIndex))
             {
                 return;
             }
 
-            data.ClaimedStageRewards.Add(stageIndex);
-            data.AvailableStageRewards.Remove(stageIndex);
+            data.ClaimedStageRewards.Add(new StageRewardKey { CollectionIndex = collectionIndex, StageIndex = stageIndex });
+            RemoveFromList(data.AvailableStageRewards, collectionIndex, stageIndex);
         }
 
         /// <summary>
         /// Clears the claimable state for a stage reward without marking it as claimed.
         /// </summary>
-        public void ClearStageCompleteAvailable(int stageIndex)
+        public void ClearStageCompleteAvailable(int collectionIndex, int stageIndex)
         {
             var data = _PlayerDataService.EnsureRewardClaimData();
-            data.AvailableStageRewards.Remove(stageIndex);
+            RemoveFromList(data.AvailableStageRewards, collectionIndex, stageIndex);
+        }
+
+        private static bool ListContains(List<StageRewardKey> list, int collectionIndex, int stageIndex)
+        {
+            if (list == null)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < list.Count; i++)
+            {
+                StageRewardKey key = list[i];
+                if (key != null && key.CollectionIndex == collectionIndex && key.StageIndex == stageIndex)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static void RemoveFromList(List<StageRewardKey> list, int collectionIndex, int stageIndex)
+        {
+            if (list == null)
+            {
+                return;
+            }
+
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                StageRewardKey key = list[i];
+                if (key != null && key.CollectionIndex == collectionIndex && key.StageIndex == stageIndex)
+                {
+                    list.RemoveAt(i);
+                }
+            }
         }
     }
 }

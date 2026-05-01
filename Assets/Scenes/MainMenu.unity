@@ -3286,7 +3286,7 @@ MonoBehaviour:
   _MissionsButton: {fileID: 1881409175}
   _CurrentStageText: {fileID: 136455758}
   _BackgroundImage: {fileID: 108759171}
-  _StagesCollection: {fileID: 11400000, guid: d7b76ea65780b0f4e890085754f0d6bf, type: 2}
+  _BackgroundEffectHolder: {fileID: 621966001}
   _MenuAnimators:
   - {fileID: 2024723703}
   - {fileID: 483006165}

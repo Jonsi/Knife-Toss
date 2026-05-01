@@ -256,10 +256,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a667647b4e01f9458c2c51236524166, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game::Game.UI.Stages.StageListController
-  _StagesCollection: {fileID: 11400000, guid: d7b76ea65780b0f4e890085754f0d6bf, type: 2}
+  _StagesComposite: {fileID: 11400000, guid: e5a1c7d294fb4608b9c0d1e2f3a4b5c6, type: 2}
   _LoadGameOnStageSelected: 1
   _ScrollToCurrentStageOnStart: 1
   _FlipOrientation: 1
-  _StageItemPrefab: {fileID: 8112384512892005357, guid: e122e9ef826bc5549a185e0f031bf1fd, type: 3}
+  _WorldRowPrefab: {fileID: 7700000000000000003, guid: f6a8b9c0d1e2f403a5b6c7d8e9f0a1b2, type: 3}
   _ContentRoot: {fileID: 4293417313391828669}
   _ScrollRect: {fileID: 4858384209808738210}

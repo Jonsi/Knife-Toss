@@ -21,7 +21,7 @@ namespace Game.Flow.Game.States
         {
             _StageCompletedChannel.Subscribe(HandleStageCompleted);
             _ReturnToMenuChannel.Subscribe(HandleReturnToMenu);
-            Machine.StageFlowController.LoadStage(Context.CurrentStageIndex);
+            Machine.StageFlowController.LoadStage(Context.CurrentCollectionIndex, Context.CurrentStageIndex);
         }
 
         public override void Exit()
@@ -32,22 +32,29 @@ namespace Game.Flow.Game.States
 
         private void HandleStageCompleted(StageData data)
         {
-            if (Context.CurrentStageIndex + 1 < Machine.LevelCatalog.StageCount)
+            int stageCount = Machine.LevelCatalog.StageCount;
+            int collectionsCount = Machine.StagesCollectionComposite?.CollectionsCount ?? 0;
+
+            if (Context.CurrentStageIndex + 1 < stageCount)
             {
                 Context.CurrentStageIndex++;
-                Machine.StageFlowController.LoadStage(Context.CurrentStageIndex);
+            }
+            else if (Context.CurrentCollectionIndex + 1 < collectionsCount)
+            {
+                Context.CurrentCollectionIndex++;
+                Context.CurrentStageIndex = 0;
             }
             else
             {
+                Context.CurrentCollectionIndex = 0;
                 Context.CurrentStageIndex = 0;
-                Machine.StageFlowController.LoadStage(Context.CurrentStageIndex);
             }
+
+            Machine.StageFlowController.LoadStage(Context.CurrentCollectionIndex, Context.CurrentStageIndex);
         }
 
         private void HandleReturnToMenu(StageData data)
         {
-            // Transition to Menu state (when implemented)
-            // Machine.SetState(Machine.Menu);
         }
     }
 }

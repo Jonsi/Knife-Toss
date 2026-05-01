@@ -52,6 +52,7 @@ namespace Game.Debugging
             
             if (_stageData != null)
             {
+                SetInternalProperty(_stageData, nameof(StageData.CollectionIndex), _gameData.CurrentCollectionIndex);
                 SetInternalProperty(_stageData, nameof(StageData.StageIndex), targetIndex);
                 SetInternalProperty(_stageData, nameof(StageData.CurrentLevelIndex), 0);
             }
