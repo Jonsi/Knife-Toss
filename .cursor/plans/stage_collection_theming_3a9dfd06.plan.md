@@ -3,34 +3,37 @@ name: Stage Collection Theming
 overview: Refactor the stage system from a single flat StagesCollection into multiple themed collections held by a composite asset, with each collection providing its own background and particle effect visuals.
 todos:
   - id: create-composite-so
-    content: Create StagesCollectionComposite ScriptableObject with ordered collection list and index mapping utilities
+    content: Create StagesCollectionComposite ScriptableObject with ordered collection list
     status: pending
   - id: add-theme-fields
     content: Add ThemeName, StageSelectBackground, and MenuParticleEffectPrefab fields to StagesCollection
     status: pending
+  - id: update-game-data
+    content: Add CurrentCollectionIndex to GameData; make CurrentStageIndex per-collection
+    status: pending
   - id: create-resolver
-    content: Create StagesCollectionResolver class that determines active collection from player progression
+    content: Create StagesCollectionResolver (reads GameData.CurrentCollectionIndex from composite)
     status: pending
   - id: create-bg-effect-service
     content: Create BackgroundEffectService to manage particle effect instantiation/cleanup in MainMenu
     status: pending
   - id: update-catalog
-    content: Refactor StagesConfigCatalog to accept StagesCollectionComposite and flatten stages across all collections
+    content: Refactor StagesConfigCatalog to work with composite + GameData (active collection only)
     status: pending
   - id: update-game-installer
     content: Register composite, resolver, and BackgroundEffectService in GameInstaller
     status: pending
   - id: update-main-menu
-    content: Update MainMenuController to use resolver and BackgroundEffectService for themed background and particle effects
+    content: Update MainMenuController to use resolver and BackgroundEffectService
     status: pending
   - id: update-stages-menu
-    content: Refactor StagesMenuController/StageListController to render world rows with per-collection themed backgrounds
+    content: Refactor StagesMenuController/StageListController to render world rows per collection
     status: pending
   - id: update-stage-flow
-    content: Update StageFlowInstaller and StageInstaller to work with composite instead of single collection
+    content: Update StageFlowInstaller, StageInstaller, and PlayerDataService for composite
     status: pending
   - id: unity-setup-instructions
-    content: Write Unity Editor setup instructions for creating/splitting assets and wiring references
+    content: Write Unity Editor setup instructions for creating assets and wiring references
     status: pending
 isProject: false
 ---
@@ -48,14 +51,14 @@ isProject: false
 
 ## Target Architecture
 
+The progression model changes from a single flat list to a two-level hierarchy: **Composite -> Collections -> Stages**. `GameData` stores both `CurrentCollectionIndex` and `CurrentStageIndex` (local to the collection).
+
 ```mermaid
 classDiagram
     class StagesCollectionComposite {
         +List~StagesCollection~ Collections
         +int CollectionCount
         +StagesCollection GetCollection(int index)
-        +int GetGlobalStageIndex(int collectionIndex, int localStageIndex)
-        +void ResolveIndices(int globalStageIndex, out int collectionIndex, out int localStageIndex)
     }
 
     class StagesCollection {
@@ -71,8 +74,14 @@ classDiagram
         +void ApplyEffect(StagesCollection activeCollection, Transform parent)
     }
 
+    class GameData {
+        +int CurrentCollectionIndex
+        +int CurrentStageIndex
+    }
+
     StagesCollectionComposite --> StagesCollection : ordered list
     StagesCollection --> StageConfig : contains
+    GameData ..> StagesCollectionComposite : indexes into
 ```
 
 ## Scripts to Create
@@ -82,9 +91,9 @@ classDiagram
 
 - Holds an ordered `List<StagesCollection>`
 - Provides `CollectionCount`, `GetCollection(int index)`
-- Provides mapping utilities: given a global stage index, resolves which collection and local stage index it maps to (and vice versa)
 - The ordering in the list defines the display/progression order of worlds
 - `CreateAssetMenu` attribute for easy creation
+- No global-to-local index mapping needed -- `GameData` directly stores collection index + local stage index
 
 ### 2. `BackgroundEffectService`
 **Path:** `Assets/Scripts/Game/Flow/Game/BackgroundEffectService.cs`
@@ -101,10 +110,9 @@ classDiagram
 **Path:** `Assets/Scripts/Game/Level/Configurations/Stage/StagesCollectionResolver.cs`
 
 - Pure C# class (no MonoBehaviour) injected via DI
-- Takes `StagesCollectionComposite` + `PlayerDataService`
-- Provides `GetActiveCollection()` which determines the current collection from the player's global stage index
-- Provides `GetActiveCollectionIndex()`
-- Used by MainMenuController and StagesMenuController to know which theme to display
+- Takes `StagesCollectionComposite` + `GameData`
+- Provides `GetActiveCollection()` which reads `GameData.CurrentCollectionIndex` and returns the matching `StagesCollection`
+- Used by MainMenuController and StagesMenuController to resolve the current theme
 
 ## Scripts to Modify
 
@@ -119,15 +127,17 @@ classDiagram
 
 ### 5. [`StagesConfigCatalog.cs`](Assets/Scripts/Game/Level/Configurations/Stage/StagesConfigCatalog.cs) -- Accept Composite
 
-- Change constructor to accept `StagesCollectionComposite` instead of a single `StagesCollection`
-- Flatten stages across all collections for backward-compatible `ILevelCatalog` interface
-- Add `GetCollectionForStage(int globalStageIndex)` method returning the `StagesCollection` that owns a given stage
+- Change constructor to accept `StagesCollectionComposite` + `GameData`
+- `ILevelCatalog` methods now operate on the **active collection** (resolved via `GameData.CurrentCollectionIndex`)
+- `StageCount` returns stages in the active collection only; `GetStageConfig(int stageIndex)` returns from the active collection
+- This keeps the interface clean: all stage play logic works within one collection at a time
 
 ### 6. [`MainMenuController.cs`](Assets/Scripts/Game/UI/MainMenu/MainMenuController.cs)
 
 - Inject `StagesCollectionResolver` and `BackgroundEffectService`
-- In `Start()`, call `BackgroundEffectService.ApplyEffect(activeCollection, backgroundEffectHolder)` where `backgroundEffectHolder` is a serialized Transform reference pointing to the existing `BackgroundEffectHolder` object in the scene
-- `UpdateBackground()` now reads from the active collection's `StageSelectBackground` or the stage's `LayoutSettings.BackgroundSprite` (keep existing per-stage background for the main menu image)
+- Remove old `_StagesCollection` serialized field; use resolver instead
+- In `Start()`, call `BackgroundEffectService.ApplyEffect(resolver.GetActiveCollection(), backgroundEffectHolder)` where `backgroundEffectHolder` is a serialized Transform reference
+- `UpdateBackground()` reads from the active collection's stage (via `GameData.CurrentStageIndex` within the active collection)
 
 ### 7. [`StagesMenuController.cs`](Assets/Scripts/Game/UI/Stages/StagesMenuController.cs) and [`StageListController.cs`](Assets/Scripts/Game/UI/Stages/StageListController.cs)
 
@@ -144,24 +154,34 @@ classDiagram
 
 ### 9. [`StageFlowInstaller.cs`](Assets/Scripts/Game/Installers/StageFlowInstaller.cs)
 
-- Change `StagesCollection` parameter to resolve the appropriate collection from `StagesCollectionComposite` using the current stage index
-- Or keep `StagesConfigCatalog` wrapping the composite directly (preferred -- single catalog for all stages)
+- Change constructor to accept `StagesCollectionComposite` instead of `StagesCollection`
+- Pass composite to `StagesConfigCatalog` registration
 
 ### 10. [`StageInstaller.cs`](Assets/Scripts/Game/Installers/StageInstaller.cs)
 
-- Replace `_StagesConfig` (single `StagesCollection`) with the composite, or resolve from parent scope
+- Replace `_StagesConfig` (single `StagesCollection`) serialized field with `StagesCollectionComposite`
+- Pass composite to `StageFlowInstaller`
 
-## Migration Steps
+### 11. [`GameData.cs`](Assets/Scripts/Game/Flow/Game/GameData.cs)
 
-1. Create the `StagesCollectionComposite` ScriptableObject script
-2. Add theme fields to `StagesCollection`
-3. In Unity Editor:
-   - Create a new `StagesCollectionComposite` asset at `Assets/Configurations/Gameplay/StagesCollectionComposite.asset`
-   - Split the current `StagesCollection.asset` (which has 10 stages) into multiple collection assets (e.g., 4 stages each for 2-3 worlds), OR keep the existing one as "World 1" and create new ones for future worlds
-   - Assign theme fields (background sprites, particle prefabs) to each collection
-   - Wire the composite into `GameInstaller` prefab
-4. Update all serialized references from `StagesCollection` to `StagesCollectionComposite` where needed
-5. Update the StagesMenu UI to render world rows
+- Add `CurrentCollectionIndex` property alongside existing `CurrentStageIndex`
+- `CurrentStageIndex` becomes local to the active collection (no longer a global flat index)
+- Update `Reset()` to zero both
+
+### 12. [`PlayerDataService.cs`](Assets/Scripts/Game/Persistence/Services/PlayerDataService.cs)
+
+- Persist `CurrentCollectionIndex` alongside `CurrentStageIndex`
+- `IsStageUnlocked` / `GetHighestStageIndex` work per-collection
+- Progression advances through stages within a collection, then moves to the next collection
+
+## Setup Steps (Unity Editor)
+
+1. Create a `StagesCollectionComposite` asset at `Assets/Configurations/Gameplay/StagesCollectionComposite.asset`
+2. The existing `StagesCollection.asset` becomes "World 1" -- assign theme fields (name, background sprite, particle prefab)
+3. Create additional `StagesCollection` assets for new worlds (World 2, 3, etc.)
+4. Add all collections to the composite's list in desired progression order
+5. Wire the composite into `GameInstaller` prefab (replace old `StagesCollection` references)
+6. Remove the manually-placed `Background_Leave` prefab from the MainMenu scene (the service now handles instantiation)
 
 ## Asset Locations
 
@@ -173,18 +193,10 @@ classDiagram
 | Composite asset | `Assets/Configurations/Gameplay/StagesCollectionComposite.asset` |
 | Per-world collection assets | `Assets/Configurations/Gameplay/Collections/World1_EnchantedForest.asset`, etc. |
 
-## Risks and Edge Cases
+## Design Notes
 
-- **Global vs Local Stage Index:** The biggest risk. Currently `GameData.CurrentStageIndex` is a flat index (0-9). After the change, it must map correctly to collection + local index. The `StagesCollectionResolver` handles this mapping. All code reading `CurrentStageIndex` (especially `PlayerDataService` persistence) must still work with the flattened global index to avoid breaking save data.
-- **Save Data Migration:** Existing players have a saved "highest stage index" that's a flat number. The composite's flattened ordering must match the old ordering exactly for backward compatibility. Adding new worlds at the end is safe; reordering existing stages would break saves.
-- **Missing Prefab/Image:** `BackgroundEffectService.ApplyEffect` should gracefully handle null prefabs (just skip instantiation). Same for null `StageSelectBackground` in the stages menu.
-- **No DontDestroyOnLoad on effects:** Since we're NOT using DontDestroyOnLoad, the particle effect is created fresh each time MainMenu loads. This is clean and avoids duplicate/leak issues entirely.
-- **Scene Reload:** If the player returns to MainMenu from gameplay, the effect is re-instantiated from the (potentially new) active collection. No stale references.
-- **StagesMenu scrolling:** The current scroll-to-current-stage logic assumes a flat list. After grouping into world rows, the scroll logic needs to target the active world row instead.
-
-## Suggestions
-
-- **Keep the global flat index for persistence** -- the composite provides the mapping, but saved data stays as a simple integer.
-- **Skip DontDestroyOnLoad for particles** -- particles should only live in the MainMenu scene. Re-instantiating on each visit is simple, correct, and avoids every `DontDestroyOnLoad` pitfall.
-- **Future expansion:** The `StagesCollection` theme fields are easily extendable (add audio themes, color palettes, reward chest sprites per world, etc.) without touching the composite or resolver.
-- **Consider a world-row prefab** for the StagesMenu that encapsulates: themed background image, world title, horizontal stage list, and world reward chest. Each row is instantiated per collection.
+- **No DontDestroyOnLoad on effects:** Particle effects live and die with the MainMenu scene. `BackgroundEffectService` re-instantiates on each MainMenu load -- clean, no duplicates, no leaks.
+- **Null safety:** `BackgroundEffectService.ApplyEffect` gracefully skips when prefab is null. Same for null `StageSelectBackground` in stages menu.
+- **Per-collection progression:** `GameData` stores `(CurrentCollectionIndex, CurrentStageIndex)`. All stage flow logic (play, complete, advance) operates within a single collection. When the last stage of a collection is completed, progression advances to the next collection.
+- **World-row prefab:** The StagesMenu should use a world-row prefab that encapsulates: themed background image, world title, horizontal stage list, and world reward chest. One row is instantiated per collection from the composite.
+- **Future expansion:** `StagesCollection` theme fields are easily extendable (audio themes, color palettes, reward chest sprites per world, etc.) without touching the composite or resolver.
