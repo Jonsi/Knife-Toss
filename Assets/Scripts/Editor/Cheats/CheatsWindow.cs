@@ -319,7 +319,7 @@ namespace Game.EditorTools
         {
             if (EditorApplication.isPlaying)
             {
-                var scopes = Object.FindObjectsByType<VContainer.Unity.LifetimeScope>(FindObjectsSortMode.None);
+                var scopes = Object.FindObjectsByType<VContainer.Unity.LifetimeScope>();
                 foreach (var scope in scopes)
                 {
                     if (scope.Container == null) continue;

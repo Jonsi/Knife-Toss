@@ -563,8 +563,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f549d571f61b5948abb6f2f76bde127, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game::Game.UI.Stages.StagesMenuController
-  _WorldRowPrefab: {fileID: 7700000000000000003, guid: f6a8b9c0d1e2f403a5b6c7d8e9f0a1b2, type: 3}
-  _ContentRoot: {fileID: 559338492}
   _BackButton: {fileID: 1904610132}
 --- !u!1 &1979444084
 GameObject:

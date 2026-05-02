@@ -16,7 +16,7 @@ namespace Editor.Drawers
     public class SerializeReferenceDropdownDrawer : PropertyDrawer
     {
         private static readonly Dictionary<Type, Type[]> DerivedTypeCache = new Dictionary<Type, Type[]>();
-        private static readonly Dictionary<int, Dictionary<long, string>> ManagedReferenceOwners = new Dictionary<int, Dictionary<long, string>>();
+        private static readonly Dictionary<EntityId, Dictionary<long, string>> ManagedReferenceOwners = new Dictionary<EntityId, Dictionary<long, string>>();
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -138,7 +138,7 @@ namespace Editor.Drawers
                 return;
             }
 
-            var targetId = targetObject.GetInstanceID();
+            var targetId = targetObject.GetEntityId();
             if (!ManagedReferenceOwners.TryGetValue(targetId, out var owners))
             {
                 owners = new Dictionary<long, string>();

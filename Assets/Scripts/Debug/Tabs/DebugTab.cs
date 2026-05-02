@@ -27,7 +27,7 @@ namespace Game.Debugging.Tabs
         {
             get
             {
-                var scopes = UnityEngine.Object.FindObjectsByType<LifetimeScope>(FindObjectsSortMode.None);
+                var scopes = UnityEngine.Object.FindObjectsByType<LifetimeScope>();
                 foreach (var scope in scopes)
                 {
                     if (scope.gameObject.scene.name != "DontDestroyOnLoad" && scope.Container != null)
