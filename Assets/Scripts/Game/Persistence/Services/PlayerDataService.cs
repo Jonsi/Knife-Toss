@@ -153,6 +153,21 @@ namespace Game.Persistence.Services
         }
 
         /// <summary>
+        /// Whether the player has cleared this stage (progress frontier is strictly past this stage).
+        /// </summary>
+        public bool IsStageCleared(int collectionIndex, int localStageIndex, StagesCollectionComposite composite)
+        {
+            if (!IsStageUnlocked(collectionIndex, localStageIndex, composite))
+            {
+                return false;
+            }
+
+            int highestC = GetHighestCollectionIndex();
+            int highestS = GetHighestStageIndex();
+            return CompareProgress(collectionIndex, localStageIndex, highestC, highestS) < 0;
+        }
+
+        /// <summary>
         /// Clamps a local stage index to the unlocked range for that collection.
         /// </summary>
         public int ClampLocalStageToUnlockedRange(

@@ -256,7 +256,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a667647b4e01f9458c2c51236524166, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game::Game.UI.Stages.StageListController
-  _StagesComposite: {fileID: 11400000, guid: e5a1c7d294fb4608b9c0d1e2f3a4b5c6, type: 2}
   _LoadGameOnStageSelected: 1
   _ScrollToCurrentStageOnStart: 1
   _FlipOrientation: 1

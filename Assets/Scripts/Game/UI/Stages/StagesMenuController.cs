@@ -16,7 +16,6 @@ namespace Game.UI.Stages
     /// </summary>
     public class StagesMenuController : MonoBehaviour
     {
-        [SerializeField] private StagesCollectionComposite _StagesComposite;
         [SerializeField] private UiWorldStageRow _WorldRowPrefab;
         [SerializeField] private Transform _ContentRoot;
         [SerializeField] private Button _BackButton;
@@ -26,6 +25,7 @@ namespace Game.UI.Stages
         [Inject] private GameData _GameData;
         [Inject] private RewardClaimTracker _RewardClaimTracker;
         [Inject] private StageRewardClaimService _StageRewardClaimService;
+        [Inject] private StagesCollectionComposite _StagesComposite;
 
         private StageListPresenter _StageListPresenter;
         private readonly List<UiWorldStageRow> _WorldRows = new List<UiWorldStageRow>();

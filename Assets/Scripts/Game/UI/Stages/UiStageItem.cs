@@ -10,14 +10,14 @@ namespace Game.UI.Stages
     /// </summary>
     public class UiStageItem : MonoBehaviour
     {
+        private const string ClaimActionLabel = "CLAIM";
+        private const string ClaimedStatusLabel = "CLAIMED";
+
         [Tooltip("Button component for interaction.")]
         [SerializeField] private Button _Button;
 
-        [Tooltip("Image component to display the stage icon.")]
+        [Tooltip("Image component to display the stage thumbnail.")]
         [SerializeField] private Image _StageIconImage;
-
-        [Tooltip("Text component to display the stage number.")]
-        [SerializeField] private TMP_Text _StageNumberText;
 
         [Tooltip("Text component to display the stage name.")]
         [SerializeField] private TMP_Text _StageNameText;
@@ -25,36 +25,23 @@ namespace Game.UI.Stages
         [Tooltip("Optional object enabled for locked stages.")]
         [SerializeField] private GameObject _LockedStateRoot;
 
-        [Tooltip("Optional object enabled for the current stage.")]
-        [SerializeField] private GameObject _CurrentStateRoot;
+        [Tooltip("Shown when the stage has been cleared (beaten).")]
+        [SerializeField] private GameObject _LevelCompleteIndicator;
 
-        [Tooltip("Optional root for the stage reward chest UI.")]
-        [SerializeField] private GameObject _RewardRoot;
-
-        [Tooltip("Optional chest image tinted by reward state.")]
-        [SerializeField] private Image _RewardChestImage;
-
-        [Tooltip("Claim button shown for the stage reward.")]
+        [Tooltip("Claim button shown when the stage has a configured reward.")]
         [SerializeField] private Button _ClaimButton;
 
-        [Tooltip("Optional object enabled after the stage reward was claimed.")]
-        [SerializeField] private GameObject _ClaimedStateRoot;
+        [Tooltip("Label on the claim button (e.g. CLAIM / CLAIMED).")]
+        [SerializeField] private TMP_Text _ClaimButtonText;
 
-        [Tooltip("Sprite used for the chest once the reward was claimed.")]
-        [SerializeField] private Sprite _ClaimedChestSprite;
+        [Tooltip("Sprite for the claim button when the reward can be claimed.")]
+        [SerializeField] private Sprite _ClaimButtonActiveSprite;
 
-        [Tooltip("Optional effect prefab spawned at the chest position when the reward is claimed.")]
-        [SerializeField] private GameObject _ClaimEffectPrefab;
+        [Tooltip("Sprite for the claim button when the reward cannot be claimed yet.")]
+        [SerializeField] private Sprite _ClaimButtonInactiveSprite;
 
-        [Tooltip("Tint used when the stage reward cannot be claimed yet.")]
-        [SerializeField] private Color _RewardUnavailableColor = new(0.55f, 0.55f, 0.55f, 1f);
-
-        [Tooltip("Tint used when the stage reward is claimable or already claimed.")]
-        [SerializeField] private Color _RewardAvailableColor = Color.white;
-
-        private Sprite _DefaultChestSprite;
-        private bool _HasInitialized;
-        private bool _WasRewardClaimed;
+        [Tooltip("Sprite when the reward was already claimed; falls back to active sprite if not set.")]
+        [SerializeField] private Sprite _ClaimButtonClaimedSprite;
 
         /// <summary>
         /// Initializes the stage item with data.
@@ -69,17 +56,9 @@ namespace Game.UI.Stages
                 return;
             }
 
-            RefreshRewardReferences();
-            bool shouldPlayClaimEffect = _HasInitialized && !_WasRewardClaimed && itemData.IsRewardClaimed;
-
             if (_StageIconImage != null)
             {
                 _StageIconImage.sprite = itemData.Icon;
-            }
-
-            if (_StageNumberText != null)
-            {
-                _StageNumberText.text = itemData.StageNumber.ToString();
             }
 
             if (_StageNameText != null)
@@ -92,47 +71,12 @@ namespace Game.UI.Stages
                 _LockedStateRoot.SetActive(itemData.IsLocked);
             }
 
-            if (_CurrentStateRoot != null)
+            if (_LevelCompleteIndicator != null)
             {
-                _CurrentStateRoot.SetActive(itemData.IsCurrent);
+                _LevelCompleteIndicator.SetActive(itemData.IsStageComplete);
             }
 
-            if (_RewardRoot)
-            {
-                _RewardRoot.SetActive(itemData.HasReward);
-            }
-
-            if (_RewardChestImage)
-            {
-                if (_DefaultChestSprite == null)
-                {
-                    _DefaultChestSprite = _RewardChestImage.sprite;
-                }
-
-                _RewardChestImage.sprite = itemData.IsRewardClaimed && _ClaimedChestSprite != null
-                    ? _ClaimedChestSprite
-                    : _DefaultChestSprite;
-                _RewardChestImage.color = itemData.CanClaimReward || itemData.IsRewardClaimed
-                    ? _RewardAvailableColor
-                    : _RewardUnavailableColor;
-            }
-
-            if (_ClaimedStateRoot)
-            {
-                _ClaimedStateRoot.SetActive(itemData.HasReward && itemData.IsRewardClaimed);
-            }
-
-            if (_ClaimButton)
-            {
-                _ClaimButton.onClick.RemoveAllListeners();
-                _ClaimButton.gameObject.SetActive(itemData.HasReward && !itemData.IsRewardClaimed);
-                _ClaimButton.interactable = itemData.CanClaimReward;
-
-                if (itemData.CanClaimReward)
-                {
-                    _ClaimButton.onClick.AddListener(() => onRewardClaimed?.Invoke(itemData.StageIndex));
-                }
-            }
+            BindClaimButton(itemData, onRewardClaimed);
 
             if (_Button == null)
             {
@@ -146,90 +90,67 @@ namespace Game.UI.Stages
             {
                 _Button.onClick.AddListener(() => onClicked?.Invoke(itemData.StageIndex));
             }
-
-            if (shouldPlayClaimEffect)
-            {
-                SpawnClaimEffect();
-            }
-
-            _WasRewardClaimed = itemData.IsRewardClaimed;
-            _HasInitialized = true;
         }
 
-        private void RefreshRewardReferences()
+        private void BindClaimButton(StageListItemData itemData, Action<int> onRewardClaimed)
         {
-            _RewardRoot = ResolveGameObject(_RewardRoot, "RewardRoot");
-            _RewardChestImage = ResolveComponent(_RewardChestImage, "RewardRoot/RewardChest");
-            _ClaimButton = ResolveComponent(_ClaimButton, "RewardRoot/ClaimButton");
-            _ClaimedStateRoot = ResolveGameObject(_ClaimedStateRoot, "RewardRoot/ClaimedText");
-        }
-
-        private GameObject ResolveGameObject(GameObject current, string childPath)
-        {
-            if (IsAlive(current))
-            {
-                return current;
-            }
-
-            Transform child = transform.Find(childPath);
-            return child != null ? child.gameObject : null;
-        }
-
-        private T ResolveComponent<T>(T current, string childPath) where T : Component
-        {
-            if (IsAlive(current))
-            {
-                return current;
-            }
-
-            Transform child = transform.Find(childPath);
-            return child != null ? child.GetComponent<T>() : null;
-        }
-
-        private static bool IsAlive(UnityEngine.Object obj)
-        {
-            try
-            {
-                return obj != null;
-            }
-            catch (MissingReferenceException)
-            {
-                return false;
-            }
-        }
-
-        private void SpawnClaimEffect()
-        {
-            if (_ClaimEffectPrefab == null || _RewardChestImage == null)
+            if (_ClaimButton == null)
             {
                 return;
             }
 
-            var effectInstance = UnityEngine.Object.Instantiate(_ClaimEffectPrefab);
-            effectInstance.transform.SetPositionAndRotation(GetClaimEffectPosition(), Quaternion.identity);
+            _ClaimButton.onClick.RemoveAllListeners();
+
+            if (!itemData.HasReward)
+            {
+                _ClaimButton.gameObject.SetActive(false);
+                return;
+            }
+
+            _ClaimButton.gameObject.SetActive(true);
+            var claimGraphic = _ClaimButton.targetGraphic as Image;
+
+            if (itemData.IsRewardClaimed)
+            {
+                _ClaimButton.interactable = false;
+                ApplyClaimVisual(claimGraphic, ClaimedSpriteOrFallback());
+                SetClaimButtonText(ClaimedStatusLabel);
+                return;
+            }
+
+            if (itemData.CanClaimReward)
+            {
+                _ClaimButton.interactable = true;
+                ApplyClaimVisual(claimGraphic, _ClaimButtonActiveSprite);
+                SetClaimButtonText(ClaimActionLabel);
+                _ClaimButton.onClick.AddListener(() => onRewardClaimed?.Invoke(itemData.StageIndex));
+                return;
+            }
+
+            _ClaimButton.interactable = false;
+            ApplyClaimVisual(claimGraphic, _ClaimButtonInactiveSprite);
+            SetClaimButtonText(ClaimActionLabel);
         }
 
-        private Vector3 GetClaimEffectPosition()
+        private Sprite ClaimedSpriteOrFallback()
         {
-            if (_RewardChestImage == null)
+            return _ClaimButtonClaimedSprite != null ? _ClaimButtonClaimedSprite : _ClaimButtonActiveSprite;
+        }
+
+        private void ApplyClaimVisual(Image claimGraphic, Sprite sprite)
+        {
+            if (claimGraphic != null && sprite != null)
             {
-                return Vector3.zero;
+                claimGraphic.sprite = sprite;
             }
+        }
 
-            Camera mainCamera = Camera.main;
-            if (mainCamera == null)
+        private void SetClaimButtonText(string value)
+        {
+            if (_ClaimButtonText != null)
             {
-                return _RewardChestImage.transform.position;
+                _ClaimButtonText.text = value;
             }
-
-            Canvas canvas = _RewardChestImage.canvas;
-            Camera eventCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
-                ? canvas.worldCamera
-                : null;
-
-            Vector3 screenPoint = RectTransformUtility.WorldToScreenPoint(eventCamera, _RewardChestImage.rectTransform.position);
-            screenPoint.z = Mathf.Abs(mainCamera.transform.position.z);
-            return mainCamera.ScreenToWorldPoint(screenPoint);
         }
     }
 }

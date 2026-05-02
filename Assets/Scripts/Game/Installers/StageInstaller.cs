@@ -1,3 +1,4 @@
+using System;
 using Common.Ads.Data;
 using Common.Ads.Events;
 using Common.Ads.Interfaces;
@@ -46,10 +47,6 @@ namespace Game.Installers
         [SerializeField]
         [Tooltip("Throw timing, arcs, and related tuning for the knife thrower.")]
         private KnifeThrowConfigAsset _KnifeThrowConfig;
-
-        [SerializeField]
-        [Tooltip("Master list of stages and levels used by the stage flow and level catalog.")]
-        private StagesCollectionComposite _StagesComposite;
 
         [SerializeField]
         [Tooltip("Shared prefabs for targets, knives, VFX, and pooling.")]
@@ -227,7 +224,7 @@ namespace Game.Installers
             Install(builder, CreateCollectibleInstaller());
             Install(builder, CreatePowerUpInstaller());
             Install(builder, CreateLevelInstaller());
-            Install(builder, CreateStageFlowInstaller());
+            Install(builder, CreateStageFlowInstaller(Parent));
             Install(builder, CreateCollisionInstaller());
             Install(builder, CreateVFXInstaller());
             Install(builder, CreateUIInstaller());
@@ -360,10 +357,17 @@ namespace Game.Installers
                 _LevelFailFlowStartedEventChannel);
         }
 
-        private StageFlowInstaller CreateStageFlowInstaller()
+        private StageFlowInstaller CreateStageFlowInstaller(LifetimeScope parentScope)
         {
+            if (parentScope == null || parentScope.Container == null)
+            {
+                throw new InvalidOperationException(
+                    "StageInstaller requires a parent LifetimeScope with StagesCollectionComposite registered.");
+            }
+
+            StagesCollectionComposite stagesComposite = parentScope.Container.Resolve<StagesCollectionComposite>();
             return new StageFlowInstaller(
-                _StagesComposite,
+                stagesComposite,
                 _StageCompletedEventChannel,
                 _ReturnToMenuEventChannel,
                 _RetryLevelClickedChannel,

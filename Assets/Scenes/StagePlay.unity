@@ -6046,7 +6046,6 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   _KnifeThrowConfig: {fileID: 11400000, guid: 5255f097d202e7341b60016482ff9511, type: 2}
-  _StagesComposite: {fileID: 11400000, guid: e5a1c7d294fb4608b9c0d1e2f3a4b5c6, type: 2}
   _PrefabsConfiguration: {fileID: 11400000, guid: 89c8339ac5c03a8469b04f345c441a2f, type: 2}
   _PowerUpCatalog: {fileID: 11400000, guid: e5d29e583c76d9547a0b6378b8cece49, type: 2}
   _PrivacyPolicyContent: {fileID: 11400000, guid: b773414e95f06b147a8f9172cdbe40e8, type: 2}

@@ -21,6 +21,9 @@ namespace Game.Installers
     {
         [Header("Scene References")]
         [SerializeField] private MainMenuController _MainMenuController;
+        [SerializeField]
+        [Tooltip("Optional. Applies themed menu particles at scene load; assign the root BackgroundEffectHolder instance.")]
+        private MainMenuBackgroundEffect _MainMenuBackgroundEffect;
         [SerializeField] private CurrencyAccumulationConfig _CurrencyAccumulationConfig;
         [SerializeField] private DailyMissionPopup _DailyMissionPopup;
         [SerializeField] private MissionProgressChangedEventChannel _MissionProgressChangedEventChannel;
@@ -33,6 +36,11 @@ namespace Game.Installers
             }
 
             builder.RegisterComponent(_MainMenuController);
+            if (_MainMenuBackgroundEffect != null)
+            {
+                builder.RegisterComponent(_MainMenuBackgroundEffect);
+            }
+
             builder.Register<KnifeSkinService>(Lifetime.Scoped).AsSelf();
 
             if (_DailyMissionPopup != null)

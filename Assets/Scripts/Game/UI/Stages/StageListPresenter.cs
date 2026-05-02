@@ -1,7 +1,6 @@
 using Game.Flow.Game;
 using Game.Level.Catalogs;
 using Game.Level.Configurations.Stage;
-using Game.Level.Configurations.Stage;
 using Game.Persistence.Services;
 using Game.Rewards.Services;
 using UnityEngine;
@@ -114,7 +113,7 @@ namespace Game.UI.Stages
             int focusedLocalStageIndex)
         {
             Sprite icon = stageConfig.LayoutSettings != null
-                ? stageConfig.LayoutSettings.StageIcon
+                ? stageConfig.LayoutSettings.TargetSprite
                 : null;
             bool hasReward = HasConfiguredRewards(stageConfig);
             int displayNumber = _Composite.GetCumulativeStageNumberDisplay(collectionIndex, localStageIndex);
@@ -133,6 +132,8 @@ namespace Game.UI.Stages
                                  _RewardClaimTracker.IsStageCompleteAvailable(collectionIndex, localStageIndex),
                 IsRewardClaimed = hasReward && _RewardClaimTracker != null &&
                                   _RewardClaimTracker.IsStageCompleteClaimed(collectionIndex, localStageIndex),
+                IsStageComplete = _PlayerDataService != null &&
+                                   _PlayerDataService.IsStageCleared(collectionIndex, localStageIndex, _Composite),
             };
         }
 

@@ -51,5 +51,10 @@ namespace Game.UI.Stages
         /// Whether the stage reward was already claimed.
         /// </summary>
         public bool IsRewardClaimed { get; set; }
+
+        /// <summary>
+        /// Whether the player has cleared this stage (beat it; frontier is past it).
+        /// </summary>
+        public bool IsStageComplete { get; set; }
     }
 }

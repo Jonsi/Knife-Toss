@@ -32,7 +32,6 @@ namespace Game.UI.MainMenu
         [SerializeField] private Button _MissionsButton;
         [SerializeField] private TMP_Text _CurrentStageText;
         [SerializeField] private Image _BackgroundImage;
-        [SerializeField] private Transform _BackgroundEffectHolder;
         [SerializeField] private UiElementAnimator[] _MenuAnimators;
         [SerializeField] private KnifeSkinSelectorView _KnifeSkinSelectorView;
 
@@ -44,7 +43,6 @@ namespace Game.UI.MainMenu
         [Inject] private MainMenuRemoveAdsFlow _RemoveAdsFlow;
         [Inject] private StagesCollectionComposite _StagesComposite;
         [Inject] private StagesCollectionResolver _StagesCollectionResolver;
-        [Inject] private BackgroundEffectService _BackgroundEffectService;
 
         private bool _IsNavigating;
         private readonly List<KnifeSkinSelectionOption> _KnifeSkinOptions = new List<KnifeSkinSelectionOption>();
@@ -81,7 +79,6 @@ namespace Game.UI.MainMenu
             SyncCurrentStageSelection();
             UpdateCurrentStageText();
             UpdateBackground();
-            _BackgroundEffectService?.ApplyEffect(_StagesCollectionResolver?.GetActiveCollection(), _BackgroundEffectHolder);
             RefreshRemoveAdsButtonState();
             InitializeKnifeSkinSelector();
             PlayMenuIn();

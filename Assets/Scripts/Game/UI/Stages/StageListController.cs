@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using Game.Flow.Game;
+using Game.Installers;
 using Game.Level.Catalogs;
 using Game.Persistence.Services;
 using Game.Rewards.Services;
@@ -16,7 +17,6 @@ namespace Game.UI.Stages
     public class StageListController : MonoBehaviour
     {
         [Header("Configuration")]
-        [SerializeField] private StagesCollectionComposite _StagesComposite;
         [SerializeField] private bool _LoadGameOnStageSelected;
         [SerializeField] private bool _ScrollToCurrentStageOnStart;
         [SerializeField] private bool _FlipOrientation;
@@ -31,12 +31,15 @@ namespace Game.UI.Stages
         [Inject] private GameData _GameData;
         [Inject] private RewardClaimTracker _RewardClaimTracker;
         [Inject] private StageRewardClaimService _StageRewardClaimService;
+        [Inject] private StagesCollectionComposite _StagesComposite;
 
         private StageListPresenter _StageListPresenter;
         private readonly List<UiWorldStageRow> _WorldRows = new List<UiWorldStageRow>();
 
         private void Start()
         {
+            TryInjectFromSceneScopes();
+
             if (_StagesComposite == null)
             {
                 enabled = false;
@@ -55,6 +58,35 @@ namespace Game.UI.Stages
             if (_ScrollToCurrentStageOnStart)
             {
                 ScrollToCurrentStage();
+            }
+        }
+
+        private void TryInjectFromSceneScopes()
+        {
+            if (_StagesComposite != null && _PlayerDataService != null && _GameData != null)
+            {
+                return;
+            }
+
+            GameObject[] roots = gameObject.scene.GetRootGameObjects();
+            for (int i = 0; i < roots.Length; i++)
+            {
+                StageInstaller stageInstaller = roots[i].GetComponent<StageInstaller>();
+                if (stageInstaller != null && stageInstaller.Container != null)
+                {
+                    stageInstaller.Container.Inject(this);
+                    return;
+                }
+            }
+
+            for (int i = 0; i < roots.Length; i++)
+            {
+                StagesMenuInstaller menuInstaller = roots[i].GetComponent<StagesMenuInstaller>();
+                if (menuInstaller != null && menuInstaller.Container != null)
+                {
+                    menuInstaller.Container.Inject(this);
+                    return;
+                }
             }
         }
 
