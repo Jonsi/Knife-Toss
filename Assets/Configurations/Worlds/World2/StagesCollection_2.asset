@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5bb6f8a06e33fb4a941dcf80a3b9fd6, type: 3}
+  m_Name: StagesCollection_2
+  m_EditorClassIdentifier: 
+  <ThemeName>k__BackingField: Woods Something
+  <StageSelectBackground>k__BackingField: {fileID: -2032790214, guid: 1818b0d66abf08849ace363f31c09a51, type: 3}
+  <MenuParticleEffectPrefab>k__BackingField: {fileID: 4376160612436399112, guid: 109e9d05a664d604b8f8b85acd3ec6dd, type: 3}
+  <DefaultTargetPrefab>k__BackingField: {fileID: 1336281483645859630, guid: 0e557c846743ed044bf689812c8bae87, type: 3}
+  <Stages>k__BackingField:
+  - {fileID: 11400000, guid: a869731dbdb68484ba522e0e3d3e7db4, type: 2}
+  - {fileID: 11400000, guid: 6b3fd4e567d729647ad3d82f3d662179, type: 2}
+  - {fileID: 11400000, guid: adc6cff14f21e7741940f15ba65ac00f, type: 2}
+  - {fileID: 11400000, guid: 5bac2affd515092418b968702ebc060d, type: 2}

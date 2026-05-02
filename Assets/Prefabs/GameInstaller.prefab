@@ -206,11 +206,11 @@ MonoBehaviour:
   _AnalyticsSettings: {fileID: 11400000, guid: d677b7278f06d92429d78ed796a5483b, type: 2}
   _StoreCatalog: {fileID: 11400000, guid: be6458f09b294b2438f43789174e696f, type: 2}
   _PrefabsConfiguration: {fileID: 11400000, guid: 89c8339ac5c03a8469b04f345c441a2f, type: 2}
-  _StagesCollectionComposite: {fileID: 11400000, guid: e5a1c7d294fb4608b9c0d1e2f3a4b5c6, type: 2}
   _DailyMissionCatalog: {fileID: 11400000, guid: d3d2c3e4f5678901a2b3c4d5e6f70890, type: 2}
   _MissionProgressChangedEventChannel: {fileID: 11400000, guid: d1d2c3e4f5678901a2b3c4d5e6f70894, type: 2}
   _MissionCompletedEventChannel: {fileID: 11400000, guid: d2d2c3e4f5678901a2b3c4d5e6f70895, type: 2}
   _AdInstaller: {fileID: -4086891514864499261}
+  _StagesCollectionComposite: {fileID: 11400000, guid: e5a1c7d294fb4608b9c0d1e2f3a4b5c6, type: 2}
   _IapInstaller: {fileID: -911165353040658700}
   _MockIapSettings: {fileID: 11400000, guid: e512f7f84df84224bc63f2fed8ce473f, type: 2}
   _MockIapPopupBridge: {fileID: 0}
