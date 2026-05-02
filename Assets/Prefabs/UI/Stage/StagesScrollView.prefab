@@ -258,7 +258,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game::Game.UI.Stages.StageListController
   _LoadGameOnStageSelected: 1
   _ScrollToCurrentStageOnStart: 1
-  _FlipOrientation: 1
+  _FlipOrientation: 0
   _WorldRowPrefab: {fileID: 7700000000000000003, guid: f6a8b9c0d1e2f403a5b6c7d8e9f0a1b2, type: 3}
   _ContentRoot: {fileID: 4293417313391828669}
   _ScrollRect: {fileID: 4858384209808738210}

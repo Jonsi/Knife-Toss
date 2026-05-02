@@ -10,8 +10,8 @@ ScriptedImporter:
   script: {fileID: 11500000, guid: 625f186215c104763be7675aa2d941aa, type: 3}
 AssetOrigin:
   serializedVersion: 1
-  productId: 249874
-  packageName: Background Effect 2D URP
+  productId: 261387
+  packageName: Action Game VFX Collection URP
   packageVersion: 1.0
   assetPath: Assets/CartoonVFX9X/Megapack9/Shaders/CartoonVFX9X_Shader1_Addictive.shadergraph
-  uploadId: 570791
+  uploadId: 603202

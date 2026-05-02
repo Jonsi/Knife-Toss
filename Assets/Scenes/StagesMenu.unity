@@ -795,10 +795,6 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4293417313391828669, guid: d76fe3563e104ee438bdfd340de1df19, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6010328931080850513, guid: d76fe3563e104ee438bdfd340de1df19, type: 3}
       propertyPath: m_Name
       value: StagesScrollView
