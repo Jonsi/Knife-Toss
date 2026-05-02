@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game::Game.Level.Configurations.Stage.StageConfig
   <StageName>k__BackingField: Stage 2
   <LayoutSettings>k__BackingField:
-    <BackgroundSprite>k__BackingField: {fileID: -1925746257, guid: dd2c3b018d51850408d547201766789f, type: 3}
-    <TargetSprite>k__BackingField: {fileID: 2075353348834590344, guid: 71a4056639fb0e8419a32add1f30fbdb, type: 3}
+    <BackgroundSprite>k__BackingField: {fileID: 4021272787734625953, guid: a14916b6a3920884b87204129c3e84f3, type: 3}
+    <TargetSprite>k__BackingField: {fileID: 6247019075878578442, guid: 5fa3baf878540f84992e2f39148ddd7c, type: 3}
     <StageIcon>k__BackingField: {fileID: 3713549098536957005, guid: cbb99ac174ee80b4aa2130f2640805ef, type: 3}
   <Rewards>k__BackingField:
   - {fileID: 11400000, guid: 2e3f071ef9391074a8d9597d424f8b46, type: 2}
