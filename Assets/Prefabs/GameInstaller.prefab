@@ -211,6 +211,12 @@ MonoBehaviour:
   _MissionCompletedEventChannel: {fileID: 11400000, guid: d2d2c3e4f5678901a2b3c4d5e6f70895, type: 2}
   _AdInstaller: {fileID: -4086891514864499261}
   _StagesCollectionComposite: {fileID: 11400000, guid: e5a1c7d294fb4608b9c0d1e2f3a4b5c6, type: 2}
+  _RemoteStagesCollectionCompositeReference:
+    m_AssetGUID: e5a1c7d294fb4608b9c0d1e2f3a4b5c6
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
   _IapInstaller: {fileID: -911165353040658700}
   _MockIapSettings: {fileID: 11400000, guid: e512f7f84df84224bc63f2fed8ce473f, type: 2}
   _MockIapPopupBridge: {fileID: 0}

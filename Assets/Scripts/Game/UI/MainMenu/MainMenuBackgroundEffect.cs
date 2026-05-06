@@ -1,5 +1,7 @@
+using Cysharp.Threading.Tasks;
 using Game.Flow.Game;
 using Game.Level.Configurations.Stage;
+using Game.Level.Services;
 using UnityEngine;
 using VContainer;
 
@@ -22,8 +24,24 @@ namespace Game.UI.MainMenu
         [Inject]
         private BackgroundEffectService _BackgroundEffectService;
 
+        [Inject]
+        private WorldAssetService _WorldAssetService;
+
+        [Inject]
+        private GameData _GameData;
+
         private void Start()
         {
+            ApplyWhenReadyAsync().Forget();
+        }
+
+        private async UniTaskVoid ApplyWhenReadyAsync()
+        {
+            if (_WorldAssetService != null && _GameData != null)
+            {
+                await _WorldAssetService.LoadCollectionAsync(_GameData.CurrentCollectionIndex);
+            }
+
             _BackgroundEffectService?.ApplyEffect(_StagesCollectionResolver?.GetActiveCollection(), transform);
         }
     }

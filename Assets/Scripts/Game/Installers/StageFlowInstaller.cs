@@ -23,7 +23,6 @@ namespace Game.Installers
     /// </summary>
     public class StageFlowInstaller : IInstaller
     {
-        private readonly StagesCollectionComposite _StagesComposite;
         private readonly StageCompletedEventChannel _StageCompletedChannel;
         private readonly ReturnToMenuEventChannel _ReturnToMenuChannel;
         private readonly VoidEventChannel _RetryChannel;
@@ -34,14 +33,12 @@ namespace Game.Installers
         /// Initializes a new instance of the <see cref="StageFlowInstaller"/> class.
         /// </summary>
         public StageFlowInstaller(
-            StagesCollectionComposite stagesComposite,
             StageCompletedEventChannel stageCompletedChannel,
             ReturnToMenuEventChannel returnToMenuChannel,
             VoidEventChannel retryChannel,
             VoidEventChannel restartChannel,
             LevelStartedEventChannel levelStartedChannel)
         {
-            _StagesComposite = stagesComposite;
             _StageCompletedChannel = stageCompletedChannel;
             _ReturnToMenuChannel = returnToMenuChannel;
             _RetryChannel = retryChannel;

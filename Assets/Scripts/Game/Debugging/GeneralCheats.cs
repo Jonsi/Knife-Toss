@@ -1,12 +1,17 @@
 #if TEST_ENABLED
+using System;
+using System.Collections.Generic;
 using Game.Flow.Game;
 using Game.Level.Catalogs;
+using Game.Level.Interfaces;
 using Game.Level.Configurations.Stage;
 using Game.Persistence.Data;
 using Game.Persistence.Services;
 using Game.Persistence.Storage;
 using Game.Rewards.Services;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Game.Debugging
 {
@@ -15,8 +20,11 @@ namespace Game.Debugging
     /// </summary>
     public class GeneralCheats
     {
+        private const int LastSlotIndexFromCountOffset = 1;
+
         private readonly GameData _gameData;
         private readonly PlayerDataService _playerDataService;
+        private readonly IStagesCollectionCatalog _stagesCollectionCatalog;
         private readonly RewardClaimTracker _rewardClaimTracker;
 
         /// <summary>
@@ -25,10 +33,12 @@ namespace Game.Debugging
         public GeneralCheats(
             GameData gameData,
             PlayerDataService playerDataService,
+            IStagesCollectionCatalog stagesCollectionCatalog,
             RewardClaimTracker rewardClaimTracker = null)
         {
             _gameData = gameData;
             _playerDataService = playerDataService;
+            _stagesCollectionCatalog = stagesCollectionCatalog;
             _rewardClaimTracker = rewardClaimTracker;
         }
 
@@ -64,15 +74,14 @@ namespace Game.Debugging
                 return;
             }
 
-            StagesCollectionComposite composite = FindLoadedComposite();
+            StagesCollectionComposite composite = _stagesCollectionCatalog?.Composite;
             if (composite == null || composite.CollectionsCount <= 0)
             {
                 return;
             }
 
-            int lastCollectionIndex = composite.CollectionsCount - 1;
-            StagesCollection lastCollection = composite.GetCollection(lastCollectionIndex);
-            int lastLocal = (lastCollection?.Stages?.Count ?? 0) - 1;
+            int lastCollectionIndex = composite.CollectionsCount - LastSlotIndexFromCountOffset;
+            int lastLocal = composite.GetStageSlotCountForWorld(lastCollectionIndex) - LastSlotIndexFromCountOffset;
             if (lastLocal < 0)
             {
                 return;
@@ -103,43 +112,78 @@ namespace Game.Debugging
             }
 
             playerData.RewardClaims ??= new RewardClaimData();
-            playerData.RewardClaims.AvailableStageRewards ??= new System.Collections.Generic.List<StageRewardKey>();
-            playerData.RewardClaims.ClaimedStageRewards ??= new System.Collections.Generic.List<StageRewardKey>();
+            playerData.RewardClaims.AvailableStageRewards ??= new List<StageRewardKey>();
+            playerData.RewardClaims.ClaimedStageRewards ??= new List<StageRewardKey>();
 
             for (int c = 0; c < composite.CollectionsCount; c++)
             {
-                StagesCollection collection = composite.GetCollection(c);
-                if (collection?.Stages == null)
+                int collectionIndex = c;
+                WithCollectionLoaded(composite, collectionIndex, collection =>
                 {
-                    continue;
-                }
+                    if (collection?.Stages == null)
+                    {
+                        return;
+                    }
 
-                for (int s = 0; s < collection.Stages.Count; s++)
+                    for (int s = 0; s < collection.Stages.Count; s++)
+                    {
+                        StageConfig stageConfig = collection.Stages[s];
+                        if (!HasConfiguredRewards(stageConfig))
+                        {
+                            continue;
+                        }
+
+                        if (_rewardClaimTracker != null)
+                        {
+                            _rewardClaimTracker.MarkStageCompleteAvailable(collectionIndex, s);
+                            continue;
+                        }
+
+                        if (ListContains(playerData.RewardClaims.ClaimedStageRewards, collectionIndex, s) ||
+                            ListContains(playerData.RewardClaims.AvailableStageRewards, collectionIndex, s))
+                        {
+                            continue;
+                        }
+
+                        playerData.RewardClaims.AvailableStageRewards.Add(
+                            new StageRewardKey { CollectionIndex = collectionIndex, StageIndex = s });
+                    }
+                });
+            }
+        }
+
+        private static void WithCollectionLoaded(
+            StagesCollectionComposite composite,
+            int collectionIndex,
+            Action<StagesCollection> use)
+        {
+            if (composite == null || use == null)
+            {
+                return;
+            }
+
+            string locationKey = composite.GetCollectionLocationKey(collectionIndex);
+            if (string.IsNullOrEmpty(locationKey))
+            {
+                return;
+            }
+
+            AsyncOperationHandle<StagesCollection> handle = Addressables.LoadAssetAsync<StagesCollection>(locationKey);
+            try
+            {
+                StagesCollection collection = handle.WaitForCompletion();
+                use(collection);
+            }
+            finally
+            {
+                if (handle.IsValid())
                 {
-                    StageConfig stageConfig = collection.Stages[s];
-                    if (!HasConfiguredRewards(stageConfig))
-                    {
-                        continue;
-                    }
-
-                    if (_rewardClaimTracker != null)
-                    {
-                        _rewardClaimTracker.MarkStageCompleteAvailable(c, s);
-                        continue;
-                    }
-
-                    if (ListContains(playerData.RewardClaims.ClaimedStageRewards, c, s) ||
-                        ListContains(playerData.RewardClaims.AvailableStageRewards, c, s))
-                    {
-                        continue;
-                    }
-
-                    playerData.RewardClaims.AvailableStageRewards.Add(new StageRewardKey { CollectionIndex = c, StageIndex = s });
+                    Addressables.Release(handle);
                 }
             }
         }
 
-        private static bool ListContains(System.Collections.Generic.List<StageRewardKey> list, int c, int s)
+        private static bool ListContains(List<StageRewardKey> list, int c, int s)
         {
             if (list == null)
             {
@@ -158,7 +202,7 @@ namespace Game.Debugging
             return false;
         }
 
-        private static bool HasConfiguredRewards(Game.Level.Configurations.Stage.StageConfig stageConfig)
+        private static bool HasConfiguredRewards(StageConfig stageConfig)
         {
             var rewards = stageConfig?.Rewards;
             if (rewards == null)
@@ -177,24 +221,6 @@ namespace Game.Debugging
             return false;
         }
 
-        private static StagesCollectionComposite FindLoadedComposite()
-        {
-            StagesCollectionComposite[] loaded = Resources.FindObjectsOfTypeAll<StagesCollectionComposite>();
-            if (loaded == null || loaded.Length == 0)
-            {
-                return null;
-            }
-
-            for (var i = 0; i < loaded.Length; i++)
-            {
-                if (loaded[i] != null && loaded[i].CollectionsCount > 0)
-                {
-                    return loaded[i];
-                }
-            }
-
-            return null;
-        }
     }
 }
 #endif

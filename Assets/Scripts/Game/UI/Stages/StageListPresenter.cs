@@ -1,6 +1,7 @@
 using Game.Flow.Game;
 using Game.Level.Catalogs;
 using Game.Level.Configurations.Stage;
+using Game.Level.Interfaces;
 using Game.Persistence.Services;
 using Game.Rewards.Services;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace Game.UI.Stages
         private readonly PlayerDataService _PlayerDataService;
         private readonly GameData _GameData;
         private readonly RewardClaimTracker _RewardClaimTracker;
-        private readonly StagesCollectionComposite _Composite;
+        private readonly IStagesCollectionCatalog _StagesCatalog;
 
         /// <summary>
         /// Creates a presenter for stage list UI.
@@ -25,17 +26,17 @@ namespace Game.UI.Stages
         /// <param name="playerDataService">Player progression source.</param>
         /// <param name="gameData">Runtime stage selection state.</param>
         /// <param name="rewardClaimTracker">Reward claim UI state.</param>
-        /// <param name="composite">All world collections in order.</param>
+        /// <param name="stagesCatalog">All world collections in order.</param>
         public StageListPresenter(
             PlayerDataService playerDataService,
             GameData gameData,
             RewardClaimTracker rewardClaimTracker,
-            StagesCollectionComposite composite)
+            IStagesCollectionCatalog stagesCatalog)
         {
             _PlayerDataService = playerDataService;
             _GameData = gameData;
             _RewardClaimTracker = rewardClaimTracker;
-            _Composite = composite;
+            _StagesCatalog = stagesCatalog;
         }
 
         /// <summary>
@@ -44,7 +45,7 @@ namespace Game.UI.Stages
         public int GetFocusedLocalStageIndex(StagesCollection stagesCollection, int collectionIndex)
         {
             int stageCount = GetStageCount(stagesCollection);
-            if (_PlayerDataService == null || _GameData == null || _Composite == null)
+            if (_PlayerDataService == null || _GameData == null || _StagesCatalog == null)
             {
                 return 0;
             }
@@ -58,7 +59,7 @@ namespace Game.UI.Stages
                 collectionIndex,
                 _GameData.CurrentStageIndex,
                 stageCount,
-                _Composite);
+                _StagesCatalog);
         }
 
         /// <summary>
@@ -67,7 +68,7 @@ namespace Game.UI.Stages
         public StageListItemData GetItemData(StagesCollection stagesCollection, int collectionIndex, int localStageIndex)
         {
             var stages = stagesCollection?.Stages;
-            if (stages == null || localStageIndex < 0 || localStageIndex >= stages.Count || _Composite == null)
+            if (stages == null || localStageIndex < 0 || localStageIndex >= stages.Count || _StagesCatalog == null)
             {
                 return null;
             }
@@ -85,13 +86,13 @@ namespace Game.UI.Stages
         /// </summary>
         public bool TrySelectStage(StagesCollection stagesCollection, int collectionIndex, int localStageIndex)
         {
-            if (_PlayerDataService == null || _GameData == null || _Composite == null)
+            if (_PlayerDataService == null || _GameData == null || _StagesCatalog == null)
             {
                 return false;
             }
 
             int stageCount = GetStageCount(stagesCollection);
-            if (!_PlayerDataService.IsStageUnlocked(collectionIndex, localStageIndex, _Composite))
+            if (!_PlayerDataService.IsStageUnlocked(collectionIndex, localStageIndex, _StagesCatalog))
             {
                 return false;
             }
@@ -101,7 +102,7 @@ namespace Game.UI.Stages
                 collectionIndex,
                 localStageIndex,
                 stageCount,
-                _Composite);
+                _StagesCatalog);
             return true;
         }
 
@@ -116,7 +117,7 @@ namespace Game.UI.Stages
                 ? stageConfig.LayoutSettings.TargetSprite
                 : null;
             bool hasReward = HasConfiguredRewards(stageConfig);
-            int displayNumber = _Composite.GetCumulativeStageNumberDisplay(collectionIndex, localStageIndex);
+            int displayNumber = _StagesCatalog.GetCumulativeStageNumberDisplay(collectionIndex, localStageIndex);
 
             return new StageListItemData
             {
@@ -125,7 +126,7 @@ namespace Game.UI.Stages
                 StageNumber = displayNumber,
                 StageName = stageConfig.StageName,
                 IsLocked = _PlayerDataService == null ||
-                           !_PlayerDataService.IsStageUnlocked(collectionIndex, localStageIndex, _Composite),
+                           !_PlayerDataService.IsStageUnlocked(collectionIndex, localStageIndex, _StagesCatalog),
                 IsCurrent = focusedLocalStageIndex >= 0 && localStageIndex == focusedLocalStageIndex,
                 HasReward = hasReward,
                 CanClaimReward = hasReward && _RewardClaimTracker != null &&
@@ -133,7 +134,7 @@ namespace Game.UI.Stages
                 IsRewardClaimed = hasReward && _RewardClaimTracker != null &&
                                   _RewardClaimTracker.IsStageCompleteClaimed(collectionIndex, localStageIndex),
                 IsStageComplete = _PlayerDataService != null &&
-                                   _PlayerDataService.IsStageCleared(collectionIndex, localStageIndex, _Composite),
+                                   _PlayerDataService.IsStageCleared(collectionIndex, localStageIndex, _StagesCatalog),
             };
         }
 

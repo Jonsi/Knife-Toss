@@ -1,8 +1,10 @@
 using Cysharp.Threading.Tasks;
 using Game.Flow.Game;
 using Game.IAP.Services;
-using Game.Level.Catalogs;
+using Game.Level.Interfaces;
 using Game.Level.Configurations.Stage;
+using Game.Level.Catalogs;
+using Game.Level.Services;
 using Game.Persistence.Services;
 using Game.Store.Data;
 using Game.Store.Services;
@@ -41,8 +43,9 @@ namespace Game.UI.MainMenu
         [Inject] private DailyMissionPopupController _MissionPopupController;
         [Inject] private KnifeSkinService _KnifeSkinService;
         [Inject] private MainMenuRemoveAdsFlow _RemoveAdsFlow;
-        [Inject] private StagesCollectionComposite _StagesComposite;
+        [Inject] private IStagesCollectionCatalog _StagesCollectionCatalog;
         [Inject] private StagesCollectionResolver _StagesCollectionResolver;
+        [Inject] private WorldAssetService _WorldAssetService;
 
         private bool _IsNavigating;
         private readonly List<KnifeSkinSelectionOption> _KnifeSkinOptions = new List<KnifeSkinSelectionOption>();
@@ -76,7 +79,17 @@ namespace Game.UI.MainMenu
             if (_MissionsButton != null)
                 _MissionsButton.onClick.AddListener(OnMissionsClicked);
 
+            StartMenuAsync().Forget();
+        }
+
+        private async UniTaskVoid StartMenuAsync()
+        {
             SyncCurrentStageSelection();
+            if (_WorldAssetService != null && _GameData != null)
+            {
+                await _WorldAssetService.LoadCollectionAsync(_GameData.CurrentCollectionIndex);
+            }
+
             UpdateCurrentStageText();
             UpdateBackground();
             RefreshRemoveAdsButtonState();
@@ -87,9 +100,9 @@ namespace Game.UI.MainMenu
 
         private void UpdateCurrentStageText()
         {
-            if (_CurrentStageText != null && _GameData != null && _StagesComposite != null)
+            if (_CurrentStageText != null && _GameData != null && _StagesCollectionCatalog != null)
             {
-                int stageNumber = _StagesComposite.GetCumulativeStageNumberDisplay(
+                int stageNumber = _StagesCollectionCatalog.GetCumulativeStageNumberDisplay(
                     _GameData.CurrentCollectionIndex,
                     _GameData.CurrentStageIndex);
                 _CurrentStageText.text = $"Stage {stageNumber}";
@@ -119,9 +132,9 @@ namespace Game.UI.MainMenu
 
         private void OnPlayClicked()
         {
-            if (_GameData != null && _PlayerDataService != null && _StagesComposite != null)
+            if (_GameData != null && _PlayerDataService != null && _StagesCollectionCatalog != null)
             {
-                _PlayerDataService.ClampSelectionToUnlocked(_StagesComposite);
+                _PlayerDataService.ClampSelectionToUnlocked(_StagesCollectionCatalog);
             }
 
             LoadGameFromMainMenuAsync().Forget();
@@ -174,12 +187,12 @@ namespace Game.UI.MainMenu
 
         private void SyncCurrentStageSelection()
         {
-            if (_GameData == null || _PlayerDataService == null || _StagesComposite == null)
+            if (_GameData == null || _PlayerDataService == null || _StagesCollectionCatalog == null)
             {
                 return;
             }
 
-            _PlayerDataService.ClampSelectionToUnlocked(_StagesComposite);
+            _PlayerDataService.ClampSelectionToUnlocked(_StagesCollectionCatalog);
         }
 
         private void UpdateBackground()

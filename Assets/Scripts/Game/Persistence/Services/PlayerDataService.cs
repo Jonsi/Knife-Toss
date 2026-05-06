@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Game.Flow.Game;
-using Game.Level.Catalogs;
+using Game.Level.Interfaces;
 using Game.Missions.Daily.Data;
 using Game.Persistence.Data;
 using Game.Persistence.Interfaces;
@@ -110,7 +110,7 @@ namespace Game.Persistence.Services
         /// <summary>
         /// Highest unlocked local stage index in the given collection, capped by stage count.
         /// </summary>
-        public int GetHighestUnlockedLocalStageIndex(int collectionIndex, int stageCountInCollection, StagesCollectionComposite composite)
+        public int GetHighestUnlockedLocalStageIndex(int collectionIndex, int stageCountInCollection, IStagesCollectionCatalog stagesCatalog)
         {
             int normalizedCount = GetNormalizedStageCount(stageCountInCollection);
             int maxStageIndex = normalizedCount - MinimumStageCount;
@@ -133,14 +133,14 @@ namespace Game.Persistence.Services
         /// <summary>
         /// Whether the stage at the given world and local index is unlocked.
         /// </summary>
-        public bool IsStageUnlocked(int collectionIndex, int localStageIndex, StagesCollectionComposite composite)
+        public bool IsStageUnlocked(int collectionIndex, int localStageIndex, IStagesCollectionCatalog stagesCatalog)
         {
-            if (composite == null)
+            if (stagesCatalog == null)
             {
                 return false;
             }
 
-            int stageCount = composite.GetCollection(collectionIndex)?.Stages?.Count ?? 0;
+            int stageCount = stagesCatalog.GetStageSlotCountForWorld(collectionIndex);
             int normalized = GetNormalizedStageCount(stageCount);
             if (localStageIndex < FirstStageIndex || localStageIndex >= normalized)
             {
@@ -155,9 +155,9 @@ namespace Game.Persistence.Services
         /// <summary>
         /// Whether the player has cleared this stage (progress frontier is strictly past this stage).
         /// </summary>
-        public bool IsStageCleared(int collectionIndex, int localStageIndex, StagesCollectionComposite composite)
+        public bool IsStageCleared(int collectionIndex, int localStageIndex, IStagesCollectionCatalog stagesCatalog)
         {
-            if (!IsStageUnlocked(collectionIndex, localStageIndex, composite))
+            if (!IsStageUnlocked(collectionIndex, localStageIndex, stagesCatalog))
             {
                 return false;
             }
@@ -174,9 +174,9 @@ namespace Game.Persistence.Services
             int collectionIndex,
             int localStageIndex,
             int stageCountInCollection,
-            StagesCollectionComposite composite)
+            IStagesCollectionCatalog stagesCatalog)
         {
-            int maxUnlocked = GetHighestUnlockedLocalStageIndex(collectionIndex, stageCountInCollection, composite);
+            int maxUnlocked = GetHighestUnlockedLocalStageIndex(collectionIndex, stageCountInCollection, stagesCatalog);
             if (maxUnlocked < FirstStageIndex)
             {
                 return FirstStageIndex;
@@ -473,9 +473,9 @@ namespace Game.Persistence.Services
         /// <summary>
         /// Clamps session collection and stage indices to the unlocked frontier and valid catalog bounds.
         /// </summary>
-        public void ClampSelectionToUnlocked(StagesCollectionComposite composite)
+        public void ClampSelectionToUnlocked(IStagesCollectionCatalog stagesCatalog)
         {
-            if (_GameData == null || composite == null)
+            if (_GameData == null || stagesCatalog == null)
             {
                 return;
             }
@@ -493,13 +493,12 @@ namespace Game.Persistence.Services
                 s = highestS;
             }
 
-            int maxCol = Math.Max(0, composite.CollectionsCount - 1);
+            int maxCol = Math.Max(0, stagesCatalog.CollectionsCount - 1);
             c = Mathf.Clamp(c, 0, maxCol);
             _GameData.CurrentCollectionIndex = c;
 
-            StagesCollection collection = composite.GetCollection(c);
-            int stageCount = collection?.Stages?.Count ?? MinimumStageCount;
-            _GameData.CurrentStageIndex = ClampLocalStageToUnlockedRange(c, s, stageCount, composite);
+            int stageCount = stagesCatalog.GetStageSlotCountForWorld(c);
+            _GameData.CurrentStageIndex = ClampLocalStageToUnlockedRange(c, s, stageCount, stagesCatalog);
         }
 
         private int GetNormalizedStageCount(int stageCount)

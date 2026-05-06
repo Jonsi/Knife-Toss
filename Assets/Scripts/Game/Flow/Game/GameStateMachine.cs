@@ -2,7 +2,6 @@ using Common.Patterns.State;
 using Game.Flow.Events;
 using Game.Flow.Game.States;
 using Game.Flow.Interfaces;
-using Game.Level.Catalogs;
 using Game.Level.Interfaces;
 using VContainer.Unity;
 
@@ -19,9 +18,9 @@ namespace Game.Flow.Game
         public GameData Context { get; }
 
         /// <summary>
-        /// Ordered worlds configuration for progression after a collection is completed.
+        /// Ordered worlds manifest for progression after a collection is completed.
         /// </summary>
-        public StagesCollectionComposite StagesCollectionComposite { get; }
+        public IStagesCollectionCatalog StagesCollectionCatalog { get; }
 
         private readonly GamePlayingState _Playing;
 
@@ -40,14 +39,14 @@ namespace Game.Flow.Game
             GameData context,
             IStageFlowController stageFlowController,
             ILevelCatalog levelCatalog,
-            StagesCollectionComposite stagesCollectionComposite,
+            IStagesCollectionCatalog stagesCollectionCatalog,
             StageCompletedEventChannel stageCompletedChannel,
             ReturnToMenuEventChannel returnToMenuChannel)
         {
             Context = context;
             StageFlowController = stageFlowController;
             LevelCatalog = levelCatalog;
-            StagesCollectionComposite = stagesCollectionComposite;
+            StagesCollectionCatalog = stagesCollectionCatalog;
 
             _Playing = new GamePlayingState(this, stageCompletedChannel, returnToMenuChannel);
         }

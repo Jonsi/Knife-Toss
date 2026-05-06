@@ -1,7 +1,7 @@
-using Game.Flow.Game;
 using Game.Level.Configurations.Stage;
 using Game.Level.Data;
 using Game.Level.Interfaces;
+using Game.Level.Services;
 
 namespace Game.Level.Catalogs
 {
@@ -10,19 +10,17 @@ namespace Game.Level.Catalogs
     /// </summary>
     public class StagesConfigCatalog : ILevelCatalog
     {
-        private readonly StagesCollectionComposite _Composite;
-        private readonly GameData _GameData;
+        private readonly WorldAssetService _WorldAssets;
 
         /// <summary>
-        /// Creates a catalog bound to the composite and session collection index.
+        /// Creates a catalog bound to the loaded world asset service.
         /// </summary>
-        public StagesConfigCatalog(StagesCollectionComposite composite, GameData gameData)
+        public StagesConfigCatalog(WorldAssetService worldAssets)
         {
-            _Composite = composite;
-            _GameData = gameData;
+            _WorldAssets = worldAssets;
         }
 
-        private StagesCollection ActiveCollection => _Composite?.GetCollection(_GameData.CurrentCollectionIndex);
+        private StagesCollection ActiveCollection => _WorldAssets?.ActiveCollection;
 
         /// <inheritdoc />
         public int StageCount

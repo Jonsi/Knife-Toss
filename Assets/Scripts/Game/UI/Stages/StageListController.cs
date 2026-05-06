@@ -1,8 +1,10 @@
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using Common.AssetLoading;
 using Game.Flow.Game;
 using Game.Installers;
 using Game.Level.Catalogs;
+using Game.Level.Interfaces;
 using Game.Persistence.Services;
 using Game.Rewards.Services;
 using UnityEngine;
@@ -31,39 +33,41 @@ namespace Game.UI.Stages
         [Inject] private GameData _GameData;
         [Inject] private RewardClaimTracker _RewardClaimTracker;
         [Inject] private StageRewardClaimService _StageRewardClaimService;
-        [Inject] private StagesCollectionComposite _StagesComposite;
+        [Inject] private IStagesCollectionCatalog _StagesCollectionCatalog;
+        [Inject] private IAssetLoader _AssetLoader;
 
         private StageListPresenter _StageListPresenter;
         private readonly List<UiWorldStageRow> _WorldRows = new List<UiWorldStageRow>();
+        private readonly List<ILoadedAsset<StagesCollection>> _MenuWorldLoads = new List<ILoadedAsset<StagesCollection>>();
 
         private void Start()
         {
             TryInjectFromSceneScopes();
 
-            if (_StagesComposite == null)
+            if (_StagesCollectionCatalog == null)
             {
                 enabled = false;
                 return;
             }
 
-            if (_PlayerDataService == null || _GameData == null)
+            if (_PlayerDataService == null || _GameData == null || _AssetLoader == null)
             {
                 enabled = false;
                 return;
             }
 
-            _StageListPresenter = new StageListPresenter(_PlayerDataService, _GameData, _RewardClaimTracker, _StagesComposite);
-            BuildWorldRows();
+            _StageListPresenter = new StageListPresenter(_PlayerDataService, _GameData, _RewardClaimTracker, _StagesCollectionCatalog);
+            BuildWorldRowsWhenReadyAsync().Forget();
+        }
 
-            if (_ScrollToCurrentStageOnStart)
-            {
-                ScrollToCurrentStage();
-            }
+        private void OnDestroy()
+        {
+            ReleaseMenuWorldLoads();
         }
 
         private void TryInjectFromSceneScopes()
         {
-            if (_StagesComposite != null && _PlayerDataService != null && _GameData != null)
+            if (_StagesCollectionCatalog != null && _PlayerDataService != null && _GameData != null && _AssetLoader != null)
             {
                 return;
             }
@@ -90,7 +94,17 @@ namespace Game.UI.Stages
             }
         }
 
-        private void BuildWorldRows()
+        private async UniTaskVoid BuildWorldRowsWhenReadyAsync()
+        {
+            await BuildWorldRowsAsync();
+
+            if (_ScrollToCurrentStageOnStart)
+            {
+                ScrollToCurrentStage();
+            }
+        }
+
+        private async UniTask BuildWorldRowsAsync()
         {
             ClearWorldRows();
 
@@ -99,10 +113,30 @@ namespace Game.UI.Stages
                 return;
             }
 
-            int count = _StagesComposite.CollectionsCount;
+            ReleaseMenuWorldLoads();
+
+            int count = _StagesCollectionCatalog.CollectionsCount;
+            for (int i = 0; i < count; i++)
+            {
+                _MenuWorldLoads.Add(null);
+            }
+
             for (int collectionIndex = 0; collectionIndex < count; collectionIndex++)
             {
-                StagesCollection collection = _StagesComposite.GetCollection(collectionIndex);
+                string locationKey = _StagesCollectionCatalog.GetCollectionLocationKey(collectionIndex);
+                if (string.IsNullOrEmpty(locationKey))
+                {
+                    continue;
+                }
+
+                ILoadedAsset<StagesCollection> loaded = await _AssetLoader.LoadAsync<StagesCollection>(locationKey);
+                _MenuWorldLoads[collectionIndex] = loaded;
+                if (loaded == null)
+                {
+                    continue;
+                }
+
+                StagesCollection collection = loaded.Asset;
                 if (collection == null)
                 {
                     continue;
@@ -125,14 +159,24 @@ namespace Game.UI.Stages
             }
         }
 
+        private void ReleaseMenuWorldLoads()
+        {
+            for (int i = 0; i < _MenuWorldLoads.Count; i++)
+            {
+                _MenuWorldLoads[i]?.Dispose();
+            }
+
+            _MenuWorldLoads.Clear();
+        }
+
         private void OnStageSelected(int collectionIndex, int localStageIndex)
         {
-            if (_StageListPresenter == null || _StagesComposite == null)
+            if (_StageListPresenter == null || _StagesCollectionCatalog == null)
             {
                 return;
             }
 
-            StagesCollection collection = _StagesComposite.GetCollection(collectionIndex);
+            StagesCollection collection = GetLoadedMenuCollection(collectionIndex);
             if (collection == null)
             {
                 return;
@@ -153,6 +197,17 @@ namespace Game.UI.Stages
 
             RefreshRow(previousCollection);
             RefreshRow(collectionIndex);
+        }
+
+        private StagesCollection GetLoadedMenuCollection(int collectionIndex)
+        {
+            if (collectionIndex < 0 || collectionIndex >= _MenuWorldLoads.Count)
+            {
+                return null;
+            }
+
+            ILoadedAsset<StagesCollection> lease = _MenuWorldLoads[collectionIndex];
+            return lease != null && lease.IsValid ? lease.Asset : null;
         }
 
         private void RefreshRow(int collectionIndex)
@@ -176,7 +231,7 @@ namespace Game.UI.Stages
 
         private async UniTaskVoid ClaimStageRewardAsync(int collectionIndex, int localStageIndex)
         {
-            StagesCollection collection = _StagesComposite?.GetCollection(collectionIndex);
+            StagesCollection collection = GetLoadedMenuCollection(collectionIndex);
             if (collection?.Stages == null || localStageIndex < 0 || localStageIndex >= collection.Stages.Count)
             {
                 return;
