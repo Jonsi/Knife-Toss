@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Worlds
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Worlds
+  m_GUID: bdd07d3819204c743be0bee9599dc556
+  m_SerializeEntries:
+  - m_GUID: 183e252eb114c194c870b143f814c107
+    m_Address: Assets/Configurations/Worlds/World4/StagesCollection_4.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e5a1c7d294fb4608b9c0d1e2f3a4b5c6
+    m_Address: Assets/Configurations/Worlds/StagesCollectionComposite.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f80fd71992597a74b8938fcb8b204fe0
+    m_Address: Assets/Configurations/Worlds/World3/StagesCollection_3.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 996771f53e8b81b47a2b2a87d879442c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 7d7497f0539517b4fa35070107f23ba5, type: 2}
+    - {fileID: 11400000, guid: d10e8ac47179ffc428c7e9f3e5513cd2, type: 2}

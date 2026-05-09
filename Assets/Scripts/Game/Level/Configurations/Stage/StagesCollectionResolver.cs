@@ -1,31 +1,29 @@
-using Game.Flow.Game;
 using Game.Level.Catalogs;
+using Game.Level.Services;
 
 namespace Game.Level.Configurations.Stage
 {
     /// <summary>
-    /// Resolves the active stage collection from session state.
+    /// Resolves the active stage collection from the addressable-loaded world service.
     /// </summary>
     public class StagesCollectionResolver
     {
-        private readonly StagesCollectionComposite _Composite;
-        private readonly GameData _GameData;
+        private readonly WorldAssetService _WorldAssetService;
 
         /// <summary>
-        /// Creates a resolver for the composite and current session data.
+        /// Creates a resolver bound to the world asset service.
         /// </summary>
-        public StagesCollectionResolver(StagesCollectionComposite composite, GameData gameData)
+        public StagesCollectionResolver(WorldAssetService worldAssetService)
         {
-            _Composite = composite;
-            _GameData = gameData;
+            _WorldAssetService = worldAssetService;
         }
 
         /// <summary>
-        /// Gets the stage collection for the current session world index.
+        /// Gets the stage collection for the session after the matching world has been loaded.
         /// </summary>
         public StagesCollection GetActiveCollection()
         {
-            return _Composite?.GetCollection(_GameData.CurrentCollectionIndex);
+            return _WorldAssetService?.ActiveCollection;
         }
     }
 }

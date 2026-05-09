@@ -12,6 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4e8c2a1b09d4c5e8f3a7123456789ab, type: 3}
   m_Name: StagesCollectionComposite
   m_EditorClassIdentifier: 
-  <Collections>k__BackingField:
-  - {fileID: 11400000, guid: 23da853b1bf3fb544baf3737e162c6ed, type: 2}
-  - {fileID: 11400000, guid: 5cc50a4cd758f09488bd14233757ffe1, type: 2}
+  _CollectionReferences:
+  - m_AssetGUID: 23da853b1bf3fb544baf3737e162c6ed
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: 5cc50a4cd758f09488bd14233757ffe1
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: f80fd71992597a74b8938fcb8b204fe0
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: 23da853b1bf3fb544baf3737e162c6ed
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: 5cc50a4cd758f09488bd14233757ffe1
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  _StageSlotCountsPerWorld: 0400000004000000040000000400000004000000

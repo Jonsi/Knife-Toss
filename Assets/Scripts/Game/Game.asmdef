@@ -2,6 +2,8 @@
     "name": "Game",
     "references": [
         "Common",
+        "Unity.Addressables",
+        "Unity.ResourceManager",
         "VContainer",
         "Unity.InputSystem",
         "UniTask",

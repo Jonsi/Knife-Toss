@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using Game.Economy.Interfaces;
 using Game.Flow.Game;
-using Game.Level.Catalogs;
+using Game.Level.Interfaces;
 using Game.Persistence.Services;
 using Game.Settings;
 using VContainer;
@@ -65,13 +65,13 @@ namespace Game.Debugging.Tabs
             {
                 var resolver = CurrentResolver;
                 var gameData = TryResolve<GameData>(resolver);
-                var composite = TryResolve<StagesCollectionComposite>(resolver);
-                if (gameData == null || composite == null)
+                var stagesCatalog = TryResolve<IStagesCollectionCatalog>(resolver);
+                if (gameData == null || stagesCatalog == null)
                 {
                     return 1;
                 }
 
-                return composite.GetCumulativeStageNumberDisplay(gameData.CurrentCollectionIndex, gameData.CurrentStageIndex);
+                return stagesCatalog.GetCumulativeStageNumberDisplay(gameData.CurrentCollectionIndex, gameData.CurrentStageIndex);
             }
         }
 

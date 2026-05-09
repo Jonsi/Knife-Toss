@@ -29,10 +29,14 @@ using Game.IAP.Mock.Installers;
 using Game.IAP.UI;
 #endif
 using Game.Level.Catalogs;
+using Game.Level.Interfaces;
 using Game.Level.Configurations.Stage;
+using Game.Level.Services;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using Common.AssetLoading;
+using Common.AssetLoading.UnityAddressables;
 using Common.Analytics;
 using Common.Services.RemoteConfig;
 using System;
@@ -74,6 +78,7 @@ namespace Game.Installers
 
         [Header("Stages")]
         [SerializeField] private StagesCollectionComposite _StagesCollectionComposite;
+        [SerializeField] private AssetReferenceStagesCollectionComposite _RemoteStagesCollectionCompositeReference;
 
         [Header("IAP")]
         [SerializeField] private IapInstaller _IapInstaller;
@@ -124,9 +129,19 @@ namespace Game.Installers
             builder.Register<InputAdapter>(Lifetime.Singleton).As<IPlayerThrowInputListener>();
             builder.Register<SceneLoaderService>(Lifetime.Singleton);
 
-            builder.RegisterInstance(_StagesCollectionComposite);
+            builder.Register<AddressableAssetLoader>(Lifetime.Singleton).As<IAssetLoader>();
+            builder.Register<CatalogUpdateService>(Lifetime.Singleton);
+            builder.Register<RemoteCompositeLoader>(Lifetime.Singleton).AsSelf()
+                .WithParameter(_RemoteStagesCollectionCompositeReference);
+            builder.Register<StagesCollectionCatalogProvider>(Lifetime.Singleton)
+                .As<IStagesCollectionCatalog>()
+                .WithParameter(_StagesCollectionComposite);
+            builder.Register<WorldAssetService>(Lifetime.Singleton).AsSelf();
             builder.Register<StagesCollectionResolver>(Lifetime.Singleton).AsSelf();
             builder.Register<BackgroundEffectService>(Lifetime.Singleton).AsSelf();
+#if UNITY_EDITOR
+            builder.RegisterEntryPoint<EditorRemoteBootstrapStartable>();
+#endif
 
             builder.RegisterEntryPoint<SettingsService>().AsSelf();
 
@@ -175,6 +190,13 @@ namespace Game.Installers
             if (_StagesCollectionComposite == null)
             {
                 throw new InvalidOperationException("GameInstaller requires StagesCollectionComposite.");
+            }
+
+            if (_RemoteStagesCollectionCompositeReference == null ||
+                !_RemoteStagesCollectionCompositeReference.RuntimeKeyIsValid())
+            {
+                throw new InvalidOperationException(
+                    "GameInstaller requires a valid AssetReferenceStagesCollectionComposite for remote composite loads.");
             }
         }
 

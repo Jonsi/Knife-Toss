@@ -4,7 +4,7 @@ using Game.Economy.Data;
 using Game.Economy.Interfaces;
 using VContainer;
 using Game.Flow.Game;
-using Game.Level.Catalogs;
+using Game.Level.Interfaces;
 using Game.Persistence.Services;
 
 namespace Game.Debugging.Tabs
@@ -40,11 +40,11 @@ namespace Game.Debugging.Tabs
             string currencyId = (configs != null && configs.Count > 0 && configs[0] != null) ? (configs[0].TypeId ?? string.Empty) : string.Empty;
             int totalCoins = string.IsNullOrEmpty(currencyId) ? 0 : currencyService.GetBalance(currencyId);
 
-            var composite = TryResolve<StagesCollectionComposite>(resolver);
+            var stagesCatalog = TryResolve<IStagesCollectionCatalog>(resolver);
             int displayStage = 1;
-            if (gameData != null && composite != null)
+            if (gameData != null && stagesCatalog != null)
             {
-                displayStage = composite.GetCumulativeStageNumberDisplay(gameData.CurrentCollectionIndex, gameData.CurrentStageIndex);
+                displayStage = stagesCatalog.GetCumulativeStageNumberDisplay(gameData.CurrentCollectionIndex, gameData.CurrentStageIndex);
             }
 
             yield return new DebugTabSection("Progress")

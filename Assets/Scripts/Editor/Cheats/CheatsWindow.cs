@@ -333,7 +333,10 @@ namespace Game.EditorTools
             }
             
             // Fallback for Edit Mode or when service not found in DI
-            if (typeof(T) == typeof(GeneralCheats)) return new GeneralCheats(null, null) as T;
+            if (typeof(T) == typeof(GeneralCheats))
+            {
+                return new GeneralCheats(null, null, null) as T;
+            }
             if (typeof(T) == typeof(EconomyCheats)) return new EconomyCheats(null, null) as T;
             if (typeof(T) == typeof(PowerUpCheats)) return new PowerUpCheats(null) as T;
             
@@ -405,7 +408,7 @@ namespace Game.EditorTools
             }
 
             int lastCollectionIndex = (composite?.CollectionsCount ?? 0) - 1;
-            StagesCollection lastCollection = composite?.GetCollection(lastCollectionIndex);
+            StagesCollection lastCollection = composite?.GetEditorOnlyCollection(lastCollectionIndex);
             int lastLocal = (lastCollection?.Stages?.Count ?? 0) - 1;
             if (composite == null || lastCollectionIndex < 0 || lastLocal < 0)
             {
@@ -426,7 +429,7 @@ namespace Game.EditorTools
 
             for (int c = 0; c < composite.CollectionsCount; c++)
             {
-                StagesCollection col = composite.GetCollection(c);
+                StagesCollection col = composite.GetEditorOnlyCollection(c);
                 if (col?.Stages == null)
                 {
                     continue;

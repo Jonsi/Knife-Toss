@@ -12,8 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5bb6f8a06e33fb4a941dcf80a3b9fd6, type: 3}
   m_Name: StagesCollection_3
   m_EditorClassIdentifier: 
-  <ThemeName>k__BackingField: Woods Something
+  <ThemeName>k__BackingField: Stage 3
   <StageSelectBackground>k__BackingField: {fileID: -2032790214, guid: 1818b0d66abf08849ace363f31c09a51, type: 3}
   <MenuParticleEffectPrefab>k__BackingField: {fileID: 4376160612436399112, guid: 109e9d05a664d604b8f8b85acd3ec6dd, type: 3}
   <DefaultTargetPrefab>k__BackingField: {fileID: 1336281483645859630, guid: 0e557c846743ed044bf689812c8bae87, type: 3}
-  <Stages>k__BackingField: []
+  <Stages>k__BackingField:
+  - {fileID: 11400000, guid: 1d3d141d7fd3eab4597abbf97a3e7a58, type: 2}
+  - {fileID: 11400000, guid: d611d3a6dc24f7245b2fa8400a67492e, type: 2}
+  - {fileID: 11400000, guid: a4accd555b6f59d4a9bf5eddedd5bc9b, type: 2}
+  - {fileID: 11400000, guid: ba7208093d105c24f98c3cbd59de5e95, type: 2}

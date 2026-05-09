@@ -14,7 +14,7 @@ using Game.Entities.Knife.Views;
 using Game.Flow.Events;
 using Game.KnifeThrower.Configs;
 using Game.KnifeThrower.Events;
-using Game.Level.Catalogs;
+using Game.Level.Interfaces;
 using Game.Missions.Services;
 using Game.Settings;
 using Game.UI.Common;
@@ -362,12 +362,11 @@ namespace Game.Installers
             if (parentScope == null || parentScope.Container == null)
             {
                 throw new InvalidOperationException(
-                    "StageInstaller requires a parent LifetimeScope with StagesCollectionComposite registered.");
+                    "StageInstaller requires a parent LifetimeScope with IStagesCollectionCatalog registered.");
             }
 
-            StagesCollectionComposite stagesComposite = parentScope.Container.Resolve<StagesCollectionComposite>();
+            parentScope.Container.Resolve<IStagesCollectionCatalog>();
             return new StageFlowInstaller(
-                stagesComposite,
                 _StageCompletedEventChannel,
                 _ReturnToMenuEventChannel,
                 _RetryLevelClickedChannel,

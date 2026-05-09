@@ -2,6 +2,9 @@
     "name": "Common",
     "references": [
         "UniTask",
+        "UniTask.Addressables",
+        "Unity.Addressables",
+        "Unity.ResourceManager",
         "VContainer"
     ],
     "includePlatforms": [],

@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Game.Flow.Events;
 using Game.Flow.Stage;
 
@@ -21,7 +22,7 @@ namespace Game.Flow.Game.States
         {
             _StageCompletedChannel.Subscribe(HandleStageCompleted);
             _ReturnToMenuChannel.Subscribe(HandleReturnToMenu);
-            Machine.StageFlowController.LoadStage(Context.CurrentCollectionIndex, Context.CurrentStageIndex);
+            StartStageAsync().Forget();
         }
 
         public override void Exit()
@@ -30,10 +31,15 @@ namespace Game.Flow.Game.States
             _ReturnToMenuChannel.Unsubscribe(HandleReturnToMenu);
         }
 
+        private async UniTaskVoid StartStageAsync()
+        {
+            await Machine.StageFlowController.LoadStage(Context.CurrentCollectionIndex, Context.CurrentStageIndex);
+        }
+
         private void HandleStageCompleted(StageData data)
         {
             int stageCount = Machine.LevelCatalog.StageCount;
-            int collectionsCount = Machine.StagesCollectionComposite?.CollectionsCount ?? 0;
+            int collectionsCount = Machine.StagesCollectionCatalog?.CollectionsCount ?? 0;
 
             if (Context.CurrentStageIndex + 1 < stageCount)
             {
@@ -50,7 +56,12 @@ namespace Game.Flow.Game.States
                 Context.CurrentStageIndex = 0;
             }
 
-            Machine.StageFlowController.LoadStage(Context.CurrentCollectionIndex, Context.CurrentStageIndex);
+            ReloadStageAfterProgressAsync().Forget();
+        }
+
+        private async UniTaskVoid ReloadStageAfterProgressAsync()
+        {
+            await Machine.StageFlowController.LoadStage(Context.CurrentCollectionIndex, Context.CurrentStageIndex);
         }
 
         private void HandleReturnToMenu(StageData data)
@@ -58,4 +69,3 @@ namespace Game.Flow.Game.States
         }
     }
 }
-
