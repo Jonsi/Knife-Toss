@@ -826,7 +826,7 @@ PlayerSettings:
   webWasm2023: 0
   webEnableSubmoduleStrippingCompatibility: 0
   scriptingDefineSymbols:
-    Android: TEST_ENABLED;DOTWEEN
+    Android: TEST_ENABLED;DOTWEEN;SENTIS_ANALYTICS_ENABLED;APP_UI_EDITOR_ONLY
     EmbeddedLinux: TEST_ENABLED;DOTWEEN
     GameCoreScarlett: TEST_ENABLED;DOTWEEN
     GameCoreXboxOne: TEST_ENABLED;DOTWEEN
