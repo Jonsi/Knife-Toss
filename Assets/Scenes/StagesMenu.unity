@@ -327,6 +327,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   _StagesMenuController: {fileID: 1965329575}
+  _RewardsPresentationPopup: {fileID: 0}
 --- !u!1001 &1904610130
 PrefabInstance:
   m_ObjectHideFlags: 0

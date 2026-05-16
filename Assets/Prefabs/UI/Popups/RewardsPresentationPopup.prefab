@@ -73,6 +73,7 @@ GameObject:
   - component: {fileID: 2898169282594419243}
   - component: {fileID: 6096379441165239530}
   - component: {fileID: 6059683599356419810}
+  - component: {fileID: 8822334455667700111}
   m_Layer: 5
   m_Name: Chest
   m_TagString: Untagged
@@ -139,6 +140,30 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8822334455667700111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1938419055720405196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7b4c8d92fa14e3b9c1d0a5f6e7b8c9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Popups.RewardsChestTapOpenView
+  _ChestImage: {fileID: 6059683599356419810}
+  _ClosedChestSprite: {fileID: 7098417591714748056, guid: d817a5b320517bb44acb17d61476b142, type: 3}
+  _OpenedChestSprite: {fileID: 4032033871735927925, guid: d817a5b320517bb44acb17d61476b142, type: 3}
+  _ChestRectTransform: {fileID: 2898169282594419243}
+  _TapChestButton: {fileID: 865331083561071989}
+  _OpenEffectRoot: {fileID: 2477514060157082713}
+  _TapsToOpen: 3
+  _TapPunchScale: {x: 0.12, y: 0.12, z: 0}
+  _TapPunchDurationSeconds: 0.18
+  _TapPunchVibrato: 6
+  _TapPunchElasticity: 0.4
+  _UseUnscaledTime: 1
 --- !u!1 &2597246916458019416
 GameObject:
   m_ObjectHideFlags: 0
@@ -1157,6 +1182,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6791580627443812946, guid: 5269911698e196e44a07db12208f3311, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5089084302324489096}
+    - targetCorrespondingSourceObject: {fileID: 6791580627443812946, guid: 5269911698e196e44a07db12208f3311, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8822334455667700222}
+    - targetCorrespondingSourceObject: {fileID: 6977700620784982145, guid: 5269911698e196e44a07db12208f3311, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7722001122334455777}
   m_SourcePrefab: {fileID: 100100000, guid: 5269911698e196e44a07db12208f3311, type: 3}
 --- !u!224 &56232260676956635 stripped
 RectTransform:
@@ -1194,8 +1225,62 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 1
+--- !u!114 &8822334455667700222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1050327611366846592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f5b2a3e4c6589701bc2d3e4f506172, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Popups.StaggeredRewardRowsPresenter
+  _RewardItemPrefab: {fileID: 910100005, guid: c1a7e84b5b9e4f23a3b0c7de5d8e4a11, type: 3}
+  _RewardRowsOrdered:
+  - {fileID: 5516910990870022372}
+  - {fileID: 9152764239251128145}
+  - {fileID: 163427547630977981}
+  - {fileID: 2528569221900878615}
+  _ItemsPerRow: 4
+  _DelayBetweenRevealStartsSeconds: 0.15
+  _RevealDurationSeconds: 0.35
+  _UseUnscaledTime: 1
 --- !u!224 &8042664107815066676 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4561655601404405478, guid: 5269911698e196e44a07db12208f3311, type: 3}
   m_PrefabInstance: {fileID: 5824009726013782738}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7722001122334455666 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6977700620784982145, guid: 5269911698e196e44a07db12208f3311, type: 3}
+  m_PrefabInstance: {fileID: 5824009726013782738}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7722001122334456100 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8675703768267260072, guid: 8e3d1e9cdadf231458e2a25a9b90f3af, type: 3}
+  m_PrefabInstance: {fileID: 2991733872641387761}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!114 &7722001122334455777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7722001122334455666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7b4c8d92fa14e3b9c1d0a5f6e7b8c9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Popups.RewardsPresentationPopup
+  _PauseGameplayWhileVisible: 1
+  _ChestTapOpenView: {fileID: 8822334455667700111}
+  _RewardRowsPresenter: {fileID: 8822334455667700222}
+  _ContinueButton: {fileID: 7722001122334456100}
