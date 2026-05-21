@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using Common.Rewards.Interfaces;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using Game.UI.Common;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,19 +22,44 @@ namespace Game.UI.Popups
         private StaggeredRewardRowsPresenter _RewardRowsPresenter;
 
         [SerializeField]
-        private Button _ContinueButton;
+        private TextMeshProUGUI _BottomText;
+
+        [SerializeField]
+        private Button _BackgroundButton;
+
+        [SerializeField]
+        private string _TapToOpenLabel = "Tap To Open !";
+
+        [SerializeField]
+        private string _ContinueLabel = "Continue";
+
+        [SerializeField]
+        private Transform _ChestOpenEffectSpawnParent;
 
         private CancellationTokenSource _PresentationCts;
+
+        /// <summary>
+        /// Fills the chest reference when a nested prefab leaves the serialized link null (composition root only).
+        /// </summary>
+        internal void EnsureChestViewFromCompositionRoot(RewardsChestTapOpenView chestTapOpenView)
+        {
+            if (_ChestTapOpenView == null && chestTapOpenView != null)
+            {
+                _ChestTapOpenView = chestTapOpenView;
+            }
+        }
 
         /// <summary>
         /// Supplies sprites for closed and opened chest visuals (overrides inspector values when non-null).
         /// </summary>
         public void SetChestSprites(Sprite closedChest, Sprite openedChest)
         {
-            if (_ChestTapOpenView != null)
+            if (_ChestTapOpenView == null)
             {
-                _ChestTapOpenView.ConfigureSprites(closedChest, openedChest);
+                return;
             }
+
+            _ChestTapOpenView.ConfigureSprites(closedChest, openedChest);
         }
 
         /// <summary>
@@ -48,10 +73,11 @@ namespace Game.UI.Popups
         public override void Show()
         {
             CancelPresentation();
-            WireContinue(false);
-            SetContinueVisible(false);
+            WireBackgroundDismiss(false);
+            ApplyBottomPromptText(_TapToOpenLabel);
             SubscribeChestOpened(false);
             base.Show();
+            _ChestTapOpenView?.SetOpenEffectSpawnParent(_ChestOpenEffectSpawnParent);
             _ChestTapOpenView?.ResetState();
             _RewardRowsPresenter?.Clear();
             SubscribeChestOpened(true);
@@ -60,17 +86,14 @@ namespace Game.UI.Popups
         private void OnDisable()
         {
             SubscribeChestOpened(false);
+            WireBackgroundDismiss(false);
         }
 
         private void OnDestroy()
         {
             CancelPresentation();
             SubscribeChestOpened(false);
-
-            if (_ContinueButton != null)
-            {
-                _ContinueButton.onClick.RemoveListener(OnContinueClicked);
-            }
+            WireBackgroundDismiss(false);
         }
 
         private void SubscribeChestOpened(bool subscribe)
@@ -115,38 +138,38 @@ namespace Game.UI.Popups
                 return;
             }
 
-            SetContinueVisible(true);
-            WireContinue(true);
+            ApplyBottomPromptText(_ContinueLabel);
+            WireBackgroundDismiss(true);
         }
 
-        private void WireContinue(bool bind)
+        private void WireBackgroundDismiss(bool bind)
         {
-            if (_ContinueButton == null)
+            if (_BackgroundButton == null)
             {
                 return;
             }
 
-            _ContinueButton.onClick.RemoveListener(OnContinueClicked);
+            _BackgroundButton.onClick.RemoveListener(OnBackgroundDismissClicked);
 
             if (bind)
             {
-                _ContinueButton.onClick.AddListener(OnContinueClicked);
+                _BackgroundButton.onClick.AddListener(OnBackgroundDismissClicked);
             }
         }
 
-        private void SetContinueVisible(bool visible)
+        private void ApplyBottomPromptText(string value)
         {
-            if (_ContinueButton == null)
+            if (_BottomText == null)
             {
                 return;
             }
 
-            _ContinueButton.gameObject.SetActive(visible);
+            _BottomText.text = value ?? string.Empty;
         }
 
-        private void OnContinueClicked()
+        private void OnBackgroundDismissClicked()
         {
-            WireContinue(false);
+            WireBackgroundDismiss(false);
             Hide();
         }
 
@@ -160,184 +183,6 @@ namespace Game.UI.Popups
             _PresentationCts.Cancel();
             _PresentationCts.Dispose();
             _PresentationCts = null;
-        }
-    }
-
-    /// <summary>
-    /// Handles chest tap input, DOTween punch feedback, and switching to the opened visual state.
-    /// </summary>
-    public class RewardsChestTapOpenView : MonoBehaviour
-    {
-        private static readonly Vector3 DefaultTapPunchScale = new Vector3(0.12f, 0.12f, 0f);
-
-        [SerializeField]
-        private Image _ChestImage;
-
-        [SerializeField]
-        private Sprite _ClosedChestSprite;
-
-        [SerializeField]
-        private Sprite _OpenedChestSprite;
-
-        [SerializeField]
-        private RectTransform _ChestRectTransform;
-
-        [SerializeField]
-        private Button _TapChestButton;
-
-        [SerializeField]
-        private Transform _OpenEffectRoot;
-
-        [SerializeField]
-        [Min(1)]
-        private int _TapsToOpen = 3;
-
-        [SerializeField]
-        private Vector3 _TapPunchScale = DefaultTapPunchScale;
-
-        [SerializeField]
-        [Min(0f)]
-        private float _TapPunchDurationSeconds = 0.18f;
-
-        [SerializeField]
-        [Min(1)]
-        private int _TapPunchVibrato = 6;
-
-        [SerializeField]
-        [Range(0f, 1f)]
-        private float _TapPunchElasticity = 0.4f;
-
-        [SerializeField]
-        private bool _UseUnscaledTime = true;
-
-        private int _TapCount;
-        private bool _IsOpened;
-
-        /// <summary>
-        /// Raised once after the last required tap, when open visuals are applied.
-        /// </summary>
-        public event Action Opened;
-
-        /// <summary>
-        /// Updates chest sprites from code; non-null arguments override serialized defaults.
-        /// </summary>
-        public void ConfigureSprites(Sprite closedChest, Sprite openedChest)
-        {
-            if (closedChest != null)
-            {
-                _ClosedChestSprite = closedChest;
-            }
-
-            if (openedChest != null)
-            {
-                _OpenedChestSprite = openedChest;
-            }
-
-            ApplyClosedVisual();
-        }
-
-        /// <summary>
-        /// Resets taps and closed visuals so the chest can be opened again.
-        /// </summary>
-        public void ResetState()
-        {
-            _TapCount = 0;
-            _IsOpened = false;
-
-            if (_OpenEffectRoot != null)
-            {
-                _OpenEffectRoot.gameObject.SetActive(false);
-            }
-
-            if (_TapChestButton != null)
-            {
-                _TapChestButton.interactable = true;
-            }
-
-            ApplyClosedVisual();
-        }
-
-        private void Awake()
-        {
-            if (_TapChestButton != null)
-            {
-                _TapChestButton.onClick.AddListener(OnChestTapped);
-            }
-        }
-
-        private void OnDestroy()
-        {
-            if (_TapChestButton != null)
-            {
-                _TapChestButton.onClick.RemoveListener(OnChestTapped);
-            }
-
-            if (_ChestRectTransform != null)
-            {
-                DOTween.Kill(_ChestRectTransform);
-            }
-        }
-
-        private void OnChestTapped()
-        {
-            if (_IsOpened)
-            {
-                return;
-            }
-
-            PlayTapPunch();
-            _TapCount++;
-
-            if (_TapCount < _TapsToOpen)
-            {
-                return;
-            }
-
-            OpenChest();
-        }
-
-        private void PlayTapPunch()
-        {
-            if (_ChestRectTransform == null)
-            {
-                return;
-            }
-
-            DOTween.Kill(_ChestRectTransform);
-            _ChestRectTransform
-                .DOPunchScale(_TapPunchScale, _TapPunchDurationSeconds, _TapPunchVibrato, _TapPunchElasticity)
-                .SetUpdate(_UseUnscaledTime)
-                .SetTarget(_ChestRectTransform);
-        }
-
-        private void OpenChest()
-        {
-            _IsOpened = true;
-
-            if (_TapChestButton != null)
-            {
-                _TapChestButton.interactable = false;
-            }
-
-            if (_ChestImage != null && _OpenedChestSprite != null)
-            {
-                _ChestImage.sprite = _OpenedChestSprite;
-            }
-
-            if (_OpenEffectRoot != null)
-            {
-                _OpenEffectRoot.gameObject.SetActive(true);
-            }
-
-            Opened?.Invoke();
-        }
-
-        private void ApplyClosedVisual()
-        {
-            if (_ChestImage != null && _ClosedChestSprite != null)
-            {
-                _ChestImage.sprite = _ClosedChestSprite;
-            }
         }
     }
 }

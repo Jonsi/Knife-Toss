@@ -36,6 +36,11 @@ namespace Game.Installers
             if (_RewardsPresentationPopup != null)
             {
                 builder.RegisterComponent(_RewardsPresentationPopup);
+                builder.RegisterBuildCallback(_ =>
+                {
+                    var chestView = _RewardsPresentationPopup.GetComponentInChildren<RewardsChestTapOpenView>(true);
+                    _RewardsPresentationPopup.EnsureChestViewFromCompositionRoot(chestView);
+                });
             }
         }
     }

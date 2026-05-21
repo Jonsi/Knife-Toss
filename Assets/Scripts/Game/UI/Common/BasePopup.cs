@@ -7,7 +7,7 @@ namespace Game.UI.Common
     /// <summary>
     /// Base class for UI popups providing common show/hide functionality.
     /// </summary>
-    public abstract class BasePopup : MonoBehaviour
+    public class BasePopup : MonoBehaviour
     {
         [SerializeField] private bool _PauseGameplayWhileVisible = true;
 
@@ -39,7 +39,6 @@ namespace Game.UI.Common
             }
 
             _IsHiding = false;
-            TryAcquirePause();
             gameObject.SetActive(true);
         }
 
@@ -69,6 +68,14 @@ namespace Game.UI.Common
         }
 
         protected virtual bool ShouldPauseGameplayWhileVisible => _PauseGameplayWhileVisible;
+
+        private void OnEnable()
+        {
+            EnsureInitialized();
+            _IsHiding = false;
+            TryAcquirePause();
+            _PopupAnimation?.PlayShow();
+        }
 
         private void OnDisable()
         {

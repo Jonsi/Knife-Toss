@@ -2,11 +2,12 @@ using System.Collections.Generic;
 using Common.Rewards.Interfaces;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game.UI.Popups
 {
     /// <summary>
-    /// Starts a sample rewards presentation on play for scene testing (optional popup reference).
+    /// Test helper: builds sample rewards and opens the popup when the open button is clicked.
     /// </summary>
     public class RewardsPresentationPopupTestFlow : MonoBehaviour
     {
@@ -38,6 +39,9 @@ namespace Game.UI.Popups
         private RewardsPresentationPopup _Popup;
 
         [SerializeField]
+        private Button _OpenPopupButton;
+
+        [SerializeField]
         private Sprite _DemoRewardIcon;
 
         [SerializeField]
@@ -52,15 +56,33 @@ namespace Game.UI.Popups
 
         private void Start()
         {
-            RunIfConfigured();
+            PrepareChestSpritesOnPopup();
         }
 
-        private void RunIfConfigured()
+        private void OnEnable()
+        {
+            if (_OpenPopupButton != null)
+            {
+                _OpenPopupButton.onClick.AddListener(OpenPopupClicked);
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (_OpenPopupButton != null)
+            {
+                _OpenPopupButton.onClick.RemoveListener(OpenPopupClicked);
+            }
+        }
+
+        private void OpenPopupClicked()
         {
             if (_Popup == null)
             {
                 return;
             }
+
+            PrepareChestSpritesOnPopup();
 
             var list = new List<IRewardItem>();
 
@@ -70,8 +92,17 @@ namespace Game.UI.Popups
             }
 
             _Popup.SetRewards(list);
-            _Popup.SetChestSprites(_ClosedChestSprite, _OpenedChestSprite);
             _Popup.Show();
+        }
+
+        private void PrepareChestSpritesOnPopup()
+        {
+            if (_Popup == null)
+            {
+                return;
+            }
+
+            _Popup.SetChestSprites(_ClosedChestSprite, _OpenedChestSprite);
         }
     }
 }

@@ -51,11 +51,6 @@ namespace Game.UI.Common
             AssignReferences();
         }
 
-        private void OnEnable()
-        {
-            PlayShow();
-        }
-
         private void OnDisable()
         {
             StopAnimation();

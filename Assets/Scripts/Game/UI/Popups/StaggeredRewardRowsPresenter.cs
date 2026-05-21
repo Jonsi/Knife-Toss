@@ -48,6 +48,7 @@ namespace Game.UI.Popups
 
             if (rewards == null)
             {
+                Debug.LogWarning("[RewardsFlow] Presenter.SetRewards: rewards list is null.");
                 return;
             }
 
@@ -58,6 +59,8 @@ namespace Game.UI.Popups
                     _Rewards.Add(rewards[i]);
                 }
             }
+
+            Debug.Log($"[RewardsFlow] Presenter.SetRewards: stored {_Rewards.Count} items (from incoming {rewards.Count}).");
         }
 
         /// <summary>
@@ -65,6 +68,7 @@ namespace Game.UI.Popups
         /// </summary>
         public void Clear()
         {
+            Debug.Log($"[RewardsFlow] Presenter.Clear: row slots={_RewardRowsOrdered.Length}, clearing children.");
             for (var r = 0; r < _RewardRowsOrdered.Length; r++)
             {
                 var row = _RewardRowsOrdered[r];
@@ -93,20 +97,25 @@ namespace Game.UI.Popups
 
             if (count == 0 || _RewardItemPrefab == null || _RewardRowsOrdered.Length == 0)
             {
+                Debug.LogWarning($"[RewardsFlow] Presenter.PresentAsync: early exit. rewardCount={count}, prefab={_RewardItemPrefab != null}, rowArrayLength={_RewardRowsOrdered.Length}.");
                 return;
             }
 
             var itemsPerRow = Mathf.Max(1, _ItemsPerRow);
             var rowsNeeded = (count + itemsPerRow - 1) / itemsPerRow;
+            Debug.Log($"[RewardsFlow] Presenter.PresentAsync: itemsPerRow={itemsPerRow}, rowsNeeded={rowsNeeded}, rewardCount={count}.");
 
             for (var r = 0; r < _RewardRowsOrdered.Length; r++)
             {
                 if (_RewardRowsOrdered[r] == null)
                 {
+                    Debug.LogWarning($"[RewardsFlow] Presenter: row index {r} is null in _RewardRowsOrdered.");
                     continue;
                 }
 
-                _RewardRowsOrdered[r].gameObject.SetActive(r < rowsNeeded);
+                var active = r < rowsNeeded;
+                _RewardRowsOrdered[r].gameObject.SetActive(active);
+                Debug.Log($"[RewardsFlow] Presenter: row {r} '{_RewardRowsOrdered[r].name}' setActive={active}.");
             }
 
             var views = new List<RewardItemView>(count);
@@ -117,6 +126,7 @@ namespace Game.UI.Popups
 
                 if (rowIndex < 0 || rowIndex >= _RewardRowsOrdered.Length || _RewardRowsOrdered[rowIndex] == null)
                 {
+                    Debug.LogWarning($"[RewardsFlow] Presenter: skip spawn index {i}: invalid rowIndex={rowIndex}.");
                     continue;
                 }
 
@@ -127,7 +137,10 @@ namespace Game.UI.Popups
                 var rt = (RectTransform)view.transform;
                 rt.localScale = Vector3.zero;
                 views.Add(view);
+                Debug.Log($"[RewardsFlow] Presenter: spawned reward {i} under row {rowIndex} ('{parent.name}').");
             }
+
+            Debug.Log($"[RewardsFlow] Presenter: starting staggered reveal for {views.Count} views.");
 
             for (var i = 0; i < views.Count; i++)
             {
@@ -152,6 +165,8 @@ namespace Game.UI.Popups
                     ignoreTimeScale: _UseUnscaledTime,
                     cancellationToken: cancellationToken);
             }
+
+            Debug.Log("[RewardsFlow] Presenter.PresentAsync: finished.");
         }
 
         private void AnimateReveal(RectTransform rectTransform)
