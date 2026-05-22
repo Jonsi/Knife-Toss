@@ -170,8 +170,9 @@ PlayerSettings:
   androidMaxAspectRatio: 2.4
   androidMinAspectRatio: 1
   applicationIdentifier:
-    Android: com.CuzGames.TossMadness
+    Android: com.CuzGames.TossMdaness
     Standalone: com.DefaultCompany.2D-Project
+    iPhone: com.CuzGames.Toss-Mdaness
   buildNumber:
     Standalone: 0
     VisionOS: 0
@@ -195,8 +196,8 @@ PlayerSettings:
   StripUnusedMeshComponents: 0
   strictShaderVariantMatching: 0
   VertexChannelCompressionMask: 4054
-  iPhoneSdkVersion: 988
-  iOSSimulatorArchitecture: 0
+  iPhoneSdkVersion: 989
+  iOSSimulatorArchitecture: 1
   iOSTargetOSVersionString: 15.0
   tvOSSdkVersion: 0
   tvOSSimulatorArchitecture: 0
@@ -501,6 +502,9 @@ PlayerSettings:
   - m_BuildTarget: Android
     m_StaticBatching: 1
     m_DynamicBatching: 0
+  - m_BuildTarget: iPhone
+    m_StaticBatching: 1
+    m_DynamicBatching: 0
   m_BuildTargetShaderSettings: []
   m_BuildTargetGraphicsJobs:
   - m_BuildTarget: MacStandaloneSupport
@@ -559,6 +563,9 @@ PlayerSettings:
   m_BuildTargetDefaultTextureCompressionFormat:
   - serializedVersion: 3
     m_BuildTarget: Android
+    m_Formats: 03000000
+  - serializedVersion: 3
+    m_BuildTarget: iOS
     m_Formats: 03000000
   playModeTestRunnerEnabled: 0
   runPlayModeTestAsEditModeTest: 0
@@ -842,7 +849,7 @@ PlayerSettings:
     WebGL: TEST_ENABLED;DOTWEEN
     Windows Store Apps: TEST_ENABLED;DOTWEEN
     XboxOne: TEST_ENABLED;DOTWEEN
-    iPhone: TEST_ENABLED;DOTWEEN
+    iPhone: TEST_ENABLED;DOTWEEN;SENTIS_ANALYTICS_ENABLED;APP_UI_EDITOR_ONLY;DISABLE_FIREBASE
     tvOS: TEST_ENABLED;DOTWEEN
   additionalCompilerArguments: {}
   platformArchitecture: {}
@@ -943,11 +950,11 @@ PlayerSettings:
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
   enableDirectStorage: 0
-  cloudProjectId: c84d3086-95a2-4d53-aebf-e3a196a2e5ba
+  cloudProjectId: 9efbe5a1-521a-4ae5-ab16-ad41e95db88d
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: TossMadness
-  organizationId: jons1122
+  projectName: Toss-Madness
+  organizationId: yo-games-0d2e49a2-d41f-4ba0-9ddf-b2bb1c9bf47f
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}

@@ -1,3 +1,4 @@
+#if !DISABLE_FIREBASE
 using System;
 using System.Linq;
 using Cysharp.Threading.Tasks;
@@ -203,3 +204,4 @@ namespace Common.Services.RemoteConfig
         }
     }
 }
+#endif

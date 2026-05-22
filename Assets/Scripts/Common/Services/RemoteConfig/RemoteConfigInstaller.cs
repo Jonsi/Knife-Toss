@@ -36,7 +36,11 @@ namespace Common.Services.RemoteConfig
         
         private void RegisterService(IContainerBuilder builder)
         {
+#if DISABLE_FIREBASE
+            builder.Register<StubRemoteConfigService>(Lifetime.Singleton)
+#else
             builder.Register<FirebaseRemoteConfigService>(Lifetime.Singleton)
+#endif
                 .AsImplementedInterfaces();
         }
     }

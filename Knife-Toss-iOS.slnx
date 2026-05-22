@@ -1,0 +1,14 @@
+﻿<Solution>
+  <Project Path="Game.csproj" />
+  <Project Path="Common.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="StompyRobot.SRDebugger.Editor.csproj" />
+  <Project Path="StompyRobot.SRF.csproj" />
+  <Project Path="StompyRobot.SRDebugger.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="DOTween.Modules.csproj" />
+  <Project Path="Game.IAP.Tests.csproj" />
+  <Project Path="Debug.csproj" />
+  <Project Path="Common.IAP.Tests.csproj" />
+  <Project Path="StompyRobot.SRF.Editor.csproj" />
+</Solution>
