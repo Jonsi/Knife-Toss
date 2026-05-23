@@ -9,6 +9,7 @@ using Game.Persistence.Services;
 using Game.Store.Data;
 using Game.Store.Services;
 using Game.UI.Common;
+using Game.UI.Data;
 using Game.UI.Missions;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,11 @@ namespace Game.UI.MainMenu
         [SerializeField] private UiElementAnimator[] _MenuAnimators;
         [SerializeField] private KnifeSkinSelectorView _KnifeSkinSelectorView;
 
+        [Header("Tutorial Gestures")]
+        [SerializeField] private GameObject _GesturePopupPrefab;
+        [SerializeField] private Transform _GesturePopupParent;
+        [SerializeField] private GestureHintConfiguration _GestureHintConfiguration;
+
         [Inject] private PlayerDataService _PlayerDataService;
         [Inject] private SceneLoaderService _SceneLoaderService;
         [Inject] private GameData _GameData;
@@ -50,6 +56,7 @@ namespace Game.UI.MainMenu
         private bool _IsNavigating;
         private readonly List<KnifeSkinSelectionOption> _KnifeSkinOptions = new List<KnifeSkinSelectionOption>();
         private int _SelectedKnifeSkinIndex;
+        private GesturePopupView _OpeningGesturePopup;
 
         private void Awake()
         {
@@ -95,6 +102,7 @@ namespace Game.UI.MainMenu
             RefreshRemoveAdsButtonState();
             InitializeKnifeSkinSelector();
             PlayMenuIn();
+            RefreshOpeningGesture();
             _SceneLoaderService.PreloadGameFromMainMenu().Forget();
         }
 
@@ -128,6 +136,9 @@ namespace Game.UI.MainMenu
 
             if (_MissionsButton != null)
                 _MissionsButton.onClick.RemoveListener(OnMissionsClicked);
+
+            if (_OpeningGesturePopup != null)
+                _OpeningGesturePopup.Tapped -= OnOpeningGestureTapped;
         }
 
         private void OnPlayClicked()
@@ -296,7 +307,9 @@ namespace Game.UI.MainMenu
 
             if (_RemoveAdsButton != null)
             {
-                _RemoveAdsButton.interactable = isInteractable && _RemoveAdsFlow.CanPurchase;
+                _RemoveAdsButton.interactable = isInteractable &&
+                                               _RemoveAdsFlow != null &&
+                                               _RemoveAdsFlow.CanPurchase;
             }
 
             if (_PvpButton != null)
@@ -430,6 +443,116 @@ namespace Game.UI.MainMenu
             }
 
             return null;
+        }
+
+        private bool IsFreshOpeningPlayer()
+        {
+            if (_PlayerDataService == null)
+            {
+                return false;
+            }
+
+            return _PlayerDataService.GetHighestCollectionIndex() <= 0 &&
+                   _PlayerDataService.GetHighestStageIndex() <= 0;
+        }
+
+        private void RefreshOpeningGesture()
+        {
+            if (!ShouldShowOpeningGesture())
+            {
+                _OpeningGesturePopup?.Hide();
+                return;
+            }
+
+            GesturePopupView popup = GetOrCreateOpeningGesturePopup();
+            if (popup == null)
+            {
+                return;
+            }
+
+            if (_GestureHintConfiguration != null)
+            {
+                popup.ShowAt(_GestureHintConfiguration.TapOnPlayPosition);
+                return;
+            }
+
+            popup.ShowAt(_PlayButton != null ? _PlayButton.transform as RectTransform : null);
+        }
+
+        private bool ShouldShowOpeningGesture()
+        {
+            if (!IsFreshOpeningPlayer())
+            {
+                return false;
+            }
+
+            return _PlayerDataService?.GetData()?.Onboarding?.HasTappedPlayGesture != true;
+        }
+
+        private GesturePopupView GetOrCreateOpeningGesturePopup()
+        {
+            if (_OpeningGesturePopup != null)
+            {
+                return _OpeningGesturePopup;
+            }
+
+            if (_GesturePopupPrefab == null)
+            {
+                return null;
+            }
+
+            Transform parent = _GesturePopupParent != null ? _GesturePopupParent : transform;
+            GameObject instance = Instantiate(_GesturePopupPrefab, parent);
+            instance.name = _GesturePopupPrefab.name;
+
+            RectTransform rectTransform = instance.transform as RectTransform;
+            if (rectTransform != null)
+            {
+                rectTransform.anchorMin = Vector2.zero;
+                rectTransform.anchorMax = Vector2.one;
+                rectTransform.offsetMin = Vector2.zero;
+                rectTransform.offsetMax = Vector2.zero;
+                rectTransform.anchoredPosition = Vector2.zero;
+                rectTransform.localScale = Vector3.one;
+            }
+
+            _OpeningGesturePopup = instance.GetComponent<GesturePopupView>();
+            if (_OpeningGesturePopup == null)
+            {
+                _OpeningGesturePopup = instance.AddComponent<GesturePopupView>();
+            }
+
+            _OpeningGesturePopup.Tapped += OnOpeningGestureTapped;
+            return _OpeningGesturePopup;
+        }
+
+        private void OnOpeningGestureTapped()
+        {
+            if (_IsNavigating)
+            {
+                return;
+            }
+
+            MarkPlayGestureTapped();
+            OnPlayClicked();
+        }
+
+        private void MarkPlayGestureTapped()
+        {
+            var data = _PlayerDataService?.GetData();
+            if (data == null)
+            {
+                return;
+            }
+
+            data.Onboarding ??= new Game.Persistence.Data.PlayerOnboardingData();
+            if (data.Onboarding.HasTappedPlayGesture)
+            {
+                return;
+            }
+
+            data.Onboarding.HasTappedPlayGesture = true;
+            _PlayerDataService.ForceSave();
         }
 
         private void RefreshRemoveAdsButtonState()

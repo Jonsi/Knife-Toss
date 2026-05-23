@@ -21,6 +21,7 @@ namespace Game.Debugging
     public class GeneralCheats
     {
         private const int LastSlotIndexFromCountOffset = 1;
+        private const string DefaultBalanceConfigurationPath = "Configurations/PlayerDefaultBalanceConfiguration";
 
         private readonly GameData _gameData;
         private readonly PlayerDataService _playerDataService;
@@ -55,13 +56,20 @@ namespace Game.Debugging
                 }
 
                 _gameData.Reset();
-                _playerDataService?.ResetAllData();
+                _playerDataService?.ResetAllData(LoadDefaultBalanceConfiguration());
             }
             else
             {
                 var store = new FilePlayerDataStore();
-                store.Save(new PlayerData());
+                PlayerData playerData = new PlayerData();
+                LoadDefaultBalanceConfiguration()?.ApplyTo(playerData);
+                store.Save(playerData);
             }
+        }
+
+        private static PlayerDefaultBalanceConfiguration LoadDefaultBalanceConfiguration()
+        {
+            return Resources.Load<PlayerDefaultBalanceConfiguration>(DefaultBalanceConfigurationPath);
         }
 
         /// <summary>

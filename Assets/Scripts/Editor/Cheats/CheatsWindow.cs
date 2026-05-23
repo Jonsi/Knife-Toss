@@ -55,7 +55,7 @@ namespace Game.EditorTools
             public static readonly GUIContent NextLevelButton = new GUIContent("Next Level");
             public static readonly GUIContent PrevLevelButton = new GUIContent("Prev Level");
             public static readonly GUIContent JumpToStageButton = new GUIContent("Jump to Stage");
-            public static readonly GUIContent ClearProgressButton = new GUIContent("Clear All Progress");
+            public static readonly GUIContent ClearProgressButton = new GUIContent("Reset To Default Balance");
             public static readonly GUIContent UnlockAllStagesButton = new GUIContent("Unlock All Stages As Won");
             public static readonly GUIContent AddCoinsButton = new GUIContent("Add Coins");
             public static readonly GUIContent SetButton = new GUIContent("Set");

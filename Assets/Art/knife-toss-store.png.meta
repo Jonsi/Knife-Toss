@@ -1,0 +1,2249 @@
+fileFormatVersion: 2
+guid: 998502a0bf5664b95953373c007c9411
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5780610164228274326
+    second: knife-toss-store_0
+  - first:
+      213: -3816041583983624076
+    second: knife-toss-store_1
+  - first:
+      213: 1159396683109823755
+    second: knife-toss-store_2
+  - first:
+      213: 7354524331374465775
+    second: knife-toss-store_3
+  - first:
+      213: 5617085089988435652
+    second: knife-toss-store_4
+  - first:
+      213: 1461920522289877994
+    second: knife-toss-store_5
+  - first:
+      213: 3259016244255705519
+    second: knife-toss-store_6
+  - first:
+      213: -4749121004293030678
+    second: knife-toss-store_7
+  - first:
+      213: 746908068749886885
+    second: knife-toss-store_8
+  - first:
+      213: -7247138841701063156
+    second: knife-toss-store_9
+  - first:
+      213: -2727812710316292227
+    second: knife-toss-store_10
+  - first:
+      213: -8573302679779166377
+    second: knife-toss-store_11
+  - first:
+      213: 252531889536085613
+    second: knife-toss-store_12
+  - first:
+      213: -492533232209734887
+    second: knife-toss-store_13
+  - first:
+      213: 1742781671401734849
+    second: knife-toss-store_14
+  - first:
+      213: 1204344301468088539
+    second: knife-toss-store_15
+  - first:
+      213: 1825056432631194286
+    second: knife-toss-store_16
+  - first:
+      213: 4326251868903406628
+    second: knife-toss-store_17
+  - first:
+      213: -3569914700976479200
+    second: knife-toss-store_18
+  - first:
+      213: 729015482413001306
+    second: knife-toss-store_19
+  - first:
+      213: -6015347268358852683
+    second: knife-toss-store_20
+  - first:
+      213: 6466107557236881520
+    second: knife-toss-store_21
+  - first:
+      213: -284993050274720809
+    second: knife-toss-store_22
+  - first:
+      213: -916260874757187856
+    second: knife-toss-store_23
+  - first:
+      213: 846539080805121391
+    second: knife-toss-store_24
+  - first:
+      213: 6445508298370621532
+    second: knife-toss-store_25
+  - first:
+      213: -7346096937114423013
+    second: knife-toss-store_26
+  - first:
+      213: -4223718331654483510
+    second: knife-toss-store_27
+  - first:
+      213: 8258713890284175237
+    second: knife-toss-store_28
+  - first:
+      213: -7162856637568558301
+    second: knife-toss-store_29
+  - first:
+      213: -3213204196512455903
+    second: knife-toss-store_30
+  - first:
+      213: -8123717442488585809
+    second: knife-toss-store_31
+  - first:
+      213: 2112289300205240997
+    second: knife-toss-store_32
+  - first:
+      213: -6946945927814333089
+    second: knife-toss-store_33
+  - first:
+      213: 7324304568054199738
+    second: knife-toss-store_34
+  - first:
+      213: -2280121818265428460
+    second: knife-toss-store_35
+  - first:
+      213: -6709531619652871533
+    second: knife-toss-store_36
+  - first:
+      213: 4293923401550984446
+    second: knife-toss-store_37
+  - first:
+      213: 45313988624511715
+    second: knife-toss-store_38
+  - first:
+      213: -7439984465534492825
+    second: knife-toss-store_39
+  - first:
+      213: 8792041540809273338
+    second: knife-toss-store_40
+  - first:
+      213: 2717819379868037753
+    second: knife-toss-store_41
+  - first:
+      213: 5206221764634374627
+    second: knife-toss-store_42
+  - first:
+      213: 8053837893010093231
+    second: knife-toss-store_43
+  - first:
+      213: 3457296534710233869
+    second: knife-toss-store_44
+  - first:
+      213: 8408070473056252792
+    second: knife-toss-store_45
+  - first:
+      213: -3249207407053288318
+    second: knife-toss-store_46
+  - first:
+      213: 8435368817090929259
+    second: knife-toss-store_47
+  - first:
+      213: -2938818718513793752
+    second: knife-toss-store_48
+  - first:
+      213: -8970930399847613610
+    second: knife-toss-store_49
+  - first:
+      213: -2394506938447681097
+    second: knife-toss-store_50
+  - first:
+      213: 4120198093054268190
+    second: knife-toss-store_51
+  - first:
+      213: 2365514143464421306
+    second: knife-toss-store_52
+  - first:
+      213: 1638071103655651482
+    second: knife-toss-store_53
+  - first:
+      213: 8439559502789908718
+    second: knife-toss-store_54
+  - first:
+      213: 8770402136327520538
+    second: knife-toss-store_55
+  - first:
+      213: -4381263417027074383
+    second: knife-toss-store_56
+  - first:
+      213: -3667706707419995359
+    second: knife-toss-store_57
+  - first:
+      213: -6270005974095503526
+    second: knife-toss-store_58
+  - first:
+      213: -1265830830755395654
+    second: knife-toss-store_59
+  - first:
+      213: -1145699574399397770
+    second: knife-toss-store_60
+  - first:
+      213: -4820396188139679119
+    second: knife-toss-store_61
+  - first:
+      213: -2162325043951848015
+    second: knife-toss-store_62
+  - first:
+      213: 4534035563468194299
+    second: knife-toss-store_63
+  - first:
+      213: 4426496424911445804
+    second: knife-toss-store_64
+  - first:
+      213: -1914438722657093812
+    second: knife-toss-store_65
+  - first:
+      213: -3508184378081585807
+    second: knife-toss-store_66
+  - first:
+      213: -1791399375800544946
+    second: knife-toss-store_67
+  - first:
+      213: 6073294952466016413
+    second: knife-toss-store_68
+  - first:
+      213: -4687789773204361002
+    second: knife-toss-store_69
+  - first:
+      213: 3331621973000681989
+    second: knife-toss-store_70
+  - first:
+      213: 3440731983014848933
+    second: knife-toss-store_71
+  - first:
+      213: 3590029328224357106
+    second: knife-toss-store_72
+  - first:
+      213: -3712813281220973173
+    second: knife-toss-store_73
+  - first:
+      213: 8542987677674032569
+    second: knife-toss-store_74
+  - first:
+      213: -1578110088112115225
+    second: knife-toss-store_75
+  - first:
+      213: -6163603159203540980
+    second: knife-toss-store_76
+  - first:
+      213: -3601750635159297216
+    second: knife-toss-store_77
+  - first:
+      213: 5072288200927338349
+    second: knife-toss-store_78
+  - first:
+      213: 3467019023012972720
+    second: knife-toss-store_79
+  - first:
+      213: -8759206790925176022
+    second: knife-toss-store_80
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Logo
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 884
+        width: 364
+        height: 133
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 698b6df315ad83050800000000000000
+      internalID: 5780610164228274326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_1
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 873
+        width: 291
+        height: 151
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 470898ac562ba0bc0800000000000000
+      internalID: -3816041583983624076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: frame3
+      rect:
+        serializedVersion: 2
+        x: 724
+        y: 840
+        width: 195
+        height: 158
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 29, y: 32, z: 30, w: 23}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b05f68af321071010800000000000000
+      internalID: 1159396683109823755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: frame
+      rect:
+        serializedVersion: 2
+        x: 933
+        y: 829
+        width: 212
+        height: 195
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe2da87d9e4801660800000000000000
+      internalID: 7354524331374465775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_4
+      rect:
+        serializedVersion: 2
+        x: 1139
+        y: 986
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ce57e5f025e3fd40800000000000000
+      internalID: 5617085089988435652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_5
+      rect:
+        serializedVersion: 2
+        x: 1151
+        y: 831
+        width: 194
+        height: 191
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae311fc28f8c94410800000000000000
+      internalID: 1461920522289877994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_6
+      rect:
+        serializedVersion: 2
+        x: 1350
+        y: 835
+        width: 175
+        height: 166
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa9c614d10a5a3d20800000000000000
+      internalID: 3259016244255705519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_7
+      rect:
+        serializedVersion: 2
+        x: 1151
+        y: 891
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aec74c7cb9bb71eb0800000000000000
+      internalID: -4749121004293030678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_8
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 743
+        width: 214
+        height: 114
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a5c5b56eec8d5a00800000000000000
+      internalID: 746908068749886885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wide-frame
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 758
+        width: 429
+        height: 108
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 30, y: 13, z: 30, w: 11}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c06e876de9dfc6b90800000000000000
+      internalID: -7247138841701063156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_10
+      rect:
+        serializedVersion: 2
+        x: 726
+        y: 729
+        width: 483
+        height: 101
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d774dc3eaccd42ad0800000000000000
+      internalID: -2727812710316292227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_11
+      rect:
+        serializedVersion: 2
+        x: 1124
+        y: 630
+        width: 405
+        height: 195
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 757bbd3d2a2850980800000000000000
+      internalID: -8573302679779166377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_12
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 623
+        width: 234
+        height: 111
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6ea1426a6c218300800000000000000
+      internalID: 252531889536085613
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_13
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 538
+        width: 243
+        height: 126
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 913501682ab2a29f0800000000000000
+      internalID: -492533232209734887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_14
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 658
+        width: 172
+        height: 71
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c246fc42ba9f2810800000000000000
+      internalID: 1742781671401734849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_15
+      rect:
+        serializedVersion: 2
+        x: 260
+        y: 598
+        width: 166
+        height: 65
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd87544e2c0b6b010800000000000000
+      internalID: 1204344301468088539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_16
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 641
+        width: 70
+        height: 91
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea2260ae727e35910800000000000000
+      internalID: 1825056432631194286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_17
+      rect:
+        serializedVersion: 2
+        x: 516
+        y: 653
+        width: 93
+        height: 76
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42c7bde372fe90c30800000000000000
+      internalID: 4326251868903406628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_18
+      rect:
+        serializedVersion: 2
+        x: 620
+        y: 653
+        width: 231
+        height: 81
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0242ad16e7d157ec0800000000000000
+      internalID: -3569914700976479200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_19
+      rect:
+        serializedVersion: 2
+        x: 854
+        y: 635
+        width: 251
+        height: 94
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5aacf008bbfd1a00800000000000000
+      internalID: 729015482413001306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_20
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 543
+        width: 163
+        height: 57
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bfaad4b781358ca0800000000000000
+      internalID: -6015347268358852683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_21
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 596
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 078b29c709a3cb950800000000000000
+      internalID: 6466107557236881520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_22
+      rect:
+        serializedVersion: 2
+        x: 437
+        y: 539
+        width: 175
+        height: 97
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d39beaa4508b0cf0800000000000000
+      internalID: -284993050274720809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_23
+      rect:
+        serializedVersion: 2
+        x: 615
+        y: 541
+        width: 159
+        height: 99
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f65286c699c843f0800000000000000
+      internalID: -916260874757187856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_24
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 547
+        width: 161
+        height: 86
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6dffdf0fc28fbb00800000000000000
+      internalID: 846539080805121391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_25
+      rect:
+        serializedVersion: 2
+        x: 942
+        y: 395
+        width: 203
+        height: 241
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c50a639c5ab037950800000000000000
+      internalID: 6445508298370621532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_26
+      rect:
+        serializedVersion: 2
+        x: 1167
+        y: 519
+        width: 67
+        height: 131
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b11b5b9c1cb6d0a90800000000000000
+      internalID: -7346096937114423013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_27
+      rect:
+        serializedVersion: 2
+        x: 1256
+        y: 519
+        width: 57
+        height: 130
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac1dd6a3e865265c0800000000000000
+      internalID: -4223718331654483510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_28
+      rect:
+        serializedVersion: 2
+        x: 1335
+        y: 532
+        width: 42
+        height: 77
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58ff8f3d688dc9270800000000000000
+      internalID: 8258713890284175237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_29
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 384
+        width: 159
+        height: 155
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32b5daca6db689c90800000000000000
+      internalID: -7162856637568558301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_30
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 415
+        width: 141
+        height: 122
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 123a41cbec76863d0800000000000000
+      internalID: -3213204196512455903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_31
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 415
+        width: 142
+        height: 122
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa1b2d00702c24f80800000000000000
+      internalID: -8123717442488585809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: frame1
+      rect:
+        serializedVersion: 2
+        x: 466
+        y: 424
+        width: 120
+        height: 107
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 11, y: 11, z: 11, w: 10}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a287995deb505d10800000000000000
+      internalID: 2112289300205240997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_33
+      rect:
+        serializedVersion: 2
+        x: 607
+        y: 405
+        width: 129
+        height: 131
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5db7c23c7d779f90800000000000000
+      internalID: -6946945927814333089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_34
+      rect:
+        serializedVersion: 2
+        x: 751
+        y: 438
+        width: 106
+        height: 100
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab534a5e23825a560800000000000000
+      internalID: 7324304568054199738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_35
+      rect:
+        serializedVersion: 2
+        x: 863
+        y: 421
+        width: 114
+        height: 121
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41edba179416b50e0800000000000000
+      internalID: -2280121818265428460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_36
+      rect:
+        serializedVersion: 2
+        x: 1015
+        y: 411
+        width: 114
+        height: 118
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39ad6516a84f2e2a0800000000000000
+      internalID: -6709531619652871533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_37
+      rect:
+        serializedVersion: 2
+        x: 1400
+        y: 520
+        width: 33
+        height: 65
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef4fe226594179b30800000000000000
+      internalID: 4293923401550984446
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_38
+      rect:
+        serializedVersion: 2
+        x: 1466
+        y: 507
+        width: 39
+        height: 54
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e2f15325dcf0a000800000000000000
+      internalID: 45313988624511715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_39
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 416
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76f546d1c8ddfb890800000000000000
+      internalID: -7439984465534492825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_40
+      rect:
+        serializedVersion: 2
+        x: 1155
+        y: 403
+        width: 79
+        height: 107
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aff2a6af23b930a70800000000000000
+      internalID: 8792041540809273338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_41
+      rect:
+        serializedVersion: 2
+        x: 1239
+        y: 408
+        width: 82
+        height: 100
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 972f4bc8352a7b520800000000000000
+      internalID: 2717819379868037753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_42
+      rect:
+        serializedVersion: 2
+        x: 1327
+        y: 411
+        width: 62
+        height: 85
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e170f67c17304840800000000000000
+      internalID: 5206221764634374627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_43
+      rect:
+        serializedVersion: 2
+        x: 1408
+        y: 415
+        width: 54
+        height: 58
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa4727384eaf4cf60800000000000000
+      internalID: 8053837893010093231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_44
+      rect:
+        serializedVersion: 2
+        x: 1470
+        y: 415
+        width: 45
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0ba79a71e8caff20800000000000000
+      internalID: 3457296534710233869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_45
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 286
+        width: 132
+        height: 115
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 873f7f02c877fa470800000000000000
+      internalID: 8408070473056252792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_46
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 398
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28c450d041f78e2d0800000000000000
+      internalID: -3249207407053288318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_47
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 295
+        width: 117
+        height: 106
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b62ac142f33701570800000000000000
+      internalID: 8435368817090929259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_48
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 295
+        width: 131
+        height: 111
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82577bf22f73737d0800000000000000
+      internalID: -2938818718513793752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_49
+      rect:
+        serializedVersion: 2
+        x: 413
+        y: 289
+        width: 110
+        height: 115
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65b7454d45ad08380800000000000000
+      internalID: -8970930399847613610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_50
+      rect:
+        serializedVersion: 2
+        x: 535
+        y: 283
+        width: 114
+        height: 118
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b92e9940a005ced0800000000000000
+      internalID: -2394506938447681097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_51
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 295
+        width: 123
+        height: 106
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e13ddbcf552ed2930800000000000000
+      internalID: 4120198093054268190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_52
+      rect:
+        serializedVersion: 2
+        x: 782
+        y: 297
+        width: 115
+        height: 104
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab7fb58949ef3d020800000000000000
+      internalID: 2365514143464421306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_53
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 273
+        width: 109
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a982a3a6df89bb610800000000000000
+      internalID: 1638071103655651482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_54
+      rect:
+        serializedVersion: 2
+        x: 1161
+        y: 219
+        width: 64
+        height: 179
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee8909037a65f1570800000000000000
+      internalID: 8439559502789908718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_55
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 174
+        width: 132
+        height: 109
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a110121864ab6b970800000000000000
+      internalID: 8770402136327520538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_56
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 176
+        width: 116
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b6efa89220a233c0800000000000000
+      internalID: -4381263417027074383
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_57
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 161
+        width: 106
+        height: 123
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 123e9e39e20b91dc0800000000000000
+      internalID: -3667706707419995359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_58
+      rect:
+        serializedVersion: 2
+        x: 1023
+        y: 283
+        width: 120
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5fd57659c67cf8a0800000000000000
+      internalID: -6270005974095503526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_59
+      rect:
+        serializedVersion: 2
+        x: 1263
+        y: 223
+        width: 65
+        height: 165
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab7461be09dde6ee0800000000000000
+      internalID: -1265830830755395654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_60
+      rect:
+        serializedVersion: 2
+        x: 1367
+        y: 223
+        width: 61
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6709b98ae48a910f0800000000000000
+      internalID: -1145699574399397770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_61
+      rect:
+        serializedVersion: 2
+        x: 1465
+        y: 224
+        width: 62
+        height: 161
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1729949d4338a1db0800000000000000
+      internalID: -4820396188139679119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_62
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 179
+        width: 108
+        height: 102
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b5b15a34d0edf1e0800000000000000
+      internalID: -2162325043951848015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_63
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 191
+        width: 92
+        height: 82
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf1828792512cee30800000000000000
+      internalID: 4534035563468194299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_64
+      rect:
+        serializedVersion: 2
+        x: 599
+        y: 195
+        width: 89
+        height: 78
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2f126ebb031e6d30800000000000000
+      internalID: 4426496424911445804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_65
+      rect:
+        serializedVersion: 2
+        x: 695
+        y: 200
+        width: 74
+        height: 78
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4775c7ff1c8e65e0800000000000000
+      internalID: -1914438722657093812
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_66
+      rect:
+        serializedVersion: 2
+        x: 782
+        y: 191
+        width: 99
+        height: 82
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1755fd135ec605fc0800000000000000
+      internalID: -3508184378081585807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_67
+      rect:
+        serializedVersion: 2
+        x: 886
+        y: 161
+        width: 91
+        height: 112
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e415d8a42cba327e0800000000000000
+      internalID: -1791399375800544946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_68
+      rect:
+        serializedVersion: 2
+        x: 981
+        y: 155
+        width: 74
+        height: 118
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d98e8e1e49da84450800000000000000
+      internalID: 6073294952466016413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_69
+      rect:
+        serializedVersion: 2
+        x: 1063
+        y: 163
+        width: 80
+        height: 115
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d0f17ac900a1feb0800000000000000
+      internalID: -4687789773204361002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_70
+      rect:
+        serializedVersion: 2
+        x: 1183
+        y: 1
+        width: 58
+        height: 207
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50a7792688c4c3e20800000000000000
+      internalID: 3331621973000681989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_71
+      rect:
+        serializedVersion: 2
+        x: 1263
+        y: 45
+        width: 64
+        height: 160
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a9ecee328fefbf20800000000000000
+      internalID: 3440731983014848933
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_72
+      rect:
+        serializedVersion: 2
+        x: 1359
+        y: 46
+        width: 58
+        height: 157
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fa0c0a37a852d130800000000000000
+      internalID: 3590029328224357106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_73
+      rect:
+        serializedVersion: 2
+        x: 1453
+        y: 45
+        width: 60
+        height: 161
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8da877fdff697cc0800000000000000
+      internalID: -3712813281220973173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_74
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 0
+        width: 124
+        height: 153
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bdcc48b70ace8670800000000000000
+      internalID: 8542987677674032569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_75
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 6
+        width: 102
+        height: 141
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e1fd9d6c3d691ae0800000000000000
+      internalID: -1578110088112115225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_76
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 55
+        width: 104
+        height: 91
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c009237359b767aa0800000000000000
+      internalID: -6163603159203540980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_77
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 1
+        width: 107
+        height: 155
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 043eac551e2040ec0800000000000000
+      internalID: -3601750635159297216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_78
+      rect:
+        serializedVersion: 2
+        x: 509
+        y: 2
+        width: 237
+        height: 158
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6fddae9e33646640800000000000000
+      internalID: 5072288200927338349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_79
+      rect:
+        serializedVersion: 2
+        x: 751
+        y: 1
+        width: 226
+        height: 155
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b8c530be635d1030800000000000000
+      internalID: 3467019023012972720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knife-toss-store_80
+      rect:
+        serializedVersion: 2
+        x: 983
+        y: 0
+        width: 186
+        height: 152
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2337b8f4db017680800000000000000
+      internalID: -8759206790925176022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: ae9998b59c5564373be00ecdca6cde89
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Logo: 5780610164228274326
+      frame: 7354524331374465775
+      frame1: 2112289300205240997
+      frame3: 1159396683109823755
+      knife-toss-store_1: -3816041583983624076
+      knife-toss-store_10: -2727812710316292227
+      knife-toss-store_11: -8573302679779166377
+      knife-toss-store_12: 252531889536085613
+      knife-toss-store_13: -492533232209734887
+      knife-toss-store_14: 1742781671401734849
+      knife-toss-store_15: 1204344301468088539
+      knife-toss-store_16: 1825056432631194286
+      knife-toss-store_17: 4326251868903406628
+      knife-toss-store_18: -3569914700976479200
+      knife-toss-store_19: 729015482413001306
+      knife-toss-store_20: -6015347268358852683
+      knife-toss-store_21: 6466107557236881520
+      knife-toss-store_22: -284993050274720809
+      knife-toss-store_23: -916260874757187856
+      knife-toss-store_24: 846539080805121391
+      knife-toss-store_25: 6445508298370621532
+      knife-toss-store_26: -7346096937114423013
+      knife-toss-store_27: -4223718331654483510
+      knife-toss-store_28: 8258713890284175237
+      knife-toss-store_29: -7162856637568558301
+      knife-toss-store_30: -3213204196512455903
+      knife-toss-store_31: -8123717442488585809
+      knife-toss-store_33: -6946945927814333089
+      knife-toss-store_34: 7324304568054199738
+      knife-toss-store_35: -2280121818265428460
+      knife-toss-store_36: -6709531619652871533
+      knife-toss-store_37: 4293923401550984446
+      knife-toss-store_38: 45313988624511715
+      knife-toss-store_39: -7439984465534492825
+      knife-toss-store_4: 5617085089988435652
+      knife-toss-store_40: 8792041540809273338
+      knife-toss-store_41: 2717819379868037753
+      knife-toss-store_42: 5206221764634374627
+      knife-toss-store_43: 8053837893010093231
+      knife-toss-store_44: 3457296534710233869
+      knife-toss-store_45: 8408070473056252792
+      knife-toss-store_46: -3249207407053288318
+      knife-toss-store_47: 8435368817090929259
+      knife-toss-store_48: -2938818718513793752
+      knife-toss-store_49: -8970930399847613610
+      knife-toss-store_5: 1461920522289877994
+      knife-toss-store_50: -2394506938447681097
+      knife-toss-store_51: 4120198093054268190
+      knife-toss-store_52: 2365514143464421306
+      knife-toss-store_53: 1638071103655651482
+      knife-toss-store_54: 8439559502789908718
+      knife-toss-store_55: 8770402136327520538
+      knife-toss-store_56: -4381263417027074383
+      knife-toss-store_57: -3667706707419995359
+      knife-toss-store_58: -6270005974095503526
+      knife-toss-store_59: -1265830830755395654
+      knife-toss-store_6: 3259016244255705519
+      knife-toss-store_60: -1145699574399397770
+      knife-toss-store_61: -4820396188139679119
+      knife-toss-store_62: -2162325043951848015
+      knife-toss-store_63: 4534035563468194299
+      knife-toss-store_64: 4426496424911445804
+      knife-toss-store_65: -1914438722657093812
+      knife-toss-store_66: -3508184378081585807
+      knife-toss-store_67: -1791399375800544946
+      knife-toss-store_68: 6073294952466016413
+      knife-toss-store_69: -4687789773204361002
+      knife-toss-store_7: -4749121004293030678
+      knife-toss-store_70: 3331621973000681989
+      knife-toss-store_71: 3440731983014848933
+      knife-toss-store_72: 3590029328224357106
+      knife-toss-store_73: -3712813281220973173
+      knife-toss-store_74: 8542987677674032569
+      knife-toss-store_75: -1578110088112115225
+      knife-toss-store_76: -6163603159203540980
+      knife-toss-store_77: -3601750635159297216
+      knife-toss-store_78: 5072288200927338349
+      knife-toss-store_79: 3467019023012972720
+      knife-toss-store_8: 746908068749886885
+      knife-toss-store_80: -8759206790925176022
+      wide-frame: -7247138841701063156
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -16,6 +16,7 @@ namespace Game.Persistence.Data
         public PlayerResourcesData Resources = new PlayerResourcesData();
         public RewardClaimData RewardClaims = new RewardClaimData();
         public DailyMissionData DailyMissions = new DailyMissionData();
+        public PlayerOnboardingData Onboarding = new PlayerOnboardingData();
 
         [JsonProperty("PowerUpInventory")]
         private PowerUpInventoryData LegacyPowerUpInventory

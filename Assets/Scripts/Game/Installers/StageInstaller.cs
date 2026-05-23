@@ -34,6 +34,7 @@ using VContainer;
 using VContainer.Unity;
 using Game.PowerUps.Configs;
 using Game.PowerUps.Events;
+using Game.UI.HUD;
 
 namespace Game.Installers
 {
@@ -92,6 +93,19 @@ namespace Game.Installers
         [SerializeField]
         [Tooltip("Stage HUD controller: fail popup, level flow hooks, etc.")]
         private UIController _UIController;
+
+        [Header("Gesture Hints")]
+        [SerializeField]
+        [Tooltip("Reusable gesture popup shown for one-time stage onboarding hints.")]
+        private GameObject _GesturePopupPrefab;
+
+        [SerializeField]
+        [Tooltip("Canvas transform that receives the stage gesture popup.")]
+        private Transform _GesturePopupParent;
+
+        [SerializeField]
+        [Tooltip("Tuned UI positions for gesture hints.")]
+        private GestureHintConfiguration _GestureHintConfiguration;
 
         [Header("Rewards")]
         [SerializeField]
@@ -229,6 +243,7 @@ namespace Game.Installers
             Install(builder, CreateVFXInstaller());
             Install(builder, CreateUIInstaller());
             Install(builder, CreateStageAudioInstaller());
+            RegisterGestureHints(builder);
             
             // Connect Stage Events to Global Persistence
             builder.RegisterEntryPoint<StagePersistenceConnector>()
@@ -403,6 +418,23 @@ namespace Game.Installers
                 _CollectibleHitEventChannel,
                 _LevelCompletedEventChannel,
                 _LevelFailedEventChannel);
+        }
+
+        private void RegisterGestureHints(IContainerBuilder builder)
+        {
+            if (_GesturePopupPrefab == null || _GestureHintConfiguration == null)
+            {
+                return;
+            }
+
+            builder.RegisterEntryPoint<StageGestureHintController>()
+                .WithParameter(_LevelStartedEventChannel)
+                .WithParameter(_KnifeThrownEventChannel)
+                .WithParameter(_PowerUpActivatedEventChannel)
+                .WithParameter(_PowerUpCatalog)
+                .WithParameter(_GestureHintConfiguration)
+                .WithParameter("gesturePopupPrefab", _GesturePopupPrefab)
+                .WithParameter("gesturePopupParent", _GesturePopupParent);
         }
     }
 }

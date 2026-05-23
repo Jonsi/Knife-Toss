@@ -6057,6 +6057,9 @@ MonoBehaviour:
   _PrivacyPopup: {fileID: 66447402}
   _ReportErrorPopup: {fileID: 521085517}
   _UIController: {fileID: 633680713}
+  _GesturePopupPrefab: {fileID: 9209562137776292494, guid: 63d01876f6991465d9d7e4c520d3b05a, type: 3}
+  _GesturePopupParent: {fileID: 1991986296}
+  _GestureHintConfiguration: {fileID: 11400000, guid: e780ff6c60cc49cf99fd455ec2118f6f, type: 2}
   _RewardGrantedEventChannel: {fileID: 11400000, guid: 8e17abd79622fd94393f6aa575e2f574, type: 2}
   _RewardPopup: {fileID: 0}
   _CollisionEventChannel: {fileID: 11400000, guid: 550df89ae380ec743af103ed588ae1b1, type: 2}

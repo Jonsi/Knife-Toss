@@ -88,7 +88,7 @@ namespace Game.Debugging.Tabs
         }
 
         [Category("Progress")]
-        [DisplayName("Reset All Player Data")]
+        [DisplayName("Reset To Default Balance")]
         public void ClearProgress()
         {
             var resolver = CurrentResolver;

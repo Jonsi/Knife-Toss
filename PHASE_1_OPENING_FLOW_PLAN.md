@@ -1,5 +1,7 @@
 # Phase 1 Plan - Opening Flow Audit
 
+Execution notes: [Phase 1 Opening Flow Execution](PHASE_1_OPENING_FLOW_EXECUTION.md)
+
 ## Phase Goal
 
 Make the first launch and main menu feel focused, with **Play** as the obvious next action and no early interruption from monetization, missions, store, or secondary modes.
@@ -13,7 +15,8 @@ Phase 1 is complete when:
 - A new player can reach gameplay within 2 taps.
 - The Play button is visually and functionally the dominant action.
 - The current stage is easy to understand.
-- Secondary systems are visible only if they do not compete with Play.
+- Secondary systems remain visible during the tutorial and should not block the Play path.
+- The opening can be started by tapping the gesture overlay shown over the Play button.
 - No popup, ad, IAP prompt, mission prompt, or store prompt appears before first gameplay.
 - The main menu communicates the current world/stage mood without requiring explanation.
 
@@ -40,8 +43,8 @@ Recommended priority:
 1. Play
 2. Current Stage
 3. Knife Skin Preview
-4. Settings/Mute
-5. Stages
+4. Stages
+5. Settings/Mute
 6. Missions
 7. Store
 8. Power-ups
@@ -50,7 +53,7 @@ Recommended priority:
 
 Decision needed:
 
-- Should Store, Missions, Power-ups, PVP, and Remove Ads be fully visible immediately, visually secondary, locked, or hidden until later?
+- Should Stages, Store, Missions, Power-ups, PVP, coin display, settings, and Remove Ads be fully visible immediately, visually secondary, locked, or hidden until later?
 
 ### 3. Decide Whether Feature Gating Is Allowed
 
@@ -58,7 +61,7 @@ Feature gating means a button can become visible or highlighted only after a pro
 
 Decision needed:
 
-- Are we allowed to delay/hide buttons for new players?
+- Are we allowed to delay, hide, or visually soften buttons for new players?
 - Or should all buttons always exist for testing and navigation?
 
 Recommended:
@@ -290,13 +293,15 @@ If you want to move quickly, use these defaults:
 - Play: fully prominent.
 - Current Stage: visible and clear.
 - Knife Skin Preview: visible if already part of menu identity.
-- Settings/Mute: visible but small.
-- Stages: visible but secondary.
-- Missions: hidden or quiet until after Stage 1.
-- Store: hidden or quiet until after first reward/currency moment.
-- Power-ups: hidden or quiet until first power-up introduction.
-- PVP: hidden or quiet until after early progression.
-- Remove Ads: hidden or quiet until after first ad exposure or later menu session.
+- Settings/Mute: visible if already present in the menu.
+- Stages: visible if already present in the menu.
+- Missions: visible if already present in the menu.
+- Store: visible if already present in the menu.
+- Power-ups: visible if already present in the menu.
+- PVP: visible if already present in the menu.
+- Remove Ads: visible only through its normal availability rules.
+- Coin display: visible if already present in the menu.
+- Gesture overlay: shown over Play for fresh players and starts Play on tap.
 - First-time popups before gameplay: **none**.
 
 ## Agent Starting Checklist
@@ -317,16 +322,20 @@ When Phase 1 starts, the agent should begin with:
 Use this after implementation:
 
 - [ ] Fresh player starts on main menu.
-- [ ] Play is the most obvious button.
-- [ ] No popup appears before pressing Play.
-- [ ] Pressing Play loads the current stage.
+- [ ] Play is the most obvious button behind the gesture overlay.
+- [ ] Existing menu buttons remain visible during the tutorial.
+- [ ] Coins remain visible if present.
+- [ ] Settings/mute remains visible if present.
+- [ ] Gesture overlay appears over the Play button.
+- [ ] Tapping the gesture overlay loads the current stage.
+- [ ] Gesture overlay does not appear again after it has been tapped once.
+- [ ] No popup appears before the first gameplay load unless explicitly required.
 - [ ] Current stage text is understandable.
 - [ ] Store does not steal attention.
 - [ ] Missions do not steal attention.
 - [ ] Power-ups do not steal attention.
 - [ ] PVP does not steal attention.
 - [ ] Remove Ads does not steal attention.
-- [ ] Settings/mute remain accessible.
 
 ## Phase 1 Exit Criteria
 

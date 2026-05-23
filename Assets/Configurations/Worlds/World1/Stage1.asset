@@ -23,8 +23,6 @@ MonoBehaviour:
   - 0
   - 50
   - 100
-  - 150
-  - 200
   <Levels>k__BackingField:
   - <KnifeCount>k__BackingField: 5
     <ExtraKnives>k__BackingField: 1
@@ -89,45 +87,6 @@ MonoBehaviour:
         <AngleOffset>k__BackingField: 288.03546
         <RadiusOffset>k__BackingField: 0
       <PreStuckKnives>k__BackingField: []
-  - <KnifeCount>k__BackingField: 7
-    <ExtraKnives>k__BackingField: 0
-    <Targets>k__BackingField:
-    - <PrefabOverride>k__BackingField: {fileID: 0}
-      <BaseScale>k__BackingField: 1
-      <InitialOffset>k__BackingField: {x: 0, y: 1.5, z: 0}
-      <KnivesToBreak>k__BackingField: 7
-      <InitialRotation>k__BackingField: 0
-      <Behaviors>k__BackingField:
-        _LocalBehaviors:
-        - _Kind: 0
-          _Config:
-            rid: 5211687530967073099
-        _WorldBehaviors: []
-      <Collectibles>k__BackingField:
-      - _collectibleCurrency: {fileID: 11400000, guid: 1ca1d82dd804abf4bb79ebf4a4e90ecd, type: 2}
-        <AngleOffset>k__BackingField: 0
-        <RadiusOffset>k__BackingField: 0
-      <PreStuckKnives>k__BackingField: []
-  - <KnifeCount>k__BackingField: 8
-    <ExtraKnives>k__BackingField: 0
-    <Targets>k__BackingField:
-    - <PrefabOverride>k__BackingField: {fileID: 0}
-      <BaseScale>k__BackingField: 1
-      <InitialOffset>k__BackingField: {x: 0, y: 1.5, z: 0}
-      <KnivesToBreak>k__BackingField: 8
-      <InitialRotation>k__BackingField: 0
-      <Behaviors>k__BackingField:
-        _LocalBehaviors:
-        - _Kind: 0
-          _Config:
-            rid: 5211687530967073100
-        _WorldBehaviors: []
-      <Collectibles>k__BackingField:
-      - _collectibleCurrency: {fileID: 11400000, guid: 1ca1d82dd804abf4bb79ebf4a4e90ecd, type: 2}
-        <AngleOffset>k__BackingField: 133.55704
-        <RadiusOffset>k__BackingField: 0
-      <PreStuckKnives>k__BackingField:
-      - <Angle>k__BackingField: 13.671284
   references:
     version: 2
     RefIds:
@@ -143,11 +102,3 @@ MonoBehaviour:
       type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
       data:
         _Speed: -84
-    - rid: 5211687530967073099
-      type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
-      data:
-        _Speed: -90
-    - rid: 5211687530967073100
-      type: {class: ConstantSpinBehaviorConfig, ns: Game.Entities.Target.Data.Behaviors.Local, asm: Game}
-      data:
-        _Speed: -96

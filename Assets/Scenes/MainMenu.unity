@@ -3063,6 +3063,9 @@ MonoBehaviour:
   - {fileID: 1197863338}
   - {fileID: 1881409178}
   _KnifeSkinSelectorView: {fileID: 1915672171}
+  _GesturePopupPrefab: {fileID: 9209562137776292494, guid: 63d01876f6991465d9d7e4c520d3b05a, type: 3}
+  _GesturePopupParent: {fileID: 1526553041}
+  _GestureHintConfiguration: {fileID: 11400000, guid: e780ff6c60cc49cf99fd455ec2118f6f, type: 2}
 --- !u!1 &1972825410
 GameObject:
   m_ObjectHideFlags: 0
