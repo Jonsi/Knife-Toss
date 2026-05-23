@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Game.Flow.Game;
+using Game.UI.Controllers;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -14,6 +15,8 @@ namespace Game.UI.Common
         [SerializeField] private Button _Button;
 
         [Inject] private SceneLoaderService _SceneLoaderService;
+        private UIController _UIController;
+        private bool _IsLoading;
 
         private void Awake()
         {
@@ -21,6 +24,8 @@ namespace Game.UI.Common
             {
                 _Button = GetComponent<Button>();
             }
+
+            _UIController = GetComponentInParent<UIController>();
         }
 
         private void Start()
@@ -41,7 +46,31 @@ namespace Game.UI.Common
 
         private void OnClicked()
         {
-            _SceneLoaderService.LoadMainMenu().Forget();
+            LoadMainMenuAsync().Forget();
+        }
+
+        private async UniTaskVoid LoadMainMenuAsync()
+        {
+            if (_IsLoading)
+            {
+                return;
+            }
+
+            _IsLoading = true;
+            if (_Button != null)
+            {
+                _Button.interactable = false;
+            }
+
+            if (_UIController != null)
+            {
+                await _UIController.PlayStageOutAsync();
+            }
+
+            if (_SceneLoaderService != null)
+            {
+                await _SceneLoaderService.LoadMainMenu();
+            }
         }
     }
 }

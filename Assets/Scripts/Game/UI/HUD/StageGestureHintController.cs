@@ -2,10 +2,8 @@ using Game.Flow.Events;
 using Game.Flow.Game;
 using Game.KnifeThrower.Events;
 using Game.Persistence.Services;
-using Game.PowerUps.Configs;
 using Game.PowerUps.Data;
 using Game.PowerUps.Events;
-using Game.PowerUps.Views;
 using Game.UI.Common;
 using Game.UI.Data;
 using UnityEngine;
@@ -39,7 +37,7 @@ namespace Game.UI.HUD
         private readonly KnifeThrownEventChannel _KnifeThrownChannel;
         private readonly LevelStartedEventChannel _LevelStartedChannel;
         private readonly PowerUpActivatedEventChannel _PowerUpActivatedChannel;
-        private readonly PowerUpCatalog _PowerUpCatalog;
+        private readonly PowerUpUsedEventChannel _PowerUpUsedChannel;
         private readonly GestureHintConfiguration _GestureHintConfiguration;
         private readonly GameObject _GesturePopupPrefab;
         private readonly Transform _GesturePopupParent;
@@ -53,7 +51,7 @@ namespace Game.UI.HUD
             KnifeThrownEventChannel knifeThrownChannel,
             LevelStartedEventChannel levelStartedChannel,
             PowerUpActivatedEventChannel powerUpActivatedChannel,
-            PowerUpCatalog powerUpCatalog,
+            PowerUpUsedEventChannel powerUpUsedChannel,
             GestureHintConfiguration gestureHintConfiguration,
             GameObject gesturePopupPrefab,
             Transform gesturePopupParent)
@@ -63,7 +61,7 @@ namespace Game.UI.HUD
             _KnifeThrownChannel = knifeThrownChannel;
             _LevelStartedChannel = levelStartedChannel;
             _PowerUpActivatedChannel = powerUpActivatedChannel;
-            _PowerUpCatalog = powerUpCatalog;
+            _PowerUpUsedChannel = powerUpUsedChannel;
             _GestureHintConfiguration = gestureHintConfiguration;
             _GesturePopupPrefab = gesturePopupPrefab;
             _GesturePopupParent = gesturePopupParent;
@@ -79,6 +77,7 @@ namespace Game.UI.HUD
             _KnifeThrownChannel?.Subscribe(OnKnifeThrown);
             _LevelStartedChannel?.Subscribe(OnLevelStarted);
             _PowerUpActivatedChannel?.Subscribe(OnPowerUpActivated);
+            _PowerUpUsedChannel?.Subscribe(OnPowerUpUsed);
 
             if (_LevelStartedChannel != null && _LevelStartedChannel.HasLastEvent)
             {
@@ -91,6 +90,7 @@ namespace Game.UI.HUD
             _KnifeThrownChannel?.Unsubscribe(OnKnifeThrown);
             _LevelStartedChannel?.Unsubscribe(OnLevelStarted);
             _PowerUpActivatedChannel?.Unsubscribe(OnPowerUpActivated);
+            _PowerUpUsedChannel?.Unsubscribe(OnPowerUpUsed);
 
             if (_GesturePopup != null)
             {
@@ -118,19 +118,13 @@ namespace Game.UI.HUD
             switch (data.LevelIndex)
             {
                 case TapToThrowLevelIndex when !onboarding.HasTappedThrowGesture:
-                    ShowHint(HintType.TapToThrow, null, _GestureHintConfiguration.TapToThrowPosition);
+                    ShowHint(HintType.TapToThrow, _GestureHintConfiguration.TapToThrowPosition);
                     break;
                 case SuperKnifeLevelIndex when !onboarding.HasTappedSuperKnifeGesture:
-                    ShowHint(
-                        HintType.SuperKnife,
-                        FindPowerUpButton(SuperKnifeInventoryKey),
-                        _GestureHintConfiguration.TapSuperKnifePowerUpPosition);
+                    ShowHint(HintType.SuperKnife, _GestureHintConfiguration.TapSuperKnifePowerUpPosition);
                     break;
                 case SlowTimeLevelIndex when !onboarding.HasTappedSlowTimeGesture:
-                    ShowHint(
-                        HintType.SlowTime,
-                        FindPowerUpButton(SlowTimeInventoryKey),
-                        _GestureHintConfiguration.TapSlowTimePowerUpPosition);
+                    ShowHint(HintType.SlowTime, _GestureHintConfiguration.TapSlowTimePowerUpPosition);
                     break;
             }
         }
@@ -143,7 +137,7 @@ namespace Game.UI.HUD
                 data.StageIndex == TutorialStageIndex;
         }
 
-        private void ShowHint(HintType hintType, RectTransform target, Vector2 fallbackPosition)
+        private void ShowHint(HintType hintType, Vector2 position)
         {
             GesturePopupView gesturePopup = GetOrCreateGesturePopup();
             if (gesturePopup == null)
@@ -152,13 +146,7 @@ namespace Game.UI.HUD
             }
 
             _ActiveHint = hintType;
-            if (target != null)
-            {
-                gesturePopup.ShowAt(target, false);
-                return;
-            }
-
-            gesturePopup.ShowAt(fallbackPosition, false);
+            gesturePopup.ShowAt(position, false);
         }
 
         private GesturePopupView GetOrCreateGesturePopup()
@@ -227,6 +215,19 @@ namespace Game.UI.HUD
             }
         }
 
+        private void OnPowerUpUsed(PowerUpUsedEventData data)
+        {
+            if (data?.Config == null)
+            {
+                return;
+            }
+
+            if (_ActiveHint == HintType.SlowTime && data.Config.InventoryKey == SlowTimeInventoryKey)
+            {
+                MarkPowerUpGestureTapped(HintType.SlowTime);
+            }
+        }
+
         private void MarkPowerUpGestureTapped(HintType hintType)
         {
             var data = _PlayerDataService?.GetData();
@@ -248,47 +249,5 @@ namespace Game.UI.HUD
             _ActiveHint = HintType.None;
         }
 
-        private RectTransform FindPowerUpButton(string inventoryKey)
-        {
-            PowerUpConfigBase config = FindPowerUpConfig(inventoryKey);
-            if (config == null)
-            {
-                return null;
-            }
-
-            PowerUpButtonView[] buttons = Object.FindObjectsByType<PowerUpButtonView>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None);
-
-            for (int i = 0; i < buttons.Length; i++)
-            {
-                PowerUpButtonView button = buttons[i];
-                if (button != null && button.Config == config && button.transform is RectTransform rectTransform)
-                {
-                    return rectTransform;
-                }
-            }
-
-            return null;
-        }
-
-        private PowerUpConfigBase FindPowerUpConfig(string inventoryKey)
-        {
-            if (_PowerUpCatalog?.Entries == null || string.IsNullOrEmpty(inventoryKey))
-            {
-                return null;
-            }
-
-            for (int i = 0; i < _PowerUpCatalog.Entries.Count; i++)
-            {
-                PowerUpConfigBase config = _PowerUpCatalog.Entries[i];
-                if (config != null && config.InventoryKey == inventoryKey)
-                {
-                    return config;
-                }
-            }
-
-            return null;
-        }
     }
 }

@@ -5,6 +5,7 @@ using Game.Flow.Events;
 using Game.Flow.Level;
 using Game.UI.Common;
 using Game.UI.Popups;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -125,6 +126,26 @@ namespace Game.UI.Controllers
             }
         }
 
+        public async UniTask PlayStageOutAsync()
+        {
+            var tasks = new List<UniTask>();
+            var seen = new HashSet<UiElementAnimator>();
+
+            AddPlayOutTasks(_StartupAnimators, tasks, seen);
+
+            if (_ReturnButtonAnimator != null &&
+                _ReturnButtonAnimator.gameObject.activeInHierarchy &&
+                seen.Add(_ReturnButtonAnimator))
+            {
+                tasks.Add(_ReturnButtonAnimator.PlayOutAsync());
+            }
+
+            if (tasks.Count > 0)
+            {
+                await UniTask.WhenAll(tasks);
+            }
+        }
+
         private void ShowReturnButton()
         {
             _ReturnButtonAnimator?.PlayIn();
@@ -144,6 +165,26 @@ namespace Game.UI.Controllers
             }
 
             _ReturnButtonAnimator.PlayOutAsync().Forget();
+        }
+
+        private static void AddPlayOutTasks(
+            IReadOnlyList<UiElementAnimator> animators,
+            List<UniTask> tasks,
+            HashSet<UiElementAnimator> seen)
+        {
+            if (animators == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < animators.Count; i++)
+            {
+                UiElementAnimator animator = animators[i];
+                if (animator != null && seen.Add(animator))
+                {
+                    tasks.Add(animator.PlayOutAsync());
+                }
+            }
         }
     }
 }

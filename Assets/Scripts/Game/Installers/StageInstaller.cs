@@ -431,7 +431,7 @@ namespace Game.Installers
                 .WithParameter(_LevelStartedEventChannel)
                 .WithParameter(_KnifeThrownEventChannel)
                 .WithParameter(_PowerUpActivatedEventChannel)
-                .WithParameter(_PowerUpCatalog)
+                .WithParameter(_PowerUpUsedEventChannel)
                 .WithParameter(_GestureHintConfiguration)
                 .WithParameter("gesturePopupPrefab", _GesturePopupPrefab)
                 .WithParameter("gesturePopupParent", _GesturePopupParent);
