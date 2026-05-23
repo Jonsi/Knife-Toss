@@ -426,6 +426,8 @@ These phases are designed to be completed separately. Each phase should leave th
 
 **Goal:** Make the first launch and main menu feel focused, with Play as the obvious next action.
 
+Detailed plan: [Phase 1 Opening Flow Plan](PHASE_1_OPENING_FLOW_PLAN.md)
+
 **Why this matters:** If the player is overwhelmed before the first throw, all later systems lose value. This phase makes sure the game starts with confidence.
 
 **Scope:**
