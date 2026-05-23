@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game::Game.UI.Data.GestureHintConfiguration
   <TapOnPlayPosition>k__BackingField: {x: -285, y: -630}
   <TapToThrowPosition>k__BackingField: {x: -71, y: -371}
-  <TapSuperKnifePowerUpPosition>k__BackingField: {x: 291, y: -596}
-  <TapSlowTimePowerUpPosition>k__BackingField: {x: 256, y: 256}
+  <TapSuperKnifePowerUpPosition>k__BackingField: {x: 292, y: -603}
+  <TapSlowTimePowerUpPosition>k__BackingField: {x: 292, y: -794}

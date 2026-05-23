@@ -25,6 +25,7 @@ namespace Game.Entities.Target.Views
 
         [SerializeField] private CircleCollider2D _Collider;
         [SerializeField] private TargetHitFeedback _HitFeedback;
+        [SerializeField] private TargetCrackReveal _CrackReveal;
         [SerializeField] private SpriteShatterController _ShatterController;
         [SerializeField] private Transform _StuckObjectsHolder;
         [SerializeField] private TargetSpawnAnimator _SpawnAnimator;
@@ -142,9 +143,11 @@ namespace Game.Entities.Target.Views
         /// <param name="orderIndex">Index within the level target list.</param>
         public void SetSortingOrder(int orderIndex)
         {
+            ResolveCrackReveal();
             _BaseSortingOrder = Mathf.Max(0, orderIndex) * SortingOrderStride;
             _SortingLayerId = ResolveSortingLayerId();
             ApplySortingOrderToRenderers();
+            _CrackReveal?.SetSortingOrder(_SortingLayerId, _BaseSortingOrder);
             UpdateStuckObjectsSorting();
         }
 
@@ -163,9 +166,11 @@ namespace Game.Entities.Target.Views
 
         public void Initialize(TargetConfig config)
         {
+            ResolveCrackReveal();
             KnivesToBreak = config.KnivesToBreak;
             _CurrentRotation = config.InitialRotation;
             HitsReceived = 0;
+            _CrackReveal?.ResetReveal();
 
             transform.localRotation = Quaternion.Euler(0f, 0f, _CurrentRotation);
         }
@@ -176,6 +181,11 @@ namespace Game.Entities.Target.Views
         public void PlaySpawnAnimation()
         {
             _SpawnAnimator?.PlaySpawnAnimation();
+        }
+
+        private void Awake()
+        {
+            ResolveCrackReveal();
         }
 
         private void OnEnable()
@@ -280,7 +290,10 @@ namespace Game.Entities.Target.Views
 
         private void RegisterHit()
         {
+            ResolveCrackReveal();
             HitsReceived++;
+            _CrackReveal?.SetHitProgress(HitsReceived, KnivesToBreak);
+
             if (HitsReceived >= KnivesToBreak)
             {
                 DestroyTarget();
@@ -486,6 +499,14 @@ namespace Game.Entities.Target.Views
             }
 
             return 0;
+        }
+
+        private void ResolveCrackReveal()
+        {
+            if (_CrackReveal == null)
+            {
+                _CrackReveal = GetComponentInChildren<TargetCrackReveal>(true);
+            }
         }
     }
 }
