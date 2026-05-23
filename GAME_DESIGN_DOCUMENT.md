@@ -512,3 +512,5 @@ The strongest next product pass would be to define the campaign identity:
 6. Define the first-time user experience and tutorial beats.
 
 The foundation is already coherent: a simple arcade core, a layered progression wrapper, and enough content systems to support a full casual mobile product.
+
+See also: [First 10 Minutes Design Pass](FIRST_10_MINUTES_DESIGN_PASS.md) for the recommended onboarding, unlock order, and early-stage tuning plan.
