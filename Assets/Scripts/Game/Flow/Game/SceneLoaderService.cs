@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -21,6 +22,8 @@ namespace Game.Flow.Game
         private bool _IsGamePreloaded;
         private int _PreloadGeneration;
 
+        public event Action StoreUnloaded;
+
         /// <summary>
         /// Loads the main menu scene.
         /// </summary>
@@ -40,12 +43,50 @@ namespace Game.Flow.Game
         }
 
         /// <summary>
-        /// Loads the store scene.
+        /// Loads the store scene additively over the current scene.
         /// </summary>
         public async UniTask LoadStore()
         {
-            InvalidatePreloadedGameState();
-            await SceneManager.LoadSceneAsync(STORE_SCENE, LoadSceneMode.Single).ToUniTask();
+            Scene existingScene = SceneManager.GetSceneByName(STORE_SCENE);
+            if (existingScene.IsValid() && existingScene.isLoaded)
+            {
+                SceneManager.SetActiveScene(existingScene);
+                return;
+            }
+
+            await SceneManager.LoadSceneAsync(STORE_SCENE, LoadSceneMode.Additive).ToUniTask();
+
+            Scene storeScene = SceneManager.GetSceneByName(STORE_SCENE);
+            if (storeScene.IsValid() && storeScene.isLoaded)
+            {
+                SceneManager.SetActiveScene(storeScene);
+            }
+        }
+
+        /// <summary>
+        /// Unloads the additive store scene and returns focus to the main menu when available.
+        /// </summary>
+        public async UniTask UnloadStore()
+        {
+            Scene storeScene = SceneManager.GetSceneByName(STORE_SCENE);
+            if (!storeScene.IsValid() || !storeScene.isLoaded)
+            {
+                return;
+            }
+
+            AsyncOperation unloadOperation = SceneManager.UnloadSceneAsync(STORE_SCENE);
+            if (unloadOperation != null)
+            {
+                await unloadOperation.ToUniTask();
+            }
+
+            Scene mainMenuScene = SceneManager.GetSceneByName(MAIN_MENU_SCENE);
+            if (mainMenuScene.IsValid() && mainMenuScene.isLoaded)
+            {
+                SceneManager.SetActiveScene(mainMenuScene);
+            }
+
+            StoreUnloaded?.Invoke();
         }
 
         /// <summary>

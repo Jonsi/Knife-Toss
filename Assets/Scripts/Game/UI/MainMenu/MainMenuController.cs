@@ -86,6 +86,9 @@ namespace Game.UI.MainMenu
             if (_MissionsButton != null)
                 _MissionsButton.onClick.AddListener(OnMissionsClicked);
 
+            if (_SceneLoaderService != null)
+                _SceneLoaderService.StoreUnloaded += OnStoreUnloaded;
+
             StartMenuAsync().Forget();
         }
 
@@ -137,6 +140,9 @@ namespace Game.UI.MainMenu
             if (_MissionsButton != null)
                 _MissionsButton.onClick.RemoveListener(OnMissionsClicked);
 
+            if (_SceneLoaderService != null)
+                _SceneLoaderService.StoreUnloaded -= OnStoreUnloaded;
+
             if (_OpeningGesturePopup != null)
                 _OpeningGesturePopup.Tapped -= OnOpeningGestureTapped;
         }
@@ -148,17 +154,17 @@ namespace Game.UI.MainMenu
                 _PlayerDataService.ClampSelectionToUnlocked(_StagesCollectionCatalog);
             }
 
-            LoadGameFromMainMenuAsync().Forget();
+            LeaveMainMenuAsync(_SceneLoaderService.RevealPreloadedGameFromMainMenu).Forget();
         }
 
         private void OnStagesClicked()
         {
-            NavigateAsync(_SceneLoaderService.LoadStagesMenu).Forget();
+            LeaveMainMenuAsync(_SceneLoaderService.LoadStagesMenu).Forget();
         }
 
         private void OnShopClicked()
         {
-            NavigateAsync(_SceneLoaderService.LoadStore).Forget();
+            LeaveMainMenuAsync(_SceneLoaderService.LoadStore).Forget();
         }
 
         private void OnRemoveAdsClicked()
@@ -173,12 +179,12 @@ namespace Game.UI.MainMenu
 
         private void OnPvpClicked()
         {
-            NavigateAsync(_SceneLoaderService.LoadPVP).Forget();
+            LeaveMainMenuAsync(_SceneLoaderService.LoadPVP).Forget();
         }
 
         private void OnPowerUpsClicked()
         {
-            NavigateAsync(_SceneLoaderService.LoadPowerUps).Forget();
+            LeaveMainMenuAsync(_SceneLoaderService.LoadPowerUps).Forget();
         }
 
         private void OnMissionsClicked()
@@ -242,7 +248,7 @@ namespace Game.UI.MainMenu
             _KnifeSkinSelectorView?.PlayIn();
         }
 
-        private async UniTaskVoid NavigateAsync(Func<UniTask> loadScene)
+        private async UniTaskVoid LeaveMainMenuAsync(Func<UniTask> loadScene)
         {
             if (_IsNavigating || loadScene == null)
             {
@@ -262,30 +268,15 @@ namespace Game.UI.MainMenu
                 Debug.LogException(exception);
                 _IsNavigating = false;
                 SetButtonsInteractable(true);
+                PlayMenuIn();
             }
         }
 
-        private async UniTaskVoid LoadGameFromMainMenuAsync()
+        private void OnStoreUnloaded()
         {
-            if (_IsNavigating)
-            {
-                return;
-            }
-
-            _IsNavigating = true;
-            SetButtonsInteractable(false);
-
-            try
-            {
-                await PlayMenuOutAsync();
-                await _SceneLoaderService.RevealPreloadedGameFromMainMenu();
-            }
-            catch (Exception exception)
-            {
-                Debug.LogException(exception);
-                _IsNavigating = false;
-                SetButtonsInteractable(true);
-            }
+            _IsNavigating = false;
+            SetButtonsInteractable(true);
+            PlayMenuIn();
         }
 
         private void SetButtonsInteractable(bool isInteractable)

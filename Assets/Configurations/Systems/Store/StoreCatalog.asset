@@ -16,11 +16,13 @@ MonoBehaviour:
   - <Price>k__BackingField:
       <Currency>k__BackingField: 1
       <Amount>k__BackingField: 250
+      <IapProduct>k__BackingField: {fileID: 0}
     <Reward>k__BackingField:
       rid: 5211687559453999730
   - <Price>k__BackingField:
       <Currency>k__BackingField: 1
       <Amount>k__BackingField: 250
+      <IapProduct>k__BackingField: {fileID: 0}
     <Reward>k__BackingField:
       rid: 6094320976635818241
   <CurrencyPacks>k__BackingField: []
@@ -28,61 +30,73 @@ MonoBehaviour:
   - <Price>k__BackingField:
       <Currency>k__BackingField: 1
       <Amount>k__BackingField: 100
+      <IapProduct>k__BackingField: {fileID: 0}
     <Reward>k__BackingField:
       rid: 8566979025762517408
   - <Price>k__BackingField:
       <Currency>k__BackingField: 1
       <Amount>k__BackingField: 150
+      <IapProduct>k__BackingField: {fileID: 0}
     <Reward>k__BackingField:
       rid: 8566979033683460164
   - <Price>k__BackingField:
       <Currency>k__BackingField: 1
       <Amount>k__BackingField: 200
+      <IapProduct>k__BackingField: {fileID: 0}
     <Reward>k__BackingField:
       rid: 1284073612687983101
   - <Price>k__BackingField:
       <Currency>k__BackingField: 1
       <Amount>k__BackingField: 250
+      <IapProduct>k__BackingField: {fileID: 0}
     <Reward>k__BackingField:
       rid: 7655696909973138148
   - <Price>k__BackingField:
       <Currency>k__BackingField: 1
       <Amount>k__BackingField: 300
+      <IapProduct>k__BackingField: {fileID: 0}
     <Reward>k__BackingField:
       rid: 4255152976586529593
   - <Price>k__BackingField:
       <Currency>k__BackingField: 1
       <Amount>k__BackingField: 350
+      <IapProduct>k__BackingField: {fileID: 0}
     <Reward>k__BackingField:
       rid: 6781337944898425218
   - <Price>k__BackingField:
       <Currency>k__BackingField: 1
       <Amount>k__BackingField: 400
+      <IapProduct>k__BackingField: {fileID: 0}
     <Reward>k__BackingField:
       rid: 3183110145742422059
   - <Price>k__BackingField:
       <Currency>k__BackingField: 1
       <Amount>k__BackingField: 450
+      <IapProduct>k__BackingField: {fileID: 0}
     <Reward>k__BackingField:
       rid: 7069501114600435860
   - <Price>k__BackingField:
       <Currency>k__BackingField: 1
       <Amount>k__BackingField: 500
+      <IapProduct>k__BackingField: {fileID: 0}
     <Reward>k__BackingField:
       rid: 4080565292216723632
   - <Price>k__BackingField:
       <Currency>k__BackingField: 1
       <Amount>k__BackingField: 550
+      <IapProduct>k__BackingField: {fileID: 0}
     <Reward>k__BackingField:
       rid: 8326543718762616171
   - <Price>k__BackingField:
       <Currency>k__BackingField: 1
       <Amount>k__BackingField: 600
+      <IapProduct>k__BackingField: {fileID: 0}
     <Reward>k__BackingField:
       rid: 2608942339762103802
   - <Price>k__BackingField:
       <Currency>k__BackingField: 1
       <Amount>k__BackingField: 650
+      <IapProduct>k__BackingField: {fileID: 0}
     <Reward>k__BackingField:
       rid: 7098076309185085272
   <IapEntries>k__BackingField:
@@ -95,6 +109,29 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 1284073612687983101
+      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
+      data:
+        <Config>k__BackingField: {fileID: 11400000, guid: cd2302e299fa49538c8e0865e6b7415c, type: 2}
+    - rid: 1405318739432303954
+      type: {class: RemoveAdsReward, ns: Game.Store.Rewards, asm: Game}
+      data: 
+    - rid: 2608942339762103802
+      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
+      data:
+        <Config>k__BackingField: {fileID: 11400000, guid: f7399e8799c4441dae49bab9058586d7, type: 2}
+    - rid: 3183110145742422059
+      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
+      data:
+        <Config>k__BackingField: {fileID: 11400000, guid: ff614fd8542947c49b37656a8d7c2b70, type: 2}
+    - rid: 4080565292216723632
+      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
+      data:
+        <Config>k__BackingField: {fileID: 11400000, guid: 6f6a2c683aae4cb09603f25a8f4b3257, type: 2}
+    - rid: 4255152976586529593
+      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
+      data:
+        <Config>k__BackingField: {fileID: 11400000, guid: 1e32505526fe431d88bcba6d22cf38e4, type: 2}
     - rid: 5211687559453999730
       type: {class: PowerUpReward, ns: Game.Store.Rewards, asm: Game}
       data:
@@ -105,66 +142,31 @@ MonoBehaviour:
       data:
         <Config>k__BackingField: {fileID: 11400000, guid: 6967f4aaf4944e44d951eb0c224f82c6, type: 2}
         <Quantity>k__BackingField: 6
-    - rid: 8566979025762517408
-      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
-      data:
-        <Config>k__BackingField: {fileID: 11400000, guid: 4390750316d8e1d4f8502549b66bdd0f, type: 2}
-        <AutoEquipOnPurchase>k__BackingField: 1
-    - rid: 8566979033683460164
-      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
-      data:
-        <Config>k__BackingField: {fileID: 11400000, guid: a507911e36d9b11488a05e00bfeb0467, type: 2}
-        <AutoEquipOnPurchase>k__BackingField: 1
-    - rid: 1284073612687983101
-      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
-      data:
-        <Config>k__BackingField: {fileID: 11400000, guid: cd2302e299fa49538c8e0865e6b7415c, type: 2}
-        <AutoEquipOnPurchase>k__BackingField: 1
-    - rid: 7655696909973138148
-      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
-      data:
-        <Config>k__BackingField: {fileID: 11400000, guid: 5c8d09bd697345179c96ed2101e0aa37, type: 2}
-        <AutoEquipOnPurchase>k__BackingField: 1
-    - rid: 4255152976586529593
-      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
-      data:
-        <Config>k__BackingField: {fileID: 11400000, guid: 1e32505526fe431d88bcba6d22cf38e4, type: 2}
-        <AutoEquipOnPurchase>k__BackingField: 1
     - rid: 6781337944898425218
       type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
       data:
         <Config>k__BackingField: {fileID: 11400000, guid: 1494b01702544ada8e0b63300919c9ba, type: 2}
-        <AutoEquipOnPurchase>k__BackingField: 1
-    - rid: 3183110145742422059
-      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
-      data:
-        <Config>k__BackingField: {fileID: 11400000, guid: ff614fd8542947c49b37656a8d7c2b70, type: 2}
-        <AutoEquipOnPurchase>k__BackingField: 1
     - rid: 7069501114600435860
       type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
       data:
         <Config>k__BackingField: {fileID: 11400000, guid: 878ea4bc1d674ffd823e44e0ec3e1f6e, type: 2}
-        <AutoEquipOnPurchase>k__BackingField: 1
-    - rid: 4080565292216723632
-      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
-      data:
-        <Config>k__BackingField: {fileID: 11400000, guid: 6f6a2c683aae4cb09603f25a8f4b3257, type: 2}
-        <AutoEquipOnPurchase>k__BackingField: 1
-    - rid: 8326543718762616171
-      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
-      data:
-        <Config>k__BackingField: {fileID: 11400000, guid: f015dbad1bd44955a7f1289c647d3b16, type: 2}
-        <AutoEquipOnPurchase>k__BackingField: 1
-    - rid: 2608942339762103802
-      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
-      data:
-        <Config>k__BackingField: {fileID: 11400000, guid: f7399e8799c4441dae49bab9058586d7, type: 2}
-        <AutoEquipOnPurchase>k__BackingField: 1
     - rid: 7098076309185085272
       type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
       data:
         <Config>k__BackingField: {fileID: 11400000, guid: 5e5ca88a2c4d41b2bff33c613513ee00, type: 2}
-        <AutoEquipOnPurchase>k__BackingField: 1
-    - rid: 1405318739432303954
-      type: {class: RemoveAdsReward, ns: Game.Store.Rewards, asm: Game}
-      data: {}
+    - rid: 7655696909973138148
+      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
+      data:
+        <Config>k__BackingField: {fileID: 11400000, guid: 5c8d09bd697345179c96ed2101e0aa37, type: 2}
+    - rid: 8326543718762616171
+      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
+      data:
+        <Config>k__BackingField: {fileID: 11400000, guid: f015dbad1bd44955a7f1289c647d3b16, type: 2}
+    - rid: 8566979025762517408
+      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
+      data:
+        <Config>k__BackingField: {fileID: 11400000, guid: 4390750316d8e1d4f8502549b66bdd0f, type: 2}
+    - rid: 8566979033683460164
+      type: {class: KnifeSkinReward, ns: Game.Store.Rewards, asm: Game}
+      data:
+        <Config>k__BackingField: {fileID: 11400000, guid: a507911e36d9b11488a05e00bfeb0467, type: 2}

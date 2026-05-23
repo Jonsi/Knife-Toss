@@ -6,6 +6,7 @@ using Game.Store.Data;
 using Game.Store.Interfaces;
 using Game.Store.Rewards;
 using Game.Store.Services;
+using Game.UI.Common;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -23,16 +24,19 @@ namespace Game.UI.Store
         [field: SerializeField] public PowerUpStoreCardView PowerUpCardPrefab { get; private set; }
         [field: SerializeField] public Transform PowerUpsContentRoot { get; private set; }
         [field: SerializeField] public Button CloseButton { get; private set; }
+        [SerializeField] private StoreBalanceChipView _StoreBalanceChipView;
+        [SerializeField] private UiElementAnimator[] _StoreAnimators;
 
         private StoreCatalog _StoreCatalog;
         private IStorePurchaseRouter _PurchaseRouter;
         private KnifeSkinService _KnifeSkinService;
         private SceneLoaderService _SceneLoaderService;
         private PlayerDataService _PlayerDataService;
-        private StoreBalanceChipView _StoreBalanceChipView;
         private readonly List<SpawnedCardBinding> _KnifeSkinBindings = new List<SpawnedCardBinding>();
         private readonly List<SpawnedCardBinding> _PowerUpBindings = new List<SpawnedCardBinding>();
         private readonly List<SpawnedCardBinding> _IapBindings = new List<SpawnedCardBinding>();
+        private readonly List<UiElementAnimator> _RuntimeAnimators = new List<UiElementAnimator>();
+        private bool _IsClosing;
 
         [Inject]
         private void Construct(
@@ -40,15 +44,13 @@ namespace Game.UI.Store
             IStorePurchaseRouter purchaseRouter,
             KnifeSkinService knifeSkinService,
             SceneLoaderService sceneLoaderService,
-            PlayerDataService playerDataService,
-            StoreBalanceChipView storeBalanceChipView)
+            PlayerDataService playerDataService)
         {
             _StoreCatalog = storeCatalog;
             _PurchaseRouter = purchaseRouter;
             _KnifeSkinService = knifeSkinService;
             _SceneLoaderService = sceneLoaderService;
             _PlayerDataService = playerDataService;
-            _StoreBalanceChipView = storeBalanceChipView;
         }
 
         private void Start()
@@ -56,6 +58,7 @@ namespace Game.UI.Store
             BindCloseButton();
             BindCatalog();
             RefreshCardState();
+            PlayStoreIn();
         }
 
         private void OnDisable()
@@ -207,7 +210,7 @@ namespace Game.UI.Store
 
         private void RefreshCardState()
         {
-            var canInteract = _PurchaseRouter == null || !_PurchaseRouter.IsPurchaseInProgress;
+            var canInteract = !_IsClosing && (_PurchaseRouter == null || !_PurchaseRouter.IsPurchaseInProgress);
             RefreshKnifeSkinStates(canInteract);
             RefreshPowerUpStates(canInteract);
             RefreshIapStates(canInteract);
@@ -242,7 +245,90 @@ namespace Game.UI.Store
 
         private void OnCloseClicked()
         {
-            _SceneLoaderService?.LoadMainMenu().Forget();
+            CloseStoreAsync().Forget();
+        }
+
+        private async UniTaskVoid CloseStoreAsync()
+        {
+            if (_IsClosing)
+            {
+                return;
+            }
+
+            _IsClosing = true;
+            RefreshCardState();
+
+            await PlayStoreOutAsync();
+            if (_SceneLoaderService != null)
+            {
+                await _SceneLoaderService.UnloadStore();
+            }
+        }
+
+        private void PlayStoreIn()
+        {
+            UiElementAnimator[] animators = GetStoreAnimators();
+            for (int i = 0; i < animators.Length; i++)
+            {
+                animators[i]?.PlayIn();
+            }
+        }
+
+        private async UniTask PlayStoreOutAsync()
+        {
+            UiElementAnimator[] animators = GetStoreAnimators();
+            if (animators.Length == 0)
+            {
+                return;
+            }
+
+            var tasks = new List<UniTask>();
+            for (int i = 0; i < animators.Length; i++)
+            {
+                UiElementAnimator animator = animators[i];
+                if (animator != null)
+                {
+                    tasks.Add(animator.PlayOutAsync());
+                }
+            }
+
+            if (tasks.Count > 0)
+            {
+                await UniTask.WhenAll(tasks);
+            }
+        }
+
+        private UiElementAnimator[] GetStoreAnimators()
+        {
+            if (_StoreAnimators != null && _StoreAnimators.Length > 0)
+            {
+                return _StoreAnimators;
+            }
+
+            if (_RuntimeAnimators.Count > 0)
+            {
+                return _RuntimeAnimators.ToArray();
+            }
+
+            Transform root = transform;
+            for (int i = 0; i < root.childCount; i++)
+            {
+                Transform child = root.GetChild(i);
+                if (child == null)
+                {
+                    continue;
+                }
+
+                UiElementAnimator animator = child.GetComponent<UiElementAnimator>();
+                if (animator == null)
+                {
+                    animator = child.gameObject.AddComponent<UiElementAnimator>();
+                }
+
+                _RuntimeAnimators.Add(animator);
+            }
+
+            return _RuntimeAnimators.ToArray();
         }
 
         private static void ClearChildren(Transform parent)

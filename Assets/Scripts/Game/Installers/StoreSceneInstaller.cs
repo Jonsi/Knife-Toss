@@ -29,6 +29,7 @@ namespace Game.Installers
 
         [Header("Scene References")]
         [SerializeField] private StoreMenuController _StoreMenuController;
+        [SerializeField] private StoreBalanceChipView _StoreBalanceChipView;
         [SerializeField] private StoreAdCtaView _StoreAdCtaView;
 
         [Header("Ads (optional; requires AdSettings in GameInstaller)")]
@@ -53,7 +54,8 @@ namespace Game.Installers
             if (_StoreMenuController != null)
                 builder.RegisterComponent(_StoreMenuController);
 
-            builder.RegisterComponentInHierarchy<StoreBalanceChipView>();
+            if (_StoreBalanceChipView != null)
+                builder.RegisterComponent(_StoreBalanceChipView);
 
             if (_StoreAdPlacement != null && _StoreAdCtaView != null)
             {
@@ -65,7 +67,7 @@ namespace Game.Installers
                     _StoreAdPlacement,
                     resolver.Resolve<IRewardGrantContext>(),
                     resolver.Resolve<StoreAdCtaView>(),
-                    resolver.Resolve<StoreBalanceChipView>()
+                    _StoreBalanceChipView
                 ), Lifetime.Scoped).AsImplementedInterfaces();
             }
         }
