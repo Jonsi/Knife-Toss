@@ -36,7 +36,7 @@ namespace Common.Services.RemoteConfig
         
         private void RegisterService(IContainerBuilder builder)
         {
-#if DISABLE_FIREBASE
+#if DISABLE_FIREBASE || UNITY_EDITOR
             builder.Register<StubRemoteConfigService>(Lifetime.Singleton)
 #else
             builder.Register<FirebaseRemoteConfigService>(Lifetime.Singleton)
