@@ -2029,6 +2029,7 @@ GameObject:
   - component: {fileID: 1510524199}
   - component: {fileID: 1510524198}
   - component: {fileID: 1510524197}
+  - component: {fileID: 1510524200}
   m_Layer: 5
   m_Name: RemoveAdsButton
   m_TagString: Untagged
@@ -2137,6 +2138,62 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1510524195}
   m_CullTransparentMesh: 1
+--- !u!114 &1510524200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1510524195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c39b31b8dcb46aabdf1b6f1f66273a2, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game::Game.UI.Common.UiElementAnimator
+  _RectTransform: {fileID: 1510524196}
+  _Graphic: {fileID: 1510524198}
+  _PlayInOnEnable: 0
+  _UseUnscaledTime: 1
+  _EnableGameObjectOnPlayIn: 1
+  _DisableGameObjectOnPlayOut: 1
+  _IdleAnimation:
+    _Mode: 0
+    _PrimaryScaleMultiplier: 1.04
+    _SecondaryScaleMultiplier: 1.02
+    _UpDuration: 0.12
+    _DownDuration: 0.1
+    _SecondaryUpDuration: 0.09
+    _SecondaryDownDuration: 0.08
+    _BetweenLoopsDelay: 0.72
+    _InitialDelay: 0.18
+    _HorizontalTravel: 28
+    _HorizontalCycleDuration: 5.6
+    _HorizontalTilt: 1.2
+    _AnimateChildrenSeparately: 0
+    _ChildPhaseOffset: 1.35
+    _ChildCycleDurationVariance: 0.18
+    _ChildTravelFalloff: 0.18
+    _ChildVerticalTravel: 3
+    _UpEase: 6
+    _DownEase: 5
+  _In:
+    _PositionOffset: {x: 120, y: 0}
+    _ScaleMultiplier: {x: 0.85, y: 0.85, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: 12}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.34
+    _Delay: 0.22
+    _Ease: 27
+  _Out:
+    _PositionOffset: {x: 90, y: 0}
+    _ScaleMultiplier: {x: 0.9, y: 0.9, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: -12}
+    _Color: {r: 1, g: 1, b: 1, a: 1}
+    _Alpha: 0
+    _Duration: 0.18
+    _Delay: 0.02
+    _Ease: 26
 --- !u!1 &1526553040
 GameObject:
   m_ObjectHideFlags: 0
@@ -3062,6 +3119,7 @@ MonoBehaviour:
   - {fileID: 1990090261}
   - {fileID: 1197863338}
   - {fileID: 1881409178}
+  - {fileID: 1510524200}
   _KnifeSkinSelectorView: {fileID: 1915672171}
   _GesturePopupPrefab: {fileID: 9209562137776292494, guid: 63d01876f6991465d9d7e4c520d3b05a, type: 3}
   _GesturePopupParent: {fileID: 1526553041}
