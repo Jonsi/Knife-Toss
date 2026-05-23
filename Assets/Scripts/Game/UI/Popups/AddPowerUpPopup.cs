@@ -181,7 +181,7 @@ namespace Game.UI.Popups
                     }
 
                     var entry = i < _VisibleEntries.Count ? _VisibleEntries[i] : null;
-                    card.SetInteractable(canInteract && entry != null && _PurchaseRouter != null && _PurchaseRouter.CanPurchase(entry));
+                    card.SetInteractable(canInteract && entry != null && _PurchaseRouter != null);
                     card.SetCurrentAmount(GetCurrentAmount(entry));
                 }
             }

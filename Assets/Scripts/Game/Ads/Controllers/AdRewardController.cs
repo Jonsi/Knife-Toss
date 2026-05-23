@@ -123,9 +123,8 @@ namespace Game.Ads.Controllers
         {
             int cost = GetCurrentContinueCost();
             bool visible = !HasConsumedContinueAccess();
-            bool interactable = visible && CanAfford(cost);
 
-            _FailPopup.SetContinueState(visible, interactable, cost);
+            _FailPopup.SetContinueState(visible, visible, cost);
         }
 
         private bool CanContinueAfterFailure(int cost) =>

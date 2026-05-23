@@ -296,13 +296,11 @@ namespace Game.UI.Store
 
                 if (binding.Card is KnifeSkinStoreCardView knifeSkinCard)
                 {
-                    var canPurchase = binding.Entry != null && _PurchaseRouter != null && _PurchaseRouter.CanPurchase(binding.Entry);
-                    knifeSkinCard.SetAvailableState(canInteract && canPurchase);
+                    knifeSkinCard.SetAvailableState(CanPressSoftPurchaseButton(binding.Entry, canInteract));
                 }
                 else
                 {
-                    var canPurchase = binding.Entry != null && _PurchaseRouter != null && _PurchaseRouter.CanPurchase(binding.Entry);
-                    binding.Card.SetInteractable(canInteract && canPurchase);
+                    binding.Card.SetInteractable(CanPressSoftPurchaseButton(binding.Entry, canInteract));
                 }
             }
         }
@@ -319,8 +317,7 @@ namespace Game.UI.Store
                     continue;
                 }
 
-                var canPurchase = binding.Entry != null && _PurchaseRouter != null && _PurchaseRouter.CanPurchase(binding.Entry);
-                binding.Card.SetInteractable(canInteract && canPurchase);
+                binding.Card.SetInteractable(CanPressSoftPurchaseButton(binding.Entry, canInteract));
 
                 if (binding.Card is not PowerUpStoreCardView powerUpCard ||
                     binding.Entry?.Reward is not PowerUpReward powerUpReward ||
@@ -347,6 +344,11 @@ namespace Game.UI.Store
                 var canPurchase = binding.Entry != null && _PurchaseRouter != null && _PurchaseRouter.CanPurchase(binding.Entry);
                 binding.Card.SetInteractable(canInteract && canPurchase);
             }
+        }
+
+        private bool CanPressSoftPurchaseButton(PurchasableEntry entry, bool canInteract)
+        {
+            return canInteract && entry != null && _PurchaseRouter != null;
         }
 
         private void PlayRewardAccumulation(PurchasableEntry entry)
