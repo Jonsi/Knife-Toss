@@ -34,7 +34,6 @@ namespace Game.UI.Store
         private PlayerDataService _PlayerDataService;
         private readonly List<SpawnedCardBinding> _KnifeSkinBindings = new List<SpawnedCardBinding>();
         private readonly List<SpawnedCardBinding> _PowerUpBindings = new List<SpawnedCardBinding>();
-        private readonly List<SpawnedCardBinding> _IapBindings = new List<SpawnedCardBinding>();
         private readonly List<UiElementAnimator> _RuntimeAnimators = new List<UiElementAnimator>();
         private bool _IsClosing;
 
@@ -84,7 +83,6 @@ namespace Game.UI.Store
         {
             BindKnifeSkinEntries(_StoreCatalog?.Skins);
             BindPowerUpEntries(_StoreCatalog?.PowerUps);
-            BindIapEntries(_StoreCatalog?.IapEntries);
         }
 
         private void BindKnifeSkinEntries(IReadOnlyList<PurchasableEntry> entries)
@@ -128,11 +126,6 @@ namespace Game.UI.Store
             BindEntries(entries, PowerUpsContentRoot, PowerUpCardPrefab, _PowerUpBindings);
         }
 
-        private void BindIapEntries(IReadOnlyList<PurchasableEntry> entries)
-        {
-            AppendEntries(entries, PowerUpsContentRoot, PowerUpCardPrefab, _IapBindings);
-        }
-
         private void BindEntries<TCard>(
             IReadOnlyList<PurchasableEntry> entries,
             Transform parent,
@@ -174,46 +167,11 @@ namespace Game.UI.Store
             RefreshScrollableContentLayout(parent);
         }
 
-        private void AppendEntries<TCard>(
-            IReadOnlyList<PurchasableEntry> entries,
-            Transform parent,
-            TCard prefab,
-            List<SpawnedCardBinding> bindings)
-            where TCard : StoreCardView
-        {
-            bindings.Clear();
-
-            if (parent == null || prefab == null || entries == null)
-            {
-                return;
-            }
-
-            for (var i = 0; i < entries.Count; i++)
-            {
-                var entry = entries[i];
-                if (entry == null)
-                {
-                    continue;
-                }
-
-                var card = Instantiate(prefab, parent);
-                card.Setup(entry, OnBuyClicked);
-                bindings.Add(new SpawnedCardBinding
-                {
-                    Card = card,
-                    Entry = entry
-                });
-            }
-
-            RefreshScrollableContentLayout(parent);
-        }
-
         private void RefreshCardState()
         {
             var canInteract = !_IsClosing && (_PurchaseRouter == null || !_PurchaseRouter.IsPurchaseInProgress);
             RefreshKnifeSkinStates(canInteract);
             RefreshPowerUpStates(canInteract);
-            RefreshIapStates(canInteract);
             if (CloseButton != null)
             {
                 CloseButton.interactable = canInteract;
@@ -417,21 +375,6 @@ namespace Game.UI.Store
             }
         }
 
-        private void RefreshIapStates(bool canInteract)
-        {
-            for (var i = 0; i < _IapBindings.Count; i++)
-            {
-                var binding = _IapBindings[i];
-                if (binding.Card == null || binding.IsPurchased)
-                {
-                    continue;
-                }
-
-                var canPurchase = binding.Entry != null && _PurchaseRouter != null && _PurchaseRouter.CanPurchase(binding.Entry);
-                binding.Card.SetInteractable(canInteract && canPurchase);
-            }
-        }
-
         private bool CanPressSoftPurchaseButton(PurchasableEntry entry, bool canInteract)
         {
             return canInteract && entry != null && _PurchaseRouter != null;
@@ -466,14 +409,6 @@ namespace Game.UI.Store
                 }
             }
 
-            for (var i = 0; i < _IapBindings.Count; i++)
-            {
-                if (_IapBindings[i].Entry == entry)
-                {
-                    return _IapBindings[i].Card;
-                }
-            }
-
             return null;
         }
 
@@ -494,20 +429,6 @@ namespace Game.UI.Store
                 }
 
                 RefreshScrollableContentLayout(KnifeSkinsContentRoot);
-                return;
-            }
-
-            if (TryGetIapBinding(entry, out binding))
-            {
-                binding.IsPurchased = true;
-                binding.Card?.SetInteractable(false);
-
-                if (binding.Card != null)
-                {
-                    binding.Card.gameObject.SetActive(false);
-                }
-
-                RefreshScrollableContentLayout(PowerUpsContentRoot);
                 return;
             }
 
@@ -532,21 +453,6 @@ namespace Game.UI.Store
             for (var i = 0; i < _KnifeSkinBindings.Count; i++)
             {
                 binding = _KnifeSkinBindings[i];
-                if (binding.Entry == entry)
-                {
-                    return true;
-                }
-            }
-
-            binding = null;
-            return false;
-        }
-
-        private bool TryGetIapBinding(PurchasableEntry entry, out SpawnedCardBinding binding)
-        {
-            for (var i = 0; i < _IapBindings.Count; i++)
-            {
-                binding = _IapBindings[i];
                 if (binding.Entry == entry)
                 {
                     return true;

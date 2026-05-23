@@ -234,13 +234,7 @@ namespace Game.UI.MainMenu
 
         private void PlayMenuIn()
         {
-            if (_MenuAnimators == null)
-            {
-                _KnifeSkinSelectorView?.PlayIn();
-                return;
-            }
-
-            foreach (UiElementAnimator animator in _MenuAnimators)
+            foreach (UiElementAnimator animator in GetMenuAnimators())
             {
                 animator?.PlayIn();
             }
@@ -344,15 +338,11 @@ namespace Game.UI.MainMenu
         {
             var tasks = new List<UniTask>();
 
-            if (_MenuAnimators != null)
+            foreach (UiElementAnimator animator in GetMenuAnimators())
             {
-                for (var i = 0; i < _MenuAnimators.Length; i++)
+                if (animator != null)
                 {
-                    var animator = _MenuAnimators[i];
-                    if (animator != null)
-                    {
-                        tasks.Add(animator.PlayOutAsync());
-                    }
+                    tasks.Add(animator.PlayOutAsync());
                 }
             }
 
@@ -364,6 +354,37 @@ namespace Game.UI.MainMenu
             if (tasks.Count > 0)
             {
                 await UniTask.WhenAll(tasks);
+            }
+        }
+
+        private IReadOnlyList<UiElementAnimator> GetMenuAnimators()
+        {
+            var animators = new List<UiElementAnimator>();
+            var seen = new HashSet<UiElementAnimator>();
+
+            AddMenuAnimators(_MenuAnimators, animators, seen);
+            AddMenuAnimators(GetComponentsInChildren<UiElementAnimator>(true), animators, seen);
+
+            return animators;
+        }
+
+        private static void AddMenuAnimators(
+            IReadOnlyList<UiElementAnimator> source,
+            List<UiElementAnimator> destination,
+            HashSet<UiElementAnimator> seen)
+        {
+            if (source == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < source.Count; i++)
+            {
+                UiElementAnimator animator = source[i];
+                if (animator != null && seen.Add(animator))
+                {
+                    destination.Add(animator);
+                }
             }
         }
 

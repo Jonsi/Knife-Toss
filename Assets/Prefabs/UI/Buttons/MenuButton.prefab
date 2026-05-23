@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4781810108337644206}
   - component: {fileID: 5683081027429824934}
   - component: {fileID: 3241972892515633416}
+  - component: {fileID: 7132048763981254702}
   m_Layer: 5
   m_Name: MenuButton
   m_TagString: Untagged
@@ -59,6 +60,62 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game::Game.UI.HUD.SettingsButtonView
   _Button: {fileID: 7290115397377063800}
+--- !u!114 &7132048763981254702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 527600414810306286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c39b31b8dcb46aabdf1b6f1f66273a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.UI.Common.UiElementAnimator
+  _RectTransform: {fileID: 4781810108337644206}
+  _Graphic: {fileID: 0}
+  _PlayInOnEnable: 0
+  _UseUnscaledTime: 1
+  _EnableGameObjectOnPlayIn: 1
+  _DisableGameObjectOnPlayOut: 1
+  _IdleAnimation:
+    _Mode: 0
+    _PrimaryScaleMultiplier: 1.04
+    _SecondaryScaleMultiplier: 1.02
+    _UpDuration: 0.12
+    _DownDuration: 0.1
+    _SecondaryUpDuration: 0.09
+    _SecondaryDownDuration: 0.08
+    _BetweenLoopsDelay: 0.72
+    _InitialDelay: 0.18
+    _HorizontalTravel: 28
+    _HorizontalCycleDuration: 5.6
+    _HorizontalTilt: 1.2
+    _AnimateChildrenSeparately: 0
+    _ChildPhaseOffset: 1.35
+    _ChildCycleDurationVariance: 0.18
+    _ChildTravelFalloff: 0.18
+    _ChildVerticalTravel: 3
+    _UpEase: 6
+    _DownEase: 5
+  _In:
+    _PositionOffset: {x: -100, y: 0}
+    _ScaleMultiplier: {x: 0.9, y: 0.9, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: -10}
+    _Color: {r: 0.9, g: 0.9, b: 0.9, a: 1}
+    _Alpha: 0
+    _Duration: 0.36
+    _Delay: 0.08
+    _Ease: 27
+  _Out:
+    _PositionOffset: {x: -80, y: 0}
+    _ScaleMultiplier: {x: 0.94, y: 0.94, z: 1}
+    _RotationOffset: {x: 0, y: 0, z: -6}
+    _Color: {r: 0.9, g: 0.9, b: 0.9, a: 1}
+    _Alpha: 0
+    _Duration: 0.18
+    _Delay: 0.04
+    _Ease: 26
 --- !u!1 &2879324248882551833
 GameObject:
   m_ObjectHideFlags: 0
