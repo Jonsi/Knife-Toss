@@ -56,6 +56,9 @@ The largest gap is not the basic mechanic; it is consistency around the mechanic
 - The approved core visual target is **Hand-Carved Forest Arcade**: colorful forest-fantasy
   readability, warm ink outlines, painted wood/stone/metal, Lilita One display typography,
   Liberation Sans body typography, and one semantic UI/VFX palette.
+- Final tutorial design and implementation are deferred to Phase 9, after mechanics,
+  progression, economy, UI, feedback, and presentation are stable. Early work exposes
+  truthful state contracts and generic guidance primitives only.
 
 ## Baseline Evidence
 
@@ -75,13 +78,13 @@ The largest gap is not the basic mechanic; it is consistency around the mechanic
 | 0 | Repeatable Playtest Foundation | Done | Real-input success, failure, restart, telemetry, and save restoration are repeatable. |
 | 1 | Runtime Transition and Release Hygiene | In progress | Runtime and Android artifact pass; iOS artifact and release-identity decisions remain. |
 | 2 | Visual Direction Lock and Asset Audit | In progress | Direction and inventory are complete; entitlement and legacy-art usage-right evidence remain. |
-| 3 | Tutorial and Power-Up Truth | Ready | Cheat QA and clean-save player flows both behave intentionally. |
+| 3 | Power-Up Mechanic Truth | Ready | Both power-ups and their acquisition/state/event contracts behave intentionally. |
 | 4 | Shared UX Feedback Foundation | Blocked | Depends on Phase 2 visual tokens and Phase 3 event semantics. |
 | 5 | Failure, Retry, and Continue Polish | Blocked | Depends on the shared feedback foundation. |
 | 6 | Continuous Completion and Reward Accumulation | Needs decision | Completion sequence and reward accumulation semantics are approved and implemented. |
 | 7 | Core Vertical-Slice Art, VFX, and Audio Refinement | Blocked | Depends on stable loops and an approved visual target. |
 | 8 | Secondary Screens and Meta UX Consistency | Blocked | Depends on the shared feedback foundation and core UI kit. |
-| 9 | Full Journey, Device, and Release Validation | Blocked | Fresh-save journey and production build pass all functional and presentation gates. |
+| 9 | Tutorial Integration, Full Journey, Device, and Release Validation | Blocked | Final tutorial is integrated against stable systems; fresh-save journey and production build pass. |
 | 10 | World Identity and Content Expansion | Deferred | Begins only after the core vertical slice passes Phase 9 validation. |
 
 ## Work Item Tracker
@@ -131,18 +134,17 @@ currently empty. The broader art tree also includes a large generic flat-icon li
 multiple unrelated VFX/audio packs. This is an asset-curation problem as well as a missing-
 art problem.
 
-### Phase 3 - Tutorial and Power-Up Truth
+### Phase 3 - Power-Up Mechanic Truth
 
 | ID | Work item | Priority | Status | Evidence / acceptance |
 |---|---|---:|---|---|
-| TUT-301 | Document and validate the cheat workflow for granting each power-up | P0 | Ready | QA can set inventory without editing save JSON or bypassing gameplay use. |
-| TUT-302 | Test Super Knife from grant through throw, collision, consumption, and feedback | P0 | Ready | Mechanic path passes with real input. |
-| TUT-303 | Test Slow Time duration, speed change, consumption, and recovery | P0 | Ready | Telemetry confirms configured effect and clean restoration. |
+| PWR-302 | Document and validate the cheat workflow for granting each power-up | P0 | Ready | QA can set inventory without editing save JSON or bypassing gameplay use. |
+| PWR-303 | Test Super Knife from grant through throw, collision, consumption, and feedback | P0 | Ready | Mechanic path passes with real input. |
+| PWR-304 | Test Slow Time duration, speed change, consumption, and recovery | P0 | Ready | Telemetry confirms configured effect and clean restoration. |
 | PWR-301 | Fix stale Slow Time selected state after immediate consumption | P0 | Ready | Used world effects clear selection and show the correct count. |
-| TUT-304 | Test clean-save acquisition through the store | P0 | Ready | Player can understand price, obtain inventory, and return to gameplay. |
-| TUT-305 | Decide empty-inventory tutorial behavior | P0 | Needs decision | Grant one unit, direct to acquisition, substitute a hint, or suppress it. |
-| TUT-306 | Ensure tutorials never require unavailable inventory without explanation | P0 | Blocked | Depends on TUT-305. |
-| TUT-307 | Keep cheat-assisted mechanic QA separate from clean-save onboarding QA | P1 | Ready | Test report labels both paths independently. |
+| PWR-305 | Validate clean-save acquisition and persistence through the store | P0 | Ready | Price, grant, inventory, scene transition, and consumption remain correct without tutorial assumptions. |
+| PWR-306 | Define stable power-up outcome events for shared feedback | P0 | Ready | Available, blocked, selected, activated, consumed, expired, and failed outcomes are presenter-ready. |
+| PWR-307 | Keep cheat-assisted mechanic QA separate from clean-save economy QA | P1 | Ready | Test evidence labels both paths independently. |
 
 ### Phase 4 - Shared UX Feedback Foundation
 
@@ -208,10 +210,15 @@ run counter, and the next target entering immediately afterward.
 | POPUP-801 | Replace development-looking mock-flow presentation in player-facing QA captures | P2 | Ready | QA/debug presentation cannot be confused with production UI. |
 | UX-801 | Audit copy, spacing, hierarchy, safe areas, and back navigation on every secondary screen | P1 | Blocked | Depends on Phase 7 core visual language. |
 
-### Phase 9 - Full Journey, Device, and Release Validation
+### Phase 9 - Tutorial Integration, Full Journey, Device, and Release Validation
 
 | ID | Work item | Priority | Status | Evidence / acceptance |
 |---|---|---:|---|---|
+| TUT-901 | Map the final minimum teaching sequence against the completed core UX | P0 | Blocked | Begins only after Phases 1-8 stabilize mechanics, progression, economy, feedback, and presentation. |
+| TUT-902 | Decide first taught power-up and empty-inventory behavior | P0 | Blocked | Choose using final acquisition cost/path, pacing, and mechanic comprehension evidence. |
+| TUT-903 | Implement truthful state-driven prompts and success-based completion flags | P0 | Blocked | Prompts query live state and complete only after the demonstrated action succeeds. |
+| TUT-904 | Add tutorial skip, dismissal, interruption recovery, and replay/debug coverage | P1 | Blocked | Tutorial state cannot trap, silently skip, or corrupt a player journey. |
+| TUT-905 | Validate final copy, gestures, focus, safe areas, and accessibility on device | P0 | Blocked | Uses final UI/art and representative device classes. |
 | QA-901 | Run fresh-save first-ten-minutes playtest with real input | P0 | Blocked | Phases 1-8 complete. |
 | QA-902 | Run progressed-save regression through store, missions, stages, and power-ups | P0 | Blocked | Phases 1-8 complete. |
 | QA-903 | Test representative low/mid/high Android devices and target iPhone | P0 | Blocked | Device matrix approved. |
@@ -234,8 +241,8 @@ run counter, and the next target entering immediately afterward.
 
 | Decision | Needed by | Current recommendation |
 |---|---|---|
-| First power-up teaching path | Phase 3 | Test both; prefer a granted Chrono Shift after normal throwing is understood, unless Super Knife is deliberately the first fantasy. |
-| Empty-inventory hint behavior | Phase 3 | Never point at an unusable action without an acquisition explanation. |
+| First power-up teaching path | Phase 9 | Decide against the finished mechanics and acquisition flow; do not lock it early. |
+| Empty-inventory hint behavior | Phase 9 | Never point at an unusable action without an acquisition explanation. |
 | Continue rules | Phase 5 | Keep the first failure low-pressure; delay aggressive ad/currency decisions. |
 | Completion duration | Phase 6 | Start with 0.6-1.0 seconds and tune through real play. |
 | Reward accumulator cashout | Phase 6 | Save rewards immediately; presentation may accumulate without risking loss. |

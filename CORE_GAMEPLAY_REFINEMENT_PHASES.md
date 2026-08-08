@@ -40,7 +40,7 @@ This roadmap complements rather than replaces:
 flowchart TD
     P0["Phase 0: Playtest Foundation"] --> P1["Phase 1: Runtime and Release Hygiene"]
     P0 --> P2["Phase 2: Visual Direction and Asset Audit"]
-    P1 --> P3["Phase 3: Tutorial and Power-Up Truth"]
+    P1 --> P3["Phase 3: Power-Up Mechanic Truth"]
     P2 --> P4["Phase 4: Shared UX Feedback"]
     P3 --> P4
     P4 --> P5["Phase 5: Failure and Recovery"]
@@ -49,7 +49,8 @@ flowchart TD
     P5 --> P7
     P6 --> P7
     P7 --> P8["Phase 8: Secondary Screens"]
-    P8 --> P9["Phase 9: Full Validation"]
+    P8 --> P9["Phase 9: Tutorial Integration and Full Validation"]
+    P3 --> P9
     P9 --> P10["Phase 10: World Content Expansion"]
 ```
 
@@ -231,12 +232,12 @@ unrelated visible elements inside the core loop are a current vertical-slice pro
   receipts and legacy-art authorship/usage-right evidence remain the sole Phase 2 closure
   gate; affected assets must be replaced if proof cannot be attached.
 
-## Phase 3 - Tutorial and Power-Up Truth
+## Phase 3 - Power-Up Mechanic Truth
 
 ### Goal
 
-Make power-ups mechanically testable and make every player-facing tutorial prompt truthful
-for the current inventory and progression state.
+Make power-ups mechanically testable and stabilize their inventory, activation, consumption,
+recovery, and presentation contracts before shared feedback is built around them.
 
 ### Test Lanes
 
@@ -247,31 +248,31 @@ for the current inventory and progression state.
 - Test activation, cancellation where applicable, throw behavior, collision behavior,
   duration, consumption, counts, VFX, audio events, and recovery.
 
-#### Clean-Save Player Lane
+#### Clean-Save Economy Lane
 
 - Start from normal inventory and currency.
-- Observe when each tutorial appears.
 - Use the store or intended grant path to acquire inventory.
-- Verify the player understands availability, cost, acquisition, use, and result.
+- Verify availability, cost, acquisition, use, persistence, and consumption without relying
+  on tutorial prompts.
 
-### Product Decision
+### Deferred Tutorial Decisions
 
-For an empty inventory when a tutorial wants to teach a power-up, choose exactly one:
+Do not lock tutorial timing, copy, gestures, sequencing, or the first taught power-up in
+this phase. Those decisions are made in Phase 9 against the finished core UX, economy,
+progression, feedback, and presentation.
 
-1. grant one tutorial unit;
-2. route the player clearly through acquisition;
-3. substitute an explanation that does not demand activation; or
-4. suppress the hint until inventory becomes available.
-
-Do not point at an unusable action and leave the player to infer why it failed.
+Phase 3 only defines truthful domain facts that the later tutorial can query: inventory,
+availability, price/acquisition route, selected state, activation result, consumption,
+duration, expiration, and failure reason.
 
 ### Scope
 
 - Document cheat invocation.
 - Validate Super Knife and Slow Time end to end.
 - Fix Slow Time's stale selected state after immediate consumption.
-- Decide the first taught power-up and empty-inventory behavior.
-- Make tutorial completion flags reflect actual successful actions.
+- Validate clean-save acquisition and inventory persistence.
+- Define stable typed outcomes for available, unavailable, selected, activated, consumed,
+  expired, and blocked states.
 - Preserve levels as beatable without paid or stocked power-ups unless explicitly designed
   otherwise.
 
@@ -279,16 +280,18 @@ Do not point at an unusable action and leave the player to infer why it failed.
 
 - Power-up QA matrix.
 - Cheat workflow documentation.
-- Clean-save acquisition findings.
+- Clean-save acquisition and persistence findings.
 - Corrected HUD state behavior.
-- Approved onboarding rule and implementation.
+- Stable power-up state and outcome-event contract for Phase 4 presenters and Phase 9
+  tutorial integration.
 
 ### Exit Criteria
 
 - Both power-ups pass mechanic QA with real gameplay input.
-- Empty-inventory behavior is intentional and understandable.
 - A used world effect cannot remain falsely selected.
-- Clean-save players are never trapped by a tutorial requirement.
+- Acquisition, inventory counts, selection, consumption, expiration, and recovery remain
+  correct across scene transitions and app interruption.
+- Phase 4 can present every power-up result without depending on tutorial-specific logic.
 
 ## Phase 4 - Shared UX Feedback Foundation
 
@@ -440,7 +443,8 @@ to secondary screens or new worlds.
 
 - Main menu.
 - Gameplay target, knives, collectibles, background, and HUD.
-- Tutorial gestures and power-up states.
+- Power-up states and reusable guidance/highlight primitives; tutorial composition remains
+  deferred to Phase 9.
 - Failure and recovery.
 - Final-hit completion and reward accumulation.
 
@@ -520,12 +524,32 @@ settings, and supporting popups.
 - Every screen uses the core UI kit and feedback vocabulary.
 - Placeholder and test content cannot be mistaken for final production content.
 
-## Phase 9 - Full Journey, Device, and Release Validation
+## Phase 9 - Tutorial Integration, Full Journey, Device, and Release Validation
 
 ### Goal
 
-Prove that the complete core vertical slice works as a player journey and as a production
-mobile build.
+Design and integrate onboarding against the finished core experience, then prove that the
+complete vertical slice works as a player journey and as a production mobile build.
+
+### Why Tutorial Integration Is Last
+
+Tutorial timing, copy, gestures, and progression dependencies are highly sensitive to
+changes in mechanics, UI hierarchy, economy, failure/recovery, rewards, art, and feedback.
+Phases 1-8 must be stable before tutorial composition begins. Earlier phases may expose
+typed state and generic guidance primitives, but must not bake in the final teaching flow.
+
+### Tutorial Integration Scope
+
+- Map the minimum teaching beats from first launch through the first successful power-up.
+- Decide the first taught power-up only after both mechanics and acquisition paths are
+  final.
+- For an empty inventory, deliberately grant a tutorial unit, route through acquisition,
+  substitute an explanatory hint, or suppress the prompt until it is actionable.
+- Ensure prompts query live state and never require unavailable inventory.
+- Set completion flags only after the demonstrated action actually succeeds.
+- Provide skip, dismissal, interruption recovery, and replay/debug paths where appropriate.
+- Validate tutorial copy, focus treatment, gesture placement, safe areas, and readability
+  on the final UI and representative devices.
 
 ### Test Profiles
 
@@ -552,6 +576,8 @@ mobile build.
 
 ### Deliverables
 
+- Final tutorial beat map, state rules, copy, and implementation.
+- Clean-save onboarding and interruption/recovery report.
 - First-ten-minutes playtest report.
 - Progressed-player regression report.
 - Device/performance matrix.
@@ -560,6 +586,9 @@ mobile build.
 
 ### Exit Criteria
 
+- Every tutorial prompt is truthful for the live inventory, progression, and UI state.
+- Tutorial completion reflects successful player action; interruption cannot trap or skip
+  required state incorrectly.
 - The first throw, first failure, first completion, first reward, and first power-up are all
   understandable without developer explanation.
 - No critical runtime, transition, persistence, economy, or release-configuration defect
@@ -609,12 +638,12 @@ naming, and low-cost prototypes may occur earlier if they do not create integrat
 1. Close and retain Phase 0 evidence.
 2. Execute Phase 1 runtime/release hygiene.
 3. Execute Phase 2 visual direction and asset audit.
-4. Execute Phase 3 tutorial and power-up truth.
+4. Execute Phase 3 power-up mechanic truth without locking the tutorial flow.
 5. Build Phase 4 shared feedback.
 6. Refine Phase 5 failure and Phase 6 completion; these may overlap after Phase 4 stabilizes.
 7. Produce Phase 7 core vertical-slice art, VFX, and audio.
 8. Apply the system to Phase 8 secondary screens.
-9. Complete Phase 9 validation.
+9. Integrate the final tutorial, then complete Phase 9 journey/device/release validation.
 10. Open Phase 10 bulk world production only after explicit approval.
 
 ## Phase Change Rule
