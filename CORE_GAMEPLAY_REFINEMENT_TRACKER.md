@@ -157,6 +157,7 @@ art problem.
 | UX-405 | Add typed VFX/audio/haptic hooks without coupling domain services to views | P0 | Ready | Each feedback event can fan out to approved presenters. |
 | UX-406 | Define reduced-motion, mute, and haptic-disable behavior | P1 | Needs decision | Accessibility variants have an explicit product policy. |
 | UX-407 | Build a feedback sandbox/debug panel | P1 | Ready | Every feedback state can be previewed without changing economy data. |
+| UX-408 | Prototype authoritative power-up button states and prepare the final-art handoff | P0 | Ready | `POWER_UP_BUTTON_ART_REPLACEMENT_PLAN.md` defines normal, pressed, active, blocked, unavailable, disabled, consumed/expired, and reduced-motion behavior for both powers. |
 
 ### Phase 5 - Failure, Retry, and Continue Polish
 
@@ -196,6 +197,7 @@ run counter, and the next target entering immediately afterward.
 | ART-705 | Add missing state art: disabled, pressed, selected, owned, unavailable, success, and failure | P0 | Blocked | Depends on Phase 4 state definitions. |
 | ART-706 | Validate all core art at gameplay size and over each retained background | P0 | Blocked | Knives and collision lanes remain readable on device. |
 | ART-707 | Set sprite/import/compression/atlas standards for mobile | P1 | Done | Phase 2 locks Android compression, atlas, filtering, size, and memory rules after auditing 58 referenced textures. |
+| ART-708 | Replace power-up button frames, icons, badges, and active/timer art | P0 | Blocked | Depends on UX-408; final Shatter and Chrono controls pass the replacement plan's gameplay-size, accessibility, provenance, and Android budget gates. |
 
 ### Phase 8 - Secondary Screens and Meta UX Consistency
 

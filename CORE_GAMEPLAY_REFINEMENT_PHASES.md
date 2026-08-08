@@ -356,6 +356,8 @@ The system must distinguish at least:
 
 - Feedback event catalog.
 - Reusable button-state component.
+- Power-up button state prototype and production handoff defined by
+  [Power-Up Button Art Replacement Plan](POWER_UP_BUTTON_ART_REPLACEMENT_PLAN.md).
 - Toast/callout presenter.
 - Currency gain/spend presenter.
 - VFX/audio/haptic adapter hooks.
@@ -502,6 +504,8 @@ to secondary screens or new worlds.
 ### Deliverables
 
 - Approved core UI kit.
+- Final power-up socket, icons, badges, active-state overlays, and countdown art from the
+  [Power-Up Button Art Replacement Plan](POWER_UP_BUTTON_ART_REPLACEMENT_PLAN.md).
 - Refined gameplay art and missing state assets.
 - Coherent core VFX set.
 - Coherent core audio cue set and mix pass.
