@@ -21,6 +21,11 @@ namespace Game.UI.Popups
 
         private void Awake()
         {
+            ActionButtonPresenter.GetOrAdd(_PrivacyPolicyButton);
+            ActionButtonPresenter.GetOrAdd(_ReportErrorButton);
+            ActionButtonPresenter.GetOrAdd(_RestorePurchasesButton);
+            ActionButtonPresenter.GetOrAdd(_CloseButton);
+
             if (_SoundToggle != null)
                 _SoundToggle.onValueChanged.AddListener(OnSoundValueChanged);
             

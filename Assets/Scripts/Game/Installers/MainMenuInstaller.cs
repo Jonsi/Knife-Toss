@@ -6,6 +6,7 @@ using Game.UI.MainMenu;
 using Game.UI.Missions;
 using Game.UI.Services;
 using Game.Missions.Events;
+using Game.Feedback.Events;
 using Game.Store.Services;
 using UnityEngine;
 using VContainer;
@@ -52,7 +53,8 @@ namespace Game.Installers
             builder.Register(resolver => new DailyMissionPopupController(
                 _DailyMissionPopup,
                 resolver.Resolve<Game.Missions.Daily.Services.DailyMissionProvider>(),
-                _MissionProgressChangedEventChannel), Lifetime.Scoped).AsSelf();
+                _MissionProgressChangedEventChannel,
+                resolver.Resolve<FeedbackEventChannel>()), Lifetime.Scoped).AsSelf();
             builder.RegisterComponentInHierarchy<CoinsUiDisplay>();
         }
     }

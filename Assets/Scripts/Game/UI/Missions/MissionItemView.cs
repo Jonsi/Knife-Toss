@@ -1,5 +1,8 @@
 using System;
+using Game.Feedback.Data;
+using Game.Feedback.Events;
 using Game.Missions.Data;
+using Game.UI.Common;
 using Game.UI.Popups;
 using TMPro;
 using UnityEngine;
@@ -23,11 +26,13 @@ namespace Game.UI.Missions
 
         private int _MissionIndex;
         private Action<int> _ClaimCallback;
+        private ActionButtonPresenter _ClaimPresenter;
 
         private void Awake()
         {
             if (_ClaimButton != null)
             {
+                _ClaimPresenter = ActionButtonPresenter.GetOrAdd(_ClaimButton);
                 _ClaimButton.onClick.AddListener(OnClaimClicked);
             }
         }
@@ -40,10 +45,15 @@ namespace Game.UI.Missions
             }
         }
 
-        public void Setup(int missionIndex, MissionSnapshot snapshot, Action<int> onClaimClicked)
+        public void Setup(
+            int missionIndex,
+            MissionSnapshot snapshot,
+            Action<int> onClaimClicked,
+            FeedbackEventChannel feedbackChannel = null)
         {
             _MissionIndex = missionIndex;
             _ClaimCallback = onClaimClicked;
+            _ClaimPresenter = ActionButtonPresenter.GetOrAdd(_ClaimButton, feedbackChannel);
 
             BuildRewardPreview(snapshot);
             Refresh(snapshot);
@@ -98,8 +108,31 @@ namespace Game.UI.Missions
             }
         }
 
+        public void ResolveClaim(bool success)
+        {
+            if (_ClaimPresenter == null)
+                return;
+
+            if (success)
+            {
+                _ClaimPresenter.CompleteSubmission();
+                return;
+            }
+
+            _ClaimPresenter.PresentBlocked(new FeedbackEventData(
+                FeedbackKind.Blocked,
+                "mission.claim_blocked",
+                _MissionIndex.ToString()));
+        }
+
         private void OnClaimClicked()
         {
+            if (_ClaimCallback == null)
+                return;
+
+            if (_ClaimPresenter != null && !_ClaimPresenter.TryBeginSubmission())
+                return;
+
             _ClaimCallback?.Invoke(_MissionIndex);
         }
 

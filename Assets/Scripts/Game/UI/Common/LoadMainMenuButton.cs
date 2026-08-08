@@ -1,4 +1,6 @@
 using Cysharp.Threading.Tasks;
+using Game.Feedback.Data;
+using Game.Feedback.Events;
 using Game.Flow.Game;
 using Game.UI.Controllers;
 using UnityEngine;
@@ -15,8 +17,10 @@ namespace Game.UI.Common
         [SerializeField] private Button _Button;
 
         [Inject] private SceneLoaderService _SceneLoaderService;
+        [Inject] private FeedbackEventChannel _FeedbackEventChannel;
         private UIController _UIController;
         private bool _IsLoading;
+        private ActionButtonPresenter _Presenter;
 
         private void Awake()
         {
@@ -30,6 +34,7 @@ namespace Game.UI.Common
 
         private void Start()
         {
+            _Presenter = ActionButtonPresenter.GetOrAdd(_Button, _FeedbackEventChannel);
             if (_Button != null)
             {
                 _Button.onClick.AddListener(OnClicked);
@@ -56,20 +61,32 @@ namespace Game.UI.Common
                 return;
             }
 
+            if (_Presenter != null && !_Presenter.TryBeginSubmission())
+            {
+                return;
+            }
+
             _IsLoading = true;
-            if (_Button != null)
+            try
             {
-                _Button.interactable = false;
-            }
+                if (_UIController != null)
+                {
+                    await _UIController.PlayStageOutAsync();
+                }
 
-            if (_UIController != null)
-            {
-                await _UIController.PlayStageOutAsync();
+                if (_SceneLoaderService != null)
+                {
+                    await _SceneLoaderService.LoadMainMenu();
+                }
             }
-
-            if (_SceneLoaderService != null)
+            catch (System.Exception exception)
             {
-                await _SceneLoaderService.LoadMainMenu();
+                Debug.LogException(exception);
+                _IsLoading = false;
+                _Presenter?.PresentBlocked(new FeedbackEventData(
+                    FeedbackKind.Blocked,
+                    "navigation.failed",
+                    gameObject.name));
             }
         }
     }

@@ -3,6 +3,7 @@ using Common.Rewards.Interfaces;
 using Game.Ads.Controllers;
 using Game.Rewards.Services;
 using Game.Ads.Data;
+using Game.Feedback.Events;
 using Game.Store.Data;
 using Game.Store.Events;
 using Game.UI.Common;
@@ -67,7 +68,8 @@ namespace Game.Installers
                     _StoreAdPlacement,
                     resolver.Resolve<IRewardGrantContext>(),
                     resolver.Resolve<StoreAdCtaView>(),
-                    _StoreBalanceChipView
+                    _StoreBalanceChipView,
+                    resolver.Resolve<FeedbackEventChannel>()
                 ), Lifetime.Scoped).AsImplementedInterfaces();
             }
         }

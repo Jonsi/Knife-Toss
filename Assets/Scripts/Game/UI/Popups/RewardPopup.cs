@@ -59,6 +59,7 @@ namespace Game.UI.Popups
 
             if (_CollectButton != null)
             {
+                ActionButtonPresenter.GetOrAdd(_CollectButton);
                 _CollectButton.onClick.RemoveListener(OnCollectClicked);
                 _CollectButton.onClick.AddListener(OnCollectClicked);
             }

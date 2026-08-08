@@ -1,6 +1,10 @@
 using System;
 using Game.Economy.Data;
+using Game.Feedback.Data;
+using Game.Feedback.Events;
 using Game.Store.Data;
+using Game.Store.Rewards;
+using Game.UI.Common;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,8 +23,12 @@ namespace Game.UI.Store
 
         protected PurchasableEntry Entry { get; private set; }
         private Action<PurchasableEntry> _OnBuyClicked;
+        private ActionButtonPresenter _ButtonPresenter;
 
-        public void Setup(PurchasableEntry entry, Action<PurchasableEntry> onBuyClicked)
+        public void Setup(
+            PurchasableEntry entry,
+            Action<PurchasableEntry> onBuyClicked,
+            FeedbackEventChannel feedbackChannel = null)
         {
             Entry = entry;
             _OnBuyClicked = onBuyClicked;
@@ -41,6 +49,7 @@ namespace Game.UI.Store
 
             if (BuyButton != null)
             {
+                _ButtonPresenter = ActionButtonPresenter.GetOrAdd(BuyButton, feedbackChannel);
                 BuyButton.onClick.RemoveListener(OnBuyPressed);
                 BuyButton.onClick.AddListener(OnBuyPressed);
             }
@@ -50,8 +59,36 @@ namespace Game.UI.Store
         {
             if (BuyButton != null)
             {
-                BuyButton.interactable = interactable;
+                if (_ButtonPresenter != null)
+                {
+                    _ButtonPresenter.SetAvailable(interactable);
+                }
+                else
+                {
+                    BuyButton.interactable = interactable;
+                }
             }
+        }
+
+        public void ResolveSubmission(PurchaseResult result)
+        {
+            if (_ButtonPresenter == null)
+                return;
+
+            if (result.Success)
+            {
+                _ButtonPresenter.CompleteSubmission();
+                return;
+            }
+
+            bool insufficientFunds = string.Equals(
+                result.FailureReason,
+                PurchaseResult.InsufficientFunds.FailureReason,
+                StringComparison.Ordinal);
+            _ButtonPresenter.PresentBlocked(new FeedbackEventData(
+                insufficientFunds ? FeedbackKind.InsufficientFunds : FeedbackKind.Blocked,
+                insufficientFunds ? "store.insufficient_funds" : "store.purchase_blocked",
+                GetFeedbackContextId()));
         }
 
         protected virtual void BindEntry(PurchasableEntry entry)
@@ -81,10 +118,23 @@ namespace Game.UI.Store
 
         private void OnBuyPressed()
         {
-            if (Entry != null)
+            if (Entry == null || _OnBuyClicked == null)
+                return;
+
+            if (_ButtonPresenter != null && !_ButtonPresenter.TryBeginSubmission())
+                return;
+
+            _OnBuyClicked.Invoke(Entry);
+        }
+
+        private string GetFeedbackContextId()
+        {
+            return Entry?.Reward switch
             {
-                _OnBuyClicked?.Invoke(Entry);
-            }
+                PowerUpReward powerUp when powerUp.Config != null => powerUp.Config.InventoryKey,
+                KnifeSkinReward skin when skin.Config != null => skin.Config.Id,
+                _ => gameObject.name
+            };
         }
 
         [Serializable]

@@ -1,4 +1,5 @@
 using System;
+using Game.UI.Common;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -77,6 +78,9 @@ namespace Game.UI.Stages
             }
 
             BindClaimButton(itemData, onRewardClaimed);
+
+            ActionButtonPresenter.GetOrAdd(_Button);
+            ActionButtonPresenter.GetOrAdd(_ClaimButton);
 
             if (_Button == null)
             {

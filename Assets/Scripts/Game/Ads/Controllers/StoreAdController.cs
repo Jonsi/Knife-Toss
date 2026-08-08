@@ -2,6 +2,7 @@ using Common.Ads.Interfaces;
 using Cysharp.Threading.Tasks;
 using Game.Ads.Data;
 using Game.Ads.Extensions;
+using Game.Feedback.Events;
 using Game.Store.Rewards;
 using Common.Rewards.Interfaces;
 using Game.UI.Store;
@@ -23,6 +24,7 @@ namespace Game.Ads.Controllers
         private readonly IRewardGrantContext _GrantContext;
         private readonly StoreAdCtaView _View;
         private readonly StoreBalanceChipView _BalanceChipView;
+        private readonly FeedbackEventChannel _FeedbackEventChannel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StoreAdController"/> class.
@@ -32,13 +34,15 @@ namespace Game.Ads.Controllers
             RewardedPlacement placement,
             IRewardGrantContext grantContext,
             StoreAdCtaView view,
-            StoreBalanceChipView balanceChipView)
+            StoreBalanceChipView balanceChipView,
+            FeedbackEventChannel feedbackEventChannel)
         {
             _AdService = adService;
             _Placement = placement;
             _GrantContext = grantContext;
             _View = view;
             _BalanceChipView = balanceChipView;
+            _FeedbackEventChannel = feedbackEventChannel;
         }
 
         /// <summary>
@@ -46,7 +50,10 @@ namespace Game.Ads.Controllers
         /// </summary>
         public void Start()
         {
-            _View.Setup(_Placement.Reward?.GetDisplayText() ?? string.Empty, OnWatchAdClicked);
+            _View.Setup(
+                _Placement.Reward?.GetDisplayText() ?? string.Empty,
+                OnWatchAdClicked,
+                _FeedbackEventChannel);
             _View.SetInteractable(_AdService.CanShowAd(_Placement));
         }
 
@@ -61,6 +68,8 @@ namespace Game.Ads.Controllers
                 await _Placement.TryGrantRewardAsync(_GrantContext);
                 PlayRewardAccumulation();
             }
+
+            _View.ResolveSubmission(result.Success);
 
             _View.SetInteractable(_AdService.CanShowAd(_Placement));
         }

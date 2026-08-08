@@ -4,6 +4,7 @@ using Game.Ads.Data;
 using Game.Economy.Data;
 using Game.Economy.Events;
 using Game.Economy.Interfaces;
+using Game.Feedback.Data;
 using Game.Flow.Events;
 using Game.Flow.Level;
 using Game.Flow.Stage;
@@ -90,12 +91,20 @@ namespace Game.Ads.Controllers
             int cost = GetCurrentContinueCost();
             if (!CanContinueAfterFailure(cost))
             {
+                _FailPopup.PresentContinueBlocked(new FeedbackEventData(
+                    CanAfford(cost) ? FeedbackKind.Blocked : FeedbackKind.InsufficientFunds,
+                    CanAfford(cost) ? "continue.unavailable" : "continue.insufficient_funds",
+                    "stage_continue"));
                 RefreshContinueState();
                 return;
             }
 
             if (cost > 0 && !_CurrencyService.TrySpend(CoinCurrencyId, cost))
             {
+                _FailPopup.PresentContinueBlocked(new FeedbackEventData(
+                    FeedbackKind.InsufficientFunds,
+                    "continue.insufficient_funds",
+                    "stage_continue"));
                 RefreshContinueState();
                 return;
             }

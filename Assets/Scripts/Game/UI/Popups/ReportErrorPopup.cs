@@ -1,9 +1,12 @@
 using System;
 using System.IO;
+using Game.Feedback.Data;
+using Game.Feedback.Events;
 using Game.UI.Common;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 namespace Game.UI.Popups
 {
@@ -13,11 +16,18 @@ namespace Game.UI.Popups
         [SerializeField] private Button _SubmitButton;
         [SerializeField] private Button _CancelButton;
         [SerializeField] private TextMeshProUGUI _StatusText;
+
+        [Inject] private FeedbackEventChannel _FeedbackEventChannel;
+
+        private ActionButtonPresenter _SubmitPresenter;
         
         public event Action OnCancelRequested;
 
         private void Awake()
         {
+            _SubmitPresenter = ActionButtonPresenter.GetOrAdd(_SubmitButton);
+            ActionButtonPresenter.GetOrAdd(_CancelButton);
+
             if (_SubmitButton != null)
                 _SubmitButton.onClick.AddListener(OnSubmitClicked);
             
@@ -46,6 +56,7 @@ namespace Game.UI.Popups
             if (string.IsNullOrWhiteSpace(description))
             {
                 ShowStatus("Please enter a description.");
+                PresentSubmitBlocked("report.description_required");
                 return;
             }
             
@@ -64,8 +75,18 @@ namespace Game.UI.Popups
             catch (Exception e)
             {
                 ShowStatus($"Failed to save report: {e.Message}");
+                PresentSubmitBlocked("report.save_failed");
                 Debug.LogError($"Failed to save error report: {e}");
             }
+        }
+
+        private void PresentSubmitBlocked(string cueId)
+        {
+            _SubmitPresenter = ActionButtonPresenter.GetOrAdd(_SubmitButton, _FeedbackEventChannel);
+            _SubmitPresenter?.PresentBlocked(new FeedbackEventData(
+                FeedbackKind.Blocked,
+                cueId,
+                "report_error"));
         }
     }
 }

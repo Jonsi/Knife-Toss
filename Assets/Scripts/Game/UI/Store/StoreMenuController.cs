@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Game.Feedback.Events;
 using Game.Flow.Game;
 using Game.Persistence.Services;
 using Game.Store.Data;
@@ -32,6 +33,8 @@ namespace Game.UI.Store
         private KnifeSkinService _KnifeSkinService;
         private SceneLoaderService _SceneLoaderService;
         private PlayerDataService _PlayerDataService;
+        private FeedbackEventChannel _FeedbackEventChannel;
+        private ActionButtonPresenter _CloseButtonPresenter;
         private readonly List<SpawnedCardBinding> _KnifeSkinBindings = new List<SpawnedCardBinding>();
         private readonly List<SpawnedCardBinding> _PowerUpBindings = new List<SpawnedCardBinding>();
         private readonly List<UiElementAnimator> _RuntimeAnimators = new List<UiElementAnimator>();
@@ -43,13 +46,15 @@ namespace Game.UI.Store
             IStorePurchaseRouter purchaseRouter,
             KnifeSkinService knifeSkinService,
             SceneLoaderService sceneLoaderService,
-            PlayerDataService playerDataService)
+            PlayerDataService playerDataService,
+            FeedbackEventChannel feedbackEventChannel)
         {
             _StoreCatalog = storeCatalog;
             _PurchaseRouter = purchaseRouter;
             _KnifeSkinService = knifeSkinService;
             _SceneLoaderService = sceneLoaderService;
             _PlayerDataService = playerDataService;
+            _FeedbackEventChannel = feedbackEventChannel;
         }
 
         private void Start()
@@ -77,6 +82,7 @@ namespace Game.UI.Store
 
             CloseButton.onClick.RemoveListener(OnCloseClicked);
             CloseButton.onClick.AddListener(OnCloseClicked);
+            _CloseButtonPresenter = ActionButtonPresenter.GetOrAdd(CloseButton, _FeedbackEventChannel);
         }
 
         private void BindCatalog()
@@ -110,7 +116,7 @@ namespace Game.UI.Store
                 }
 
                 var card = Instantiate(KnifeSkinCardPrefab, KnifeSkinsContentRoot);
-                card.Setup(entry, OnBuyClicked);
+                card.Setup(entry, OnBuyClicked, _FeedbackEventChannel);
                 _KnifeSkinBindings.Add(new SpawnedCardBinding
                 {
                     Card = card,
@@ -156,7 +162,7 @@ namespace Game.UI.Store
                 }
 
                 var card = Instantiate(prefab, parent);
-                card.Setup(entry, OnBuyClicked);
+                card.Setup(entry, OnBuyClicked, _FeedbackEventChannel);
                 bindings.Add(new SpawnedCardBinding
                 {
                     Card = card,
@@ -192,6 +198,7 @@ namespace Game.UI.Store
 
             RefreshCardState();
             var result = await _PurchaseRouter.TryPurchaseAsync(entry);
+            FindCardForEntry(entry)?.ResolveSubmission(result);
             if (result.Success)
             {
                 SyncKnifeSkinState();
@@ -203,6 +210,11 @@ namespace Game.UI.Store
 
         private void OnCloseClicked()
         {
+            if (_CloseButtonPresenter != null && !_CloseButtonPresenter.TryBeginSubmission())
+            {
+                return;
+            }
+
             CloseStoreAsync().Forget();
         }
 

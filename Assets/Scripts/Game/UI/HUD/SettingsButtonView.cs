@@ -1,4 +1,5 @@
 using Game.UI.Controllers;
+using Game.UI.Common;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -19,6 +20,7 @@ namespace Game.UI.HUD
 
         private void OnEnable()
         {
+            ActionButtonPresenter.GetOrAdd(_Button);
             if (_Button != null)
                 _Button.onClick.AddListener(OnClicked);
         }

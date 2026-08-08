@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Game.Feedback.Events;
 using Game.Missions.Data;
 using Game.Missions.Daily.Services;
 using Game.Missions.Events;
+using Game.UI.Common;
 using UnityEngine;
 
 namespace Game.UI.Missions
@@ -17,6 +19,7 @@ namespace Game.UI.Missions
         private readonly DailyMissionPopup _Popup;
         private readonly DailyMissionProvider _Provider;
         private readonly MissionProgressChangedEventChannel _ProgressChannel;
+        private readonly FeedbackEventChannel _FeedbackEventChannel;
         private readonly List<MissionItemView> _SpawnedItems = new();
         private readonly HashSet<int> _ClaimsInFlight = new();
 
@@ -26,14 +29,17 @@ namespace Game.UI.Missions
         public DailyMissionPopupController(
             DailyMissionPopup popup,
             DailyMissionProvider provider,
-            MissionProgressChangedEventChannel progressChannel)
+            MissionProgressChangedEventChannel progressChannel,
+            FeedbackEventChannel feedbackEventChannel)
         {
             _Popup = popup;
             _Provider = provider;
             _ProgressChannel = progressChannel;
+            _FeedbackEventChannel = feedbackEventChannel;
 
             if (_Popup?.CloseButton != null)
             {
+                ActionButtonPresenter.GetOrAdd(_Popup.CloseButton, _FeedbackEventChannel);
                 _Popup.CloseButton.onClick.AddListener(HideMissions);
             }
         }
@@ -117,7 +123,7 @@ namespace Game.UI.Missions
             for (var i = 0; i < snapshots.Count; i++)
             {
                 var itemView = UnityEngine.Object.Instantiate(_Popup.MissionItemPrefab, _Popup.MissionItemsRoot);
-                itemView.Setup(i, snapshots[i], OnClaimClicked);
+                itemView.Setup(i, snapshots[i], OnClaimClicked, _FeedbackEventChannel);
                 _SpawnedItems.Add(itemView);
             }
         }
@@ -264,8 +270,9 @@ namespace Game.UI.Missions
 
             try
             {
-                await _Provider.TryClaimRewardAsync(missionIndex);
+                bool claimed = await _Provider.TryClaimRewardAsync(missionIndex);
                 RefreshItem(missionIndex);
+                itemView?.ResolveClaim(claimed);
             }
             finally
             {

@@ -1,6 +1,8 @@
 using Cysharp.Threading.Tasks;
 using Game.Flow.Game;
 using Game.IAP.Services;
+using Game.Feedback.Data;
+using Game.Feedback.Events;
 using Game.Level.Interfaces;
 using Game.Level.Configurations.Stage;
 using Game.Level.Catalogs;
@@ -52,11 +54,14 @@ namespace Game.UI.MainMenu
         [Inject] private IStagesCollectionCatalog _StagesCollectionCatalog;
         [Inject] private StagesCollectionResolver _StagesCollectionResolver;
         [Inject] private WorldAssetService _WorldAssetService;
+        [Inject] private FeedbackEventChannel _FeedbackEventChannel;
 
         private bool _IsNavigating;
         private readonly List<KnifeSkinSelectionOption> _KnifeSkinOptions = new List<KnifeSkinSelectionOption>();
         private int _SelectedKnifeSkinIndex;
         private GesturePopupView _OpeningGesturePopup;
+        private ActionButtonPresenter _ActiveNavigationPresenter;
+        private ActionButtonPresenter _RemoveAdsPresenter;
 
         private void Awake()
         {
@@ -68,6 +73,7 @@ namespace Game.UI.MainMenu
 
         private void Start()
         {
+            ConfigureActionButtons();
             _PlayButton.onClick.AddListener(OnPlayClicked);
             _StagesButton.onClick.AddListener(OnStagesClicked);
 
@@ -154,17 +160,17 @@ namespace Game.UI.MainMenu
                 _PlayerDataService.ClampSelectionToUnlocked(_StagesCollectionCatalog);
             }
 
-            LeaveMainMenuAsync(_SceneLoaderService.RevealPreloadedGameFromMainMenu).Forget();
+            LeaveMainMenuAsync(_SceneLoaderService.RevealPreloadedGameFromMainMenu, _PlayButton).Forget();
         }
 
         private void OnStagesClicked()
         {
-            LeaveMainMenuAsync(_SceneLoaderService.LoadStagesMenu).Forget();
+            LeaveMainMenuAsync(_SceneLoaderService.LoadStagesMenu, _StagesButton).Forget();
         }
 
         private void OnShopClicked()
         {
-            LeaveMainMenuAsync(_SceneLoaderService.LoadStore).Forget();
+            LeaveMainMenuAsync(_SceneLoaderService.LoadStore, _ShopButton).Forget();
         }
 
         private void OnRemoveAdsClicked()
@@ -179,12 +185,12 @@ namespace Game.UI.MainMenu
 
         private void OnPvpClicked()
         {
-            LeaveMainMenuAsync(_SceneLoaderService.LoadPVP).Forget();
+            LeaveMainMenuAsync(_SceneLoaderService.LoadPVP, _PvpButton).Forget();
         }
 
         private void OnPowerUpsClicked()
         {
-            LeaveMainMenuAsync(_SceneLoaderService.LoadPowerUps).Forget();
+            LeaveMainMenuAsync(_SceneLoaderService.LoadPowerUps, _PowerUpsButton).Forget();
         }
 
         private void OnMissionsClicked()
@@ -242,14 +248,21 @@ namespace Game.UI.MainMenu
             _KnifeSkinSelectorView?.PlayIn();
         }
 
-        private async UniTaskVoid LeaveMainMenuAsync(Func<UniTask> loadScene)
+        private async UniTaskVoid LeaveMainMenuAsync(Func<UniTask> loadScene, Button sourceButton)
         {
             if (_IsNavigating || loadScene == null)
             {
                 return;
             }
 
+            ActionButtonPresenter presenter = ActionButtonPresenter.GetOrAdd(sourceButton, _FeedbackEventChannel);
+            if (presenter != null && !presenter.TryBeginSubmission())
+            {
+                return;
+            }
+
             _IsNavigating = true;
+            _ActiveNavigationPresenter = presenter;
             SetButtonsInteractable(false);
 
             try
@@ -261,6 +274,11 @@ namespace Game.UI.MainMenu
             {
                 Debug.LogException(exception);
                 _IsNavigating = false;
+                presenter?.PresentBlocked(new FeedbackEventData(
+                    FeedbackKind.Blocked,
+                    "navigation.failed",
+                    sourceButton != null ? sourceButton.gameObject.name : "main_menu"));
+                _ActiveNavigationPresenter = null;
                 SetButtonsInteractable(true);
                 PlayMenuIn();
             }
@@ -269,6 +287,8 @@ namespace Game.UI.MainMenu
         private void OnStoreUnloaded()
         {
             _IsNavigating = false;
+            _ActiveNavigationPresenter?.CompleteSubmission();
+            _ActiveNavigationPresenter = null;
             SetButtonsInteractable(true);
             PlayMenuIn();
         }
@@ -322,6 +342,11 @@ namespace Game.UI.MainMenu
                 return;
             }
 
+            if (_RemoveAdsPresenter != null && !_RemoveAdsPresenter.TryBeginSubmission())
+            {
+                return;
+            }
+
             SetButtonsInteractable(false);
             try
             {
@@ -329,6 +354,7 @@ namespace Game.UI.MainMenu
             }
             finally
             {
+                _RemoveAdsPresenter?.CompleteSubmission();
                 SetButtonsInteractable(true);
                 RefreshRemoveAdsButtonState();
             }
@@ -582,6 +608,17 @@ namespace Game.UI.MainMenu
 
             _RemoveAdsButton.gameObject.SetActive(_RemoveAdsFlow.IsAvailable);
             _RemoveAdsButton.interactable = !_IsNavigating && _RemoveAdsFlow.CanPurchase;
+        }
+
+        private void ConfigureActionButtons()
+        {
+            ActionButtonPresenter.GetOrAdd(_PlayButton, _FeedbackEventChannel);
+            ActionButtonPresenter.GetOrAdd(_StagesButton, _FeedbackEventChannel);
+            ActionButtonPresenter.GetOrAdd(_ShopButton, _FeedbackEventChannel);
+            _RemoveAdsPresenter = ActionButtonPresenter.GetOrAdd(_RemoveAdsButton, _FeedbackEventChannel);
+            ActionButtonPresenter.GetOrAdd(_PvpButton, _FeedbackEventChannel);
+            ActionButtonPresenter.GetOrAdd(_PowerUpsButton, _FeedbackEventChannel);
+            ActionButtonPresenter.GetOrAdd(_MissionsButton, _FeedbackEventChannel);
         }
     }
 }

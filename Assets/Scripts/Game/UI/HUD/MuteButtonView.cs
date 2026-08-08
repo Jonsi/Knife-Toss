@@ -1,4 +1,5 @@
 using Game.UI.Services;
+using Game.UI.Common;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,6 +17,7 @@ namespace Game.UI.HUD
 
         private void OnEnable()
         {
+            ActionButtonPresenter.GetOrAdd(_Button);
             if (_Button != null)
                 _Button.onClick.AddListener(OnClicked);
 

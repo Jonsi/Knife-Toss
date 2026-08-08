@@ -1,8 +1,11 @@
 using Common.Events;
+using Game.Feedback.Data;
+using Game.Feedback.Events;
 using Game.UI.Common;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 namespace Game.UI.Popups
 {
@@ -24,8 +27,16 @@ namespace Game.UI.Popups
         [SerializeField] private VoidEventChannel _RestartStageChannel;
         [SerializeField] private VoidEventChannel _ContinueRequestedChannel;
 
+        [Inject] private FeedbackEventChannel _FeedbackEventChannel;
+
+        private ActionButtonPresenter _ContinuePresenter;
+
         private void OnEnable()
         {
+            ActionButtonPresenter.GetOrAdd(_RetryButton, _FeedbackEventChannel);
+            ActionButtonPresenter.GetOrAdd(_RestartStageButton, _FeedbackEventChannel);
+            _ContinuePresenter = ActionButtonPresenter.GetOrAdd(_ContinueButton, _FeedbackEventChannel);
+
             if (_RetryButton != null && _RetryButton != _ContinueButton)
                 _RetryButton.onClick.AddListener(OnRetryClicked);
 
@@ -65,6 +76,12 @@ namespace Game.UI.Popups
             {
                 _ContinueAmountText.text = cost.ToString();
             }
+        }
+
+        public void PresentContinueBlocked(FeedbackEventData feedback)
+        {
+            _ContinuePresenter ??= ActionButtonPresenter.GetOrAdd(_ContinueButton, _FeedbackEventChannel);
+            _ContinuePresenter?.PresentBlocked(feedback);
         }
 
         private void OnRetryClicked()

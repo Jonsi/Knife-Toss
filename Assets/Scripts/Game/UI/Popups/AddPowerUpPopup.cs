@@ -5,6 +5,7 @@ using Common.Rewards.Interfaces;
 using Cysharp.Threading.Tasks;
 using Game.Ads.Data;
 using Game.Ads.Extensions;
+using Game.Feedback.Events;
 using Game.Persistence.Services;
 using Game.PowerUps.Configs;
 using Game.Store.Data;
@@ -35,6 +36,7 @@ namespace Game.UI.Popups
         private IAdService _AdService;
         private IRewardGrantContext _GrantContext;
         private CoinsUiDisplay _CoinsUiDisplay;
+        private FeedbackEventChannel _FeedbackEventChannel;
         private PowerUpConfigBase _RequestedConfig;
         private readonly List<PurchasableEntry> _VisibleEntries = new List<PurchasableEntry>();
 
@@ -47,7 +49,8 @@ namespace Game.UI.Popups
             PlayerDataService playerDataService,
             IAdService adService,
             IRewardGrantContext grantContext,
-            CoinsUiDisplay coinsUiDisplay)
+            CoinsUiDisplay coinsUiDisplay,
+            FeedbackEventChannel feedbackEventChannel)
         {
             _StoreCatalog = storeCatalog;
             _PurchaseRouter = purchaseRouter;
@@ -55,6 +58,7 @@ namespace Game.UI.Popups
             _AdService = adService;
             _GrantContext = grantContext;
             _CoinsUiDisplay = coinsUiDisplay;
+            _FeedbackEventChannel = feedbackEventChannel;
         }
 
         private void Awake()
@@ -69,6 +73,7 @@ namespace Game.UI.Popups
 
         private void OnEnable()
         {
+            ActionButtonPresenter.GetOrAdd(_CloseButton, _FeedbackEventChannel);
             if (_CloseButton != null)
             {
                 _CloseButton.onClick.RemoveListener(OnCloseClicked);
@@ -125,7 +130,7 @@ namespace Game.UI.Popups
                 var entry = orderedEntries[i];
                 _VisibleEntries.Add(entry);
                 card.gameObject.SetActive(true);
-                card.Setup(entry, OnBuyClicked);
+                card.Setup(entry, OnBuyClicked, _FeedbackEventChannel);
                 card.SetCurrentAmount(GetCurrentAmount(entry));
             }
         }
@@ -162,7 +167,10 @@ namespace Game.UI.Popups
             if (_AdCtaView == null)
                 return;
 
-            _AdCtaView.Setup(_AdPlacement?.Reward?.GetDisplayText() ?? string.Empty, OnWatchAdClicked);
+            _AdCtaView.Setup(
+                _AdPlacement?.Reward?.GetDisplayText() ?? string.Empty,
+                OnWatchAdClicked,
+                _FeedbackEventChannel);
             _AdCtaView.SetInteractable(_AdPlacement != null && _AdService != null && _AdService.CanShowAd(_AdPlacement));
         }
 
@@ -205,6 +213,7 @@ namespace Game.UI.Popups
             RefreshCardState();
 
             var result = await _PurchaseRouter.TryPurchaseAsync(entry);
+            FindCard(entry)?.ResolveSubmission(result);
             if (result.Success)
             {
                 InventoryChanged?.Invoke();
@@ -227,6 +236,8 @@ namespace Game.UI.Popups
                 PlayRewardAccumulation();
                 InventoryChanged?.Invoke();
             }
+
+            _AdCtaView.ResolveSubmission(result.Success);
 
             RefreshCardState();
             _AdCtaView.SetInteractable(_AdService.CanShowAd(_AdPlacement));
@@ -265,6 +276,22 @@ namespace Game.UI.Popups
 
             var inventory = _PlayerDataService?.EnsurePowerUpInventory();
             return inventory?.GetCount(powerUpReward.Config.InventoryKey) ?? 0;
+        }
+
+        private StoreCardView FindCard(PurchasableEntry entry)
+        {
+            if (_PowerUpCards == null)
+                return null;
+
+            for (int i = 0; i < _PowerUpCards.Length && i < _VisibleEntries.Count; i++)
+            {
+                if (_VisibleEntries[i] == entry)
+                {
+                    return _PowerUpCards[i];
+                }
+            }
+
+            return null;
         }
 
         private void PlayRewardAccumulation()

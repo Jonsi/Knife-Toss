@@ -16,6 +16,7 @@ namespace Game.UI.Popups
 
         private void Awake()
         {
+            ActionButtonPresenter.GetOrAdd(_CloseButton);
             if (_CloseButton != null)
                 _CloseButton.onClick.AddListener(() => OnCloseRequested?.Invoke());
         }
