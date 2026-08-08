@@ -157,7 +157,7 @@ art problem.
 | UX-405 | Add typed VFX/audio/haptic hooks without coupling domain services to views | P0 | Ready | Each feedback event can fan out to approved presenters. |
 | UX-406 | Define reduced-motion, mute, and haptic-disable behavior | P1 | Needs decision | Accessibility variants have an explicit product policy. |
 | UX-407 | Build a feedback sandbox/debug panel | P1 | Ready | Every feedback state can be previewed without changing economy data. |
-| UX-408 | Prototype authoritative power-up button states and prepare the final-art handoff | P0 | Ready | `POWER_UP_BUTTON_ART_REPLACEMENT_PLAN.md` defines normal, pressed, active, blocked, unavailable, disabled, consumed/expired, and reduced-motion behavior for both powers. |
+| UX-408 | Prototype authoritative power-up button states and prepare the final-art handoff | P0 | Ready | The art/layout replacement is integrated without gameplay changes. The separate authoritative-state presenter remains future work; original power-up logic is preserved and 7/7 focused service tests pass. |
 
 ### Phase 5 - Failure, Retry, and Continue Polish
 

@@ -19,6 +19,7 @@ namespace Game.PowerUps.Views
         [SerializeField] private TMP_Text _CountText;
         [SerializeField] private GameObject _CountRoot;
         [SerializeField] private GameObject _PlusRoot;
+        [SerializeField] private Material _ActiveIconMaterial;
         [SerializeField] private Color _SelectedColor = Color.white;
         [SerializeField] private Color _UnselectedColor = Color.gray;
         [SerializeField] private Color _UnavailableColor = new Color(0.3f, 0.3f, 0.3f, 0.5f);
@@ -32,6 +33,7 @@ namespace Game.PowerUps.Views
         private bool _IsEffectActive;
         private bool _IsGameplayActive = true;
         private Image _CooldownFill;
+        private Material _DefaultIconMaterial;
         private LevelStartedEventChannel _LevelStartedChannel;
         private VoidEventChannel _FailFlowStartedChannel;
 
@@ -52,6 +54,7 @@ namespace Game.PowerUps.Views
             _FailFlowStartedChannel = failFlowStartedChannel;
             if (_Icon != null)
             {
+                _DefaultIconMaterial = _Icon.material;
                 _Icon.sprite = config.Icon;
             }
 
@@ -217,13 +220,23 @@ namespace Game.PowerUps.Views
             if (targetGraphic == null)
                 return;
 
-            if (_CurrentCount <= 0)
+            bool isActive = _IsSelected || _IsEffectActive;
+            bool isUnavailable = _CurrentCount <= 0 && !_IsEffectActive;
+
+            if (_Icon != null)
             {
-                targetGraphic.color = _AddHandler != null ? _UnselectedColor : _UnavailableColor;
+                _Icon.material = isActive && !isUnavailable && _ActiveIconMaterial != null
+                    ? _ActiveIconMaterial
+                    : _DefaultIconMaterial;
+            }
+
+            if (isUnavailable)
+            {
+                targetGraphic.color = _UnavailableColor;
                 return;
             }
 
-            targetGraphic.color = _IsSelected || _IsEffectActive ? _SelectedColor : _UnselectedColor;
+            targetGraphic.color = isActive ? _SelectedColor : _UnselectedColor;
         }
     }
 }

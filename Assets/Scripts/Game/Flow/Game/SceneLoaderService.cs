@@ -235,7 +235,7 @@ namespace Game.Flow.Game
             _IsPreloadingGame = false;
             _IsGamePreloaded = false;
             _PreloadGameTask = default;
-            DeferredGameSceneVisibility.Reset();
+            DeferredGameSceneVisibility.ResetHiddenLoadState();
         }
     }
 }

@@ -12,6 +12,8 @@ namespace Game.Flow.Game
         [SerializeField] private GameObject[] _RootsToHide;
 
         private readonly List<BehaviourState> _HiddenBehaviours = new();
+        private readonly List<RendererState> _HiddenRenderers = new();
+        private readonly HashSet<Renderer> _HiddenRendererLookup = new();
         private bool _IsHidden;
 
         private void Awake()
@@ -24,6 +26,14 @@ namespace Game.Flow.Game
             SetRootsVisible(false);
             _IsHidden = true;
             DeferredGameSceneVisibilityState.RegisterLoadedGate(this);
+        }
+
+        private void LateUpdate()
+        {
+            if (_IsHidden)
+            {
+                HideSceneRenderers();
+            }
         }
 
         public static void BeginHiddenLoad()
@@ -41,7 +51,7 @@ namespace Game.Flow.Game
             return DeferredGameSceneVisibilityState.WaitForReveal();
         }
 
-        public static void Reset()
+        public static void ResetHiddenLoadState()
         {
             DeferredGameSceneVisibilityState.Reset();
         }
@@ -67,6 +77,8 @@ namespace Game.Flow.Game
             if (!isVisible)
             {
                 _HiddenBehaviours.Clear();
+                _HiddenRenderers.Clear();
+                _HiddenRendererLookup.Clear();
 
                 foreach (GameObject root in _RootsToHide)
                 {
@@ -88,6 +100,8 @@ namespace Game.Flow.Game
                     }
                 }
 
+                HideSceneRenderers();
+
                 return;
             }
 
@@ -97,6 +111,43 @@ namespace Game.Flow.Game
             }
 
             _HiddenBehaviours.Clear();
+
+            for (int i = 0; i < _HiddenRenderers.Count; i++)
+            {
+                _HiddenRenderers[i].Restore();
+            }
+
+            _HiddenRenderers.Clear();
+            _HiddenRendererLookup.Clear();
+        }
+
+        private void HideSceneRenderers()
+        {
+            if (!gameObject.scene.IsValid() || !gameObject.scene.isLoaded)
+            {
+                return;
+            }
+
+            foreach (GameObject root in gameObject.scene.GetRootGameObjects())
+            {
+                foreach (Renderer renderer in root.GetComponentsInChildren<Renderer>(true))
+                {
+                    if (renderer == null || !renderer.enabled)
+                    {
+                        continue;
+                    }
+
+                    if (_HiddenRendererLookup.Contains(renderer))
+                    {
+                        renderer.enabled = false;
+                        continue;
+                    }
+
+                    _HiddenRenderers.Add(new RendererState(renderer));
+                    _HiddenRendererLookup.Add(renderer);
+                    renderer.enabled = false;
+                }
+            }
         }
     }
 
@@ -114,6 +165,24 @@ namespace Game.Flow.Game
             if (_Behaviour != null)
             {
                 _Behaviour.enabled = true;
+            }
+        }
+    }
+
+    internal readonly struct RendererState
+    {
+        private readonly Renderer _Renderer;
+
+        public RendererState(Renderer renderer)
+        {
+            _Renderer = renderer;
+        }
+
+        public void Restore()
+        {
+            if (_Renderer != null)
+            {
+                _Renderer.enabled = true;
             }
         }
     }

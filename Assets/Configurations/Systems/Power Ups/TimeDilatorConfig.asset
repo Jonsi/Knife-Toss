@@ -15,7 +15,7 @@ MonoBehaviour:
   <DisplayName>k__BackingField: Chrono Shift
   <Description>k__BackingField: Temporarily slows down the target's rotation speed
     for easier timing
-  <Icon>k__BackingField: {fileID: 56575535, guid: 3e840c59f67698f4f833964fb9d9835d, type: 3}
+  <Icon>k__BackingField: {fileID: 21300000, guid: 216542d1ac7254ba3bf00b06c765a531, type: 3}
   <InventoryKey>k__BackingField: TimeDilator
   <VfxPrefab>k__BackingField: {fileID: 0}
   <VfxLocalOffset>k__BackingField: {x: 0, y: 0, z: 0}

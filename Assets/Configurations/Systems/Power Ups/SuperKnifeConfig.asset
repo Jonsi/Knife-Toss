@@ -15,7 +15,7 @@ MonoBehaviour:
   <DisplayName>k__BackingField: Shatter Strike
   <Description>k__BackingField: ' Instantly destroys the target with a single hit,
     skipping the remaining knives'
-  <Icon>k__BackingField: {fileID: 7634017216313761014, guid: 3e840c59f67698f4f833964fb9d9835d, type: 3}
+  <Icon>k__BackingField: {fileID: 21300000, guid: 1d33fd65ff3434de8b8c68319a29272c, type: 3}
   <InventoryKey>k__BackingField: SuperKnife
   <VfxPrefab>k__BackingField: {fileID: 1681955857082631048, guid: 175ccb28f92ec504e821458e2e02aecb, type: 3}
   <VfxLocalOffset>k__BackingField: {x: 0, y: -0.6, z: 0}

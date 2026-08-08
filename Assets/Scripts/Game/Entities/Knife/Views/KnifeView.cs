@@ -183,6 +183,7 @@ namespace Game.Entities.Knife.Views
         public void Bounce(bool playFailFeedback = true)
         {
             StopFailSequence(restoreVisuals: true, restoreTimeScale: true);
+            HandleKnifePowerUpVfxHit();
 
             BeginBounceMotion();
 
@@ -202,9 +203,9 @@ namespace Game.Entities.Knife.Views
             StopFailSequence(restoreVisuals: true, restoreTimeScale: true);
             _HasReportedOutOfView = false;
             _SuppressOutOfViewMonitoring = false;
-            IsSuperKnife = false;
+            _IsSuperKnife = false;
             _SourcePowerUpConfig = null;
-            UpdateKnifePowerUpVfxState();
+            DestroyKnifePowerUpVfx();
             RefreshVisualSkin();
             SetSpriteAlpha(1f);
             _StateMachine.SetState(_StateMachine.Loaded);
@@ -274,6 +275,12 @@ namespace Game.Entities.Knife.Views
 
             var mainCamera = _MainCamera;
             if (mainCamera == null)
+            {
+                mainCamera = Camera.main;
+                _MainCamera = mainCamera;
+            }
+
+            if (mainCamera == null)
                 return;
 
             if (_StateMachine == null || !_StateMachine.ShouldMonitorOutOfView)
@@ -304,6 +311,7 @@ namespace Game.Entities.Knife.Views
         public void ReturnToPool()
         {
             StopFailSequence(restoreVisuals: true, restoreTimeScale: false);
+            DestroyKnifePowerUpVfx();
 
             if (_KnifePoolProvider == null)
                 return;
@@ -409,7 +417,10 @@ namespace Game.Entities.Knife.Views
             }
 
             _SuppressOutOfViewMonitoring = false;
-            KnifeFailScreenFlash.Instance.Hide();
+            if (Application.isPlaying)
+            {
+                KnifeFailScreenFlash.Instance.Hide();
+            }
 
             if (restoreTimeScale)
             {
@@ -454,10 +465,7 @@ namespace Game.Entities.Knife.Views
         {
             if (_KnifePowerUpVfxInstance != null)
             {
-                Destroy(_KnifePowerUpVfxInstance);
-                _KnifePowerUpVfxInstance = null;
-                _KnifePowerUpVfxParticleSystems = null;
-                _KnifePowerUpVfxRenderers = null;
+                DestroyKnifePowerUpVfx();
             }
 
             var parent = VisualRoot != null ? VisualRoot : transform;
@@ -542,7 +550,7 @@ namespace Game.Entities.Knife.Views
 
             if (config.DestroyVfxOnHit)
             {
-                StopKnifePowerUpVfx();
+                DestroyKnifePowerUpVfx();
                 return;
             }
 
@@ -573,10 +581,7 @@ namespace Game.Entities.Knife.Views
 
         private void OnDestroy()
         {
-            if (_KnifePowerUpVfxInstance != null)
-            {
-                Destroy(_KnifePowerUpVfxInstance);
-            }
+            DestroyKnifePowerUpVfx();
         }
 
         private bool TryGetKnifeVfxConfig(out PowerUpConfigBase config)
@@ -590,6 +595,23 @@ namespace Game.Entities.Knife.Views
             _KnifePowerUpVfxInstance = null;
             _KnifePowerUpVfxParticleSystems = null;
             _KnifePowerUpVfxRenderers = null;
+        }
+
+        private void DestroyKnifePowerUpVfx()
+        {
+            if (_KnifePowerUpVfxInstance != null)
+            {
+                if (Application.isPlaying)
+                {
+                    Destroy(_KnifePowerUpVfxInstance);
+                }
+                else
+                {
+                    DestroyImmediate(_KnifePowerUpVfxInstance);
+                }
+            }
+
+            ClearKnifePowerUpVfxReferences();
         }
 
         private void ConfigureKnifePowerUpVfxScaling()
