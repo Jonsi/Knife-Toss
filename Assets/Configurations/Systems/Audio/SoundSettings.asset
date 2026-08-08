@@ -20,3 +20,5 @@ MonoBehaviour:
   <WinClip>k__BackingField: {fileID: 8300000, guid: 52320e590bf774734a288886eba557ba, type: 3}
   <LoseClip>k__BackingField: {fileID: 8300000, guid: 79e6baad2fd414b82a6d49ce1568d2e5, type: 3}
   <ButtonClickClip>k__BackingField: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
+  <CurrencyGainClip>k__BackingField: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
+  <CurrencySpendClip>k__BackingField: {fileID: 8300000, guid: 32d4b1811dda14a6cb9e059ee8ad17d2, type: 3}

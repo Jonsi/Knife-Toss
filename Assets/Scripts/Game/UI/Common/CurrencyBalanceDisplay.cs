@@ -2,6 +2,7 @@ using DG.Tweening;
 using Game.Economy.Data;
 using Game.Economy.Events;
 using Game.Economy.Interfaces;
+using Game.Feedback.Currency;
 using TMPro;
 using UnityEngine;
 
@@ -144,7 +145,7 @@ namespace Game.UI.Common
         {
             if (!string.IsNullOrEmpty(_ResolvedCurrencyId) && data.CurrencyId == _ResolvedCurrencyId)
             {
-                AnimateBalance(data.NewBalance, data.AmountChanged);
+                AnimateBalance(data.NewBalance, CurrencyFeedbackSemantics.Classify(data));
             }
         }
 
@@ -170,7 +171,7 @@ namespace Game.UI.Common
             _IsSubscribed = false;
         }
 
-        private void AnimateBalance(int value, int amountChanged)
+        private void AnimateBalance(int value, CurrencyFeedbackKind feedbackKind)
         {
             CacheVisualState();
             KillActiveTweens(resetVisuals: true);
@@ -181,7 +182,7 @@ namespace Game.UI.Common
                 return;
             }
 
-            if (amountChanged == 0 || _DisplayedValue == value)
+            if (feedbackKind == CurrencyFeedbackKind.None || _DisplayedValue == value)
             {
                 SetBalanceImmediate(value);
                 return;
@@ -202,7 +203,9 @@ namespace Game.UI.Common
             _ActiveSequence.Join(_ValueTween);
             _ActiveSequence.Join(BalanceText.rectTransform.DOScale(_BaseScale * ScalePulseMultiplier, ScalePulseDuration).SetLoops(2, LoopType.Yoyo).SetEase(Ease.OutQuad).SetUpdate(UseUnscaledTime));
 
-            Color flashColor = amountChanged > 0 ? IncreaseFlashColor : DecreaseFlashColor;
+            Color flashColor = feedbackKind == CurrencyFeedbackKind.Gain
+                ? IncreaseFlashColor
+                : DecreaseFlashColor;
             _ActiveSequence.Join(BalanceText.DOColor(flashColor, ColorFlashDuration).SetUpdate(UseUnscaledTime));
             _ActiveSequence.Append(BalanceText.DOColor(_BaseTextColor, ColorFlashDuration).SetUpdate(UseUnscaledTime));
             _ActiveSequence.OnComplete(() =>

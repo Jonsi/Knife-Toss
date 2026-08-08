@@ -20,6 +20,7 @@ namespace Game.Feedback.Audio.Data
         [field: SerializeField] public AudioClip LoseClip { get; private set; }
         [Header("UI")]
         [field: SerializeField] public AudioClip ButtonClickClip { get; private set; }
+        [field: SerializeField] public AudioClip CurrencyGainClip { get; private set; }
+        [field: SerializeField] public AudioClip CurrencySpendClip { get; private set; }
     }
 }
-

@@ -153,7 +153,7 @@ art problem.
 | UX-401 | Define feedback events and priority rules | P0 | Done | `FeedbackEventChannel` and `FeedbackEventSystem.md` cover all nine semantics with explicit priority, FIFO queueing, interruption, cooldown, duplicate, overflow, and teardown rules; 19/19 focused EditMode cases pass. |
 | UX-402 | Build reusable button pressed/disabled/loading/blocked presentation | P0 | Ready | Phase 2 now supplies the approved UI tokens and state language. |
 | UX-403 | Build reusable toast/callout presenter with queue and deduplication | P0 | Done | Persistent typed-channel toast uses the UX-401 interruption/FIFO/capacity/cooldown/dedup rules, clears on scene teardown, passes 28/28 focused EditMode cases, and has inspected multi-frame runtime evidence. |
-| UX-404 | Add consistent currency gain/spend animation and sound hooks | P0 | Ready | UX-401 now supplies the presentation-neutral shared event contract. |
+| UX-404 | Add consistent currency gain/spend animation and sound hooks | P0 | Done | Existing typed balance events now drive shared gain/spend semantics, the existing count/pulse/color animation, and presentation-only audio hooks; 8/8 focused currency cases pass, both runtime cues reached the persistent AudioSource, and recorded multi-frame evidence was inspected. |
 | UX-405 | Add typed VFX/audio/haptic hooks without coupling domain services to views | P0 | Ready | Each feedback event can fan out to approved presenters. |
 | UX-406 | Define reduced-motion, mute, and haptic-disable behavior | P1 | Needs decision | Accessibility variants have an explicit product policy. |
 | UX-407 | Build a feedback sandbox/debug panel | P1 | Ready | Every feedback state can be previewed without changing economy data. |

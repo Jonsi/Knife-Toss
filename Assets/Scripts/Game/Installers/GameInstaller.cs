@@ -20,6 +20,7 @@ using Game.Settings;
 using Game.UI.Services;
 using Game.Feedback.Audio.Interfaces;
 using Game.Feedback.Audio.Systems;
+using Game.Feedback.Audio.Services;
 using Common.Rewards.Interfaces;
 using Game.Rewards.Services;
 using Game.Store.Data;
@@ -150,6 +151,11 @@ namespace Game.Installers
 
             builder.RegisterInstance(_SoundSettings);
             builder.RegisterComponent(_AudioPlayer).As<IAudioPlayer>();
+
+            if (_CurrencyBalanceChangedEventChannel != null)
+            {
+                builder.RegisterEntryPoint<CurrencyAudioFeedbackService>();
+            }
 
             if (_FeedbackEventChannel != null)
             {
