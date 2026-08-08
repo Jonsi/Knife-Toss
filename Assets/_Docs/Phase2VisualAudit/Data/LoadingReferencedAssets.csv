@@ -1,0 +1,4 @@
+"Scene","Object Path","Component","Property","Asset Path","Runtime State"
+"Loading","Canvas/background","Image","sprite","Assets/Art/backgrounds/stages_screen.jpg","Visible/active"
+"Loading","Canvas/Loading","TextMeshProUGUI","font","Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset","Visible/active"
+"Loading","Canvas/Loading","TextMeshProUGUI","fontMaterial","Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset","Visible/active"

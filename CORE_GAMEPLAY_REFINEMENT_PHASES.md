@@ -211,6 +211,26 @@ unrelated visible elements inside the core loop are a current vertical-slice pro
 - Core UI and VFX work can proceed without inventing style independently per screen.
 - Later-world production remains explicitly out of scope.
 
+### Implementation Evidence - 2026-08-08
+
+- [Phase 2 Visual Direction and Asset Audit](PHASE_2_VISUAL_DIRECTION_AND_ASSET_AUDIT.md)
+  approves the Hand-Carved Forest Arcade target and defines the belonging test, palette,
+  typography, outline/material language, reusable UI/VFX tokens, and gameplay-readability
+  checklist.
+- A 13-state contact sheet covers every player-facing state reachable through the Android
+  build flow, including inactive failure, completion, tutorial, privacy, report, and
+  acquisition popups.
+- Five live scene scans recorded 228 component-to-asset bindings and 75 unique referenced
+  asset paths; all 75 have an explicit Keep, Refine, Replace, or Remove disposition.
+- Unused imported library volume is separated from visible inconsistency. Broad packs are
+  quarantined by production policy and were not destructively deleted or relocated.
+- An audit of 58 referenced sprites found no Android overrides or SpriteAtlas assets;
+  mobile compression, atlas, filtering, size, and texture-memory standards are now locked
+  for Phase 7 implementation.
+- Lilita One and Liberation Sans license records were identified. Marketplace entitlement
+  receipts and legacy-art authorship/usage-right evidence remain the sole Phase 2 closure
+  gate; affected assets must be replaced if proof cannot be attached.
+
 ## Phase 3 - Tutorial and Power-Up Truth
 
 ### Goal

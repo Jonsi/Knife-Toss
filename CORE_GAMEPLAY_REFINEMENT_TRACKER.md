@@ -53,6 +53,9 @@ The largest gap is not the basic mechanic; it is consistency around the mechanic
 - Duplicate EventSystem and AudioListener transition warnings should be resolved.
 - UX feedback is a game-wide system, not a collection of one-off button fixes.
 - Core art refinement belongs in the current plan; bulk campaign art does not.
+- The approved core visual target is **Hand-Carved Forest Arcade**: colorful forest-fantasy
+  readability, warm ink outlines, painted wood/stone/metal, Lilita One display typography,
+  Liberation Sans body typography, and one semantic UI/VFX palette.
 
 ## Baseline Evidence
 
@@ -71,7 +74,7 @@ The largest gap is not the basic mechanic; it is consistency around the mechanic
 |---|---|---|---|
 | 0 | Repeatable Playtest Foundation | Done | Real-input success, failure, restart, telemetry, and save restoration are repeatable. |
 | 1 | Runtime Transition and Release Hygiene | In progress | Runtime and Android artifact pass; iOS artifact and release-identity decisions remain. |
-| 2 | Visual Direction Lock and Asset Audit | Ready | One approved visual target and a keep/refine/replace/remove inventory exist. |
+| 2 | Visual Direction Lock and Asset Audit | In progress | Direction and inventory are complete; entitlement and legacy-art usage-right evidence remain. |
 | 3 | Tutorial and Power-Up Truth | Ready | Cheat QA and clean-save player flows both behave intentionally. |
 | 4 | Shared UX Feedback Foundation | Blocked | Depends on Phase 2 visual tokens and Phase 3 event semantics. |
 | 5 | Failure, Retry, and Continue Polish | Blocked | Depends on the shared feedback foundation. |
@@ -113,14 +116,14 @@ The largest gap is not the basic mechanic; it is consistency around the mechanic
 
 | ID | Work item | Priority | Status | Evidence / acceptance |
 |---|---|---:|---|---|
-| ART-201 | Capture every player-facing screen and core gameplay state | P0 | Ready | Contact sheet includes menu, gameplay, fail, store, missions, stage select, rewards, and popups. |
-| ART-202 | Inventory assets actually referenced by those screens | P0 | Ready | Referenced assets are separated from unused imported packs. |
-| ART-203 | Mark each visible asset Keep, Refine, Replace, or Remove | P0 | Ready | Every visible asset has a disposition and reason. |
-| ART-204 | Approve the core visual target | P0 | Needs decision | Target defines mood, shape language, material treatment, contrast, color, and polish level. |
-| ART-205 | Create a lightweight art bible and UI/VFX tokens | P0 | Blocked | Depends on ART-204. |
-| ART-206 | Define readability budgets for target, knife, hazards, collectibles, HUD, and VFX | P0 | Ready | Gameplay objects remain readable on all approved backgrounds. |
-| ART-207 | Audit source/license/provenance for retained third-party and generated art | P1 | Ready | Every retained asset has a known source and usage right. |
-| ART-208 | Quarantine unrelated or unused asset-pack content from production-facing folders | P2 | Blocked | Depends on ART-202; no destructive deletion without a separate review. |
+| ART-201 | Capture every player-facing screen and core gameplay state | P0 | Done | 13-state contact sheet covers menu, gameplay, fail, store, missions, stages, rewards, settings, and popups. |
+| ART-202 | Inventory assets actually referenced by those screens | P0 | Done | Five live scene scans record 228 bindings to 75 unique paths, separately from unused packs. |
+| ART-203 | Mark each visible asset Keep, Refine, Replace, or Remove | P0 | Done | The 75-row disposition CSV records 16 Keep, 44 Refine, 12 Replace, and three Remove decisions. |
+| ART-204 | Approve the core visual target | P0 | Done | Hand-Carved Forest Arcade is approved in `PHASE_2_VISUAL_DIRECTION_AND_ASSET_AUDIT.md`. |
+| ART-205 | Create a lightweight art bible and UI/VFX tokens | P0 | Done | The approved document defines palette, type, shape, material, layout, UI, and VFX tokens. |
+| ART-206 | Define readability budgets for target, knife, hazards, collectibles, HUD, and VFX | P0 | Done | Checklist sets size, occlusion, interaction-lane, contrast, and reduced-motion limits. |
+| ART-207 | Audit source/license/provenance for retained third-party and generated art | P1 | In progress | Font records are verified; marketplace receipts and legacy-art ownership/usage evidence must be attached or affected assets replaced. |
+| ART-208 | Quarantine unrelated or unused asset-pack content from production-facing folders | P2 | Done | Production policy excludes broad packs from Resources/atlases and forbids destructive relocation until dependency/license review. |
 
 Current inventory signal: `_StageAssets` contains usable image content for the basic set,
 Elder Root, and Ignis Pit, while the named folders for Moss Sanctum through Void Gate are
@@ -146,8 +149,8 @@ art problem.
 | ID | Work item | Priority | Status | Evidence / acceptance |
 |---|---|---:|---|---|
 | UX-401 | Define feedback events and priority rules | P0 | Ready | Success, blocked, insufficient funds, purchase, reward, consume, navigation, fail, and complete are covered. |
-| UX-402 | Build reusable button pressed/disabled/loading/blocked presentation | P0 | Blocked | Depends on ART-205. |
-| UX-403 | Build reusable toast/callout presenter with queue and deduplication | P0 | Blocked | Depends on UX-401 and ART-205. |
+| UX-402 | Build reusable button pressed/disabled/loading/blocked presentation | P0 | Ready | Phase 2 now supplies the approved UI tokens and state language. |
+| UX-403 | Build reusable toast/callout presenter with queue and deduplication | P0 | Blocked | Phase 2 art tokens are ready; depends on UX-401 event semantics. |
 | UX-404 | Add consistent currency gain/spend animation and sound hooks | P0 | Blocked | Depends on UX-401. |
 | UX-405 | Add typed VFX/audio/haptic hooks without coupling domain services to views | P0 | Ready | Each feedback event can fan out to approved presenters. |
 | UX-406 | Define reduced-motion, mute, and haptic-disable behavior | P1 | Needs decision | Accessibility variants have an explicit product policy. |
@@ -185,12 +188,12 @@ run counter, and the next target entering immediately afterward.
 |---|---|---:|---|---|
 | ART-701 | Refine the main menu, gameplay, failure, and completion as one visual family | P0 | Blocked | Depends on ART-205 and stable Phase 5/6 layouts. |
 | ART-702 | Establish one reusable target/knife rendering standard | P0 | Blocked | Materials, outline, lighting, hit state, and silhouettes are coherent. |
-| ART-703 | Replace visibly unrelated core UI icons, panels, and fonts | P0 | Blocked | Depends on ART-203 and the approved UI kit. |
+| ART-703 | Replace visibly unrelated core UI icons, panels, and fonts | P0 | Ready | Phase 2 identifies the replacements and supplies the approved UI kit. |
 | ART-704 | Standardize target crack, hit, shatter, collision, collectible, and power-up VFX | P0 | Blocked | Effects share palette, timing, scale, and readability limits. |
 | AUDIO-701 | Standardize throw, stick, collision, crack, shatter, reward, and UI sound families | P0 | Ready | Cues feel related and have a documented mix hierarchy. |
 | ART-705 | Add missing state art: disabled, pressed, selected, owned, unavailable, success, and failure | P0 | Blocked | Depends on Phase 4 state definitions. |
 | ART-706 | Validate all core art at gameplay size and over each retained background | P0 | Blocked | Knives and collision lanes remain readable on device. |
-| ART-707 | Set sprite/import/compression/atlas standards for mobile | P1 | Ready | No accidental quality, memory, or filtering inconsistencies. |
+| ART-707 | Set sprite/import/compression/atlas standards for mobile | P1 | Done | Phase 2 locks Android compression, atlas, filtering, size, and memory rules after auditing 58 referenced textures. |
 
 ### Phase 8 - Secondary Screens and Meta UX Consistency
 
@@ -233,7 +236,6 @@ run counter, and the next target entering immediately afterward.
 |---|---|---|
 | First power-up teaching path | Phase 3 | Test both; prefer a granted Chrono Shift after normal throwing is understood, unless Super Knife is deliberately the first fantasy. |
 | Empty-inventory hint behavior | Phase 3 | Never point at an unusable action without an acquisition explanation. |
-| Visual target | Phase 2 | Preserve colorful arcade-fantasy readability, but curate one material, outline, icon, and VFX language. |
 | Continue rules | Phase 5 | Keep the first failure low-pressure; delay aggressive ad/currency decisions. |
 | Completion duration | Phase 6 | Start with 0.6-1.0 seconds and tune through real play. |
 | Reward accumulator cashout | Phase 6 | Save rewards immediately; presentation may accumulate without risking loss. |
