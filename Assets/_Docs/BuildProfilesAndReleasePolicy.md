@@ -57,8 +57,8 @@ commercial build:
 - integrate the analytics backend through `IAnalyticsService`;
 - decide production Firebase/Remote Config behavior for device and simulator profiles;
 - perform purchase, ad, consent, offline, and restore testing on signed device builds.
-- confirm whether the current Android identity `com.CuzGames.TossMdaness` and label
-  `Toss Mdaness` are intentional before any store upload;
+- confirm the restored Firebase-registered Android identity `com.CuzGames.TossMadness`, the
+  `Toss Mdaness` product label, and store continuity before any store upload;
 - triage the Android build's shader warning volume, currently dominated by Sentis variants,
   and fix the compressed application icon warning.
 

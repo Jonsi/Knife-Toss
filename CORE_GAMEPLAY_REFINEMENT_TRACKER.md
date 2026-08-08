@@ -111,7 +111,7 @@ The largest gap is not the basic mechanic; it is consistency around the mechanic
 | BUILD-101 | Define development, QA, and production build profiles | P0 | Done | Six Android/iOS profiles define explicit flavor symbols and development settings. |
 | BUILD-102 | Remove `TEST_ENABLED`, SRDebugger, cheats, mock ads, and mock IAP from production | P0 | In progress | Android Production APK scan is clean across metadata, native symbols, and serialized data; iOS archive scan remains. |
 | BUILD-103 | Add a build-time failure for forbidden production symbols/components | P0 | Done | Policy rejects unsafe symbols and enabled debug content; profile-aware staging removes test sources/Resources before production collection. |
-| BUILD-104 | Confirm Android application ID and product label | P0 | Needs decision | Built artifact currently reports `com.CuzGames.TossMdaness` / `Toss Mdaness`; changing an existing store ID may break update compatibility. |
+| BUILD-104 | Confirm Android application ID and product label | P0 | Needs decision | Android identity is restored to the historical Firebase-registered `com.CuzGames.TossMadness`; the `Toss Mdaness` product label and store continuity still require release-owner confirmation. |
 | BUILD-105 | Triage Android production build warnings | P1 | Ready | Build succeeded with 0 errors and 992 warnings, primarily Sentis shader variants plus a compressed icon warning. |
 | TECH-105 | Run menu/game/store/stages transition soak | P1 | Done | Real-input Store and Stages round trips x10 plus gameplay failure return; zero warnings/errors. |
 

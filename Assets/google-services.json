@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "800044104635",
+    "firebase_url": "https://toss-madness-default-rtdb.firebaseio.com",
+    "project_id": "toss-madness",
+    "storage_bucket": "toss-madness.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:800044104635:android:c5509f94dc4970521ca29e",
+        "android_client_info": {
+          "package_name": "com.CuzGames.TossMadness"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFaIEuRnN-WSSW5zfFsupAJ3c2qtMNMBw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

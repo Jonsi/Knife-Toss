@@ -8,22 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:800044104635:ios:f097d1132c598e991ca29e",
+        "mobilesdk_app_id": "1:800044104635:android:c5509f94dc4970521ca29e",
         "android_client_info": {
-          "package_name": "com.CuzGames.Toss-Mdaness"
+          "package_name": "com.CuzGames.TossMadness"
         }
       },
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAJ8a6snTWhak03gqABWDRTHPeg5MdPiq0"
+          "current_key": "AIzaSyCFaIEuRnN-WSSW5zfFsupAJ3c2qtMNMBw"
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 0
-        },
         "appinvite_service": {
-          "status": 1
+          "other_platform_oauth_client": []
         }
       }
     }
