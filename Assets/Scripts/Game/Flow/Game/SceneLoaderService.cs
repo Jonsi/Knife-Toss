@@ -142,21 +142,36 @@ namespace Game.Flow.Game
                 return;
             }
 
-            if (stageScene.IsValid())
-            {
-                SceneManager.SetActiveScene(stageScene);
-            }
-
-            DeferredGameSceneVisibility.RevealLoadedScene();
-
             Scene mainMenuScene = SceneManager.GetSceneByName(MAIN_MENU_SCENE);
-            if (mainMenuScene.IsValid() && mainMenuScene.isLoaded && SceneManager.sceneCount > 1)
+            SceneRuntimeAuthoritySuspension mainMenuSuspension = null;
+
+            try
             {
-                AsyncOperation unloadOperation = SceneManager.UnloadSceneAsync(MAIN_MENU_SCENE);
-                if (unloadOperation != null)
+                // The preloaded StagePlay authorities are revealed only after MainMenu's
+                // camera, listener, canvases, raycasters, and input authority are disabled.
+                // This guarantees that additive handoff never has two active owners.
+                if (mainMenuScene.IsValid() && mainMenuScene.isLoaded && SceneManager.sceneCount > 1)
                 {
-                    await unloadOperation.ToUniTask();
+                    mainMenuSuspension = SceneRuntimeAuthority.Suspend(mainMenuScene);
                 }
+
+                SceneManager.SetActiveScene(stageScene);
+                DeferredGameSceneVisibility.RevealLoadedScene();
+
+                if (mainMenuScene.IsValid() && mainMenuScene.isLoaded && SceneManager.sceneCount > 1)
+                {
+                    AsyncOperation unloadOperation = SceneManager.UnloadSceneAsync(MAIN_MENU_SCENE);
+                    if (unloadOperation != null)
+                    {
+                        await unloadOperation.ToUniTask();
+                    }
+                }
+            }
+            catch
+            {
+                // If unloading/reveal fails, restore MainMenu so navigation remains usable.
+                mainMenuSuspension?.Restore();
+                throw;
             }
 
             _IsGamePreloaded = false;

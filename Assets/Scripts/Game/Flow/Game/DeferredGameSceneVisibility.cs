@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 namespace Game.Flow.Game
 {
+    [DefaultExecutionOrder(-10000)]
     public sealed class DeferredGameSceneVisibility : MonoBehaviour
     {
         [SerializeField] private GameObject[] _RootsToHide;
@@ -74,9 +75,10 @@ namespace Game.Flow.Game
                         continue;
                     }
 
-                    foreach (Behaviour behaviour in root.GetComponents<Behaviour>())
+                    foreach (Behaviour behaviour in root.GetComponentsInChildren<Behaviour>(true))
                     {
-                        if (behaviour == null || !behaviour.enabled || !ShouldTemporarilyDisable(behaviour))
+                        if (behaviour == null || !behaviour.enabled ||
+                            !SceneRuntimeAuthority.IsControlledBehaviour(behaviour))
                         {
                             continue;
                         }
@@ -95,16 +97,6 @@ namespace Game.Flow.Game
             }
 
             _HiddenBehaviours.Clear();
-        }
-
-        private static bool ShouldTemporarilyDisable(Behaviour behaviour)
-        {
-            return behaviour is Camera
-                || behaviour is AudioListener
-                || behaviour is Canvas
-                || behaviour is GraphicRaycaster
-                || behaviour is EventSystem
-                || behaviour is BaseInputModule;
         }
     }
 

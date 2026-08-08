@@ -70,7 +70,7 @@ The largest gap is not the basic mechanic; it is consistency around the mechanic
 | Phase | Name | Status | Primary exit signal |
 |---|---|---|---|
 | 0 | Repeatable Playtest Foundation | Done | Real-input success, failure, restart, telemetry, and save restoration are repeatable. |
-| 1 | Runtime Transition and Release Hygiene | Ready | Every tested transition has one EventSystem/listener, a clean Console, and no production debug overlay. |
+| 1 | Runtime Transition and Release Hygiene | In progress | Runtime and Android artifact pass; iOS artifact and release-identity decisions remain. |
 | 2 | Visual Direction Lock and Asset Audit | Ready | One approved visual target and a keep/refine/replace/remove inventory exist. |
 | 3 | Tutorial and Power-Up Truth | Ready | Cheat QA and clean-save player flows both behave intentionally. |
 | 4 | Shared UX Feedback Foundation | Blocked | Depends on Phase 2 visual tokens and Phase 3 event semantics. |
@@ -98,14 +98,16 @@ The largest gap is not the basic mechanic; it is consistency around the mechanic
 
 | ID | Work item | Priority | Status | Evidence / acceptance |
 |---|---|---:|---|---|
-| TECH-101 | Map ownership and lifetime of EventSystems across persistent and content scenes | P0 | Ready | Owner and transition timeline documented. |
-| TECH-102 | Enforce exactly one active EventSystem during every transition | P0 | Ready | No duplicate EventSystem warnings in a transition matrix. |
-| TECH-103 | Enforce exactly one active AudioListener during every transition | P0 | Ready | No listener warnings; intended camera owns audio. |
-| TECH-104 | Verify hidden/preloaded StagePlay cannot consume input before reveal | P0 | Ready | Real input affects only the visible scene. |
-| BUILD-101 | Define development, QA, and production build profiles | P0 | Needs decision | Each profile has an explicit symbol and service policy. |
-| BUILD-102 | Remove `TEST_ENABLED`, SRDebugger, cheats, mock ads, and mock IAP from production | P0 | Ready | Production artifact contains none of them. |
-| BUILD-103 | Add a build-time failure for forbidden production symbols/components | P0 | Ready | Invalid release configuration fails before build output. |
-| TECH-105 | Run menu/game/store/stages transition soak | P1 | Blocked | Runs after TECH-102 and TECH-103. |
+| TECH-101 | Map ownership and lifetime of EventSystems across persistent and content scenes | P0 | Done | Ownership contract and handoff sequence documented in `RuntimeSceneAuthority.md`. |
+| TECH-102 | Enforce exactly one active EventSystem during every transition | P0 | Done | Preload, reveal, Store x10, Stages x10, and failure-return soak produced no duplicate warnings. |
+| TECH-103 | Enforce exactly one active AudioListener during every transition | P0 | Done | Ownership snapshots show only the intended scene listener enabled. |
+| TECH-104 | Verify hidden/preloaded StagePlay cannot consume input before reveal | P0 | Done | Hidden StagePlay EventSystem, input module, canvases, and raycasters are disabled until reveal. |
+| BUILD-101 | Define development, QA, and production build profiles | P0 | Done | Six Android/iOS profiles define explicit flavor symbols and development settings. |
+| BUILD-102 | Remove `TEST_ENABLED`, SRDebugger, cheats, mock ads, and mock IAP from production | P0 | In progress | Android Production APK scan is clean across metadata, native symbols, and serialized data; iOS archive scan remains. |
+| BUILD-103 | Add a build-time failure for forbidden production symbols/components | P0 | Done | Policy rejects unsafe symbols and enabled debug content; profile-aware staging removes test sources/Resources before production collection. |
+| BUILD-104 | Confirm Android application ID and product label | P0 | Needs decision | Built artifact currently reports `com.CuzGames.TossMdaness` / `Toss Mdaness`; changing an existing store ID may break update compatibility. |
+| BUILD-105 | Triage Android production build warnings | P1 | Ready | Build succeeded with 0 errors and 992 warnings, primarily Sentis shader variants plus a compressed icon warning. |
+| TECH-105 | Run menu/game/store/stages transition soak | P1 | Done | Real-input Store and Stages round trips x10 plus gameplay failure return; zero warnings/errors. |
 
 ### Phase 2 - Visual Direction Lock and Asset Audit
 

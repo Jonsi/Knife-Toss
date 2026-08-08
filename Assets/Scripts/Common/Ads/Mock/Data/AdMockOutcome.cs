@@ -1,3 +1,4 @@
+#if TEST_ENABLED
 using System;
 
 namespace Common.Ads.Data
@@ -51,3 +52,4 @@ namespace Common.Ads.Data
         }
     }
 }
+#endif

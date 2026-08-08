@@ -1,3 +1,4 @@
+#if TEST_ENABLED
 using System;
 using UnityEngine;
 
@@ -38,3 +39,4 @@ namespace Common.IAP.Data
         }
     }
 }
+#endif

@@ -1,3 +1,4 @@
+#if TEST_ENABLED
 using System;
 using Common.Ads.Data;
 using Common.Ads.Providers;
@@ -82,3 +83,4 @@ namespace Game.Ads.UI
         }
     }
 }
+#endif

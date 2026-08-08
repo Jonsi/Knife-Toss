@@ -1,3 +1,4 @@
+#if TEST_ENABLED
 using System;
 using System.Threading;
 using Common.Ads.Data;
@@ -162,3 +163,4 @@ namespace Game.Ads.UI
         }
     }
 }
+#endif

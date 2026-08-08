@@ -1,3 +1,4 @@
+#if TEST_ENABLED
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -81,3 +82,4 @@ namespace Common.Analytics.Services
         }
     }
 }
+#endif

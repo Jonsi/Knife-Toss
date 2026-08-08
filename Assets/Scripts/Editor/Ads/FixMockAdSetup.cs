@@ -1,3 +1,4 @@
+#if TEST_ENABLED
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -86,3 +87,4 @@ namespace Editor.Ads
         }
     }
 }
+#endif

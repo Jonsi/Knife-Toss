@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 15003, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: "Android\u2122"
+  m_Name: Android QA
   m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.Build.Profile.BuildProfile
   m_AssetVersion: 1
   m_BuildTarget: 13
@@ -32,8 +32,10 @@ MonoBehaviour:
   - m_enabled: 1
     m_path: Assets/Scenes/StagesMenu.unity
     m_guid: 6d28933bfa0ac144cb2b722b05ef805b
-  m_HasScriptingDefines: 0
-  m_ScriptingDefines: []
+  m_HasScriptingDefines: 1
+  m_ScriptingDefines:
+  - TEST_ENABLED
+  - QA_BUILD
   m_PlayerSettingsYaml:
     m_Settings: []
   references:
@@ -43,7 +45,7 @@ MonoBehaviour:
       type: {class: AndroidPlatformBuildSettings, ns: UnityEditor.Android, asm: UnityEditor.Android.Extensions}
       data:
         m_Development: 1
-        m_ConnectProfiler: 1
+        m_ConnectProfiler: 0
         m_BuildWithDeepProfilingSupport: 0
         m_AllowDebugging: 0
         m_WaitForManagedDebugger: 0
@@ -65,5 +67,5 @@ MonoBehaviour:
         m_BuildType: 1
         m_LinkTimeOptimization: 0
         m_BuildAppBundle: 0
-        m_IPAddressToConnect: 
+        m_IPAddressToConnect:
         m_SymlinkSources: 0

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 15003, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: iOS
+  m_Name: iOS Production
   m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.Build.Profile.BuildProfile
   m_AssetVersion: 1
   m_BuildTarget: 9
@@ -20,8 +20,10 @@ MonoBehaviour:
     rid: 1937769907461554176
   m_OverrideGlobalSceneList: 0
   m_Scenes: []
-  m_HasScriptingDefines: 0
-  m_ScriptingDefines: []
+  m_HasScriptingDefines: 1
+  m_ScriptingDefines:
+  - PRODUCTION_BUILD
+  - DISABLE_SRDEBUGGER
   m_PlayerSettingsYaml:
     m_Settings: []
   references:
@@ -30,7 +32,7 @@ MonoBehaviour:
     - rid: 1937769907461554176
       type: {class: iOSPlatformSettings, ns: UnityEditor.iOS, asm: UnityEditor.iOS.Extensions}
       data:
-        m_Development: 1
+        m_Development: 0
         m_ConnectProfiler: 0
         m_BuildWithDeepProfilingSupport: 0
         m_AllowDebugging: 0
@@ -46,5 +48,5 @@ MonoBehaviour:
         m_AdaptivePerformanceEnabled: 0
         m_iOSXcodeBuildConfig: 1
         m_SymlinkSources: 0
-        m_PreferredXcode: 
+        m_PreferredXcode:
         m_SymlinkTrampoline: 0

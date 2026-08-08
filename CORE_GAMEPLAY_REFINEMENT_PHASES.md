@@ -107,12 +107,14 @@ problems harder to diagnose.
   production builds.
 - Add an automated forbidden-content validation for release builds.
 
-### Recommended Technical Direction
+### Implemented Technical Direction
 
-Prefer one persistent EventSystem owned by the application shell, with content scenes not
-owning one. If scene-local EventSystems must remain, the transition contract must disable
-the outgoing owner before enabling the incoming owner. Apply the same explicit ownership
-rule to AudioListeners.
+Scene-local ownership remains because most navigation uses clean single-scene loads and the
+Store overlay intentionally reuses MainMenu authority. The exceptional additive StagePlay
+preload now disables incoming authorities before normal enable order, suspends MainMenu
+before reveal, restores StagePlay, and rolls MainMenu back if handoff fails. The same
+contract applies to EventSystems, input modules, cameras, AudioListeners, canvases, and
+raycasters.
 
 ### Deliverables
 
@@ -128,6 +130,24 @@ rule to AudioListeners.
 - Exactly one EventSystem and one intended AudioListener are active at all times.
 - No hidden scene receives gameplay input.
 - A production build cannot be created with forbidden debug/test content.
+
+### Implementation Evidence - 2026-08-08
+
+- Runtime ownership map and rollback-safe additive handoff implemented.
+- MainMenu -> preloaded StagePlay -> revealed StagePlay has one EventSystem, camera, and
+  AudioListener at each observed state.
+- Store open/close and StagesMenu round trips each passed ten real-input cycles.
+- A real gameplay failure returned to MainMenu through the visible Return button.
+- The full transition soak produced zero Unity warnings and zero errors.
+- Android and iOS Development, QA, and Production profiles are configured.
+- A deliberate non-test compilation passes with mock ad/analytics code excluded and safe
+  fallback providers active.
+- The existing Unity EditMode suite passes all 42 tests with zero failures or skips.
+- A non-development Android Production APK built successfully with zero errors. Its IL2CPP
+  metadata, native symbols, and serialized data contain none of the forbidden debug/mock
+  patterns, and its manifest is not debuggable.
+- iOS artifact validation, Android application-identity confirmation, and Android build
+  warning triage remain before closing the final release portion of this phase.
 
 ## Phase 2 - Visual Direction Lock and Asset Audit
 

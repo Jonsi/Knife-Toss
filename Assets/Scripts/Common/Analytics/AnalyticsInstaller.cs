@@ -24,9 +24,14 @@ namespace Common.Analytics
                 ? _settings
                 : ScriptableObject.CreateInstance<AnalyticsSettings>());
 
+#if TEST_ENABLED
             builder.Register<MockAnalyticsService>(Lifetime.Singleton)
                 .As<IAnalyticsService>()
                 .AsSelf();
+#else
+            builder.Register<NullAnalyticsService>(Lifetime.Singleton)
+                .As<IAnalyticsService>();
+#endif
         }
     }
 }

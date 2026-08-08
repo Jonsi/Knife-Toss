@@ -289,6 +289,10 @@ namespace KnifeToss.EditorTools.Playtest
                 QueueMouseState(_ScheduledInput.Position, true);
                 _ScheduledInput.PressSent = true;
                 Debug.Log($"[PlaytestHarness] PRESS {_ScheduledInput.Reason} at {_ScheduledInput.Position}.");
+                // A press and release queued in the same Editor update can collapse into
+                // one Input System frame when the Editor is throttled. Always preserve at
+                // least one rendered/input frame of held state.
+                return;
             }
 
             if (_ScheduledInput.PressSent && now >= _ScheduledInput.ReleaseAt)

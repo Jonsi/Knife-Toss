@@ -1,3 +1,4 @@
+#if TEST_ENABLED
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -118,3 +119,4 @@ namespace Common.Ads.Providers
         }
     }
 }
+#endif

@@ -1,3 +1,4 @@
+#if TEST_ENABLED
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -29,3 +30,4 @@ namespace Common.Ads.Data
         [field: SerializeField] public List<AdMockOutcome> SequencedOutcomes { get; private set; }
     }
 }
+#endif

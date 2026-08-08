@@ -152,9 +152,12 @@ namespace Game.Installers
             builder.RegisterInstance(_StoreCatalog).AsSelf();
 
 #if TEST_ENABLED
-            if (_IapInstaller != null && _MockIapSettings != null)
+            if (_IapInstaller != null)
             {
-                Install(builder, new IapMockInstaller(_MockIapSettings, _MockIapPopupBridge));
+                MockIapSettings mockSettings = _MockIapSettings != null
+                    ? _MockIapSettings
+                    : ScriptableObject.CreateInstance<MockIapSettings>();
+                Install(builder, new IapMockInstaller(mockSettings, _MockIapPopupBridge));
             }
 #endif
 

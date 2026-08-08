@@ -1,3 +1,4 @@
+#if TEST_ENABLED
 namespace Common.IAP.Data
 {
     /// <summary>
@@ -12,3 +13,4 @@ namespace Common.IAP.Data
         AlreadyOwned
     }
 }
+#endif
