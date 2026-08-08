@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cb6426e091b044e8b1771e48fabf1e3, type: 3}
+  m_Name: FeedbackToastCatalog
+  m_EditorClassIdentifier: Game::Game.Feedback.Presentation.FeedbackToastCatalog
+  _Cues:
+  - _Kind: 0
+    _CueId: action.success
+    _Message: Done
+    _AccentColor: {r: 0.27058825, g: 0.7882353, b: 0.40784314, a: 1}
+    _VisibleSeconds: 1.35
+  - _Kind: 1
+    _CueId: action.blocked
+    _Message: That action is unavailable
+    _AccentColor: {r: 0.9490196, g: 0.41568628, b: 0.18039216, a: 1}
+    _VisibleSeconds: 1.65
+  - _Kind: 2
+    _CueId: store.insufficient_funds
+    _Message: Not enough coins
+    _AccentColor: {r: 0.9490196, g: 0.41568628, b: 0.18039216, a: 1}
+    _VisibleSeconds: 1.65
+  - _Kind: 3
+    _CueId: store.purchase
+    _Message: Purchase complete
+    _AccentColor: {r: 1, g: 0.76862746, b: 0.23921569, a: 1}
+    _VisibleSeconds: 1.55
+  - _Kind: 4
+    _CueId: reward.granted
+    _Message: Reward received
+    _AccentColor: {r: 1, g: 0.76862746, b: 0.23921569, a: 1}
+    _VisibleSeconds: 1.55
+  - _Kind: 5
+    _CueId: power_up.consumed
+    _Message: Power-up used
+    _AccentColor: {r: 0.09803922, g: 0.7490196, b: 0.76862746, a: 1}
+    _VisibleSeconds: 1.35
+  - _Kind: 6
+    _CueId: navigation.open
+    _Message: Opened
+    _AccentColor: {r: 0.9098039, g: 0.78039217, b: 0.60784316, a: 1}
+    _VisibleSeconds: 1.1
+  - _Kind: 7
+    _CueId: level.failed
+    _Message: Try again
+    _AccentColor: {r: 0.9098039, g: 0.29411766, b: 0.23529412, a: 1}
+    _VisibleSeconds: 1.8
+  - _Kind: 8
+    _CueId: level.completed
+    _Message: Level complete
+    _AccentColor: {r: 1, g: 0.76862746, b: 0.23921569, a: 1}
+    _VisibleSeconds: 1.8

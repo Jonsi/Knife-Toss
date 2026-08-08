@@ -2,7 +2,8 @@
     "name": "Game.Feedback.Tests",
     "references": [
         "Game",
-        "Common"
+        "Common",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [
         "Editor"

@@ -52,3 +52,23 @@ InsufficientFunds; 1.0 for Purchase and Reward; and 1.5 for Failure and Completi
 
 These rules arbitrate presentation only. They never retry an action, mutate inventory or
 currency, alter navigation, or change level state.
+
+## Toast/callout presenter (UX-403)
+
+`FeedbackToastPresenter` is the reusable UI subscriber for the shared channel. It lives on a
+non-modal, raycast-transparent canvas under the persistent `GameInstaller` and delegates all
+arbitration to the presentation-neutral `FeedbackPresentationQueue`. The queue implements the
+UX-401 priority, FIFO, interruption, capacity, duplicate, cooldown, and teardown rules without
+depending on Unity time or UI components. Active and pending feedback is cleared when the
+presenter disables or the active scene changes, so stale copy cannot leak into another screen.
+
+`FeedbackToastCatalog` maps `(FeedbackKind, CueId)` to display copy, accent color, and visible
+duration. The presenter has a generic per-kind fallback, but it never displays `CueId` or
+`ContextId` as player-facing text. Adding domain-to-feedback adapters remains separate work;
+UX-403 does not change domain services or make the toast authoritative for gameplay outcomes.
+
+Focused EditMode coverage validates immediate presentation, strict-priority interruption,
+priority/FIFO queueing, full-queue replacement and dropping, active/pending duplicate
+suppression, cooldown boundaries, typed-channel subscription, queued copy advancement, scene
+clearing, and teardown. Multi-frame evidence is recorded in
+`Assets/_Docs/Feedback/Captures/UX403_Toast_Queue.mov`.
