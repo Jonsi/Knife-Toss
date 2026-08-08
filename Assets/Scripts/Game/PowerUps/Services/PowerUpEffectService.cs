@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using Common.Events;
 using Game.Entities.Target.Interfaces;
 using Game.Flow.Events;
 using Game.Flow.Level;
+using Game.PowerUps.Configs;
+using Game.PowerUps.Data;
 using Game.PowerUps.Interfaces;
 using UnityEngine;
 using VContainer.Unity;
@@ -16,16 +19,21 @@ namespace Game.PowerUps.Services
     {
         private readonly LevelData _LevelData;
         private readonly LevelStartedEventChannel _LevelStartedChannel;
+        private readonly IEventChannel<PowerUpOutcomeEventData> _OutcomeChannel;
 
         private readonly List<ActiveEffect> _ActiveEffects = new List<ActiveEffect>();
 
         /// <summary>
         /// Initializes a new instance of the power-up effect service.
         /// </summary>
-        public PowerUpEffectService(LevelData levelData, LevelStartedEventChannel levelStartedChannel)
+        public PowerUpEffectService(
+            LevelData levelData,
+            LevelStartedEventChannel levelStartedChannel,
+            IEventChannel<PowerUpOutcomeEventData> outcomeChannel)
         {
             _LevelData = levelData;
             _LevelStartedChannel = levelStartedChannel;
+            _OutcomeChannel = outcomeChannel;
         }
 
         /// <summary>
@@ -46,14 +54,44 @@ namespace Game.PowerUps.Services
             if (effect == null || duration <= 0f)
                 return;
 
+            for (int i = 0; i < _ActiveEffects.Count; i++)
+            {
+                if (ReferenceEquals(_ActiveEffects[i].Effect, effect))
+                {
+                    return;
+                }
+            }
+
             var activeEffect = new ActiveEffect
             {
                 Effect = effect,
+                Duration = duration,
                 RemainingTime = duration
             };
 
             ApplyEffectToAllTargets(effect);
             _ActiveEffects.Add(activeEffect);
+        }
+
+        /// <summary>
+        /// Gets the normalized remaining time for an active effect.
+        /// </summary>
+        public bool TryGetEffectProgress(IPowerUpEffect effect, out float normalizedRemaining)
+        {
+            for (int i = 0; i < _ActiveEffects.Count; i++)
+            {
+                var activeEffect = _ActiveEffects[i];
+                if (!ReferenceEquals(activeEffect.Effect, effect))
+                    continue;
+
+                normalizedRemaining = activeEffect.Duration > 0f
+                    ? Mathf.Clamp01(activeEffect.RemainingTime / activeEffect.Duration)
+                    : 0f;
+                return true;
+            }
+
+            normalizedRemaining = 0f;
+            return false;
         }
 
         /// <summary>
@@ -74,6 +112,7 @@ namespace Game.PowerUps.Services
                 {
                     RemoveEffectFromAllTargets(activeEffect.Effect);
                     _ActiveEffects.RemoveAt(i);
+                    RaiseEndedOutcome(activeEffect.Effect, PowerUpOutcome.Expired);
                 }
             }
         }
@@ -86,7 +125,9 @@ namespace Game.PowerUps.Services
             for (int i = 0; i < _ActiveEffects.Count; i++)
             {
                 RemoveEffectFromAllTargets(_ActiveEffects[i].Effect);
+                RaiseEndedOutcome(_ActiveEffects[i].Effect, PowerUpOutcome.Cleared);
             }
+
             _ActiveEffects.Clear();
         }
 
@@ -125,6 +166,14 @@ namespace Game.PowerUps.Services
             }
         }
 
+        private void RaiseEndedOutcome(IPowerUpEffect effect, PowerUpOutcome outcome)
+        {
+            if (effect is PowerUpConfigBase config)
+            {
+                _OutcomeChannel?.Raise(new PowerUpOutcomeEventData(config, outcome, -1));
+            }
+        }
+
         public void Dispose()
         {
             _LevelStartedChannel?.Unsubscribe(HandleLevelStarted);
@@ -134,6 +183,7 @@ namespace Game.PowerUps.Services
         private class ActiveEffect
         {
             public IPowerUpEffect Effect;
+            public float Duration;
             public float RemainingTime;
         }
     }

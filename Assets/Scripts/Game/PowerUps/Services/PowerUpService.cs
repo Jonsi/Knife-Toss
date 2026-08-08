@@ -1,4 +1,5 @@
 using System;
+using Common.Events;
 using Game.Entities.Knife.Views;
 using Game.Flow.Events;
 using Game.PowerUps.Configs;
@@ -19,6 +20,7 @@ namespace Game.PowerUps.Services
         private readonly PowerUpActivatedEventChannel _ActivatedChannel;
         private readonly PowerUpUsedEventChannel _UsedChannel;
         private readonly PowerUpCancelledEventChannel _CancelledChannel;
+        private readonly IEventChannel<PowerUpOutcomeEventData> _OutcomeChannel;
         private readonly LevelStartedEventChannel _LevelStartedChannel;
         private readonly PowerUpEffectService _EffectService;
         private readonly Game.KnifeThrower.Interfaces.IThrowerStateManager _ThrowerStateManager;
@@ -32,6 +34,7 @@ namespace Game.PowerUps.Services
             PowerUpActivatedEventChannel activatedChannel,
             PowerUpUsedEventChannel usedChannel,
             PowerUpCancelledEventChannel cancelledChannel,
+            IEventChannel<PowerUpOutcomeEventData> outcomeChannel,
             LevelStartedEventChannel levelStartedChannel,
             PowerUpEffectService effectService,
             Game.KnifeThrower.Interfaces.IThrowerStateManager throwerStateManager)
@@ -40,6 +43,7 @@ namespace Game.PowerUps.Services
             _ActivatedChannel = activatedChannel;
             _UsedChannel = usedChannel;
             _CancelledChannel = cancelledChannel;
+            _OutcomeChannel = outcomeChannel;
             _LevelStartedChannel = levelStartedChannel;
             _EffectService = effectService;
             _ThrowerStateManager = throwerStateManager;
@@ -77,31 +81,84 @@ namespace Game.PowerUps.Services
         public bool TryActivate(PowerUpConfigBase config)
         {
             if (config == null || string.IsNullOrEmpty(config.InventoryKey))
+            {
+                RaiseOutcome(config, PowerUpOutcome.InvalidConfiguration, 0, "Power-up configuration or inventory key is missing.");
                 return false;
+            }
 
             var inventory = _PlayerDataService.EnsurePowerUpInventory();
             if (!HasInventory(inventory, config))
+            {
+                RaiseOutcome(config, PowerUpOutcome.Unavailable, 0, "No inventory is available for this power-up.");
                 return false;
+            }
 
             // World effects apply immediately without affecting thrower
             if (config is IWorldEffectPowerUp worldEffect)
             {
+                if (config is IPowerUpEffect effect &&
+                    _EffectService.TryGetEffectProgress(effect, out _))
+                {
+                    RaiseOutcome(
+                        config,
+                        PowerUpOutcome.Blocked,
+                        GetRemainingCount(inventory, config),
+                        "This world effect is already active.");
+                    return false;
+                }
+
                 worldEffect.ApplyWorldEffect(_EffectService);
+                int countBeforeConsumption = GetRemainingCount(inventory, config);
+                _ActivatedChannel?.Raise(new PowerUpActivatedEventData(config, countBeforeConsumption));
+                RaiseOutcome(config, PowerUpOutcome.Activated, countBeforeConsumption);
                 ConsumeInventory(inventory, config);
-                _UsedChannel?.Raise(new PowerUpUsedEventData(config, GetRemainingCount(inventory, config)));
+                int remainingCount = GetRemainingCount(inventory, config);
+                _UsedChannel?.Raise(new PowerUpUsedEventData(config, remainingCount));
+                RaiseOutcome(config, PowerUpOutcome.Consumed, remainingCount);
                 return true;
             }
 
-            // Projectile powerups switch thrower state
+            // Projectile power-ups switch thrower state
             if (config is IProjectilePowerUp)
             {
+                if (HasActivePowerUp)
+                {
+                    RaiseOutcome(
+                        config,
+                        PowerUpOutcome.Blocked,
+                        GetRemainingCount(inventory, config),
+                        "Another projectile power-up is already active.");
+                    return false;
+                }
+
                 _ThrowerStateManager.ActivateProjectilePowerUp(config);
                 _RuntimeState.HasActivePowerUp = true;
                 _RuntimeState.ActiveConfig = config;
-                _ActivatedChannel?.Raise(new PowerUpActivatedEventData(config, GetRemainingCount(inventory, config)));
+                int remainingCount = GetRemainingCount(inventory, config);
+                _ActivatedChannel?.Raise(new PowerUpActivatedEventData(config, remainingCount));
+                RaiseOutcome(config, PowerUpOutcome.Activated, remainingCount);
                 return true;
             }
 
+            RaiseOutcome(
+                config,
+                PowerUpOutcome.Unsupported,
+                GetRemainingCount(inventory, config),
+                "The power-up does not implement a supported execution type.");
+            return false;
+        }
+
+        /// <summary>
+        /// Gets the normalized remaining time for an active world effect.
+        /// </summary>
+        public bool TryGetWorldEffectProgress(PowerUpConfigBase config, out float normalizedRemaining)
+        {
+            if (config is IPowerUpEffect effect)
+            {
+                return _EffectService.TryGetEffectProgress(effect, out normalizedRemaining);
+            }
+
+            normalizedRemaining = 0f;
             return false;
         }
 
@@ -120,6 +177,7 @@ namespace Game.PowerUps.Services
                 var config = _RuntimeState.ActiveConfig;
                 _RuntimeState.Clear();
                 _CancelledChannel?.Raise(new PowerUpCancelledEventData(config));
+                RaiseOutcome(config, PowerUpOutcome.Cancelled, GetRemainingCountFor(config));
                 return true;
             }
 
@@ -131,7 +189,7 @@ namespace Game.PowerUps.Services
         /// </summary>
         public void ClearActive()
         {
-            _RuntimeState.Clear();
+            ResetState();
         }
 
         /// <summary>
@@ -148,6 +206,15 @@ namespace Game.PowerUps.Services
             if (handled)
             {
                 ConsumeActive();
+            }
+            else
+            {
+                var config = _RuntimeState.ActiveConfig;
+                RaiseOutcome(
+                    config,
+                    PowerUpOutcome.ExecutionFailed,
+                    GetRemainingCountFor(config),
+                    "The active power-up could not handle the throw request.");
             }
 
             return handled;
@@ -168,7 +235,17 @@ namespace Game.PowerUps.Services
 
         private void ResetState()
         {
+            var config = _RuntimeState.ActiveConfig;
+            if (_ThrowerStateManager != null && _ThrowerStateManager.IsProjectilePowerUpActive)
+            {
+                _ThrowerStateManager.DeactivateProjectilePowerUp();
+            }
+
             _RuntimeState.Clear();
+            if (config != null)
+            {
+                RaiseOutcome(config, PowerUpOutcome.Cleared, GetRemainingCountFor(config));
+            }
         }
 
         private void ConsumeActive()
@@ -183,7 +260,9 @@ namespace Game.PowerUps.Services
 
             ConsumeInventory(inventory, activeConfig);
             _RuntimeState.Clear();
-            _UsedChannel?.Raise(new PowerUpUsedEventData(activeConfig, GetRemainingCount(inventory, activeConfig)));
+            int remainingCount = GetRemainingCount(inventory, activeConfig);
+            _UsedChannel?.Raise(new PowerUpUsedEventData(activeConfig, remainingCount));
+            RaiseOutcome(activeConfig, PowerUpOutcome.Consumed, remainingCount);
         }
 
         private void ConsumeInventory(PowerUpInventoryData inventory, PowerUpConfigBase config)
@@ -211,6 +290,20 @@ namespace Game.PowerUps.Services
                 return;
 
             inventory.DecrementCount(config.InventoryKey, 1);
+        }
+
+        private int GetRemainingCountFor(PowerUpConfigBase config)
+        {
+            return GetRemainingCount(_PlayerDataService.EnsurePowerUpInventory(), config);
+        }
+
+        private void RaiseOutcome(
+            PowerUpConfigBase config,
+            PowerUpOutcome outcome,
+            int remainingCount,
+            string failureReason = null)
+        {
+            _OutcomeChannel?.Raise(new PowerUpOutcomeEventData(config, outcome, remainingCount, failureReason));
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using Common.Events;
 using Game.Flow.Events;
 using Game.PowerUps.Configs;
+using Game.PowerUps.Interfaces;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,13 +22,16 @@ namespace Game.PowerUps.Views
         [SerializeField] private Color _SelectedColor = Color.white;
         [SerializeField] private Color _UnselectedColor = Color.gray;
         [SerializeField] private Color _UnavailableColor = new Color(0.3f, 0.3f, 0.3f, 0.5f);
+        [SerializeField] private Color _CooldownColor = new Color(0f, 0f, 0f, 0.6f);
 
         private PowerUpConfigBase _Config;
         private Action<PowerUpConfigBase> _ClickHandler;
         private Action<PowerUpConfigBase> _AddHandler;
         private int _CurrentCount;
         private bool _IsSelected;
+        private bool _IsEffectActive;
         private bool _IsGameplayActive = true;
+        private Image _CooldownFill;
         private LevelStartedEventChannel _LevelStartedChannel;
         private VoidEventChannel _FailFlowStartedChannel;
 
@@ -50,6 +54,8 @@ namespace Game.PowerUps.Views
             {
                 _Icon.sprite = config.Icon;
             }
+
+            EnsureCooldownFill();
 
             UpdateSelected(false);
             SetCount(0);
@@ -80,21 +86,25 @@ namespace Game.PowerUps.Views
                 _CountText.text = count.ToString();
             }
 
-            if (_CountRoot != null)
+            UpdateAvailabilityState();
+            UpdateVisualState();
+        }
+
+        /// <summary>
+        /// Displays a clockwise radial overlay for an active timed effect.
+        /// </summary>
+        public void SetEffectProgress(bool isActive, float normalizedRemaining)
+        {
+            _IsEffectActive = isActive;
+            if (_CooldownFill != null)
             {
-                _CountRoot.SetActive(count > 0);
+                _CooldownFill.gameObject.SetActive(isActive);
+                _CooldownFill.fillAmount = isActive
+                    ? 1f - Mathf.Clamp01(normalizedRemaining)
+                    : 0f;
             }
 
-            if (_PlusRoot != null)
-            {
-                _PlusRoot.SetActive(count <= 0);
-            }
-
-            if (_Button != null)
-            {
-                _Button.interactable = count > 0 || _AddHandler != null;
-            }
-
+            UpdateAvailabilityState();
             UpdateVisualState();
         }
 
@@ -109,6 +119,9 @@ namespace Game.PowerUps.Views
 
         private void HandleClick()
         {
+            if (_IsEffectActive)
+                return;
+
             if (_CurrentCount <= 0)
             {
                 _AddHandler?.Invoke(_Config);
@@ -147,6 +160,57 @@ namespace Game.PowerUps.Views
             _IsGameplayActive = isGameplayActive;
         }
 
+        private void EnsureCooldownFill()
+        {
+            if (_CooldownFill != null || _Config is not IWorldEffectPowerUp || _Icon == null)
+                return;
+
+            var cooldownObject = new GameObject(
+                "CooldownFill",
+                typeof(RectTransform),
+                typeof(CanvasRenderer),
+                typeof(Image));
+            cooldownObject.layer = gameObject.layer;
+
+            var rectTransform = cooldownObject.GetComponent<RectTransform>();
+            rectTransform.SetParent(transform, false);
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = Vector2.zero;
+            rectTransform.offsetMax = Vector2.zero;
+            rectTransform.SetAsFirstSibling();
+
+            _CooldownFill = cooldownObject.GetComponent<Image>();
+            _CooldownFill.sprite = _Icon.sprite;
+            _CooldownFill.color = _CooldownColor;
+            _CooldownFill.raycastTarget = false;
+            _CooldownFill.type = Image.Type.Filled;
+            _CooldownFill.fillMethod = Image.FillMethod.Radial360;
+            _CooldownFill.fillOrigin = (int)Image.Origin360.Top;
+            _CooldownFill.fillClockwise = true;
+            _CooldownFill.fillAmount = 0f;
+            _CooldownFill.gameObject.SetActive(false);
+        }
+
+        private void UpdateAvailabilityState()
+        {
+            if (_CountRoot != null)
+            {
+                _CountRoot.SetActive(_CurrentCount > 0 || _IsEffectActive);
+            }
+
+            if (_PlusRoot != null)
+            {
+                _PlusRoot.SetActive(_CurrentCount <= 0 && !_IsEffectActive);
+            }
+
+            if (_Button != null)
+            {
+                _Button.interactable = !_IsEffectActive &&
+                    (_CurrentCount > 0 || _AddHandler != null);
+            }
+        }
+
         private void UpdateVisualState()
         {
             var targetGraphic = _Button != null ? _Button.targetGraphic : null;
@@ -159,7 +223,7 @@ namespace Game.PowerUps.Views
                 return;
             }
 
-            targetGraphic.color = _IsSelected ? _SelectedColor : _UnselectedColor;
+            targetGraphic.color = _IsSelected || _IsEffectActive ? _SelectedColor : _UnselectedColor;
         }
     }
 }

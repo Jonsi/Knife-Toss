@@ -78,8 +78,8 @@ The largest gap is not the basic mechanic; it is consistency around the mechanic
 | 0 | Repeatable Playtest Foundation | Done | Real-input success, failure, restart, telemetry, and save restoration are repeatable. |
 | 1 | Runtime Transition and Release Hygiene | In progress | Runtime and Android artifact pass; iOS artifact and release-identity decisions remain. |
 | 2 | Visual Direction Lock and Asset Audit | In progress | Direction and inventory are complete; entitlement and legacy-art usage-right evidence remain. |
-| 3 | Power-Up Mechanic Truth | Ready | Both power-ups and their acquisition/state/event contracts behave intentionally. |
-| 4 | Shared UX Feedback Foundation | Blocked | Depends on Phase 2 visual tokens and Phase 3 event semantics. |
+| 3 | Power-Up Mechanic Truth | Done | Both power-ups, acquisition/persistence, cleanup, and typed outcome contracts passed real-input and automated QA. |
+| 4 | Shared UX Feedback Foundation | Ready | Phase 2 visual tokens and Phase 3 power-up event semantics are available. |
 | 5 | Failure, Retry, and Continue Polish | Blocked | Depends on the shared feedback foundation. |
 | 6 | Continuous Completion and Reward Accumulation | Needs decision | Completion sequence and reward accumulation semantics are approved and implemented. |
 | 7 | Core Vertical-Slice Art, VFX, and Audio Refinement | Blocked | Depends on stable loops and an approved visual target. |
@@ -138,13 +138,13 @@ art problem.
 
 | ID | Work item | Priority | Status | Evidence / acceptance |
 |---|---|---:|---|---|
-| PWR-302 | Document and validate the cheat workflow for granting each power-up | P0 | Ready | QA can set inventory without editing save JSON or bypassing gameplay use. |
-| PWR-303 | Test Super Knife from grant through throw, collision, consumption, and feedback | P0 | Ready | Mechanic path passes with real input. |
-| PWR-304 | Test Slow Time duration, speed change, consumption, and recovery | P0 | Ready | Telemetry confirms configured effect and clean restoration. |
-| PWR-301 | Fix stale Slow Time selected state after immediate consumption | P0 | Ready | Used world effects clear selection and show the correct count. |
-| PWR-305 | Validate clean-save acquisition and persistence through the store | P0 | Ready | Price, grant, inventory, scene transition, and consumption remain correct without tutorial assumptions. |
-| PWR-306 | Define stable power-up outcome events for shared feedback | P0 | Ready | Available, blocked, selected, activated, consumed, expired, and failed outcomes are presenter-ready. |
-| PWR-307 | Keep cheat-assisted mechanic QA separate from clean-save economy QA | P1 | Ready | Test evidence labels both paths independently. |
+| PWR-302 | Document and validate the cheat workflow for granting each power-up | P0 | Done | Android Development `TEST_ENABLED` profile and `Tools > Cheats` workflow documented; no save-file surgery. |
+| PWR-303 | Test Super Knife from grant through throw, collision, consumption, and feedback | P0 | Done | Real HUD activation and gameplay tap consumed one unit, destroyed the target in one throw, and advanced cleanly. |
+| PWR-304 | Test Slow Time duration, speed change, consumption, and recovery | P0 | Done | Real input measured 0.30 for five seconds, restored 1.00, and emitted Activated/Consumed/Expired. |
+| PWR-301 | Fix stale Slow Time selected state after immediate consumption | P0 | Done | Selection now derives from `ActiveConfig`; final selection is false during and after the immediate world effect. |
+| PWR-305 | Validate clean-save acquisition and persistence through the store | P0 | Done | Zero-count popup purchase spent 250, persisted six units, survived Play Mode stop, and rejected insufficient funds safely. |
+| PWR-306 | Define stable power-up outcome events for shared feedback | P0 | Done | Unified channel covers activation, consumption, cancellation, expiry, cleanup, availability/block/failure reasons. |
+| PWR-307 | Keep cheat-assisted mechanic QA separate from clean-save economy QA | P1 | Done | Evidence labels controlled cheat setup separately from real UI activation, purchase, rejection, and persistence paths. |
 
 ### Phase 4 - Shared UX Feedback Foundation
 

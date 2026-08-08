@@ -23,6 +23,10 @@ namespace Game.PowerUps.Interfaces
         /// </summary>
         bool TryActivate(PowerUpConfigBase config);
         /// <summary>
+        /// Gets the normalized remaining time for an active world effect.
+        /// </summary>
+        bool TryGetWorldEffectProgress(PowerUpConfigBase config, out float normalizedRemaining);
+        /// <summary>
         /// Attempts to cancel the active power-up.
         /// </summary>
         bool TryCancelActive();

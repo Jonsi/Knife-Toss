@@ -60,6 +60,24 @@ namespace Game.PowerUps.Views
             Unsubscribe();
         }
 
+        private void Update()
+        {
+            if (_PowerUpService == null)
+                return;
+
+            for (int i = 0; i < _Buttons.Count; i++)
+            {
+                var button = _Buttons[i];
+                if (button == null || button.Config is not IWorldEffectPowerUp)
+                    continue;
+
+                bool isActive = _PowerUpService.TryGetWorldEffectProgress(
+                    button.Config,
+                    out float normalizedRemaining);
+                button.SetEffectProgress(isActive, normalizedRemaining);
+            }
+        }
+
         private void OnDestroy()
         {
             if (_PopupInstance != null)
@@ -120,10 +138,7 @@ namespace Game.PowerUps.Views
                 return;
             }
 
-            if (_PowerUpService.TryActivate(config))
-            {
-                Select(config);
-            }
+            _PowerUpService.TryActivate(config);
         }
 
         private void OnAddButtonClicked(PowerUpConfigBase config)
@@ -169,12 +184,12 @@ namespace Game.PowerUps.Views
         private void OnUsed(PowerUpUsedEventData data)
         {
             RefreshCounts();
-            ClearSelection();
+            RefreshSelectionFromService();
         }
 
         private void OnCancelled(PowerUpCancelledEventData data)
         {
-            ClearSelection();
+            RefreshSelectionFromService();
         }
 
         private void OnLevelStarted(LevelStartedEventData data)
@@ -212,6 +227,11 @@ namespace Game.PowerUps.Views
 
                 button.UpdateSelected(false);
             }
+        }
+
+        private void RefreshSelectionFromService()
+        {
+            Select(_PowerUpService?.ActiveConfig);
         }
 
         private void RefreshInventoryAndCounts()

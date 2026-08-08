@@ -293,6 +293,27 @@ duration, expiration, and failure reason.
   correct across scene transitions and app interruption.
 - Phase 4 can present every power-up result without depending on tutorial-specific logic.
 
+### Implementation Evidence - 2026-08-08
+
+- [Phase 3 Power-Up Mechanic Truth](PHASE_3_POWER_UP_MECHANIC_TRUTH.md) records the QA
+  workflow, stable domain contract, real-input matrix, acquisition/persistence evidence,
+  and save restoration.
+- Shatter Strike activated through the real HUD, consumed exactly one unit only after a
+  real gameplay throw, destroyed the target in one hit, and advanced to the next level.
+- Chrono Shift applies a five-second `0.30` target-speed multiplier, consumes immediately,
+  restores `1.00` on expiry, and no longer leaves its HUD button selected.
+- Level reset explicitly clears the projectile thrower without consuming a selected unit;
+  repeated world-effect input is blocked while a visible radial timer is active.
+- `PowerUpOutcomeEventChannel` exposes Activated, Consumed, Cancelled, Expired, Cleared,
+  Unavailable, Blocked, InvalidConfiguration, Unsupported, and ExecutionFailed outcomes for
+  Phase 4 presenters.
+- StagePlay now inherits the persistent currency authority instead of installing a second
+  stale `CurrencyManager`; standalone StagePlay retains its local fallback.
+- A real zero-count acquisition popup purchase spent 250 currency, granted/persisted six
+  Chrono units, and rejected a second unaffordable purchase without mutation.
+- Seven focused power-up tests and the full 49-test Unity EditMode suite pass with zero
+  failures or skips. The exact pre-test user save was restored afterward.
+
 ## Phase 4 - Shared UX Feedback Foundation
 
 ### Goal

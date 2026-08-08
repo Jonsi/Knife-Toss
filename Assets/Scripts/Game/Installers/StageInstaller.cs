@@ -8,6 +8,7 @@ using Game.Ads.Data;
 using Game.Economy.Data;
 using Common.Events;
 using Game.Economy.Events;
+using Game.Economy.Interfaces;
 using Game.Entities.Collectible.Events;
 using Game.Entities.Knife.Events;
 using Game.Entities.Knife.Views;
@@ -177,6 +178,10 @@ namespace Game.Installers
         [Tooltip("A power-up activation was cancelled.")]
         private PowerUpCancelledEventChannel _PowerUpCancelledEventChannel;
 
+        [SerializeField]
+        [Tooltip("Unified power-up lifecycle/results for shared UI, VFX, audio, and analytics feedback.")]
+        private PowerUpOutcomeEventChannel _PowerUpOutcomeEventChannel;
+
         [Header("Economy (optional; use when stage runs standalone or parent has none)")]
         [SerializeField]
         [Tooltip("Currency type metadata and display defaults.")]
@@ -293,7 +298,9 @@ namespace Game.Installers
                 builder.Register<KnifeSkinService>(Lifetime.Scoped).AsSelf();
             }
 
-            if (_CurrencyTypeCatalog != null && _CurrencyBalanceChangedEventChannel != null)
+            if (!HasParentCurrencyService() &&
+                _CurrencyTypeCatalog != null &&
+                _CurrencyBalanceChangedEventChannel != null)
             {
                 Install(builder, new EconomyInstaller(_CurrencyTypeCatalog, _CurrencyBalanceChangedEventChannel));
             }
@@ -332,6 +339,24 @@ namespace Game.Installers
             installer.Install(builder);
         }
 
+        private bool HasParentCurrencyService()
+        {
+            if (Parent == null || Parent.Container == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                Parent.Container.Resolve<ICurrencyService>();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private TargetInstaller CreateTargetInstaller()
         {
             return new TargetInstaller(_PrefabsConfiguration);
@@ -360,6 +385,7 @@ namespace Game.Installers
                 _PowerUpActivatedEventChannel,
                 _PowerUpUsedEventChannel,
                 _PowerUpCancelledEventChannel,
+                _PowerUpOutcomeEventChannel,
                 _LevelStartedEventChannel);
         }
 
