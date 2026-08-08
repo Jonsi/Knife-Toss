@@ -20,6 +20,8 @@ namespace Game.PowerUps.Views
         [SerializeField] private GameObject _CountRoot;
         [SerializeField] private GameObject _PlusRoot;
         [SerializeField] private Material _ActiveIconMaterial;
+        [SerializeField, Range(0f, 0.15f)] private float _ActivePulseAmount = 0.06f;
+        [SerializeField, Min(0.1f)] private float _ActivePulseFrequency = 1.25f;
         [SerializeField] private Color _SelectedColor = Color.white;
         [SerializeField] private Color _UnselectedColor = Color.gray;
         [SerializeField] private Color _UnavailableColor = new Color(0.3f, 0.3f, 0.3f, 0.5f);
@@ -34,6 +36,8 @@ namespace Game.PowerUps.Views
         private bool _IsGameplayActive = true;
         private Image _CooldownFill;
         private Material _DefaultIconMaterial;
+        private Vector3 _IconBaseScale = Vector3.one;
+        private float _ActivePulseElapsed;
         private LevelStartedEventChannel _LevelStartedChannel;
         private VoidEventChannel _FailFlowStartedChannel;
 
@@ -55,6 +59,7 @@ namespace Game.PowerUps.Views
             if (_Icon != null)
             {
                 _DefaultIconMaterial = _Icon.material;
+                _IconBaseScale = _Icon.rectTransform.localScale;
                 _Icon.sprite = config.Icon;
             }
 
@@ -71,6 +76,28 @@ namespace Game.PowerUps.Views
             _FailFlowStartedChannel?.Subscribe(OnFailFlowStarted);
 
             UpdateVisualState();
+        }
+
+        private void Update()
+        {
+            if (_Icon == null)
+                return;
+
+            bool isActive = (_IsSelected || _IsEffectActive) &&
+                (_CurrentCount > 0 || _IsEffectActive);
+
+            if (!isActive)
+            {
+                _ActivePulseElapsed = 0f;
+                _Icon.rectTransform.localScale = _IconBaseScale;
+                return;
+            }
+
+            _ActivePulseElapsed += Time.unscaledDeltaTime;
+            float wave = 0.5f - 0.5f * Mathf.Cos(
+                _ActivePulseElapsed * _ActivePulseFrequency * Mathf.PI * 2f);
+            float scale = 1f + wave * _ActivePulseAmount;
+            _Icon.rectTransform.localScale = _IconBaseScale * scale;
         }
 
         /// <summary>
@@ -228,6 +255,12 @@ namespace Game.PowerUps.Views
                 _Icon.material = isActive && !isUnavailable && _ActiveIconMaterial != null
                     ? _ActiveIconMaterial
                     : _DefaultIconMaterial;
+
+                if (!isActive || isUnavailable)
+                {
+                    _ActivePulseElapsed = 0f;
+                    _Icon.rectTransform.localScale = _IconBaseScale;
+                }
             }
 
             if (isUnavailable)

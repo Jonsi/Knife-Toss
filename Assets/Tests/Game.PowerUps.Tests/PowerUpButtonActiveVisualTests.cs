@@ -78,11 +78,35 @@ namespace Game.PowerUps.Tests
             Assert.That(_Icon.color, Is.EqualTo(Color.gray));
         }
 
+        [Test]
+        public void ActivePulseScalesUniformlyAroundTheIconPivot()
+        {
+            _Icon.rectTransform.anchoredPosition = new Vector2(12f, -7f);
+            Vector2 originalPosition = _Icon.rectTransform.anchoredPosition;
+
+            _View.SetCount(3);
+            _View.UpdateSelected(true);
+            SetPrivate(_View, "_ActivePulseElapsed", 0.4f);
+            InvokePrivate(_View, "Update");
+
+            Assert.That(_Icon.rectTransform.anchoredPosition, Is.EqualTo(originalPosition));
+            Assert.That(_Icon.rectTransform.localScale.x, Is.GreaterThan(1f));
+            Assert.That(_Icon.rectTransform.localScale.x,
+                Is.EqualTo(_Icon.rectTransform.localScale.y).Within(0.0001f));
+        }
+
         private static void SetPrivate<T>(object target, string fieldName, T value)
         {
             FieldInfo field = target.GetType().GetField(fieldName, PrivateInstance);
             Assert.That(field, Is.Not.Null, $"Private field {fieldName} was not found.");
             field.SetValue(target, value);
+        }
+
+        private static void InvokePrivate(object target, string methodName)
+        {
+            MethodInfo method = target.GetType().GetMethod(methodName, PrivateInstance);
+            Assert.That(method, Is.Not.Null, $"Private method {methodName} was not found.");
+            method.Invoke(target, null);
         }
     }
 }
