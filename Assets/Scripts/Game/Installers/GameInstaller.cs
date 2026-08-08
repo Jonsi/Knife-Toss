@@ -6,6 +6,8 @@ using Common.IAP.Interfaces;
 using Common.Events;
 using Game.Economy.Events;
 using Game.Feedback.Audio.Data;
+using Game.Feedback.Data;
+using Game.Feedback.Events;
 using Game.Flow.Events;
 using Game.Flow.Game;
 using Game.Flow.Loading;
@@ -59,6 +61,7 @@ namespace Game.Installers
         [SerializeField] private CurrencyBalanceChangedEventChannel _CurrencyBalanceChangedEventChannel;
 
         [Header("Feedback")]
+        [SerializeField] private FeedbackEventChannel _FeedbackEventChannel;
         [SerializeField] private SoundSettings _SoundSettings;
         [SerializeField] private AudioPlayer _AudioPlayer;
 
@@ -147,6 +150,13 @@ namespace Game.Installers
 
             builder.RegisterInstance(_SoundSettings);
             builder.RegisterComponent(_AudioPlayer).As<IAudioPlayer>();
+
+            if (_FeedbackEventChannel != null)
+            {
+                builder.RegisterInstance(_FeedbackEventChannel)
+                    .AsSelf()
+                    .As<IEventChannel<FeedbackEventData>>();
+            }
 
             builder.RegisterInstance(_ReturnToMenuEventChannel);
             builder.RegisterInstance(_StoreCatalog).AsSelf();

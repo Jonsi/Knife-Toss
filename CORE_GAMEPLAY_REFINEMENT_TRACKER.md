@@ -79,7 +79,7 @@ The largest gap is not the basic mechanic; it is consistency around the mechanic
 | 1 | Runtime Transition and Release Hygiene | In progress | Runtime and Android artifact pass; iOS artifact and release-identity decisions remain. |
 | 2 | Visual Direction Lock and Asset Audit | In progress | Direction and inventory are complete; entitlement and legacy-art usage-right evidence remain. |
 | 3 | Power-Up Mechanic Truth | Done | Both power-ups, acquisition/persistence, cleanup, and typed outcome contracts passed real-input and automated QA. |
-| 4 | Shared UX Feedback Foundation | Ready | Phase 2 visual tokens and Phase 3 power-up event semantics are available. |
+| 4 | Shared UX Feedback Foundation | In progress | UX-401 now defines the shared typed event and arbitration contract; presenter work remains. |
 | 5 | Failure, Retry, and Continue Polish | Blocked | Depends on the shared feedback foundation. |
 | 6 | Continuous Completion and Reward Accumulation | Needs decision | Completion sequence and reward accumulation semantics are approved and implemented. |
 | 7 | Core Vertical-Slice Art, VFX, and Audio Refinement | Blocked | Depends on stable loops and an approved visual target. |
@@ -150,14 +150,14 @@ art problem.
 
 | ID | Work item | Priority | Status | Evidence / acceptance |
 |---|---|---:|---|---|
-| UX-401 | Define feedback events and priority rules | P0 | Ready | Success, blocked, insufficient funds, purchase, reward, consume, navigation, fail, and complete are covered. |
+| UX-401 | Define feedback events and priority rules | P0 | Done | `FeedbackEventChannel` and `FeedbackEventSystem.md` cover all nine semantics with explicit priority, FIFO queueing, interruption, cooldown, duplicate, overflow, and teardown rules; 19/19 focused EditMode cases pass. |
 | UX-402 | Build reusable button pressed/disabled/loading/blocked presentation | P0 | Ready | Phase 2 now supplies the approved UI tokens and state language. |
-| UX-403 | Build reusable toast/callout presenter with queue and deduplication | P0 | Blocked | Phase 2 art tokens are ready; depends on UX-401 event semantics. |
-| UX-404 | Add consistent currency gain/spend animation and sound hooks | P0 | Blocked | Depends on UX-401. |
+| UX-403 | Build reusable toast/callout presenter with queue and deduplication | P0 | Ready | UX-401 supplies the tested event and arbitration contract; no presenter was started as part of UX-401. |
+| UX-404 | Add consistent currency gain/spend animation and sound hooks | P0 | Ready | UX-401 now supplies the presentation-neutral shared event contract. |
 | UX-405 | Add typed VFX/audio/haptic hooks without coupling domain services to views | P0 | Ready | Each feedback event can fan out to approved presenters. |
 | UX-406 | Define reduced-motion, mute, and haptic-disable behavior | P1 | Needs decision | Accessibility variants have an explicit product policy. |
 | UX-407 | Build a feedback sandbox/debug panel | P1 | Ready | Every feedback state can be previewed without changing economy data. |
-| UX-408 | Prototype authoritative power-up button states and prepare the final-art handoff | P0 | Ready | The art/layout replacement is integrated without gameplay changes. The separate authoritative-state presenter remains future work; original power-up logic is preserved and 7/7 focused service tests pass. |
+| UX-408 | Prototype authoritative power-up button states and prepare the final-art handoff | P0 | In progress | The art/layout prototype is integrated and 14/14 current power-up EditMode tests pass, but the separate authoritative-state presenter and recorded runtime motion evidence are still outstanding; original gameplay logic remains unchanged. |
 
 ### Phase 5 - Failure, Retry, and Continue Polish
 
