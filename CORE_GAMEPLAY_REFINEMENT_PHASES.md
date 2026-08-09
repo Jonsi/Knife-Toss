@@ -1,6 +1,6 @@
 # Toss Madness Core Gameplay Refinement Phases
 
-Last updated: 2026-08-08
+Last updated: 2026-08-09
 
 Live execution status: [Core Gameplay Refinement Tracker](CORE_GAMEPLAY_REFINEMENT_TRACKER.md)
 
@@ -16,6 +16,8 @@ This roadmap complements rather than replaces:
 - [First 10 Minutes Design Pass](FIRST_10_MINUTES_DESIGN_PASS.md)
 - [Phase 1 Opening Flow Execution](PHASE_1_OPENING_FLOW_EXECUTION.md)
 - [Stage Collection Theming Setup](Assets/_Docs/StageCollectionTheming-Setup.md)
+- [Game-Wide UX/UI Audit and Build Plan](GAME_WIDE_UX_UI_AUDIT_AND_BUILD_PLAN.md)
+- [Game-Wide UX/UI Production Backlog](GAME_WIDE_UX_UI_PRODUCTION_BACKLOG.md)
 
 ## Planning Principles
 
