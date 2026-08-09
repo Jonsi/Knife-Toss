@@ -70,3 +70,4 @@ crashlytics-build.properties
 # Packed Addressables
 /[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
 /Assets/TextMesh Pro/Examples & Extras
+/Assets/_Recovery
