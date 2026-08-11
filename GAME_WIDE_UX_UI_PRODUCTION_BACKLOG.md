@@ -2,9 +2,10 @@
 
 Date: 2026-08-10
 
-Status: P0 decisions are recorded and the P1 interaction/layer foundation is implemented
-and validated. The Meta/Progression, Modal/Form, and Reusable UI/Feedback boards remain
-candidate references until separately approved; P2 and later phases remain planned work.
+Status: P0 decisions are recorded, the P1 interaction/layer foundation is implemented and
+validated, and P2-001 semantic tokens are complete. The Meta/Progression, Modal/Form, and
+Reusable UI/Feedback boards remain candidate references until separately approved; P2-002
+and later work remains planned.
 
 Companion documents:
 
@@ -321,7 +322,7 @@ Goal: prevent generated presentation details from becoming accidental product ru
 | P0-004 Approve completion contract | COMP-601/COMP-602 | Needs decision | Timeline, automatic progression, reward persistence and summary placement. |
 | P0-005 Approve settings/accessibility policy | UX-406 | Needs decision | Sound/music/mute, reduced motion and haptic availability/defaults. |
 | P0-006 Approve legal/support content | UX-801 | Needs decision | Product name, developer, support route, privacy text and acceptance semantics. |
-| P0-007 Build production asset register | ART-207/ART-703 | Ready | Every keep/refine/replace/new element has owner, source, provenance, target resolution, nine-slice/import settings and consuming prefabs. |
+| P0-007 Build production asset register | ART-207/ART-703 | Done | The 34-row `docs/UIProduction/PRODUCTION_ASSET_REGISTER.csv` covers every shared P2 element with disposition, owner/provider, demonstrated provenance state, source/output paths, pixel/display targets, nine-slice/import/atlas/alpha rules, consumers, states, accessibility variants, and blockers. Missing Layer Lab entitlement, legacy ownership evidence, and the Lilita editable source remain explicit blockers rather than inferred rights. |
 | P0-008 Lock validation baselines | QA-001/ART-201 | Ready | Fresh/progressed saves, current screenshots/video, resolutions and performance baseline recorded. |
 
 Exit gate: the attached core board is locked, other boards are explicitly approved or marked
@@ -381,7 +382,7 @@ Goal: create reusable production elements before rebuilding screens.
 
 | Task | Priority | Dependency | Deliverable and acceptance |
 |---|---:|---|---|
-| P2-001 Create semantic UI token assets | P0 | P0-007 | Palette, type, spacing, outline, shadow, motion and layer tokens are centralized. |
+| P2-001 Create semantic UI token assets | P0 | P0-007 | Done — `UiSemanticTokens.asset` centralizes 14 unique semantic colors, seven typography roles, the 8 dp grid, sizing, radii, outline/shadow/nine-slice conventions, standard/reduced motion, presentation layers, 48 dp touch targets, and safe-area/reference constants. |
 | P2-002 Produce button sprite family | P0 | P2-001 | Primary, secondary, danger, icon, price, owned/equipped art supports nine-slice and gameplay-size readability. |
 | P2-003 Skin shared button presenter | P0 | P2-002 | UX-402 semantics remain deterministic; no per-screen state copies. |
 | P2-004 Produce modal/panel/card family | P0 | P2-001 | Shared modal shell, rows, cards, scrim and scroll variants. |
@@ -391,6 +392,20 @@ Goal: create reusable production elements before rebuilding screens.
 | P2-008 Integrate current power-up art | P0 | UX-408 | Keep Shatter/Chrono identity; attach counts and authoritative state overlays. |
 | P2-009 Build UI gallery/debug scene | P1 | P2-003..008 | Preview every visual/state variant without save/economy mutation. |
 | P2-010 Validate imports and budgets | P0 | P2-002..008 | Provenance, PPU, compression, atlas, mip/filter, memory and grayscale checks pass. |
+
+#### P0-007 / P2-001 implementation evidence — 2026-08-11
+
+- The production register and its field/provenance conventions are stored in
+  `docs/UIProduction`; target-board pixels are explicitly excluded from runtime use and
+  removed tutorial/onboarding elements are explicitly forbidden.
+- `Assets/Configurations/UI/UiSemanticTokens.asset` reuses Lilita One for
+  display/heading/action/value roles and Liberation Sans for body/legal/caption roles.
+- The asset has a compact custom Inspector with a completeness summary, labeled color
+  swatches, and foldouts for typography, layout, surfaces, motion, layers, and accessibility.
+- Focused semantic-token EditMode coverage passed 4/4; the complete EditMode suite passed
+  139/139. The final post-test Unity Console contained zero errors and zero warnings.
+- No screen or prefab was skinned, no final sprite was generated, and gameplay, economy,
+  store, power-up behavior, navigation, and build/release configuration were unchanged.
 
 Exit gate: every shared element is previewable at phone size, uses one state model and token
 set, and has production source/provenance. No generated board pixels ship.

@@ -1,0 +1,139 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a353a42bb73c2402fba979d175c743bf, type: 3}
+  m_Name: UiSemanticTokens
+  m_EditorClassIdentifier: Game::Game.UI.Tokens.UiSemanticTokens
+  _SchemaVersion: 1
+  _Colors:
+    _Ink: {r: 0.14117648, g: 0.08627451, b: 0.05882353, a: 1}
+    _Ivory: {r: 1, g: 0.95686275, b: 0.87058824, a: 1}
+    _WoodDark: {r: 0.2901961, g: 0.14901961, b: 0.09019608, a: 1}
+    _WoodMid: {r: 0.54509807, g: 0.29411766, b: 0.14117648, a: 1}
+    _WoodLight: {r: 0.7607843, g: 0.47843137, b: 0.22745098, a: 1}
+    _Parchment: {r: 0.9098039, g: 0.78039217, b: 0.60784316, a: 1}
+    _SunGold: {r: 1, g: 0.76862746, b: 0.23921569, a: 1}
+    _Lagoon: {r: 0.09803922, g: 0.7490196, b: 0.76862746, a: 1}
+    _Leaf: {r: 0.27058825, g: 0.7882353, b: 0.40784314, a: 1}
+    _FailureDanger: {r: 0.9098039, g: 0.29411766, b: 0.23529412, a: 1}
+    _Disabled: {r: 0.4509804, g: 0.40392157, b: 0.36078432, a: 1}
+    _Scrim: {r: 0.02745098, g: 0.09019608, b: 0.05882353, a: 0.8}
+    _Success: {r: 0.18431373, g: 0.6862745, b: 0.3647059, a: 1}
+    _BlockedFeedback: {r: 0.9490196, g: 0.41568628, b: 0.18039216, a: 1}
+  _Typography:
+    _Display:
+      _FontAsset: {fileID: 11400000, guid: 605433b68313d491a8ab88bc03a41651, type: 2}
+      _SizeDp: 64
+      _MinimumSizeDp: 40
+      _LineHeightPercent: 100
+      _CharacterSpacing: 0
+    _Heading:
+      _FontAsset: {fileID: 11400000, guid: 605433b68313d491a8ab88bc03a41651, type: 2}
+      _SizeDp: 40
+      _MinimumSizeDp: 28
+      _LineHeightPercent: 105
+      _CharacterSpacing: 0
+    _Action:
+      _FontAsset: {fileID: 11400000, guid: 605433b68313d491a8ab88bc03a41651, type: 2}
+      _SizeDp: 24
+      _MinimumSizeDp: 18
+      _LineHeightPercent: 100
+      _CharacterSpacing: 1
+    _Body:
+      _FontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+      _SizeDp: 18
+      _MinimumSizeDp: 16
+      _LineHeightPercent: 130
+      _CharacterSpacing: 0
+    _Legal:
+      _FontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+      _SizeDp: 14
+      _MinimumSizeDp: 12
+      _LineHeightPercent: 145
+      _CharacterSpacing: 0
+    _Value:
+      _FontAsset: {fileID: 11400000, guid: 605433b68313d491a8ab88bc03a41651, type: 2}
+      _SizeDp: 28
+      _MinimumSizeDp: 20
+      _LineHeightPercent: 100
+      _CharacterSpacing: 0
+    _Caption:
+      _FontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+      _SizeDp: 14
+      _MinimumSizeDp: 12
+      _LineHeightPercent: 125
+      _CharacterSpacing: 0
+  _Layout:
+    _GridDp: 8
+    _HalfGridDp: 4
+    _CompactGapDp: 8
+    _RegularGapDp: 16
+    _RoomyGapDp: 24
+    _SectionGapDp: 32
+    _ScreenMarginDp: 24
+    _PanelInnerPaddingDp: 24
+    _CompactControlHeightDp: 48
+    _RegularControlHeightDp: 56
+    _LargeControlHeightDp: 72
+    _SmallIconDp: 32
+    _RegularIconDp: 48
+    _LargeIconDp: 64
+    _HeroIconDp: 96
+  _Surfaces:
+    _CompactRadiusDp: 8
+    _RegularRadiusDp: 16
+    _LargeRadiusDp: 24
+    _ThinOutlineDp: 1
+    _RegularOutlineDp: 2
+    _StrongOutlineDp: 3
+    _MaximumOutlineProportion: 0.04
+    _ShadowOffsetDp: {x: 0, y: -4}
+    _ShadowSoftnessDp: 4
+    _ShadowOpacity: 0.35
+    _NineSliceEdgeDp: 16
+    _NineSliceMinimumCenterDp: 8
+    _PreserveNineSliceBorderAspect: 1
+  _Motion:
+    _InstantSeconds: 0
+    _PressSeconds: 0.1
+    _FeedbackSeconds: 0.18
+    _TransitionSeconds: 0.22
+    _ModalSeconds: 0.2
+    _EmphasisSeconds: 0.38
+    _StandardEasing: 2
+    _EnterEasing: 4
+    _ExitEasing: 1
+    _ReducedPressSeconds: 0.05
+    _ReducedFeedbackSeconds: 0.08
+    _ReducedTransitionSeconds: 0.08
+    _ReducedModalSeconds: 0.08
+    _ReducedEmphasisSeconds: 0.1
+    _ReducedEasing: 0
+    _ReducedMotionAllowsShake: 0
+    _UseUnscaledTime: 1
+  _Layers:
+    _UiSortingLayer: UI
+    _WorldOrder: 0
+    _HudOrder: 100
+    _ScrimOrder: 200
+    _ModalOrder: 300
+    _ToastOrder: 400
+    _CriticalFeedbackOrder: 500
+  _Accessibility:
+    _MinimumTouchTargetDp: 48
+    _ReferencePixelsPerDp: 3
+    _ReferenceResolution: {x: 1080, y: 1920}
+    _CanvasWidthMatch: 0.5
+    _ApplyDeviceSafeArea: 1
+    _SafeAreaEdges: 15
+    _SafeContentMarginDp: 16
+    _BodyTextContrast: 4.5
+    _LargeTextAndBoundaryContrast: 3

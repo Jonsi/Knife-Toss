@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Game.UI.Tokens;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -49,8 +50,8 @@ namespace Game.UI.Common
     [DisallowMultipleComponent]
     public sealed class TouchTargetValidator : MonoBehaviour
     {
-        public const float DefaultMinimumSizeDp = 48f;
-        public const float DefaultReferencePixelsPerDp = 3f;
+        public const float DefaultMinimumSizeDp = UiTokenDefaults.MinimumTouchTargetDp;
+        public const float DefaultReferencePixelsPerDp = UiTokenDefaults.ReferencePixelsPerDp;
         internal const float ComparisonTolerance = 0.001f;
 
         [SerializeField] private RectTransform _ValidationRoot;
