@@ -29,22 +29,6 @@ namespace Game.UI.Controllers
         [SerializeField] private VoidEventChannel _RetryLevelChannel;
         [SerializeField] private VoidEventChannel _RestartStageChannel;
 
-        private SettingsPopupController _SettingsPopupController;
-
-        [VContainer.Inject]
-        public void Construct(SettingsPopupController settingsPopupController)
-        {
-            _SettingsPopupController = settingsPopupController;
-        }
-
-        public void ToggleSettings()
-        {
-            if (_SettingsPopupController != null)
-            {
-                _SettingsPopupController.ToggleSettings();
-            }
-        }
-
         public void SetBackground(Sprite sprite)
         {
             if (_BackgroundImage != null && sprite != null)

@@ -219,6 +219,8 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   _IapInstaller: {fileID: -911165353040658700}
+  _MockIapSettings: {fileID: 0}
+  _MockIapPopupBridge: {fileID: 0}
 --- !u!114 &-4086891514864499261
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,9 +234,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game::Game.Ads.Installers.AdInstaller
   _AdSettings: {fileID: 11400000, guid: 9f98e7c617ee091448d54f53ab75d101, type: 2}
+  _MockAdSettings: {fileID: 0}
   _AdRequestedChannel: {fileID: 11400000, guid: 7f240732fc1a6dc43bc8e4a2a6b9d398, type: 2}
   _AdCompletedChannel: {fileID: 11400000, guid: 736ce2f04deb38a45bddfa941e627bac, type: 2}
   _AdFailedChannel: {fileID: 11400000, guid: c2a25d8625e3f724fa37359710030286, type: 2}
+  _MockAdPopupBridge: {fileID: 0}
 --- !u!114 &-911165353040658700
 MonoBehaviour:
   m_ObjectHideFlags: 0

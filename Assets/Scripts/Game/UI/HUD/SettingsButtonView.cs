@@ -10,12 +10,12 @@ namespace Game.UI.HUD
     {
         [SerializeField] private Button _Button;
         
-        private UIController _UIController;
+        private ISettingsPopupPresenter _SettingsPresenter;
 
         [Inject]
-        public void Construct(UIController uiController)
+        public void Construct(ISettingsPopupPresenter settingsPresenter)
         {
-            _UIController = uiController;
+            _SettingsPresenter = settingsPresenter;
         }
 
         private void OnEnable()
@@ -33,10 +33,7 @@ namespace Game.UI.HUD
 
         private void OnClicked()
         {
-            if (_UIController != null)
-            {
-                _UIController.ToggleSettings();
-            }
+            _SettingsPresenter?.ToggleSettings();
         }
     }
 }

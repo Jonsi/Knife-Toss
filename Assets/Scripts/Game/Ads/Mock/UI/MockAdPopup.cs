@@ -71,12 +71,13 @@ namespace Game.Ads.UI
             _FailButton.onClick.AddListener(OnFailClicked);
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
             Debug.Log("[MockAdPopup] OnDisable.");
             _CompleteButton.onClick.RemoveListener(OnCompleteClicked);
             _SkipButton.onClick.RemoveListener(OnSkipClicked);
             _FailButton.onClick.RemoveListener(OnFailClicked);
+            base.OnDisable();
         }
 
         /// <summary>
@@ -156,10 +157,11 @@ namespace Game.Ads.UI
             };
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             _TimerCts?.Cancel();
             _Tcs?.TrySetResult(AdResult.Skipped);
+            base.OnDestroy();
         }
     }
 }

@@ -47,7 +47,7 @@ namespace Game.UI.Popups
                 _ContinueButton.onClick.AddListener(OnContinueClicked);
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
             if (_RetryButton != null && _RetryButton != _ContinueButton)
                 _RetryButton.onClick.RemoveListener(OnRetryClicked);
@@ -57,6 +57,8 @@ namespace Game.UI.Popups
 
             if (_ContinueButton != null)
                 _ContinueButton.onClick.RemoveListener(OnContinueClicked);
+
+            base.OnDisable();
         }
 
         public void SetContinueAvailable(bool available)

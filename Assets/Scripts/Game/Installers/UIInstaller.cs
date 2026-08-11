@@ -50,6 +50,9 @@ namespace Game.Installers
         /// <param name="builder">Container builder instance.</param>
         public void Install(IContainerBuilder builder)
         {
+            builder.Register<ModalStackCoordinator>(Lifetime.Singleton)
+                .As<IModalStackCoordinator>();
+
             builder.RegisterComponent(_Controller);
             builder.RegisterComponent(_FailPopup);
             builder.RegisterComponent(_SettingsPopup);
@@ -60,13 +63,16 @@ namespace Game.Installers
                 builder.RegisterInstance(_PrivacyPolicyContent);
 
             builder.Register<PopupGamePauseController>(Lifetime.Singleton).As<IGamePauseController>();
-            builder.Register<SettingsPopupController>(Lifetime.Singleton);
+            builder.Register<SettingsPopupController>(Lifetime.Singleton)
+                .As<ISettingsPopupPresenter>()
+                .AsSelf();
             builder.Register<CoinAccumulationController>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.RegisterComponentInHierarchy<CoinsUiDisplay>();
             builder.RegisterComponentInHierarchy<LoadMainMenuButton>();
             builder.RegisterComponentInHierarchy<PowerUpHudController>();
             builder.RegisterComponentInHierarchy<SettingsButtonView>();
+            builder.RegisterComponentInHierarchy<ModalInputBlockerPresenter>();
         }
     }
 }

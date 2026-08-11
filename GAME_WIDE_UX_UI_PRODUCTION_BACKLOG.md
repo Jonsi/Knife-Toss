@@ -1,10 +1,10 @@
 # Toss Madness Game-Wide UX/UI Production Backlog
 
-Date: 2026-08-09
+Date: 2026-08-10
 
-Status: planning only. The Core Loop target board is approved; the Meta/Progression,
-Modal/Form, and Reusable UI/Feedback boards remain candidate references until separately
-approved.
+Status: P0 decisions are recorded and the P1 interaction/layer foundation is implemented
+and validated. The Meta/Progression, Modal/Form, and Reusable UI/Feedback boards remain
+candidate references until separately approved; P2 and later phases remain planned work.
 
 Companion documents:
 
@@ -46,7 +46,7 @@ be sliced into runtime assets.
 In scope:
 
 - Main Menu, gameplay HUD, Failure, Completion, Daily Missions, Store, Stage Selection,
-  Settings, Privacy, Report Error, Add Power-Up, tutorial guidance primitives, shared UI,
+  Settings, Privacy, Report Error, Add Power-Up, shared UI,
   transitions, VFX, SFX, haptics, and accessibility fallbacks.
 - Reusable prefabs, tokens, typed presentation adapters, production sprites, focused tests,
   screen recordings, Console review, and device validation.
@@ -56,7 +56,8 @@ Out of scope:
 - Gameplay outcomes, prices, rewards, inventory quantities, power-up mechanics, balance,
   stage rules, navigation rules, release identities, Firebase, build profiles, or project
   settings unless a separate task explicitly authorizes them.
-- Final tutorial composition before stable screens and mechanics.
+- Tutorial, onboarding, gesture-prompt, spotlight, and forced-focus flows. These are
+  intentionally excluded from the product unless a later explicit product decision reverses it.
 - PVP, the dormant PowerUpsMenu, and Loading prototypes.
 - Bulk world-content production or redesign of the current Shatter Strike and Chrono Shift
   button identities.
@@ -90,7 +91,7 @@ motion, audio, and accessibility contracts.
 | EL-002 | Spacing and sizing tokens | Formalize | 8 dp grid, standard margins, gaps, radii, outline and shadow weights | Compact, regular, spacious where approved | Every screen |
 | EL-003 | Typography tokens | Refine | Explicit TMP heading, action, body, legal, value and caption styles with fallbacks | Normal, emphasized, disabled, error, link | Every screen |
 | EL-004 | Color/material tokens | Formalize | Ink, WoodDark, WoodMid, Parchment, SunGold, Ember, Lagoon, Leaf, Failure and ivory tokens | Normal, dimmed, selected, blocked, success | Every screen |
-| EL-005 | Modal layer stack | New | World/HUD/Guidance/Scrim/Modal/Toast/CriticalFeedback ownership | No modal, one modal, nested route, teardown | Gameplay and popups |
+| EL-005 | Modal layer stack | New | World/HUD/Scrim/Modal/Toast/CriticalFeedback ownership | No modal, one modal, nested route, teardown | Gameplay and popups |
 | EL-006 | Modal scrim | New | Full-safe-area input blocker with controlled fade | Enter, active, exit, reduced motion | All modal surfaces |
 | EL-007 | Wood/parchment modal shell | New | Nine-sliced frame with title, close, content and action slots | Standard, compact, scrollable, danger | Failure, Completion, Missions, Settings, forms |
 | EL-008 | Panel/card frame family | Refine/New | Shared nine-sliced world card, offer card, mission row, selector slot | Ready, selected, locked, complete, owned | Menu, Store, Missions, Stages |
@@ -100,7 +101,6 @@ motion, audio, and accessibility contracts.
 | EL-012 | Badge family | Refine | Inventory count, notification, lock, claimed, owned and equipped marks | Available, zero, locked, claimable, claimed | Menu, HUD, Store, Missions, Stages |
 | EL-013 | Knife selector | Refine | Three-card carousel/selector with arrows and selection highlight | Previous, current, next, owned, locked | Main Menu, Store |
 | EL-014 | Knife magazine | Refine | Compact remaining-knife dock with clear silhouettes | Full, partial, final knife, empty | Gameplay HUD |
-| EL-015 | Guidance callout | Replace | Small copy-plus-gesture primitive anchored away from actions/throw lane | Tap, swipe, dismissed, suppressed, reduced motion | Gameplay/tutorial |
 | EL-016 | Form field | New | Parchment input field with label, prompt, count and error line | Idle, focused, invalid, valid, disabled | Report Error |
 | EL-017 | Toggle/slider family | New | Carved setting rows and controls | On, off, muted, disabled, focused | Settings |
 | EL-018 | Scroll affordance | New | Page dots, next-card arrow, scroll bar or continuation treatment | Start, middle, end | Store, Stages, Privacy |
@@ -154,7 +154,7 @@ Elements:
 - Central knife/target hero area that remains quieter than Play.
 - Three-card knife selector with restrained arrows and authoritative ownership/selection.
 - One dominant Play action and subordinate Stages action.
-- Consistent enter/return transition and optional compact onboarding guidance.
+- Consistent enter/return transition.
 
 Behavior to preserve:
 
@@ -177,7 +177,6 @@ Elements:
 - Knife magazine at lower left.
 - Existing Shatter Strike and Chrono Shift controls retained at lower right with counts
   attached to their controls.
-- Guidance callout that never blocks the target, incoming knife, collision lane, or modal.
 - Open central throw lane with no persistent decorative overlay.
 
 Behavior to preserve:
@@ -190,7 +189,6 @@ Acceptance:
 - Target, stuck knives and incoming knife remain readable over every retained background.
 - HUD never intercepts valid gameplay input outside visible controls.
 - Counts, progress and selection update from authoritative runtime state.
-- Guidance is suppressed by any modal or transition.
 
 ### Failure and recovery — approved target structure
 
@@ -213,7 +211,7 @@ Acceptance:
 - Player can identify the collision cause before choosing an action.
 - Every recovery option is visibly distinct and truthfully labeled.
 - Loading blocks duplicate submission and all exit/teardown paths restore valid input.
-- Tutorial/HUD controls never render or receive input above the modal.
+- HUD controls never render or receive input above the modal.
 
 ### Completion and handoff — approved visual direction, product values unresolved
 
@@ -251,7 +249,7 @@ Acceptance:
 
 - Claimable state is obvious without color alone.
 - Claim cannot duplicate and claimed state persists after reopening.
-- Foreground HUD/guidance never overlaps the modal.
+- Foreground HUD never overlaps the modal.
 
 ### Store — candidate target
 
@@ -333,20 +331,49 @@ candidate, and no unresolved product value blocks the first affected screen.
 
 Goal: repair concrete functional defects before replacing visuals.
 
-| Task | Priority | Dependency | Deliverable and acceptance |
-|---|---:|---|---|
-| P1-001 Fix Settings ownership/subscription | P0 | None | One click opens one visible Settings modal from Main Menu and gameplay. |
-| P1-002 Introduce modal-stack ownership | P0 | P1-001 | One scrim/input blocker; only top modal receives input; deterministic teardown. |
-| P1-003 Suppress Guidance under modal/transition | P0 | P1-002 | No tutorial or power-up guidance renders above any modal. |
-| P1-004 Resolve dead Stage chest controls | P0 | None | Bind only to a real action or hide/remove the affordance; off-screen input disabled. |
-| P1-005 Repair StagePlay TMP references | P0 | None | Zero missing font/material references and explicit fallback configuration. |
-| P1-006 Add reusable safe-area root | P0 | None | Verified at 16:9, 19.5:9, 20:9 and tablet previews. |
-| P1-007 Add touch-target validation | P1 | P1-006 | Player actions meet 48 dp minimum or documented exception. |
-| P1-008 Protect deferred scenes | P1 | None | Automated/release check proves PVP, PowerUpsMenu and Loading remain unreachable. |
-| P1-009 Add focused foundation tests | P0 | P1-001..008 | Ownership, stacking, input blocking, cleanup, safe-area and dead-control tests pass. |
+| Task | Priority | Dependency | Status | Deliverable and acceptance |
+|---|---:|---|---|---|
+| P1-001 Fix Settings ownership/subscription | P0 | None | Done | One click opens one visible Settings modal from Main Menu and gameplay. |
+| P1-002 Introduce modal-stack ownership | P0 | P1-001 | Done | One scrim/input blocker; only top modal receives input; deterministic teardown. |
+| P1-003 Remove tutorial guidance | P0 | P1-002 | Done | No tutorial UI, state, persistence, scene wiring, or input interception remains. |
+| P1-004 Resolve dead Stage chest controls | P0 | None | Done | Bind only to a real action or hide/remove the affordance; off-screen input disabled. |
+| P1-005 Repair StagePlay TMP references | P0 | None | Done | Zero missing font/material references and explicit fallback configuration. |
+| P1-006 Add reusable safe-area root | P0 | None | Done | Verified at 16:9, 19.5:9, 20:9 and tablet previews. |
+| P1-007 Add touch-target validation | P1 | P1-006 | Done | Player actions meet 48 dp minimum or documented exception. |
+| P1-008 Protect deferred scenes | P1 | None | Done | Automated/release check proves PVP, PowerUpsMenu and Loading remain unreachable. |
+| P1-009 Add focused foundation tests | P0 | P1-001..008 | Done | Ownership, stacking, input blocking, cleanup, safe-area and dead-control tests pass. |
 
-Exit gate: zero dead taps, input leaks, missing references or safe-area failures across all
-reachable scenes; clean Console and no behavior/economy changes.
+#### P1 implementation evidence — 2026-08-10
+
+- Main Menu and StagePlay each resolve one Settings button owner and one scene-local
+  Settings/Privacy/Report modal host; the gameplay controller no longer owns Settings UI.
+- The scene-scoped modal coordinator gives the newest remaining modal top ownership,
+  aggregates blocking/suppression authority across overlapping fades, and releases that
+  authority deterministically on hide, disable, destroy, or coordinator disposal.
+- Tutorial guidance was removed by product direction: no hand, spotlight/dimmer, gesture
+  popup, onboarding persistence, scene reference, stage controller, or tutorial-only modal
+  authority remains.
+- The unbound world-row chest and coin-plus affordances are inactive and non-interactive;
+  the real per-stage reward Claim path remains intact.
+- StagePlay has no unresolved TMP font/material references and TMP Settings names an
+  explicit project fallback font.
+- Reusable safe-area roots are installed in Main Menu, StagePlay, Stages Menu, and Store;
+  EditMode profile tests cover 16:9, 19.5:9, 20:9, and tablet insets. Physical-device
+  notch, gesture-bar, and navigation-bar validation remains part of P8-006.
+- Reusable 48 dp hit padding and runtime validation cover reachable static and dynamically
+  instantiated actions, including stage selectors and reward Claim buttons, without
+  changing visual layout or power-up identities.
+- Asset-integrity tests prove the Android profiles exclude Loading, PVP, and PowerUpsMenu,
+  the Main Menu has no references to those routes, and no Loading route is callable.
+- Focused tutorial-removal integrity coverage passed 1/1; the complete EditMode suite
+  passed 135/135. Unity
+  Play validation covered Main Menu, gameplay, Stages, and Store with zero
+  Console errors or warnings. The modal sequence and clean Play-to-gameplay route were
+  captured and inspected, with no tutorial object or input interception present.
+
+Exit gate: passed in Editor and automated coverage with zero dead taps, input leaks,
+missing references, or preview-profile safe-area failures across reachable scenes; clean
+Console and no behavior/economy changes. Physical-device coverage remains assigned to P8.
 
 ### P2 — shared UI kit and production art
 
@@ -379,9 +406,8 @@ Goal: establish the approved hierarchy on the two continuously visible core surf
 | P3-003 Refine knife selector | P1 | P2 | Clear current/owned/locked states; arrows do not dominate or imply invalid input. |
 | P3-004 Recompose HUD hierarchy | P0 | P2 | Progress/resource/magazine/power-up layout leaves the throw lane clear. |
 | P3-005 Attach power-up count/state | P0 | P2-008 | Counts and selection/unavailable/timer truth remain attached and readable. |
-| P3-006 Replace tutorial gesture primitive | P1 | P1-003/P2 | Contextual guidance avoids target/actions and supports suppression/reduced motion. |
 | P3-007 Add menu/gameplay transition | P1 | FB-002 contract | Shared short language without navigation-rule change. |
-| P3-008 Validate core surfaces | P0 | P3-001..007 | Fresh/progressed real-input captures, grayscale, safe-area and Console evidence. |
+| P3-008 Validate core surfaces | P0 | P3-001..005/P3-007 | Fresh/progressed real-input captures, grayscale, safe-area and Console evidence. |
 
 Exit gate: Main Menu and gameplay read as one product, Play and throw remain immediate, and
 no HUD/control overlap or state lie remains.
@@ -454,18 +480,16 @@ Goal: finish the shared product shell and sensory language.
 Exit gate: every reachable modal uses one shell/ownership model, all required feedback has
 accessible fallback, and default/placeholder UI is gone.
 
-### P8 — tutorial integration, full journey and release evidence
+### P8 — full journey and release evidence
 
 Goal: prove the polished product across paths, states and representative hardware.
 
 | Task | Tracker mapping | Dependency | Deliverable and acceptance |
 |---|---|---|---|
-| P8-001 Finalize tutorial beat map | TUT-901/TUT-902 | P3..P7 | Minimum truthful sequence based on final controls, inventory and acquisition. |
-| P8-002 Implement tutorial state flow | TUT-903/TUT-904 | P8-001 | Live-state prompts, success completion, skip/dismiss/recovery/replay. |
-| P8-003 Run fresh-save journey | QA-901 | P8-002 | First ten minutes through throw, fail, recover, complete, reward and power-up. |
+| P8-003 Run fresh-save journey | QA-901 | P3..P7 | First ten minutes through throw, fail, recover, complete, reward and power-up. |
 | P8-004 Run progressed-save regression | QA-902 | P6/P7 | Menu, Store, Missions, Stages, Settings, forms, power-ups and return paths. |
 | P8-005 Run interruption matrix | QA-906 | P4..P7 | Offline/ad failure/cancel/pause/resume/quit during action and transition. |
-| P8-006 Run resolution and device matrix | QA-903/QA-904/TUT-905 | P8-003..005 | Android low/mid/high and target iPhone; safe areas, touch, latency, mix, haptics, thermals and frame pacing. |
+| P8-006 Run resolution and device matrix | QA-903/QA-904 | P8-003..005 | Android low/mid/high and target iPhone; safe areas, touch, latency, mix, haptics, thermals and frame pacing. |
 | P8-007 Run production safety checks | QA-905 | P8-003..006 | Forbidden-content scan; deferred scenes remain unreachable; build/release configuration untouched except separately authorized tasks. |
 | P8-008 Assemble final evidence | QA-907 | P8-007 | Tests, Console, screenshots, inspected encoded videos, telemetry, save restoration and known issues. |
 
@@ -478,7 +502,7 @@ Do not begin screen art replacement first. The initial implementation batch is:
 
 1. P1-001 Settings ownership/subscription.
 2. P1-002 modal-stack ownership.
-3. P1-003 Guidance suppression.
+3. P1-003 tutorial guidance removal.
 4. P1-004 dead Stage chest resolution.
 5. P1-005 StagePlay TMP reference repair.
 6. P1-006 safe-area root.

@@ -238,6 +238,7 @@ GameObject:
   - component: {fileID: 1149406768120562619}
   - component: {fileID: 3518785598094294716}
   - component: {fileID: 4346300674601199877}
+  - component: {fileID: 7314147745213394768}
   m_Layer: 5
   m_Name: StageIcon
   m_TagString: Untagged
@@ -348,6 +349,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7314147745213394768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4213231746454984704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fc8d6ed8962443599b8eaa9b5cc6a0, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game::Game.UI.Common.TouchTargetPadding
+  _MinimumSizeDp: 48
+  _ReferencePixelsPerDp: 3
 --- !u!1 &6061579733163163386
 GameObject:
   m_ObjectHideFlags: 0
@@ -497,6 +512,7 @@ GameObject:
   - component: {fileID: 7867373666061758876}
   - component: {fileID: 5387542716172875807}
   - component: {fileID: 5240218903721735310}
+  - component: {fileID: 7608370540504352214}
   m_Layer: 5
   m_Name: ClaimButton
   m_TagString: Untagged
@@ -606,6 +622,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6358866434778580669}
   m_CullTransparentMesh: 1
+--- !u!114 &7608370540504352214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6358866434778580669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fc8d6ed8962443599b8eaa9b5cc6a0, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game::Game.UI.Common.TouchTargetPadding
+  _MinimumSizeDp: 48
+  _ReferencePixelsPerDp: 3
 --- !u!1 &9050387583784907779
 GameObject:
   m_ObjectHideFlags: 0

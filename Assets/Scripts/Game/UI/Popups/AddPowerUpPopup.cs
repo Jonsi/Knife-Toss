@@ -83,12 +83,14 @@ namespace Game.UI.Popups
             RefreshContent();
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
             if (_CloseButton != null)
             {
                 _CloseButton.onClick.RemoveListener(OnCloseClicked);
             }
+
+            base.OnDisable();
         }
 
         public void ShowFor(PowerUpConfigBase config)

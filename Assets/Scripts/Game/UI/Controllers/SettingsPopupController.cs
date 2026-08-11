@@ -7,7 +7,7 @@ using VContainer;
 
 namespace Game.UI.Controllers
 {
-    public class SettingsPopupController : IDisposable
+    public class SettingsPopupController : ISettingsPopupPresenter, IDisposable
     {
         private readonly SettingsPopup _SettingsPopup;
         private readonly PrivacyPolicyPopup _PrivacyPopup;
@@ -42,12 +42,22 @@ namespace Game.UI.Controllers
 
         public void ShowSettings()
         {
+            if (_SettingsPopup == null)
+            {
+                return;
+            }
+
             _SettingsPopup.Setup(_SettingsService.IsMuted);
             _SettingsPopup.Show();
         }
 
         public void ToggleSettings()
         {
+            if (_SettingsPopup == null)
+            {
+                return;
+            }
+
             if (_SettingsPopup.gameObject.activeSelf)
             {
                 HideSettings();
@@ -60,7 +70,7 @@ namespace Game.UI.Controllers
 
         public void HideSettings()
         {
-            _SettingsPopup.Hide();
+            _SettingsPopup?.Hide();
         }
 
         private void Subscribe()
@@ -115,18 +125,18 @@ namespace Game.UI.Controllers
         private void OnPrivacyPolicyRequested()
         {
             _SettingsPopup.Hide();
-            
+
             if (_PrivacyContent != null)
                 _PrivacyPopup.SetContent(_PrivacyContent.PolicyText);
-                
-            _PrivacyPopup.Show();
+
+            _PrivacyPopup?.Show();
         }
 
         private void OnReportErrorRequested()
         {
             _SettingsPopup.Hide();
-            _ReportErrorPopup.Clear();
-            _ReportErrorPopup.Show();
+            _ReportErrorPopup?.Clear();
+            _ReportErrorPopup?.Show();
         }
 
         private async void OnRestorePurchasesRequested()
@@ -157,14 +167,14 @@ namespace Game.UI.Controllers
 
         private void OnPrivacyCloseRequested()
         {
-            _PrivacyPopup.Hide();
-            _SettingsPopup.Show();
+            _PrivacyPopup?.Hide();
+            _SettingsPopup?.Show();
         }
 
         private void OnReportCancelRequested()
         {
-            _ReportErrorPopup.Hide();
-            _SettingsPopup.Show();
+            _ReportErrorPopup?.Hide();
+            _SettingsPopup?.Show();
         }
     }
 }

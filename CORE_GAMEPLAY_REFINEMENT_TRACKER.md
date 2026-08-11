@@ -1,6 +1,6 @@
 # Toss Madness Core Gameplay Refinement Tracker
 
-Last updated: 2026-08-08
+Last updated: 2026-08-10
 
 Companion roadmap: [Core Gameplay Refinement Phases](CORE_GAMEPLAY_REFINEMENT_PHASES.md)
 
@@ -9,7 +9,7 @@ Related design: [Game Design Document](GAME_DESIGN_DOCUMENT.md), [First 10 Minut
 ## Purpose
 
 This is the execution tracker for taking the current game from a functional arcade loop to
-a coherent, testable core vertical slice. It covers runtime reliability, onboarding,
+a coherent, testable core vertical slice. It covers runtime reliability,
 power-ups, feedback, failure and completion flow, art direction, reusable core art,
 secondary-screen UX, release safety, and final playtesting.
 
@@ -33,7 +33,6 @@ The core throw-and-avoid loop is viable. Real-input playtesting showed responsiv
 clear stuck-knife hazards, effective target cracking, and a useful early difficulty ramp.
 The largest gap is not the basic mechanic; it is consistency around the mechanic:
 
-- tutorial prompts and inventory state do not always agree;
 - feedback is inconsistent across gameplay, failure, rewards, and store actions;
 - stage completion has intentionally uninterrupted pacing but lacks a completion beat;
 - scene transitions briefly create duplicate systems;
@@ -56,9 +55,9 @@ The largest gap is not the basic mechanic; it is consistency around the mechanic
 - The approved core visual target is **Hand-Carved Forest Arcade**: colorful forest-fantasy
   readability, warm ink outlines, painted wood/stone/metal, Lilita One display typography,
   Liberation Sans body typography, and one semantic UI/VFX palette.
-- Final tutorial design and implementation are deferred to Phase 9, after mechanics,
-  progression, economy, UI, feedback, and presentation are stable. Early work exposes
-  truthful state contracts and generic guidance primitives only.
+- Tutorial/onboarding UI is intentionally excluded by product direction. No hand,
+  spotlight, gesture prompt, forced-focus flow, or tutorial persistence should be added
+  without a new explicit product decision.
 
 ## Baseline Evidence
 
@@ -84,7 +83,7 @@ The largest gap is not the basic mechanic; it is consistency around the mechanic
 | 6 | Continuous Completion and Reward Accumulation | Needs decision | Completion sequence and reward accumulation semantics are approved and implemented. |
 | 7 | Core Vertical-Slice Art, VFX, and Audio Refinement | Blocked | Depends on stable loops and an approved visual target. |
 | 8 | Secondary Screens and Meta UX Consistency | Blocked | Depends on the shared feedback foundation and core UI kit. |
-| 9 | Tutorial Integration, Full Journey, Device, and Release Validation | Blocked | Final tutorial is integrated against stable systems; fresh-save journey and production build pass. |
+| 9 | Full Journey, Device, and Release Validation | Blocked | Fresh-save journey, device matrix, and production build pass. |
 | 10 | World Identity and Content Expansion | Deferred | Begins only after the core vertical slice passes Phase 9 validation. |
 
 ## Work Item Tracker
@@ -212,15 +211,10 @@ run counter, and the next target entering immediately afterward.
 | POPUP-801 | Replace development-looking mock-flow presentation in player-facing QA captures | P2 | Ready | QA/debug presentation cannot be confused with production UI. |
 | UX-801 | Audit copy, spacing, hierarchy, safe areas, and back navigation on every secondary screen | P1 | Blocked | Depends on Phase 7 core visual language. |
 
-### Phase 9 - Tutorial Integration, Full Journey, Device, and Release Validation
+### Phase 9 - Full Journey, Device, and Release Validation
 
 | ID | Work item | Priority | Status | Evidence / acceptance |
 |---|---|---:|---|---|
-| TUT-901 | Map the final minimum teaching sequence against the completed core UX | P0 | Blocked | Begins only after Phases 1-8 stabilize mechanics, progression, economy, feedback, and presentation. |
-| TUT-902 | Decide first taught power-up and empty-inventory behavior | P0 | Blocked | Choose using final acquisition cost/path, pacing, and mechanic comprehension evidence. |
-| TUT-903 | Implement truthful state-driven prompts and success-based completion flags | P0 | Blocked | Prompts query live state and complete only after the demonstrated action succeeds. |
-| TUT-904 | Add tutorial skip, dismissal, interruption recovery, and replay/debug coverage | P1 | Blocked | Tutorial state cannot trap, silently skip, or corrupt a player journey. |
-| TUT-905 | Validate final copy, gestures, focus, safe areas, and accessibility on device | P0 | Blocked | Uses final UI/art and representative device classes. |
 | QA-901 | Run fresh-save first-ten-minutes playtest with real input | P0 | Blocked | Phases 1-8 complete. |
 | QA-902 | Run progressed-save regression through store, missions, stages, and power-ups | P0 | Blocked | Phases 1-8 complete. |
 | QA-903 | Test representative low/mid/high Android devices and target iPhone | P0 | Blocked | Device matrix approved. |

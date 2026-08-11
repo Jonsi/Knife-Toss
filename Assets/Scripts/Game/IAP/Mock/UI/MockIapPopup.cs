@@ -38,12 +38,13 @@ namespace Game.IAP.UI
             if (_FailButton != null) _FailButton.onClick.AddListener(OnFailedClicked);
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
             if (_SuccessButton != null) _SuccessButton.onClick.RemoveListener(OnSuccessClicked);
             if (_CancelButton != null) _CancelButton.onClick.RemoveListener(OnCancelledClicked);
             if (_DeferredButton != null) _DeferredButton.onClick.RemoveListener(OnDeferredClicked);
             if (_FailButton != null) _FailButton.onClick.RemoveListener(OnFailedClicked);
+            base.OnDisable();
         }
 
         public void Present(
@@ -110,10 +111,11 @@ namespace Game.IAP.UI
             return $"mock-popup:{key}:{Guid.NewGuid():N}";
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             _TimerCts?.Cancel();
             _Tcs?.TrySetResult(IapPurchaseResult.CancelledByUser);
+            base.OnDestroy();
         }
     }
 }

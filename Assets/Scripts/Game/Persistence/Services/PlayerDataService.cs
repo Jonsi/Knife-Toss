@@ -439,11 +439,6 @@ namespace Game.Persistence.Services
             {
                 _CachedData.DailyMissions.ActiveMissions = new List<Game.Missions.Data.ActiveMissionEntry>();
             }
-
-            if (_CachedData.Onboarding == null)
-            {
-                _CachedData.Onboarding = new PlayerOnboardingData();
-            }
         }
 
         private void UpdateProgress()
@@ -476,7 +471,6 @@ namespace Game.Persistence.Services
             _CachedData.RewardClaims.ClaimedStageRewards ??= new List<StageRewardKey>();
             _CachedData.DailyMissions ??= new DailyMissionData();
             _CachedData.DailyMissions.ActiveMissions ??= new List<Game.Missions.Data.ActiveMissionEntry>();
-            _CachedData.Onboarding ??= new PlayerOnboardingData();
         }
 
         private void SyncGameData()

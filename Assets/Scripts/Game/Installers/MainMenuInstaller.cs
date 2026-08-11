@@ -4,6 +4,9 @@ using Game.UI.HUD;
 using Game.UI.Interfaces;
 using Game.UI.MainMenu;
 using Game.UI.Missions;
+using Game.UI.Controllers;
+using Game.UI.Data;
+using Game.UI.Popups;
 using Game.UI.Services;
 using Game.Missions.Events;
 using Game.Feedback.Events;
@@ -29,8 +32,15 @@ namespace Game.Installers
         [SerializeField] private DailyMissionPopup _DailyMissionPopup;
         [SerializeField] private MissionProgressChangedEventChannel _MissionProgressChangedEventChannel;
 
+        [Header("Settings Presentation")]
+        [SerializeField] private SettingsModalHost _SettingsModalHost;
+        [SerializeField] private PrivacyPolicyContent _PrivacyPolicyContent;
+
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.Register<ModalStackCoordinator>(Lifetime.Singleton)
+                .As<IModalStackCoordinator>();
+
             if (_CurrencyAccumulationConfig != null)
             {
                 builder.RegisterInstance(_CurrencyAccumulationConfig);
@@ -50,12 +60,31 @@ namespace Game.Installers
             }
 
             builder.Register<PopupGamePauseController>(Lifetime.Singleton).As<IGamePauseController>();
+
+            if (_SettingsModalHost != null && _SettingsModalHost.IsConfigured)
+            {
+                builder.RegisterComponent(_SettingsModalHost.SettingsPopup);
+                builder.RegisterComponent(_SettingsModalHost.PrivacyPopup);
+                builder.RegisterComponent(_SettingsModalHost.ReportErrorPopup);
+
+                if (_PrivacyPolicyContent != null)
+                {
+                    builder.RegisterInstance(_PrivacyPolicyContent);
+                }
+
+                builder.Register<SettingsPopupController>(Lifetime.Singleton)
+                    .As<ISettingsPopupPresenter>()
+                    .AsSelf();
+                builder.RegisterComponentInHierarchy<SettingsButtonView>();
+            }
+
             builder.Register(resolver => new DailyMissionPopupController(
                 _DailyMissionPopup,
                 resolver.Resolve<Game.Missions.Daily.Services.DailyMissionProvider>(),
                 _MissionProgressChangedEventChannel,
                 resolver.Resolve<FeedbackEventChannel>()), Lifetime.Scoped).AsSelf();
             builder.RegisterComponentInHierarchy<CoinsUiDisplay>();
+            builder.RegisterComponentInHierarchy<ModalInputBlockerPresenter>();
         }
     }
 }

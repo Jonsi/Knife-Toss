@@ -166,7 +166,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.03529412, b: 0.06666667, a: 1}
@@ -199,11 +199,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2236823810742255323, guid: d76fe3563e104ee438bdfd340de1df19, type: 3}
   m_PrefabInstance: {fileID: 5479045618780343819}
   m_PrefabAsset: {fileID: 0}
---- !u!224 &559338492 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 4293417313391828669, guid: d76fe3563e104ee438bdfd340de1df19, type: 3}
-  m_PrefabInstance: {fileID: 5479045618780343819}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &797213547
 GameObject:
   m_ObjectHideFlags: 0
@@ -232,7 +227,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.UI.InputSystemUIInputModule
   m_SendPointerHoverToParent: 1
   m_MoveRepeatDelay: 0.5
@@ -263,7 +258,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventSystem
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
@@ -283,6 +278,57 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1057953463
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1057953464}
+  - component: {fileID: 1057953466}
+  m_Layer: 0
+  m_Name: SafeAreaRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1057953464
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1057953463}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 304479646}
+  - {fileID: 1904610131}
+  m_Father: {fileID: 1965329574}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1057953466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1057953463}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6aeb80b8a3074c34afde57dca3ead90, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game::Game.UI.Common.SafeAreaRoot
+  _Edges: 15
 --- !u!1 &1660981156
 GameObject:
   m_ObjectHideFlags: 0
@@ -325,7 +371,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1ef40c006e1d87043bd8e21cbc05aa08, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Game::Game.Installers.StagesMenuInstaller
   parentReference:
     TypeName: Game.Installers.GameInstaller
@@ -338,7 +384,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1965329574}
+    m_TransformParent: {fileID: 1057953464}
     m_Modifications:
     - target: {fileID: 1389502087507450272, guid: c7fa24327d8ca134282c6928e94ce0e6, type: 3}
       propertyPath: m_Name
@@ -443,7 +489,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1 &1965329570
 GameObject:
@@ -458,6 +504,7 @@ GameObject:
   - component: {fileID: 1965329572}
   - component: {fileID: 1965329571}
   - component: {fileID: 1965329575}
+  - component: {fileID: 1965329576}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -475,7 +522,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -492,7 +539,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
@@ -542,8 +589,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 108759170}
-  - {fileID: 304479646}
-  - {fileID: 1904610131}
+  - {fileID: 1057953464}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -561,9 +607,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f549d571f61b5948abb6f2f76bde127, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Game::Game.UI.Stages.StagesMenuController
   _BackButton: {fileID: 1904610132}
+--- !u!114 &1965329576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1965329570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed859954835e848388cc6318cac1d784, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game::Game.UI.Common.TouchTargetValidator
+  _ValidationRoot: {fileID: 1965329574}
+  _MinimumSizeDp: 48
+  _ReferencePixelsPerDp: 3
+  _IncludeInactive: 1
 --- !u!1 &1979444084
 GameObject:
   m_ObjectHideFlags: 0
@@ -667,7 +729,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
@@ -707,7 +769,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1965329574}
+    m_TransformParent: {fileID: 1057953464}
     m_Modifications:
     - target: {fileID: 2236823810742255323, guid: d76fe3563e104ee438bdfd340de1df19, type: 3}
       propertyPath: m_Pivot.x

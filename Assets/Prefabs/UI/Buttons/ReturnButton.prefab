@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7169858456608745230}
   - component: {fileID: 585233656585111778}
   - component: {fileID: 1376334030654520120}
+  - component: {fileID: 6004261819425416017}
   m_Layer: 5
   m_Name: ReturnButton
   m_TagString: Untagged
@@ -120,3 +121,17 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6004261819425416017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1389502087507450272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fc8d6ed8962443599b8eaa9b5cc6a0, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game::Game.UI.Common.TouchTargetPadding
+  _MinimumSizeDp: 48
+  _ReferencePixelsPerDp: 3

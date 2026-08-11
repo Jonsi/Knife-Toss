@@ -128,7 +128,7 @@ GameObject:
   - component: {fileID: 4633851412228952970}
   - component: {fileID: 3384417772286689472}
   - component: {fileID: 7290115397377063800}
-  - component: {fileID: 6364830810561711340}
+  - component: {fileID: 7302727163197453542}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -238,7 +238,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &6364830810561711340
+--- !u!114 &7302727163197453542
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -247,10 +247,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2879324248882551833}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 011d2ccec03a54b488d43f138c33ddfd, type: 3}
+  m_Script: {fileID: 11500000, guid: d7fc8d6ed8962443599b8eaa9b5cc6a0, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game::Game.UI.HUD.SettingsButtonView
-  _Button: {fileID: 7290115397377063800}
+  m_EditorClassIdentifier: Game::Game.UI.Common.TouchTargetPadding
+  _MinimumSizeDp: 48
+  _ReferencePixelsPerDp: 3
 --- !u!1 &7379068232736971001
 GameObject:
   m_ObjectHideFlags: 0
