@@ -12,22 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a353a42bb73c2402fba979d175c743bf, type: 3}
   m_Name: UiSemanticTokens
   m_EditorClassIdentifier: Game::Game.UI.Tokens.UiSemanticTokens
-  _SchemaVersion: 1
+  _SchemaVersion: 2
   _Colors:
-    _Ink: {r: 0.14117648, g: 0.08627451, b: 0.05882353, a: 1}
-    _Ivory: {r: 1, g: 0.95686275, b: 0.87058824, a: 1}
-    _WoodDark: {r: 0.2901961, g: 0.14901961, b: 0.09019608, a: 1}
-    _WoodMid: {r: 0.54509807, g: 0.29411766, b: 0.14117648, a: 1}
-    _WoodLight: {r: 0.7607843, g: 0.47843137, b: 0.22745098, a: 1}
-    _Parchment: {r: 0.9098039, g: 0.78039217, b: 0.60784316, a: 1}
-    _SunGold: {r: 1, g: 0.76862746, b: 0.23921569, a: 1}
-    _Lagoon: {r: 0.09803922, g: 0.7490196, b: 0.76862746, a: 1}
-    _Leaf: {r: 0.27058825, g: 0.7882353, b: 0.40784314, a: 1}
-    _FailureDanger: {r: 0.9098039, g: 0.29411766, b: 0.23529412, a: 1}
-    _Disabled: {r: 0.4509804, g: 0.40392157, b: 0.36078432, a: 1}
-    _Scrim: {r: 0.02745098, g: 0.09019608, b: 0.05882353, a: 0.8}
-    _Success: {r: 0.18431373, g: 0.6862745, b: 0.3647059, a: 1}
-    _BlockedFeedback: {r: 0.9490196, g: 0.41568628, b: 0.18039216, a: 1}
+    _Ink: {r: 0.19607843, g: 0.12156863, b: 0.05490196, a: 1}
+    _Ivory: {r: 0.96862745, g: 0.89411765, b: 0.74509805, a: 1}
+    _WoodDark: {r: 0.003921569, g: 0.105882354, b: 0.09019608, a: 1}
+    _WoodMid: {r: 0.003921569, g: 0.18431373, b: 0.16470589, a: 1}
+    _WoodLight: {r: 0.003921569, g: 0.30980393, b: 0.2627451, a: 1}
+    _Parchment: {r: 0.9607843, g: 0.8745098, b: 0.7058824, a: 1}
+    _SunGold: {r: 0.99215686, g: 0.654902, b: 0.1254902, a: 1}
+    _Lagoon: {r: 0.19215687, g: 0.654902, b: 0.5529412, a: 1}
+    _Leaf: {r: 0.33333334, g: 0.7882353, b: 0.7058824, a: 1}
+    _FailureDanger: {r: 0.9490196, g: 0.37254903, b: 0.20784314, a: 1}
+    _Disabled: {r: 0.3764706, g: 0.40784314, b: 0.38039216, a: 1}
+    _Scrim: {r: 0.003921569, g: 0.105882354, b: 0.09019608, a: 0.8}
+    _Success: {r: 0.18039216, g: 0.72156864, b: 0.5137255, a: 1}
+    _BlockedFeedback: {r: 0.9764706, g: 0.52156866, b: 0.34901962, a: 1}
   _Typography:
     _Display:
       _FontAsset: {fileID: 11400000, guid: 605433b68313d491a8ab88bc03a41651, type: 2}
@@ -101,6 +101,21 @@ MonoBehaviour:
     _NineSliceEdgeDp: 16
     _NineSliceMinimumCenterDp: 8
     _PreserveNineSliceBorderAspect: 1
+  _Buttons:
+    _Primary: {fileID: 21300000, guid: c07c0f281b9944c638dc1d3ea62a8508, type: 3}
+    _Secondary: {fileID: 21300000, guid: 28b129ae594524d9ca96b681b1a25b4a, type: 3}
+    _Danger: {fileID: 21300000, guid: a11d5078649b240d39a3112bf2dba79f, type: 3}
+    _IconOnly: {fileID: 21300000, guid: f42a0484892504bf59a637ca3c104590, type: 3}
+    _Price: {fileID: 21300000, guid: a2a51cdcf660b4fae84c0dea41310310, type: 3}
+    _Status: {fileID: 21300000, guid: 9e0e2e39076954b6982dabeae75e22c4, type: 3}
+    _OwnedMark: {fileID: -852329945831503209, guid: 1e90d91677e524f73a591c69daf62f32, type: 3}
+    _EquippedMark: {fileID: -3631540426887483333, guid: 1e90d91677e524f73a591c69daf62f32, type: 3}
+    _PressedScale: 0.96
+    _PressedTintStrength: 0.12
+    _DisabledAlpha: 0.55
+    _DisabledTintStrength: 0.55
+    _BlockedShakeDistanceDp: 2.5
+    _LoadingPulseMinimumAlpha: 0.65
   _Motion:
     _InstantSeconds: 0
     _PressSeconds: 0.1

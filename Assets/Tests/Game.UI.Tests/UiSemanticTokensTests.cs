@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Game.UI.Common;
 using Game.UI.Tokens;
 using NUnit.Framework;
@@ -85,6 +86,68 @@ namespace Game.UI.Tests
             Assert.That(tokens.Layers.ScrimOrder, Is.LessThan(tokens.Layers.ModalOrder));
             Assert.That(tokens.Layers.ModalOrder, Is.LessThan(tokens.Layers.ToastOrder));
             Assert.That(tokens.Layers.ToastOrder, Is.LessThan(tokens.Layers.CriticalFeedbackOrder));
+        }
+
+        [Test]
+        public void ProductionButtonTokensReferenceTheExactProjectSprites()
+        {
+            UiSemanticTokens tokens = LoadProductionAsset();
+            var expectedSurfaces = new[]
+            {
+                (UiButtonStyle.Primary, "Assets/Art/UI/Core/ButtonPrimary.png"),
+                (UiButtonStyle.Secondary, "Assets/Art/UI/Core/ButtonSecondary.png"),
+                (UiButtonStyle.Danger, "Assets/Art/UI/Core/ButtonDanger.png"),
+                (UiButtonStyle.IconOnly, "Assets/Art/UI/Core/ButtonIconSocket.png"),
+                (UiButtonStyle.Price, "Assets/Art/UI/Core/ButtonPrice.png"),
+                (UiButtonStyle.Status, "Assets/Art/UI/Core/ButtonStatus.png")
+            };
+
+            foreach ((UiButtonStyle style, string path) in expectedSurfaces)
+            {
+                Sprite expected = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+                Sprite actual = tokens.Buttons.GetSurface(style);
+
+                Assert.That(expected, Is.Not.Null, $"Missing expected production sprite at {path}.");
+                Assert.That(actual, Is.SameAs(expected), $"Button style {style} must reference {path} exactly.");
+                Assert.That(AssetDatabase.Contains(actual), Is.True);
+            }
+
+            Sprite[] ownershipSprites = AssetDatabase.LoadAllAssetsAtPath("Assets/Art/UI/Core/ButtonOwnershipMarks.png")
+                .OfType<Sprite>()
+                .ToArray();
+            Sprite expectedOwned = ownershipSprites.Single(sprite => sprite.name == "ButtonOwnedMark");
+            Sprite expectedEquipped = ownershipSprites.Single(sprite => sprite.name == "ButtonEquippedMark");
+
+            Assert.That(tokens.Buttons.GetOwnershipMark(UiButtonOwnershipMark.Owned), Is.SameAs(expectedOwned));
+            Assert.That(tokens.Buttons.GetOwnershipMark(UiButtonOwnershipMark.Equipped), Is.SameAs(expectedEquipped));
+            Assert.That(tokens.Buttons.GetSurface(UiButtonStyle.Unskinned), Is.Null);
+            Assert.That(tokens.Buttons.GetOwnershipMark(UiButtonOwnershipMark.None), Is.Null);
+        }
+
+        [Test]
+        public void MissingButtonSpriteReferencesProduceSpecificValidationIssues()
+        {
+            var tokens = ScriptableObject.CreateInstance<UiSemanticTokens>();
+
+            try
+            {
+                IReadOnlyList<string> issues = tokens.GetValidationIssues();
+
+                foreach (UiButtonStyle style in Enum.GetValues(typeof(UiButtonStyle)))
+                {
+                    if (style != UiButtonStyle.Unskinned)
+                    {
+                        Assert.That(issues, Does.Contain($"Button style {style} has no surface sprite."));
+                    }
+                }
+
+                Assert.That(issues, Does.Contain("Button ownership mark Owned has no sprite."));
+                Assert.That(issues, Does.Contain("Button ownership mark Equipped has no sprite."));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(tokens);
+            }
         }
 
         private static UiSemanticTokens LoadProductionAsset()

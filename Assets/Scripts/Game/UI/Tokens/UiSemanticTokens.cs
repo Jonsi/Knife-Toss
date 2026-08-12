@@ -35,6 +35,24 @@ namespace Game.UI.Tokens
         Caption
     }
 
+    public enum UiButtonStyle
+    {
+        Unskinned = 0,
+        Primary = 1,
+        Secondary = 2,
+        Danger = 3,
+        IconOnly = 4,
+        Price = 5,
+        Status = 6
+    }
+
+    public enum UiButtonOwnershipMark
+    {
+        None = 0,
+        Owned = 1,
+        Equipped = 2
+    }
+
     public enum UiEasing
     {
         Linear,
@@ -47,20 +65,20 @@ namespace Game.UI.Tokens
     [Serializable]
     public sealed class UiColorTokens
     {
-        [SerializeField] private Color _Ink = new Color32(0x24, 0x16, 0x0F, 0xFF);
-        [SerializeField] private Color _Ivory = new Color32(0xFF, 0xF4, 0xDE, 0xFF);
-        [SerializeField] private Color _WoodDark = new Color32(0x4A, 0x26, 0x17, 0xFF);
-        [SerializeField] private Color _WoodMid = new Color32(0x8B, 0x4B, 0x24, 0xFF);
-        [SerializeField] private Color _WoodLight = new Color32(0xC2, 0x7A, 0x3A, 0xFF);
-        [SerializeField] private Color _Parchment = new Color32(0xE8, 0xC7, 0x9B, 0xFF);
-        [SerializeField] private Color _SunGold = new Color32(0xFF, 0xC4, 0x3D, 0xFF);
-        [SerializeField] private Color _Lagoon = new Color32(0x19, 0xBF, 0xC4, 0xFF);
-        [SerializeField] private Color _Leaf = new Color32(0x45, 0xC9, 0x68, 0xFF);
-        [SerializeField] private Color _FailureDanger = new Color32(0xE8, 0x4B, 0x3C, 0xFF);
-        [SerializeField] private Color _Disabled = new Color32(0x73, 0x67, 0x5C, 0xFF);
-        [SerializeField] private Color _Scrim = new Color32(0x07, 0x17, 0x0F, 0xCC);
-        [SerializeField] private Color _Success = new Color32(0x2F, 0xAF, 0x5D, 0xFF);
-        [SerializeField] private Color _BlockedFeedback = new Color32(0xF2, 0x6A, 0x2E, 0xFF);
+        [SerializeField] private Color _Ink = new Color32(0x32, 0x1F, 0x0E, 0xFF);
+        [SerializeField] private Color _Ivory = new Color32(0xF7, 0xE4, 0xBE, 0xFF);
+        [SerializeField] private Color _WoodDark = new Color32(0x01, 0x1B, 0x17, 0xFF);
+        [SerializeField] private Color _WoodMid = new Color32(0x01, 0x2F, 0x2A, 0xFF);
+        [SerializeField] private Color _WoodLight = new Color32(0x01, 0x4F, 0x43, 0xFF);
+        [SerializeField] private Color _Parchment = new Color32(0xF5, 0xDF, 0xB4, 0xFF);
+        [SerializeField] private Color _SunGold = new Color32(0xFD, 0xA7, 0x20, 0xFF);
+        [SerializeField] private Color _Lagoon = new Color32(0x31, 0xA7, 0x8D, 0xFF);
+        [SerializeField] private Color _Leaf = new Color32(0x55, 0xC9, 0xB4, 0xFF);
+        [SerializeField] private Color _FailureDanger = new Color32(0xF2, 0x5F, 0x35, 0xFF);
+        [SerializeField] private Color _Disabled = new Color32(0x60, 0x68, 0x61, 0xFF);
+        [SerializeField] private Color _Scrim = new Color32(0x01, 0x1B, 0x17, 0xCC);
+        [SerializeField] private Color _Success = new Color32(0x2E, 0xB8, 0x83, 0xFF);
+        [SerializeField] private Color _BlockedFeedback = new Color32(0xF9, 0x85, 0x59, 0xFF);
 
         public Color Get(UiColorRole role)
         {
@@ -205,6 +223,58 @@ namespace Game.UI.Tokens
     }
 
     [Serializable]
+    public sealed class UiButtonSkinTokens
+    {
+        [SerializeField] private Sprite _Primary;
+        [SerializeField] private Sprite _Secondary;
+        [SerializeField] private Sprite _Danger;
+        [SerializeField] private Sprite _IconOnly;
+        [SerializeField] private Sprite _Price;
+        [SerializeField] private Sprite _Status;
+        [SerializeField] private Sprite _OwnedMark;
+        [SerializeField] private Sprite _EquippedMark;
+
+        [Header("Presentation")]
+        [SerializeField, Range(0.8f, 1f)] private float _PressedScale = 0.96f;
+        [SerializeField, Range(0f, 1f)] private float _PressedTintStrength = 0.12f;
+        [SerializeField, Range(0f, 1f)] private float _DisabledAlpha = 0.55f;
+        [SerializeField, Range(0f, 1f)] private float _DisabledTintStrength = 0.55f;
+        [SerializeField, Min(0f)] private float _BlockedShakeDistanceDp = 2.5f;
+        [SerializeField, Range(0f, 1f)] private float _LoadingPulseMinimumAlpha = 0.65f;
+
+        public float PressedScale => _PressedScale;
+        public float PressedTintStrength => _PressedTintStrength;
+        public float DisabledAlpha => _DisabledAlpha;
+        public float DisabledTintStrength => _DisabledTintStrength;
+        public float BlockedShakeDistanceDp => _BlockedShakeDistanceDp;
+        public float LoadingPulseMinimumAlpha => _LoadingPulseMinimumAlpha;
+
+        public Sprite GetSurface(UiButtonStyle style)
+        {
+            return style switch
+            {
+                UiButtonStyle.Primary => _Primary,
+                UiButtonStyle.Secondary => _Secondary,
+                UiButtonStyle.Danger => _Danger,
+                UiButtonStyle.IconOnly => _IconOnly,
+                UiButtonStyle.Price => _Price,
+                UiButtonStyle.Status => _Status,
+                _ => null
+            };
+        }
+
+        public Sprite GetOwnershipMark(UiButtonOwnershipMark mark)
+        {
+            return mark switch
+            {
+                UiButtonOwnershipMark.Owned => _OwnedMark,
+                UiButtonOwnershipMark.Equipped => _EquippedMark,
+                _ => null
+            };
+        }
+    }
+
+    [Serializable]
     public sealed class UiMotionTokens
     {
         [SerializeField, Min(0f)] private float _InstantSeconds;
@@ -289,20 +359,21 @@ namespace Game.UI.Tokens
     }
 
     /// <summary>
-    /// Central semantic UI vocabulary for Hand-Carved Forest Arcade. It deliberately contains
+    /// Central semantic UI vocabulary for Modern Forest Arcade. It deliberately contains
     /// presentation policy only: no screen routes, prices, rewards, inventory, or gameplay values.
     /// </summary>
     [CreateAssetMenu(fileName = "UiSemanticTokens", menuName = "Game/UI/Semantic Tokens")]
     public sealed class UiSemanticTokens : ScriptableObject
     {
         public const string ProductionAssetPath = "Assets/Configurations/UI/UiSemanticTokens.asset";
-        public const int CurrentSchemaVersion = 1;
+        public const int CurrentSchemaVersion = 2;
 
         [SerializeField] private int _SchemaVersion = CurrentSchemaVersion;
         [SerializeField] private UiColorTokens _Colors = new UiColorTokens();
         [SerializeField] private UiTypographyTokens _Typography = new UiTypographyTokens();
         [SerializeField] private UiLayoutTokens _Layout = new UiLayoutTokens();
         [SerializeField] private UiSurfaceTokens _Surfaces = new UiSurfaceTokens();
+        [SerializeField] private UiButtonSkinTokens _Buttons = new UiButtonSkinTokens();
         [SerializeField] private UiMotionTokens _Motion = new UiMotionTokens();
         [SerializeField] private UiPresentationLayerTokens _Layers = new UiPresentationLayerTokens();
         [SerializeField] private UiAccessibilityTokens _Accessibility = new UiAccessibilityTokens();
@@ -312,6 +383,7 @@ namespace Game.UI.Tokens
         public UiTypographyTokens Typography => _Typography;
         public UiLayoutTokens Layout => _Layout;
         public UiSurfaceTokens Surfaces => _Surfaces;
+        public UiButtonSkinTokens Buttons => _Buttons;
         public UiMotionTokens Motion => _Motion;
         public UiPresentationLayerTokens Layers => _Layers;
         public UiAccessibilityTokens Accessibility => _Accessibility;
@@ -326,6 +398,7 @@ namespace Game.UI.Tokens
             ValidateTypography(issues);
             ValidateLayout(issues);
             ValidateSurfaces(issues);
+            ValidateButtons(issues);
             ValidateMotion(issues);
             ValidateLayers(issues);
             ValidateAccessibility(issues);
@@ -423,6 +496,39 @@ namespace Game.UI.Tokens
                 issues.Add("Structural shadows must use the approved lower-right direction.");
             if (!IsPositiveFinite(_Surfaces.NineSliceEdgeDp) || !IsPositiveFinite(_Surfaces.NineSliceMinimumCenterDp))
                 issues.Add("Nine-slice edge and center values must be positive.");
+        }
+
+        private void ValidateButtons(ICollection<string> issues)
+        {
+            if (_Buttons == null)
+            {
+                issues.Add("Button skin tokens are missing.");
+                return;
+            }
+
+            foreach (UiButtonStyle style in Enum.GetValues(typeof(UiButtonStyle)))
+            {
+                if (style != UiButtonStyle.Unskinned && _Buttons.GetSurface(style) == null)
+                    issues.Add($"Button style {style} has no surface sprite.");
+            }
+
+            foreach (UiButtonOwnershipMark mark in Enum.GetValues(typeof(UiButtonOwnershipMark)))
+            {
+                if (mark != UiButtonOwnershipMark.None && _Buttons.GetOwnershipMark(mark) == null)
+                    issues.Add($"Button ownership mark {mark} has no sprite.");
+            }
+
+            if (_Buttons.PressedScale < 0.8f || _Buttons.PressedScale > 1f)
+                issues.Add("Button pressed scale is outside the approved 0.8-1.0 range.");
+            if (_Buttons.PressedTintStrength < 0f || _Buttons.PressedTintStrength > 1f ||
+                _Buttons.DisabledTintStrength < 0f || _Buttons.DisabledTintStrength > 1f)
+                issues.Add("Button tint strengths must remain normalized.");
+            if (_Buttons.DisabledAlpha <= 0f || _Buttons.DisabledAlpha > 1f)
+                issues.Add("Button disabled alpha must be within the visible 0-1 range.");
+            if (!IsNonNegativeFinite(_Buttons.BlockedShakeDistanceDp))
+                issues.Add("Button blocked shake distance must be finite and non-negative.");
+            if (_Buttons.LoadingPulseMinimumAlpha < 0f || _Buttons.LoadingPulseMinimumAlpha > 1f)
+                issues.Add("Button loading pulse minimum alpha must remain normalized.");
         }
 
         private void ValidateMotion(ICollection<string> issues)

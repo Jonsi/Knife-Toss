@@ -1,0 +1,59 @@
+id,group,name,x_px,y_px,width_px,height_px,x_percent,y_percent,width_percent,height_percent,source_scope,production_disposition
+H-01,Header,Title,264,55,422,77,28.06,3.29,44.85,4.61,Full 941x1672 board,Reference-sheet presentation only
+H-02,Header,Subtitle,292,148,362,29,31.03,8.85,38.47,1.73,Full 941x1672 board,Reference-sheet presentation only
+H-03,Header,Left botanical flourish,126,54,104,88,13.39,3.23,11.05,5.26,Full 941x1672 board,Decorative reference only
+H-04,Header,Right botanical flourish,710,54,105,88,75.45,3.23,11.16,5.26,Full 941x1672 board,Decorative reference only
+L-01,Label,PRIMARY label,61,222,96,24,6.48,13.28,10.20,1.44,Full 941x1672 board,Reference-sheet annotation only
+L-02,Label,Primary rule,174,232,266,7,18.49,13.88,28.27,0.42,Full 941x1672 board,Reference-sheet annotation only
+B-01,Button,Primary specimen,60,269,441,136,6.38,16.09,46.87,8.13,Full 941x1672 board,Approved direction; recreate as blank production surface
+L-03,Label,SECONDARY label,61,456,104,25,6.48,27.27,11.05,1.50,Full 941x1672 board,Reference-sheet annotation only
+L-04,Label,Secondary rule,208,466,232,7,22.10,27.87,24.65,0.42,Full 941x1672 board,Reference-sheet annotation only
+B-02,Button,Secondary specimen,61,501,419,132,6.48,29.96,44.53,7.89,Full 941x1672 board,Approved direction; recreate as blank production surface
+L-05,Label,DANGER label,61,685,88,24,6.48,40.97,9.35,1.44,Full 941x1672 board,Reference-sheet annotation only
+L-06,Label,Danger rule,169,695,271,7,17.96,41.57,28.80,0.42,Full 941x1672 board,Reference-sheet annotation only
+B-03,Button,Danger specimen,61,729,420,129,6.48,43.60,44.63,7.72,Full 941x1672 board,Approved direction; recreate as blank production surface
+L-07,Label,ICON ONLY label,61,906,125,25,6.48,54.19,13.28,1.50,Full 941x1672 board,Reference-sheet annotation only
+L-08,Label,Icon rule,199,916,184,7,21.15,54.78,19.55,0.42,Full 941x1672 board,Reference-sheet annotation only
+B-04,Button,Icon-only specimen,200,943,132,124,21.25,56.40,14.03,7.42,Full 941x1672 board,Approved direction; recreate as blank socket
+L-09,Label,PRICE label,61,1093,66,24,6.48,65.37,7.01,1.44,Full 941x1672 board,Reference-sheet annotation only
+L-10,Label,Price rule,145,1103,269,7,15.41,65.97,28.59,0.42,Full 941x1672 board,Reference-sheet annotation only
+B-05,Button,Price specimen,61,1132,411,108,6.48,67.70,43.68,6.46,Full 941x1672 board,Approved direction; recreate blank and keep value/icon live
+L-11,Label,OWNED / EQUIPPED label,61,1279,214,25,6.48,76.50,22.74,1.50,Full 941x1672 board,Reference-sheet annotation only
+L-12,Label,Status rule,291,1289,166,7,30.92,77.09,17.64,0.42,Full 941x1672 board,Reference-sheet annotation only
+B-06,Button,Owned specimen,61,1317,410,91,6.48,78.77,43.57,5.44,Full 941x1672 board,Approved direction; state truth remains runtime-owned
+B-07,Button,Equipped specimen,61,1426,411,93,6.48,85.29,43.68,5.56,Full 941x1672 board,Approved direction; state truth remains runtime-owned
+C-01,Context,Phone outer hardware,529,400,372,903,56.22,23.92,39.53,54.01,Full 941x1672 board,Presentation context only
+C-02,Context,Phone viewport,550,421,330,858,58.45,25.18,35.07,51.32,Full 941x1672 board,Layout-ratio reference only
+D-01,Decoration,Footer forest silhouette,0,1517,941,155,0.00,90.73,100.00,9.27,Full 941x1672 board,Presentation context only
+D-02,Decoration,Right botanical flourish,771,1408,170,264,81.93,84.21,18.07,15.79,Full 941x1672 board,Presentation context only
+P-01,Phone UI,Settings socket,561,463,51,51,3.33,4.90,15.45,5.94,330x858 phone viewport,Component idea; gear remains live icon
+P-02,Phone UI,Currency chip,728,465,101,43,53.94,5.13,30.61,5.01,330x858 phone viewport,Component idea; currency and value remain live
+P-03,Phone UI,Add-currency socket,828,463,40,51,84.24,4.90,12.12,5.94,330x858 phone viewport,Component idea; plus remains live icon
+P-04,Phone content,Knife,696,575,74,174,44.24,17.95,22.42,20.28,330x858 phone viewport,Context illustration only
+P-05,Phone content,Target and stand,608,635,205,274,17.58,24.94,62.12,31.93,330x858 phone viewport,Context illustration only
+P-06,Phone UI,Primary PLAY,575,940,275,72,7.58,60.49,83.33,8.39,330x858 phone viewport,Observed layout proportion
+P-07,Phone UI,Secondary STAGES,575,1024,275,60,7.58,70.28,83.33,6.99,330x858 phone viewport,Observed layout proportion
+P-08,Phone UI,Danger RETRY,575,1094,275,58,7.58,78.44,83.33,6.76,330x858 phone viewport,Observed layout proportion
+P-09,Phone UI,Icon-only knife action,679,1164,67,68,39.09,86.60,20.30,7.93,330x858 phone viewport,Observed layout proportion; glyph remains live
+I-01,Icon,Header botanical sprig left,126,54,104,88,13.39,3.23,11.05,5.26,Full 941x1672 board,Decorative only
+I-02,Icon,Header botanical sprig right,710,54,105,88,75.45,3.23,11.16,5.26,Full 941x1672 board,Decorative only
+I-03,Icon,Primary arrow left,107,316,39,37,11.37,18.90,4.14,2.21,Full 941x1672 board,Reject decorative/nonfunctional
+I-04,Icon,Primary arrow right,414,316,38,37,44.00,18.90,4.04,2.21,Full 941x1672 board,Reject decorative/nonfunctional
+I-05,Icon,Secondary arrow left,104,548,39,32,11.05,32.78,4.14,1.91,Full 941x1672 board,Reject decorative/nonfunctional
+I-06,Icon,Secondary arrow right,404,548,41,32,42.93,32.78,4.36,1.91,Full 941x1672 board,Reject decorative/nonfunctional
+I-07,Icon,Danger arrow left,104,775,39,33,11.05,46.35,4.14,1.97,Full 941x1672 board,Reject decorative/nonfunctional
+I-08,Icon,Danger arrow right,405,775,40,33,43.04,46.35,4.25,1.97,Full 941x1672 board,Reject decorative/nonfunctional
+I-09,Icon,Knife glyph specimen,224,962,82,89,23.80,57.54,8.71,5.32,Full 941x1672 board,Concept only; live project glyph required
+I-10,Icon,Price coin medallion,142,1147,67,68,15.09,68.60,7.12,4.07,Full 941x1672 board,Concept only; authoritative resource icon required
+I-11,Icon,Coin conifer/up mark,161,1162,31,38,17.11,69.50,3.29,2.27,Full 941x1672 board,Concept only; meaning is ambiguous
+I-12,Icon,Owned ring,107,1332,59,60,11.37,79.67,6.27,3.59,Full 941x1672 board,Approved simple-ring direction
+I-13,Icon,Owned check,122,1348,31,28,12.96,80.62,3.29,1.67,Full 941x1672 board,Approved semantic direction
+I-14,Icon,Equipped shield,105,1441,60,63,11.16,86.18,6.38,3.77,Full 941x1672 board,Approved distinct-shape direction
+I-15,Icon,Equipped conifer,122,1458,30,37,12.96,87.20,3.19,2.21,Full 941x1672 board,Concept only; consider star/knife instead
+I-16,Icon,Phone settings gear,570,472,33,33,60.57,28.23,3.51,1.97,Full 941x1672 board,Functional live icon
+I-17,Icon,Phone currency coin,735,471,31,31,78.11,28.17,3.29,1.85,Full 941x1672 board,Functional live icon
+I-18,Icon,Phone plus,837,473,23,27,88.95,28.29,2.44,1.61,Full 941x1672 board,Functional live icon
+I-19,Icon,Phone knife-action glyph,688,1173,49,50,73.11,70.16,5.21,2.99,Full 941x1672 board,Functional live icon
+I-20,Context illustration,Knife embedded in target,696,575,74,174,73.96,34.39,7.86,10.41,Full 941x1672 board,Main-menu context only; outside button scope
+I-21,Context illustration,Round target and stand,608,635,205,274,64.61,37.98,21.79,16.39,Full 941x1672 board,Main-menu context only; outside button scope
+I-22,Context illustration,Mushroom cluster,802,848,62,62,85.23,50.72,6.59,3.71,Full 941x1672 board,Environmental context only; outside button scope

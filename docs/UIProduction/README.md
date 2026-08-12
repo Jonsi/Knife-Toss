@@ -1,8 +1,14 @@
 # Production UI asset register
 
 `PRODUCTION_ASSET_REGISTER.csv` is the maintainable source of truth for the shared UI
-elements planned by P2. It translates the approved Hand-Carved Forest Arcade direction into
-production briefs without treating any target-board pixel as a runtime asset.
+elements planned by P2. It translates the approved Modern Forest Arcade direction into
+production briefs without treating any target-board or reference-board pixel as a runtime asset.
+
+## Approved direction references
+
+- [Modern Forest Arcade reference specification](MODERN_FOREST_ARCADE_REFERENCE_SPEC.md) —
+  measured 941×1672 board decomposition, phone-relative layout, candidate 1080×1920/dp sizes,
+  sampled palette and contrast, full icon inventory, annotated images, and machine-readable CSV.
 
 ## Field conventions
 

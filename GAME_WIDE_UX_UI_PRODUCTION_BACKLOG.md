@@ -3,9 +3,9 @@
 Date: 2026-08-10
 
 Status: P0 decisions are recorded, the P1 interaction/layer foundation is implemented and
-validated, and P2-001 semantic tokens are complete. The Meta/Progression, Modal/Form, and
-Reusable UI/Feedback boards remain candidate references until separately approved; P2-002
-and later work remains planned.
+validated, and P2-001 semantic tokens plus the P2-002/P2-003 button production system are
+complete. The Meta/Progression, Modal/Form, and Reusable UI/Feedback boards remain candidate
+references until separately approved; P2-004 and later work remains planned.
 
 Companion documents:
 
@@ -113,12 +113,12 @@ the presenter supplies presentation and duplicate-submit prevention.
 
 | ID | Variant/state | Visual target | Behavioral contract |
 |---|---|---|---|
-| BTN-001 | Primary | SunGold carved face, ivory/Ink readable label, strong depth | One dominant action per surface |
-| BTN-002 | Secondary | Blue/Lagoon or restrained wood face | Clearly actionable but below primary |
-| BTN-003 | Danger/recovery | Ember/Failure face and explicit copy | Used only when destructive or urgent meaning is real |
-| BTN-004 | Icon-only | Square carved socket, authored icon, 48 dp minimum | Accessible name and deterministic pressed state |
+| BTN-001 | Primary | Modern Forest Arcade amber clipped-corner face, Ink label, shallow depth | One dominant action per surface |
+| BTN-002 | Secondary | Fresh-teal clipped-corner face sharing the exact Primary alpha silhouette | Clearly actionable but below primary |
+| BTN-003 | Danger/recovery | Coral face sharing the exact Primary alpha silhouette plus explicit copy | Used only when destructive or urgent meaning is real |
+| BTN-004 | Icon-only | Deep-teal clipped-corner socket, live icon, 48 dp minimum | Accessible name and deterministic pressed state |
 | BTN-005 | Price | Action label plus resource icon/value | Value comes from existing economy presenter; never baked into art |
-| BTN-006 | Owned/equipped | Stamp/check/selection outline | Cannot submit a purchase when action is not valid |
+| BTN-006 | Owned/equipped | Separate check-ring or shield mark on a deep-teal Status surface | Cannot submit a purchase when action is not valid |
 | BTN-007 | Pressed | Short compression and reduced shadow | Only while pointer is actively held; returns cleanly on cancel/disable |
 | BTN-008 | Disabled | Desaturated/dimmed but legible | Preserves existing interactability rules; no submission |
 | BTN-009 | Loading | Label context plus small spinner/progress cue | Blocks duplicate submission until completion/cancel/teardown |
@@ -383,8 +383,8 @@ Goal: create reusable production elements before rebuilding screens.
 | Task | Priority | Dependency | Deliverable and acceptance |
 |---|---:|---|---|
 | P2-001 Create semantic UI token assets | P0 | P0-007 | Done — `UiSemanticTokens.asset` centralizes 14 unique semantic colors, seven typography roles, the 8 dp grid, sizing, radii, outline/shadow/nine-slice conventions, standard/reduced motion, presentation layers, 48 dp touch targets, and safe-area/reference constants. |
-| P2-002 Produce button sprite family | P0 | P2-001 | Primary, secondary, danger, icon, price, owned/equipped art supports nine-slice and gameplay-size readability. |
-| P2-003 Skin shared button presenter | P0 | P2-002 | UX-402 semantics remain deterministic; no per-screen state copies. |
+| P2-002 Produce button sprite family | P0 | P2-001 | Done — user-approved Modern Forest Arcade masters produce Primary, Secondary, Danger, Icon Only, Price, Status, Owned, and Equipped sprites with validated import, exact shared action alpha, nine-slice, V2 CoreUI atlas, phone-size, and grayscale Editor evidence. Physical Android/player-build proof remains P2-010. |
+| P2-003 Skin shared button presenter | P0 | P2-002 | Done — `ActionButtonPresenter` consumes the shared `UiSemanticTokens` family; MainMenu Play and Stages are representative production consumers. Deterministic Ready/Pressed/Disabled/Loading/Blocked precedence, atomic fallback, cancellation, duplicate-submit prevention, and Editor-only reduced preview remain behavior-owned. UX-406's shipping preference remains unresolved. |
 | P2-004 Produce modal/panel/card family | P0 | P2-001 | Shared modal shell, rows, cards, scrim and scroll variants. |
 | P2-005 Produce navigation/icon family | P0 | P2-001 | Back/close/settings/Store/Missions/map plus badge/lock/check family. |
 | P2-006 Produce resource/progress components | P0 | P2-001 | Coin chip, stage progress, markers, reward chips and magazine dock. |
@@ -406,6 +406,43 @@ Goal: create reusable production elements before rebuilding screens.
   139/139. The final post-test Unity Console contained zero errors and zero warnings.
 - No screen or prefab was skinned, no final sprite was generated, and gameplay, economy,
   store, power-up behavior, navigation, and build/release configuration were unchanged.
+
+#### P2-002 / P2-003 approved replacement evidence — 2026-08-12
+
+- The user rejected the earlier bulky carved family. It remains only as superseded provenance.
+  The approved source sheet, exact prompts, retained masters, deterministic normalized outputs,
+  hashes, and honest limits are recorded under `ArtSource/UI/Buttons/ModernForestArcade` and
+  `Assets/_Docs/UIProduction/ModernForestArcade/README.md`.
+- Runtime Primary, Secondary, Danger, Icon Only, Price, Status, Owned, and Equipped sprites live
+  under `Assets/Art/UI/Core`, are referenced by `UiSemanticTokens.asset`, and are the exact eight
+  nonmissing packables in the valid V2 `CoreUI.spriteatlasv2`.
+- Primary, Secondary, and Danger share an exact pixel alpha silhouette. Text, prices, icons, and
+  ownership/equipped truth remain live layers. MainMenu Continue/Play and Stages are the first
+  production consumers of the new skins; their existing callbacks and screen ownership remain.
+- The final focused button-production set passed 34/34 in 2.00 seconds, job `25c665706e45`; the complete
+  EditMode inventory passed 163/163 in 19.89 seconds, job `19898ebd5736`.
+- Play-stop review found one pre-existing `ModalInputBlockerPresenter` shutdown-order exception and
+  the known Unity Account API warning; neither stack contained a button path. Compilation ended
+  clean and the asset missing-reference scan returned zero results.
+- Runtime evidence used Unity `6000.4.2f1`, `MainMenu`, the Android target, a fixed 1080×1920
+  Game View, and a `CanvasScaler` reference resolution of 1080×1920 with match `0.5`.
+  A temporary `DontSave` overlay used the existing `EventSystem` plus the actual semantic-token
+  asset and sprites; it made no scene, save, economy, navigation, or build mutation.
+- Static evidence in `Assets/_Docs/UIProduction/ModernForestArcade/Captures` includes MainMenu,
+  Standard/Reduced 1080×1920 captures, a grayscale derivative, a 360×640 downsample, and the
+  decoded-MOV key-frame contact sheet.
+- `ModernForestArcade_ButtonStates.mov` is H.264 High/yuv420p/BT.709, 1080×1920, 30 fps,
+  198 frames, 6.6 seconds, fast-start encoded. Eleven live Unity samples cover Standard Ready,
+  Pressed, pointer cancellation, Loading duplicate rejection, async cancellation, Blocked, then
+  reduced Ready, Pressed, static Loading, cancellation, and Blocked without shake. Each is held on
+  a synthetic timeline, so the movie proves state presentation and ordering—not wall-clock timing.
+- Key snapshots record Pressed scale `0.96` on a child presentation root while the transparent
+  hit root remains unscaled; Loading `attempts=2`, `accepted=1`, `duplicateResult=false`; reduced
+  Loading alpha `1`; reduced Blocked anchored delta exactly zero; and clean teardown with no
+  overlay, an unmodified scene, and one Edit Mode EventSystem.
+- Evidence is Editor-only. Physical Android/device touch, player-build, on-device ASTC, and
+  device-memory proof remain P2-010 work. UX-406's shipping reduced-motion preference/default
+  remains unresolved; this validation used an explicit nonpersistent reduced-motion preview.
 
 Exit gate: every shared element is previewable at phone size, uses one state model and token
 set, and has production source/provenance. No generated board pixels ship.

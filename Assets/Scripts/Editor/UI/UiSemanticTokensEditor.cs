@@ -14,6 +14,7 @@ namespace Game.Editor.UI
             "_Typography",
             "_Layout",
             "_Surfaces",
+            "_Buttons",
             "_Motion",
             "_Layers",
             "_Accessibility"
@@ -52,7 +53,8 @@ namespace Game.Editor.UI
             {
                 EditorGUILayout.HelpBox(
                     $"Complete and valid · {Enum.GetValues(typeof(UiColorRole)).Length} colors · " +
-                    $"{Enum.GetValues(typeof(UiTypographyRole)).Length} typography roles",
+                    $"{Enum.GetValues(typeof(UiTypographyRole)).Length} typography roles · " +
+                    $"{Enum.GetValues(typeof(UiButtonStyle)).Length - 1} button surfaces",
                     MessageType.Info);
                 return;
             }
