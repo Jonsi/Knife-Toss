@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!612988286 &1
+SpriteAtlasAsset:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: MainMenuIcons
+  serializedVersion: 2
+  m_MasterAtlas: {fileID: 0}
+  m_ImporterData:
+    packables:
+    - {fileID: 21300000, guid: b6d38c97c925c4d5abb0a138ba1fcf10, type: 3}
+    - {fileID: 21300000, guid: 67356ad4a77c3428aa22b417728df8f4, type: 3}
+    - {fileID: 21300000, guid: a6d992c273ac94990baf6cd132b301e9, type: 3}
+    - {fileID: 21300000, guid: 4279045f96450401ca689cd9e90768b0, type: 3}
+    - {fileID: 21300000, guid: 7d34fd5dbc8a348eeac6350bdd2c3b08, type: 3}
+    - {fileID: 21300000, guid: db77be297dbdd4e3ab7f3621801f98de, type: 3}
+    - {fileID: 21300000, guid: 93707b61c14414649b2a28a463936e01, type: 3}
+  m_IsVariant: 0
+  m_ScriptablePacker: {fileID: 0}

@@ -36,6 +36,7 @@ namespace Game.UI.MainMenu
         [SerializeField] private Button _MissionsButton;
         [SerializeField] private TMP_Text _CurrentStageText;
         [SerializeField] private Image _BackgroundImage;
+        [SerializeField] private Sprite _MainMenuBackgroundOverride;
         [SerializeField] private UiElementAnimator[] _MenuAnimators;
         [SerializeField] private KnifeSkinSelectorView _KnifeSkinSelectorView;
 
@@ -209,6 +210,13 @@ namespace Game.UI.MainMenu
 
         private void UpdateBackground()
         {
+            if (_BackgroundImage != null && _MainMenuBackgroundOverride != null)
+            {
+                _BackgroundImage.sprite = _MainMenuBackgroundOverride;
+                _BackgroundImage.preserveAspect = false;
+                return;
+            }
+
             StagesCollection active = _StagesCollectionResolver?.GetActiveCollection();
             if (_BackgroundImage == null || active?.Stages == null || active.Stages.Count == 0 || _GameData == null)
             {

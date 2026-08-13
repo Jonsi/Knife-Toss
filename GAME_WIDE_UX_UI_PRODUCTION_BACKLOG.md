@@ -453,16 +453,24 @@ Goal: establish the approved hierarchy on the two continuously visible core surf
 
 | Task | Priority | Dependency | Deliverable and acceptance |
 |---|---:|---|---|
-| P3-001 Recompose Main Menu hierarchy | P0 | P2 | Safe top controls, retained logo, quieter hero area, selector, dominant Play and secondary Stages. |
-| P3-002 Normalize Main Menu navigation | P0 | P1/P2 | Store/Missions/Settings use one icon/action language and truthful notifications. |
-| P3-003 Refine knife selector | P1 | P2 | Clear current/owned/locked states; arrows do not dominate or imply invalid input. |
+| P3-001 Recompose Main Menu hierarchy | P0 | P2 | **Done (MainMenu)** — one SafeAreaRoot composition retains the logo/hero content; 48 dp top grid, live currency, restrained stage chip, 780×168 Play and 720×144 Stages are recorded under `Assets/_Docs/UIProduction/ModernForestArcade/MainMenu`. |
+| P3-002 Normalize Main Menu navigation | P0 | P1/P2 | **Done (MainMenu)** — Settings/Store/Missions/conditional Remove Ads use the blank Icon Socket plus bespoke illustrated production sprites; existing action owners and availability truth remain unchanged. Generalized secondary-screen migration remains P6/P7. |
+| P3-003 Refine knife selector | P1 | P2 | **Done (MainMenu)** — 48 dp illustrated wooden arrows replace blocked arrow pixels; newly authored default knife and stump replace legacy hero pixels while existing GUID/selection ownership remains stable; one-option arrows hide, multiple-option wrapping/equip remains `KnifeSkinService`-owned, and navigation locking disables valid arrows. The 12 unlockable skin sprites remain unchanged with their legacy-rights blocker explicit. |
 | P3-004 Recompose HUD hierarchy | P0 | P2 | Progress/resource/magazine/power-up layout leaves the throw lane clear. |
 | P3-005 Attach power-up count/state | P0 | P2-008 | Counts and selection/unavailable/timer truth remain attached and readable. |
-| P3-007 Add menu/gameplay transition | P1 | FB-002 contract | Shared short language without navigation-rule change. |
-| P3-008 Validate core surfaces | P0 | P3-001..005/P3-007 | Fresh/progressed real-input captures, grayscale, safe-area and Console evidence. |
+| P3-007 Add menu/gameplay transition | P1 | FB-002 contract | **Done (MainMenu portion)** — ordered short entrance/exit, restrained knife float, unchanged navigation authority, clean cancel/disable restoration; 120-frame wall-clock MOV decoded and inspected. Cross-screen normalization remains P6-005. |
+| P3-008 Validate core surfaces | P0 | P3-001..005/P3-007 | **Done (MainMenu portion)** — standard/progressed/low-high/one-multiple/Remove Ads states, 360×640, grayscale, 1080×2160 tall safe, 1440×2560 portrait tablet-safe, motion, Console, references, and tests recorded. HUD portion remains P3-004/P3-005. |
 
 Exit gate: Main Menu and gameplay read as one product, Play and throw remain immediate, and
 no HUD/control overlap or state lie remains.
+
+MainMenu validation uses Unity 6000.4.2f1/Android. Focused 41/41 passed in 2.51 s
+(`df57866a1563`); full EditMode 173/173 passed in 21.40 s (`5d04452104b3`). Compilation and final
+Edit Mode Console are clean, scene/assets have no missing references, MainMenu is saved/not dirty,
+and exactly one EventSystem remains. In-Play Console is clean; Play-stop repeats the pre-existing
+`ModalInputBlockerPresenter.Dispose` destroyed-object exception. Evidence is Editor-only and does
+not close the P2-010/P8-006 device matrix. UX-406 remains unresolved and no shipping preference
+was added.
 
 ### P4 — Failure and recovery
 

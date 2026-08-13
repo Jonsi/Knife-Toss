@@ -17,6 +17,7 @@ namespace Game.UI.MainMenu
         [SerializeField] private Image _PreviewImage;
         [SerializeField] private Button _PreviousButton;
         [SerializeField] private Button _NextButton;
+        [SerializeField, Min(0f)] private float _EntranceDelay = 0.14f;
         [SerializeField] private float _PreviewFloatDistance = 14f;
         [SerializeField] private float _PreviewFloatDuration = 1.25f;
 
@@ -80,11 +81,13 @@ namespace Game.UI.MainMenu
             if (_PreviousButton != null)
             {
                 _PreviousButton.interactable = arrowsInteractable;
+                _PreviousButton.gameObject.SetActive(canCycle);
             }
 
             if (_NextButton != null)
             {
                 _NextButton.interactable = arrowsInteractable;
+                _NextButton.gameObject.SetActive(canCycle);
             }
         }
 
@@ -104,6 +107,10 @@ namespace Game.UI.MainMenu
             _CanvasGroup.alpha = 0f;
 
             var sequence = DOTween.Sequence().SetTarget(this).SetUpdate(true);
+            if (_EntranceDelay > 0f)
+            {
+                sequence.SetDelay(_EntranceDelay);
+            }
             sequence.Join(_RectTransform.DOAnchorPos(_BaseAnchoredPosition, FadeDuration).SetEase(Ease.OutBack));
             sequence.Join(_RectTransform.DOScale(_BaseScale, FadeDuration).SetEase(Ease.OutBack));
             sequence.Join(_CanvasGroup.DOFade(1f, FadeDuration).SetEase(Ease.OutQuad));

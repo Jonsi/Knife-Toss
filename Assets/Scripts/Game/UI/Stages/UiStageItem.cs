@@ -44,6 +44,15 @@ namespace Game.UI.Stages
         [Tooltip("Sprite when the reward was already claimed; falls back to active sprite if not set.")]
         [SerializeField] private Sprite _ClaimButtonClaimedSprite;
 
+        [Header("Reference Stage Tokens")]
+        [SerializeField] private Sprite _CompleteTokenSprite;
+        [SerializeField] private Sprite _CurrentTokenSprite;
+        [SerializeField] private Sprite _LockedTokenSprite;
+
+        private const string CompleteStatusLabel = "COMPLETE";
+        private const string CurrentStatusLabel = "CURRENT";
+        private const string LockedStatusLabel = "LOCKED";
+
         /// <summary>
         /// Initializes the stage item with data.
         /// </summary>
@@ -59,22 +68,24 @@ namespace Game.UI.Stages
 
             if (_StageIconImage != null)
             {
-                _StageIconImage.sprite = itemData.Icon;
+                Sprite stateToken = ResolveStateToken(itemData);
+                _StageIconImage.sprite = stateToken != null ? stateToken : itemData.Icon;
+                _StageIconImage.preserveAspect = true;
             }
 
             if (_StageNameText != null)
             {
-                _StageNameText.text = itemData.StageName;
+                _StageNameText.text = itemData.StageNumber.ToString();
             }
 
             if (_LockedStateRoot != null)
             {
-                _LockedStateRoot.SetActive(itemData.IsLocked);
+                _LockedStateRoot.SetActive(false);
             }
 
             if (_LevelCompleteIndicator != null)
             {
-                _LevelCompleteIndicator.SetActive(itemData.IsStageComplete);
+                _LevelCompleteIndicator.SetActive(false);
             }
 
             BindClaimButton(itemData, onRewardClaimed);
@@ -89,11 +100,27 @@ namespace Game.UI.Stages
 
             _Button.onClick.RemoveAllListeners();
             _Button.interactable = !itemData.IsLocked;
+            _Button.transition = Selectable.Transition.None;
 
             if (!itemData.IsLocked)
             {
                 _Button.onClick.AddListener(() => onClicked?.Invoke(itemData.StageIndex));
             }
+        }
+
+        private Sprite ResolveStateToken(StageListItemData itemData)
+        {
+            if (itemData.IsLocked)
+            {
+                return _LockedTokenSprite;
+            }
+
+            if (itemData.IsCurrent)
+            {
+                return _CurrentTokenSprite;
+            }
+
+            return itemData.IsStageComplete ? _CompleteTokenSprite : _CurrentTokenSprite;
         }
 
         private void BindClaimButton(StageListItemData itemData, Action<int> onRewardClaimed)
@@ -107,12 +134,42 @@ namespace Game.UI.Stages
 
             if (!itemData.HasReward)
             {
-                _ClaimButton.gameObject.SetActive(false);
+                _ClaimButton.gameObject.SetActive(true);
+                _ClaimButton.interactable = false;
+                var statusGraphic = _ClaimButton.targetGraphic as Image;
+                if (statusGraphic != null)
+                {
+                    statusGraphic.enabled = true;
+                    statusGraphic.sprite = _ClaimButtonInactiveSprite;
+                    statusGraphic.color = itemData.IsLocked
+                        ? new Color32(50, 31, 14, 230)
+                        : new Color32(1, 79, 67, 242);
+                }
+                SetClaimButtonText(GetStatusLabel(itemData));
                 return;
             }
 
             _ClaimButton.gameObject.SetActive(true);
             var claimGraphic = _ClaimButton.targetGraphic as Image;
+            if (claimGraphic != null)
+            {
+                claimGraphic.enabled = true;
+            }
+
+            if (!itemData.CanClaimReward && !itemData.IsRewardClaimed)
+            {
+                _ClaimButton.interactable = false;
+                if (claimGraphic != null)
+                {
+                    claimGraphic.enabled = true;
+                    claimGraphic.sprite = _ClaimButtonInactiveSprite;
+                    claimGraphic.color = itemData.IsLocked
+                        ? new Color32(50, 31, 14, 230)
+                        : new Color32(1, 79, 67, 242);
+                }
+                SetClaimButtonText(GetStatusLabel(itemData));
+                return;
+            }
 
             if (itemData.IsRewardClaimed)
             {
@@ -134,6 +191,21 @@ namespace Game.UI.Stages
             _ClaimButton.interactable = false;
             ApplyClaimVisual(claimGraphic, _ClaimButtonInactiveSprite);
             SetClaimButtonText(ClaimActionLabel);
+        }
+
+        private static string GetStatusLabel(StageListItemData itemData)
+        {
+            if (itemData.IsLocked)
+            {
+                return LockedStatusLabel;
+            }
+
+            if (itemData.IsCurrent)
+            {
+                return CurrentStatusLabel;
+            }
+
+            return itemData.IsStageComplete ? CompleteStatusLabel : CurrentStatusLabel;
         }
 
         private Sprite ClaimedSpriteOrFallback()

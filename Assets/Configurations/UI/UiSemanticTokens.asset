@@ -30,43 +30,43 @@ MonoBehaviour:
     _BlockedFeedback: {r: 0.9764706, g: 0.52156866, b: 0.34901962, a: 1}
   _Typography:
     _Display:
-      _FontAsset: {fileID: 11400000, guid: 605433b68313d491a8ab88bc03a41651, type: 2}
+      _FontAsset: {fileID: 11400000, guid: 221c603aeaac74d8cb1430c4bd688252, type: 2}
       _SizeDp: 64
       _MinimumSizeDp: 40
       _LineHeightPercent: 100
       _CharacterSpacing: 0
     _Heading:
-      _FontAsset: {fileID: 11400000, guid: 605433b68313d491a8ab88bc03a41651, type: 2}
+      _FontAsset: {fileID: 11400000, guid: 221c603aeaac74d8cb1430c4bd688252, type: 2}
       _SizeDp: 40
       _MinimumSizeDp: 28
       _LineHeightPercent: 105
       _CharacterSpacing: 0
     _Action:
-      _FontAsset: {fileID: 11400000, guid: 605433b68313d491a8ab88bc03a41651, type: 2}
+      _FontAsset: {fileID: 11400000, guid: 221c603aeaac74d8cb1430c4bd688252, type: 2}
       _SizeDp: 24
       _MinimumSizeDp: 18
       _LineHeightPercent: 100
       _CharacterSpacing: 1
     _Body:
-      _FontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+      _FontAsset: {fileID: 11400000, guid: 3bb86cdf949474b26bfa5d1823e528c0, type: 2}
       _SizeDp: 18
       _MinimumSizeDp: 16
       _LineHeightPercent: 130
       _CharacterSpacing: 0
     _Legal:
-      _FontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+      _FontAsset: {fileID: 11400000, guid: 3bb86cdf949474b26bfa5d1823e528c0, type: 2}
       _SizeDp: 14
       _MinimumSizeDp: 12
       _LineHeightPercent: 145
       _CharacterSpacing: 0
     _Value:
-      _FontAsset: {fileID: 11400000, guid: 605433b68313d491a8ab88bc03a41651, type: 2}
+      _FontAsset: {fileID: 11400000, guid: 221c603aeaac74d8cb1430c4bd688252, type: 2}
       _SizeDp: 28
       _MinimumSizeDp: 20
       _LineHeightPercent: 100
       _CharacterSpacing: 0
     _Caption:
-      _FontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+      _FontAsset: {fileID: 11400000, guid: 3bb86cdf949474b26bfa5d1823e528c0, type: 2}
       _SizeDp: 14
       _MinimumSizeDp: 12
       _LineHeightPercent: 125

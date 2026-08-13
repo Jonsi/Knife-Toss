@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5bb6f8a06e33fb4a941dcf80a3b9fd6, type: 3}
   m_Name: StagesCollection_2
   m_EditorClassIdentifier: 
-  <ThemeName>k__BackingField: Woods Something
+  <ThemeName>k__BackingField: Ember Peaks
   <StageSelectBackground>k__BackingField: {fileID: -2032790214, guid: 1818b0d66abf08849ace363f31c09a51, type: 3}
   <MenuParticleEffectPrefab>k__BackingField: {fileID: 4376160612436399112, guid: 109e9d05a664d604b8f8b85acd3ec6dd, type: 3}
   <DefaultTargetPrefab>k__BackingField: {fileID: 1336281483645859630, guid: 0e557c846743ed044bf689812c8bae87, type: 3}
