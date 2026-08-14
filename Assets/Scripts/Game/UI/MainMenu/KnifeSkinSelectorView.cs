@@ -20,15 +20,28 @@ namespace Game.UI.MainMenu
         [SerializeField, Min(0f)] private float _EntranceDelay = 0.14f;
         [SerializeField] private float _PreviewFloatDistance = 14f;
         [SerializeField] private float _PreviewFloatDuration = 1.25f;
+        [Header("Knife Swap")]
+        [SerializeField, Min(0f)] private float _SwapDistance = 96f;
+        [SerializeField, Min(0.01f)] private float _SwapOutDuration = 0.12f;
+        [SerializeField, Min(0.01f)] private float _SwapInDuration = 0.2f;
+        [SerializeField, Range(0.5f, 1f)] private float _SwapScale = 0.9f;
 
         private RectTransform _RectTransform;
         private RectTransform _PreviewRectTransform;
         private Vector2 _BaseAnchoredPosition;
         private Vector2 _PreviewBaseAnchoredPosition;
         private Vector3 _BaseScale;
+        private Vector3 _PreviewBaseScale;
+        private Color _PreviewBaseColor = Color.white;
         private bool _HasCachedState;
         private bool _HasCachedPreviewState;
+        private bool _CanCycle;
+        private bool _CanInteract;
+        private bool _IsSwapping;
         private Tween _PreviewFloatTween;
+        private Sequence _SwapSequence;
+
+        public bool IsSwapAnimating => _IsSwapping;
 
         private void Awake()
         {
@@ -38,11 +51,17 @@ namespace Game.UI.MainMenu
 
         private void OnDisable()
         {
+            StopSwap(resetVisual: true, restartFloat: false);
             StopPreviewFloat(resetPosition: true);
         }
 
         private void OnDestroy()
         {
+            if (_SwapSequence != null && _SwapSequence.IsActive())
+            {
+                _SwapSequence.Kill();
+            }
+
             DOTween.Kill(this);
         }
 
@@ -53,7 +72,7 @@ namespace Game.UI.MainMenu
                 _PreviousButton.onClick.RemoveAllListeners();
                 if (onPrevious != null)
                 {
-                    _PreviousButton.onClick.AddListener(() => onPrevious());
+                    _PreviousButton.onClick.AddListener(() => PlaySwap(onPrevious, -1));
                 }
             }
 
@@ -62,32 +81,29 @@ namespace Game.UI.MainMenu
                 _NextButton.onClick.RemoveAllListeners();
                 if (onNext != null)
                 {
-                    _NextButton.onClick.AddListener(() => onNext());
+                    _NextButton.onClick.AddListener(() => PlaySwap(onNext, 1));
                 }
             }
         }
 
         public void SetDisplay(Sprite previewSprite, bool canCycle, bool canInteract)
         {
+            EnsureReferences();
+            CacheState();
+
             if (_PreviewImage != null)
             {
                 _PreviewImage.sprite = previewSprite;
                 _PreviewImage.enabled = previewSprite != null;
             }
 
-            StartPreviewFloatIfNeeded();
+            _CanCycle = canCycle;
+            _CanInteract = canInteract;
+            ApplyArrowAvailability();
 
-            var arrowsInteractable = canCycle && canInteract;
-            if (_PreviousButton != null)
+            if (!_IsSwapping)
             {
-                _PreviousButton.interactable = arrowsInteractable;
-                _PreviousButton.gameObject.SetActive(canCycle);
-            }
-
-            if (_NextButton != null)
-            {
-                _NextButton.interactable = arrowsInteractable;
-                _NextButton.gameObject.SetActive(canCycle);
+                StartPreviewFloatIfNeeded();
             }
         }
 
@@ -100,6 +116,7 @@ namespace Game.UI.MainMenu
 
             EnsureReferences();
             CacheState();
+            StopSwap(resetVisual: true, restartFloat: false);
             DOTween.Kill(this);
 
             _RectTransform.anchoredPosition = _BaseAnchoredPosition + Vector2.down * 42f;
@@ -126,6 +143,7 @@ namespace Game.UI.MainMenu
 
             EnsureReferences();
             CacheState();
+            StopSwap(resetVisual: true, restartFloat: false);
             DOTween.Kill(this);
             StopPreviewFloat(resetPosition: true);
 
@@ -169,7 +187,133 @@ namespace Game.UI.MainMenu
             if (!_HasCachedPreviewState && _PreviewRectTransform != null)
             {
                 _PreviewBaseAnchoredPosition = _PreviewRectTransform.anchoredPosition;
+                _PreviewBaseScale = _PreviewRectTransform.localScale;
+                _PreviewBaseColor = _PreviewImage != null ? _PreviewImage.color : Color.white;
                 _HasCachedPreviewState = true;
+            }
+        }
+
+        private void PlaySwap(Action swapAction, int direction)
+        {
+            if (swapAction == null || _IsSwapping)
+            {
+                return;
+            }
+
+            EnsureReferences();
+            CacheState();
+
+            if (!gameObject.activeInHierarchy ||
+                _PreviewImage == null ||
+                !_PreviewImage.enabled ||
+                _PreviewRectTransform == null ||
+                !_HasCachedPreviewState)
+            {
+                swapAction();
+                return;
+            }
+
+            var normalizedDirection = direction < 0 ? -1f : 1f;
+            var exitOffset = Vector2.right * (-normalizedDirection * _SwapDistance);
+            var entranceOffset = Vector2.right * (normalizedDirection * _SwapDistance);
+
+            StopPreviewFloat(resetPosition: true);
+            _IsSwapping = true;
+            ApplyArrowAvailability();
+
+            _PreviewRectTransform.anchoredPosition = _PreviewBaseAnchoredPosition;
+            _PreviewRectTransform.localScale = _PreviewBaseScale;
+            _PreviewImage.color = _PreviewBaseColor;
+
+            _SwapSequence = DOTween.Sequence().SetTarget(this).SetUpdate(true);
+            _SwapSequence.Append(
+                _PreviewRectTransform
+                    .DOAnchorPos(_PreviewBaseAnchoredPosition + exitOffset, _SwapOutDuration)
+                    .SetEase(Ease.InCubic));
+            _SwapSequence.Join(
+                _PreviewRectTransform
+                    .DOScale(_PreviewBaseScale * _SwapScale, _SwapOutDuration)
+                    .SetEase(Ease.InQuad));
+            _SwapSequence.Join(_PreviewImage.DOFade(0f, _SwapOutDuration).SetEase(Ease.InQuad));
+            _SwapSequence.AppendCallback(() =>
+            {
+                swapAction();
+                if (_PreviewRectTransform == null || _PreviewImage == null)
+                {
+                    return;
+                }
+
+                _PreviewRectTransform.anchoredPosition = _PreviewBaseAnchoredPosition + entranceOffset;
+                _PreviewRectTransform.localScale = _PreviewBaseScale * _SwapScale;
+                _PreviewImage.color = WithAlpha(_PreviewBaseColor, 0f);
+            });
+            _SwapSequence.Append(
+                _PreviewRectTransform
+                    .DOAnchorPos(_PreviewBaseAnchoredPosition, _SwapInDuration)
+                    .SetEase(Ease.OutCubic));
+            _SwapSequence.Join(
+                _PreviewRectTransform
+                    .DOScale(_PreviewBaseScale, _SwapInDuration)
+                    .SetEase(Ease.OutBack));
+            _SwapSequence.Join(
+                _PreviewImage
+                    .DOFade(_PreviewBaseColor.a, _SwapInDuration)
+                    .SetEase(Ease.OutQuad));
+            _SwapSequence.OnComplete(() =>
+            {
+                _PreviewRectTransform.anchoredPosition = _PreviewBaseAnchoredPosition;
+                _PreviewRectTransform.localScale = _PreviewBaseScale;
+                _PreviewImage.color = _PreviewBaseColor;
+                _SwapSequence = null;
+                _IsSwapping = false;
+                ApplyArrowAvailability();
+                StartPreviewFloatIfNeeded();
+            });
+        }
+
+        private void StopSwap(bool resetVisual, bool restartFloat)
+        {
+            if (_SwapSequence != null && _SwapSequence.IsActive())
+            {
+                _SwapSequence.Kill();
+            }
+
+            _SwapSequence = null;
+            _IsSwapping = false;
+
+            if (resetVisual && _HasCachedPreviewState && _PreviewRectTransform != null)
+            {
+                _PreviewRectTransform.anchoredPosition = _PreviewBaseAnchoredPosition;
+                _PreviewRectTransform.localScale = _PreviewBaseScale;
+                if (_PreviewImage != null)
+                {
+                    _PreviewImage.color = _PreviewBaseColor;
+                }
+            }
+
+            ApplyArrowAvailability();
+            if (restartFloat)
+            {
+                StartPreviewFloatIfNeeded();
+            }
+        }
+
+        private void ApplyArrowAvailability()
+        {
+            // PlaySwap guards re-entry while the carousel is moving. Keep the
+            // Selectables visually enabled so their presenter does not hide or
+            // dim the arrows during the transition.
+            var arrowsInteractable = _CanCycle && _CanInteract;
+            if (_PreviousButton != null)
+            {
+                _PreviousButton.interactable = arrowsInteractable;
+                _PreviousButton.gameObject.SetActive(_CanCycle);
+            }
+
+            if (_NextButton != null)
+            {
+                _NextButton.interactable = arrowsInteractable;
+                _NextButton.gameObject.SetActive(_CanCycle);
             }
         }
 
@@ -179,6 +323,7 @@ namespace Game.UI.MainMenu
             CacheState();
 
             if (!gameObject.activeInHierarchy ||
+                _IsSwapping ||
                 _PreviewImage == null ||
                 !_PreviewImage.enabled ||
                 _PreviewRectTransform == null ||
@@ -212,6 +357,12 @@ namespace Game.UI.MainMenu
             {
                 _PreviewRectTransform.anchoredPosition = _PreviewBaseAnchoredPosition;
             }
+        }
+
+        private static Color WithAlpha(Color color, float alpha)
+        {
+            color.a = alpha;
+            return color;
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using DG.Tweening;
 using Game.UI.Common;
 using Game.UI.MainMenu;
 using Game.UI.Tokens;
@@ -27,14 +28,37 @@ namespace Game.UI.Tests
                 Transform safe = Find(scene, "Canvas/Layer1/SafeAreaRoot");
                 Assert.That(safe, Is.Not.Null);
 
-                AssertRect(safe.Find("ContinueButton") as RectTransform, new Vector2(720f, 176f), new Vector2(0f, 272f));
+                AssertRect(safe.Find("ContinueButton") as RectTransform, new Vector2(600f, 136f), new Vector2(0f, 256f));
                 AssertRect(safe.Find("StagesButton") as RectTransform, new Vector2(510f, 112f), new Vector2(0f, 112f));
-                Assert.That(safe.Find("StageSign").gameObject.activeSelf, Is.False);
+                AssertRect(safe.Find("Logo") as RectTransform, new Vector2(773.682f, 490.02905f), new Vector2(0f, -345f));
+                AssertRect(safe.Find("Logo/Toss") as RectTransform, new Vector2(444f, 185f), Vector2.zero);
+                AssertRect(safe.Find("Logo/Madness") as RectTransform, new Vector2(529f, 144f), new Vector2(0f, -164f));
+                Assert.That(safe.Find("StageSign").gameObject.activeSelf, Is.True,
+                    "The wooden stage sign is part of the Main Menu composition.");
+                AssertRect(safe.Find("StageSign") as RectTransform, new Vector2(320f, 320f), new Vector2(232f, 488f));
                 AssertRect(safe.Find("KnifeSkinSlelector") as RectTransform, new Vector2(920f, 560f), new Vector2(0f, -245f));
+                AssertRect(safe.Find("KnifeSkinSlelector/LeftButton") as RectTransform,
+                    new Vector2(128f, 128f), new Vector2(-250f, 180f));
+                AssertRect(safe.Find("KnifeSkinSlelector/RightButton") as RectTransform,
+                    new Vector2(128f, 128f), new Vector2(250f, 180f));
+                Assert.That(safe.Find("KnifeSkinSlelector/GiftBox_Effect_8").gameObject.activeSelf,
+                    Is.False, "Knife-selector particles are intentionally disabled.");
+
+                SerializedObject logoAnimator = new SerializedObject(safe.Find("Logo").GetComponent<UiElementAnimator>());
+                Assert.That(logoAnimator.FindProperty("_IdleAnimation._Mode").enumValueIndex,
+                    Is.EqualTo(2), "The original per-word logo idle animation must remain enabled.");
+                Assert.That(Find(scene, "BackgroundEffectHolder").gameObject.activeSelf,
+                    Is.False, "World-themed Main Menu particles are intentionally disabled.");
 
                 AssertRect(safe.Find("MenuButton") as RectTransform, new Vector2(128f, 128f), new Vector2(96f, -96f));
-                AssertRect(safe.Find("ShopButton") as RectTransform, new Vector2(152f, 188f), new Vector2(104f, -280f));
-                AssertRect(safe.Find("DailyMissionButton") as RectTransform, new Vector2(152f, 188f), new Vector2(104f, -478f));
+                AssertRect(safe.Find("ShopButton") as RectTransform, new Vector2(128f, 128f), new Vector2(96f, -256f));
+                AssertRect(safe.Find("DailyMissionButton") as RectTransform, new Vector2(128f, 128f), new Vector2(96f, -416f));
+                Assert.That(safe.Find("ShopButton/PresentationRoot/MenuLabel").gameObject.activeSelf, Is.False);
+                Assert.That(safe.Find("DailyMissionButton/PresentationRoot/MenuLabel").gameObject.activeSelf, Is.False);
+                AssertRect(safe.Find("ShopButton/PresentationRoot/Glyph") as RectTransform,
+                    new Vector2(90f, 90f), Vector2.zero);
+                AssertRect(safe.Find("DailyMissionButton/PresentationRoot/Glyph") as RectTransform,
+                    new Vector2(90f, 90f), Vector2.zero);
                 AssertRect(safe.Find("CoinUiDisaply") as RectTransform, new Vector2(384f, 112f), new Vector2(-220f, -92f));
                 AssertRect(safe.Find("RemoveAdsButton") as RectTransform, new Vector2(124f, 124f), new Vector2(-94f, -254f));
 
@@ -57,10 +81,10 @@ namespace Game.UI.Tests
                 UiSemanticTokens tokens = AssetDatabase.LoadAssetAtPath<UiSemanticTokens>(UiSemanticTokens.ProductionAssetPath);
                 Assert.That(tokens, Is.Not.Null);
 
-                AssertIconButton(safe.Find("MenuButton/Holder/Button"), "IconSettings", tokens, usesReferenceSurface: true);
-                AssertIconButton(safe.Find("ShopButton"), "IconStore", tokens, usesReferenceSurface: true);
-                AssertIconButton(safe.Find("DailyMissionButton"), "IconMissions", tokens, usesReferenceSurface: true);
-                AssertIconButton(safe.Find("RemoveAdsButton"), "IconRemoveAds", tokens, usesReferenceSurface: true);
+                AssertIconButton(safe.Find("MenuButton/Holder/Button"), "IconSettings", tokens);
+                AssertIconButton(safe.Find("ShopButton"), "IconStore", tokens);
+                AssertIconButton(safe.Find("DailyMissionButton"), "IconMissions", tokens);
+                AssertIconButton(safe.Find("RemoveAdsButton"), "IconRemoveAds", tokens);
                 AssertIconButton(safe.Find("KnifeSkinSlelector/LeftButton"), "IconPrevious", tokens);
                 AssertIconButton(safe.Find("KnifeSkinSlelector/RightButton"), "IconNext", tokens);
 
@@ -69,23 +93,66 @@ namespace Game.UI.Tests
                 Assert.That(AssetDatabase.GetAssetPath(currencyIcon.sprite),
                     Is.EqualTo("Assets/Art/UI/Icons/IconCurrency.png"));
                 Assert.That(currencyIcon.raycastTarget, Is.False);
+                AssertRect(safe.Find("CoinUiDisaply/CoinIcon") as RectTransform,
+                    new Vector2(108f, 108f), new Vector2(-54f, -15f));
+
+                TMP_Text balanceText = safe.Find("CoinUiDisaply/CountText").GetComponent<TMP_Text>();
+                Assert.That(AssetDatabase.GetAssetPath(balanceText.font),
+                    Is.EqualTo("Assets/Layer Lab/GUI Pro-CasualGame/ResourcesData/Fonts/LilitaOne-Regular SDF.asset"));
+                Assert.That(balanceText.horizontalAlignment, Is.EqualTo(HorizontalAlignmentOptions.Center));
+                Assert.That(balanceText.verticalAlignment, Is.EqualTo(VerticalAlignmentOptions.Middle));
 
                 Image currencySurface = safe.Find("CoinUiDisaply").GetComponent<Image>();
                 Image stageSurface = safe.Find("StageSign").GetComponent<Image>();
                 Assert.That(AssetDatabase.GetAssetPath(currencySurface.sprite),
                     Is.EqualTo("Assets/Art/UI/MainMenuReference/MainMenuCurrencyBar.png"));
-                Assert.That(stageSurface.sprite, Is.EqualTo(tokens.Buttons.GetSurface(UiButtonStyle.Price)));
+                Assert.That(AssetDatabase.GetAssetPath(stageSurface.sprite),
+                    Is.EqualTo("Assets/Art/stage_sign.png"));
+
+                TMP_Text stageLabel = safe.Find("StageSign/Text (TMP)").GetComponent<TMP_Text>();
+                Assert.That(AssetDatabase.GetAssetPath(stageLabel.font),
+                    Is.EqualTo("Assets/Layer Lab/GUI Pro-CasualGame/ResourcesData/Fonts/LilitaOne-Regular SDF.asset"));
+                Assert.That(stageLabel.horizontalAlignment, Is.EqualTo(HorizontalAlignmentOptions.Center));
+                Assert.That(stageLabel.verticalAlignment, Is.EqualTo(VerticalAlignmentOptions.Middle));
 
                 TMP_FontAsset actionFont = tokens.Typography.Get(UiTypographyRole.Action).FontAsset;
-                Assert.That(safe.Find("ContinueButton").GetComponentInChildren<TMP_Text>(true).font, Is.EqualTo(actionFont));
+                TMP_Text playLabel = safe.Find("ContinueButton").GetComponentInChildren<TMP_Text>(true);
+                Assert.That(playLabel.font, Is.EqualTo(actionFont));
+                Assert.That(playLabel.fontSizeMax, Is.EqualTo(66f).Within(0.01f));
+                Assert.That(playLabel.margin, Is.EqualTo(Vector4.zero));
                 Assert.That(safe.Find("StagesButton").GetComponentInChildren<TMP_Text>(true).font, Is.EqualTo(actionFont));
-                Assert.That(safe.Find("StageSign").GetComponentInChildren<TMP_Text>(true).font, Is.EqualTo(actionFont));
+
+                string[] sceneOwnedStaticButtons =
+                {
+                    "ContinueButton",
+                    "StagesButton",
+                    "MenuButton/Holder/Button",
+                    "ShopButton",
+                    "DailyMissionButton",
+                    "RemoveAdsButton",
+                    "KnifeSkinSlelector/LeftButton",
+                    "KnifeSkinSlelector/RightButton"
+                };
+                foreach (string path in sceneOwnedStaticButtons)
+                {
+                    ActionButtonPresenter presenter = safe.Find(path).GetComponent<ActionButtonPresenter>();
+                    Assert.That(presenter.SkinStyle, Is.EqualTo(UiButtonStyle.Unskinned),
+                        $"{path} must preserve its scene-authored artwork at runtime.");
+                    SerializedObject presenterState = new SerializedObject(presenter);
+                    Assert.That(presenterState.FindProperty("_SemanticTokens").objectReferenceValue, Is.Null,
+                        $"{path} must not replace static scene artwork from semantic tokens at runtime.");
+                }
 
                 string[] newlyProducedChromePaths =
                 {
+                    "MenuButton/Holder/Button/PresentationRoot/Surface",
+                    "ShopButton/PresentationRoot/Surface",
+                    "DailyMissionButton/PresentationRoot/Surface",
+                    "RemoveAdsButton/PresentationRoot/Surface",
                     "KnifeSkinSlelector/LeftButton/PresentationRoot/Surface",
                     "KnifeSkinSlelector/RightButton/PresentationRoot/Surface",
-                    "StageSign"
+                    "ContinueButton/PresentationRoot/Surface",
+                    "StagesButton/PresentationRoot/Surface"
                 };
                 foreach (string path in newlyProducedChromePaths)
                 {
@@ -97,14 +164,7 @@ namespace Game.UI.Tests
 
                 string[] referenceChromePaths =
                 {
-                    "MenuButton/Holder/Button/PresentationRoot/Surface",
-                    "ShopButton/PresentationRoot/Surface",
-                    "DailyMissionButton/PresentationRoot/Surface",
-                    "RemoveAdsButton/PresentationRoot/Surface",
-                    "CoinUiDisaply",
-                    "ContinueButton/PresentationRoot/Surface",
-                    "StagesButton/PresentationRoot/Surface",
-                    "KnifeSkinSlelector/ReferenceSelectorFrame"
+                    "CoinUiDisaply"
                 };
                 foreach (string path in referenceChromePaths)
                 {
@@ -112,6 +172,9 @@ namespace Game.UI.Tests
                     Assert.That(AssetDatabase.GetAssetPath(image.sprite),
                         Does.StartWith("Assets/Art/UI/MainMenuReference/"));
                 }
+
+                Assert.That(safe.Find("KnifeSkinSlelector/ReferenceSelectorFrame").gameObject.activeSelf,
+                    Is.False, "The high-contrast selector frame is intentionally disabled.");
 
                 string[] illustratedIconPaths =
                 {
@@ -177,6 +240,70 @@ namespace Game.UI.Tests
             }
         }
 
+        [Test]
+        public void KnifeSelector_ArrowPressLocksInputAndCompletesCarouselSwap()
+        {
+            Scene scene = EditorSceneManager.OpenPreviewScene(MainMenuScenePath);
+            KnifeSkinSelectorView selector = null;
+            try
+            {
+                Transform safe = Find(scene, "Canvas/Layer1/SafeAreaRoot");
+                selector = safe.Find("KnifeSkinSlelector").GetComponent<KnifeSkinSelectorView>();
+                Image preview = safe.Find("KnifeSkinSlelector/PreviewImage").GetComponent<Image>();
+                Button previous = safe.Find("KnifeSkinSlelector/LeftButton").GetComponent<Button>();
+                Button next = safe.Find("KnifeSkinSlelector/RightButton").GetComponent<Button>();
+                Sprite initialSprite = preview.sprite;
+                Sprite replacementSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/UI/Icons/IconStore.png");
+                Vector2 basePosition = preview.rectTransform.anchoredPosition;
+                Vector3 baseScale = preview.rectTransform.localScale;
+                Color baseColor = preview.color;
+                int swaps = 0;
+
+                Assert.That(initialSprite, Is.Not.Null);
+                Assert.That(replacementSprite, Is.Not.Null);
+
+                SerializedObject selectorState = new SerializedObject(selector);
+                selectorState.FindProperty("_PreviewFloatDistance").floatValue = 0f;
+                selectorState.ApplyModifiedPropertiesWithoutUndo();
+
+                selector.SetDisplay(initialSprite, canCycle: true, canInteract: true);
+                selector.Bind(null, () =>
+                {
+                    swaps++;
+                    selector.SetDisplay(replacementSprite, canCycle: true, canInteract: true);
+                });
+
+                next.onClick.Invoke();
+
+                Assert.That(selector.IsSwapAnimating, Is.True);
+                Assert.That(swaps, Is.Zero, "The knife must change only after the outgoing preview clears the center.");
+                Assert.That(previous.interactable, Is.True, "Arrow artwork must stay in its normal visible state during a swap.");
+                Assert.That(next.interactable, Is.True, "Arrow artwork must stay in its normal visible state during a swap.");
+
+                next.onClick.Invoke();
+
+                DOTween.Complete(selector, withCallbacks: true);
+
+                Assert.That(swaps, Is.EqualTo(1), "Repeated presses must not interrupt or stack carousel swaps.");
+                Assert.That(preview.sprite, Is.EqualTo(replacementSprite));
+                Assert.That(selector.IsSwapAnimating, Is.False);
+                Assert.That(previous.interactable, Is.True);
+                Assert.That(next.interactable, Is.True);
+                Assert.That(preview.rectTransform.anchoredPosition, Is.EqualTo(basePosition));
+                Assert.That(preview.rectTransform.localScale, Is.EqualTo(baseScale));
+                Assert.That(preview.color, Is.EqualTo(baseColor));
+            }
+            finally
+            {
+                if (selector != null)
+                {
+                    DOTween.Kill(selector);
+                }
+
+                EditorSceneManager.ClosePreviewScene(scene);
+            }
+        }
+
         private static void AssertIconButton(
             Transform transform,
             string expectedSpriteName,
@@ -191,7 +318,7 @@ namespace Game.UI.Tests
 
             Assert.That(button, Is.Not.Null);
             Assert.That(presenter, Is.Not.Null);
-            Assert.That(presenter.SkinStyle, Is.EqualTo(UiButtonStyle.IconOnly));
+            Assert.That(presenter.SkinStyle, Is.EqualTo(UiButtonStyle.Unskinned));
             if (usesReferenceSurface)
             {
                 Assert.That(AssetDatabase.GetAssetPath(surface.sprite),
