@@ -7,6 +7,7 @@ using Game.Level.Catalogs;
 using Game.Level.Interfaces;
 using Game.Persistence.Services;
 using Game.Rewards.Services;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -27,6 +28,8 @@ namespace Game.UI.Stages
         [SerializeField] private UiWorldStageRow _WorldRowPrefab;
         [SerializeField] private Transform _ContentRoot;
         [SerializeField] private ScrollRect _ScrollRect;
+        [SerializeField] private GameObject _WorldUnlockFooter;
+        [SerializeField] private TMP_Text _WorldUnlockFooterLabel;
 
         [Inject] private PlayerDataService _PlayerDataService;
         [Inject] private SceneLoaderService _SceneLoaderService;
@@ -157,6 +160,38 @@ namespace Game.UI.Stages
             {
                 ApplyFlippedOrientation();
             }
+
+            RefreshWorldUnlockFooter();
+        }
+
+        private void RefreshWorldUnlockFooter()
+        {
+            if (_WorldUnlockFooter == null)
+            {
+                return;
+            }
+
+            int nextLockedWorld = _PlayerDataService != null
+                ? _PlayerDataService.GetHighestCollectionIndex() + 1
+                : 1;
+            bool hasLockedWorld = nextLockedWorld > 0 &&
+                                  nextLockedWorld < _WorldRows.Count &&
+                                  nextLockedWorld < _StagesCollectionCatalog.CollectionsCount;
+            _WorldUnlockFooter.SetActive(hasLockedWorld);
+            if (!hasLockedWorld || _WorldUnlockFooterLabel == null)
+            {
+                return;
+            }
+
+            int priorWorld = nextLockedWorld - 1;
+            int priorStageCount = _StagesCollectionCatalog.GetStageSlotCountForWorld(priorWorld);
+            int requiredStage = _StagesCollectionCatalog.GetCumulativeStageNumberDisplay(
+                priorWorld,
+                Mathf.Max(0, priorStageCount - 1));
+            string nextWorldName = _WorldRows[nextLockedWorld] != null
+                ? _WorldRows[nextLockedWorld].WorldTitle
+                : string.Empty;
+            _WorldUnlockFooterLabel.text = $"COMPLETE STAGE {requiredStage}\nTO UNLOCK {nextWorldName.ToUpperInvariant()}";
         }
 
         private void ReleaseMenuWorldLoads()

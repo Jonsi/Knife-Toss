@@ -13,6 +13,8 @@ namespace Game.UI.Tests
     {
         private const string ScenePath = "Assets/Scenes/StagesMenu.unity";
         private const string ArtFolder = "Assets/Art/UI/StagesReference/";
+        private const string MainMenuArtFolder = "Assets/Art/UI/MainMenuReference/";
+        private const string IconFolder = "Assets/Art/UI/Icons/";
 
         [Test]
         public void StagesMenu_UsesApprovedTitleAndCompactScrollGeometry()
@@ -27,9 +29,30 @@ namespace Game.UI.Tests
                     Is.EqualTo(ArtFolder + "StagesTitlePlaque.png"));
                 Assert.That(title.GetComponentInChildren<TMP_Text>().text, Is.EqualTo("STAGES"));
 
+                Transform backButton = safe.Find("ReturnButton");
+                Assert.That(AssetDatabase.GetAssetPath(backButton.GetComponent<Image>().sprite),
+                    Is.EqualTo(MainMenuArtFolder + "MainMenuWoodIconSocket.png"));
+                Assert.That(AssetDatabase.GetAssetPath(backButton.Find("Glyph").GetComponent<Image>().sprite),
+                    Is.EqualTo(IconFolder + "IconPrevious.png"));
+
                 RectTransform scroll = safe.Find("StagesScrollView") as RectTransform;
                 Assert.That(scroll.sizeDelta.x, Is.EqualTo(1020f).Within(0.01f));
-                Assert.That(scroll.sizeDelta.y, Is.EqualTo(-300f).Within(0.01f));
+                Assert.That(scroll.sizeDelta.y, Is.EqualTo(-324f).Within(0.01f));
+
+                RectTransform footer = safe.Find("WorldUnlockFooter") as RectTransform;
+                Assert.That(footer, Is.Not.Null);
+                Assert.That(footer.sizeDelta, Is.EqualTo(new Vector2(720f, 126f)));
+                Assert.That(AssetDatabase.GetAssetPath(footer.GetComponent<Image>().sprite),
+                    Is.EqualTo(ArtFolder + "StagesUnlockPlaque.png"));
+                Assert.That(footer.GetComponent<Image>().raycastTarget, Is.False);
+                Assert.That(footer.Find("Label").GetComponent<TMP_Text>().text,
+                    Is.EqualTo("COMPLETE STAGE 4\nTO UNLOCK EMBER PEAKS"));
+
+                SerializedObject stageList = new SerializedObject(scroll.GetComponent<StageListController>());
+                Assert.That(stageList.FindProperty("_WorldUnlockFooter").objectReferenceValue,
+                    Is.EqualTo(footer.gameObject));
+                Assert.That(stageList.FindProperty("_WorldUnlockFooterLabel").objectReferenceValue,
+                    Is.EqualTo(footer.Find("Label").GetComponent<TMP_Text>()));
             }
             finally
             {

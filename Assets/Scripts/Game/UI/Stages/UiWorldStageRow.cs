@@ -22,6 +22,11 @@ namespace Game.UI.Stages
         private readonly List<UiStageItem> _Items = new List<UiStageItem>();
 
         /// <summary>
+        /// Runtime world title used by progression-owned chrome outside the row.
+        /// </summary>
+        public string WorldTitle => _Collection != null ? _Collection.ThemeName : string.Empty;
+
+        /// <summary>
         /// Builds child stage items and applies world chrome.
         /// </summary>
         public void Initialize(
