@@ -56,6 +56,9 @@ namespace Game.UI.HUD
 
         private void OnLevelStarted(LevelStartedEventData data)
         {
+            if (data == null)
+                return;
+
             _TotalKnives = data.TotalKnives;
             _KnivesRemaining = data.TotalKnives;
 
@@ -78,7 +81,48 @@ namespace Game.UI.HUD
                     _Icons[i].gameObject.SetActive(false);
             }
 
+            UpdateLayoutSpacing();
             UpdateVisuals();
+        }
+
+        private void UpdateLayoutSpacing()
+        {
+            if (_Container is not RectTransform containerRect || _TotalKnives <= 0)
+                return;
+
+            var layout = containerRect.GetComponent<VerticalLayoutGroup>();
+            if (layout == null)
+                return;
+
+            float iconHeight = 0f;
+            float rotatedEdgeAllowance = 0f;
+            if (_Icons.Count > 0 && _Icons[0] != null)
+            {
+                var layoutElement = _Icons[0].GetComponent<LayoutElement>();
+                iconHeight = layoutElement != null && layoutElement.preferredHeight > 0f
+                    ? layoutElement.preferredHeight
+                    : _Icons[0].rectTransform.rect.height;
+
+                float iconWidth = layoutElement != null && layoutElement.preferredWidth > 0f
+                    ? layoutElement.preferredWidth
+                    : _Icons[0].rectTransform.rect.width;
+                float angle = _Icons[0].rectTransform.localEulerAngles.z * Mathf.Deg2Rad;
+                float rotatedHeight = Mathf.Abs(iconHeight * Mathf.Cos(angle)) +
+                    Mathf.Abs(iconWidth * Mathf.Sin(angle));
+                rotatedEdgeAllowance = Mathf.Max(0f, rotatedHeight - iconHeight);
+            }
+
+            if (iconHeight <= 0f)
+                return;
+
+            float availableHeight = containerRect.rect.height - layout.padding.vertical;
+            float spacing = _TotalKnives > 1
+                ? (availableHeight - iconHeight * _TotalKnives - rotatedEdgeAllowance) /
+                    (_TotalKnives - 1)
+                : 0f;
+
+            layout.spacing = Mathf.Clamp(spacing, -30f, 18f);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(containerRect);
         }
 
         private void OnKnifeThrown()

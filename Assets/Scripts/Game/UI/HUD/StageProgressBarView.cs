@@ -52,6 +52,9 @@ namespace Game.UI.HUD
 
         private void OnLevelStarted(LevelStartedEventData data)
         {
+            if (data == null)
+                return;
+
             bool levelCountChanged = data.TotalLevelsInStage != _CachedLevelCount;
 
             _CachedLevelCount = data.TotalLevelsInStage;
@@ -59,8 +62,8 @@ namespace Game.UI.HUD
             _CurrentStageIndex = data.StageIndex;
             UpdateStageLabels(data.StageIndex);
 
-            if (levelCountChanged || _Slots.Count != _CachedLevelCount)
-                Rebuild();
+            if (levelCountChanged || _Slots.Count < _CachedLevelCount)
+                EnsureSlotCount();
 
             Refresh();
         }
@@ -85,22 +88,15 @@ namespace Game.UI.HUD
             if (_CachedLevelCount < 0)
                 return;
 
-            if (_Slots.Count == _CachedLevelCount)
+            if (_Slots.Count >= _CachedLevelCount)
                 return;
 
-            Rebuild();
+            EnsureSlotCount();
         }
 
-        private void Rebuild()
+        private void EnsureSlotCount()
         {
-            for (int i = 0; i < _Slots.Count; i++)
-            {
-                if (_Slots[i] != null)
-                    Destroy(_Slots[i].gameObject);
-            }
-            _Slots.Clear();
-
-            for (int i = 0; i < _CachedLevelCount; i++)
+            while (_Slots.Count < _CachedLevelCount)
             {
                 var slotObject = Instantiate(_SlotPrefab, _Container);
                 slotObject.transform.localScale = Vector3.one;
@@ -117,10 +113,17 @@ namespace Game.UI.HUD
             if (_CachedLevelCount < 0)
                 return;
 
+            UpdateMarkerLayout();
+
             for (int i = 0; i < _Slots.Count; i++)
             {
                 var slot = _Slots[i];
                 if (slot == null)
+                    continue;
+
+                bool isUsedByCurrentStage = i < _CachedLevelCount;
+                slot.gameObject.SetActive(isUsedByCurrentStage);
+                if (!isUsedByCurrentStage)
                     continue;
 
                 if (i < _CurrentLevelIndex)
@@ -136,12 +139,51 @@ namespace Game.UI.HUD
                     slot.color = _IncompleteColor;
                 }
             }
+
+        }
+
+        private void UpdateMarkerLayout()
+        {
+            if (!(_Container is RectTransform containerRect) || _CachedLevelCount <= 0)
+                return;
+
+            HorizontalLayoutGroup layout = _Container.GetComponent<HorizontalLayoutGroup>();
+            if (layout == null)
+                return;
+
+            float availableWidth = Mathf.Max(0f, containerRect.rect.width - layout.padding.horizontal);
+            const float minimumSpacing = 4f;
+            float markerSize = Mathf.Clamp(
+                (availableWidth - minimumSpacing * (_CachedLevelCount - 1)) / _CachedLevelCount,
+                14f,
+                28f);
+            layout.spacing = _CachedLevelCount > 1
+                ? Mathf.Max(minimumSpacing,
+                    (availableWidth - markerSize * _CachedLevelCount) / (_CachedLevelCount - 1))
+                : 0f;
+
+            for (int i = 0; i < _Slots.Count; i++)
+            {
+                Image slot = _Slots[i];
+                if (slot == null)
+                    continue;
+
+                var slotRect = slot.rectTransform;
+                slotRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, markerSize);
+                slotRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, markerSize);
+                LayoutElement element = slot.GetComponent<LayoutElement>();
+                if (element != null)
+                {
+                    element.preferredWidth = markerSize;
+                    element.preferredHeight = markerSize;
+                }
+            }
         }
 
         private void UpdateStageLabels(int stageIndex)
         {
             if (_CurrentStageLabel != null)
-                _CurrentStageLabel.text = (stageIndex + 1).ToString();
+                _CurrentStageLabel.text = $"STAGE {stageIndex + 1}";
 
             if (_NextStageLabel != null)
                 _NextStageLabel.text = (stageIndex + 2).ToString();
