@@ -2,18 +2,28 @@
 
 Date: 2026-08-08
 
+Implementation audit updated: 2026-08-15
+
 ## Production family
 
-- `PowerUpSocket.png`: retained source option; the shipping button is currently frameless.
+- `PowerUpSocket.png`: unreferenced handoff/source option; the shipping button is currently
+  frameless.
 - `ShatterStrikeIcon.png`: Ember/SunGold knife-through-cracked-target silhouette.
 - `ChronoShiftIcon.png`: Lagoon clock, twelve ticks, hands, and clockwise arrow.
 - `PowerUpBadges.png`: count chip, acquisition plus, unavailable pouch/slash, and lock.
 - `PowerUpClockRing.png`: deterministic Lagoon twelve-tick countdown ring/mask generated in
-  the Unity Editor so its radial fill remains mechanically exact.
+  the Unity Editor as a final-art handoff asset. It is not currently referenced by the live
+  prefab or view; the runtime-created cooldown fill copies the configured power-up icon.
 
 The legacy power-up sheet and button frame remain in the repository for reference and
-rollback. Shipping references move only after the new prefab and configuration bindings
-validate.
+rollback. Runtime configuration references now use the new Shatter and Chrono icons, and the
+button prefab uses the new badge sheet and active material. The socket and clock ring are not
+runtime-referenced.
+
+`PowerUpHUD.spriteatlasv2` exists and records intended packing settings, but its serialized
+`packables` list is empty and it currently packs no sprites. Individual texture import and
+Android override settings exist; atlas integration and budget validation remain ART-708 and
+P2-010 work.
 
 ## Scope boundary
 
@@ -58,3 +68,30 @@ Shatter icon, Chrono icon, and four-badge sheet, matching the generated source f
 These are deterministic sprite composites, not live Game View screenshots. Unity 6000.4.2f1
 hit a native Metal render-pass crash while creating a capture render target, so prefab
 inspection and automated validation are the handoff evidence for this art-only change.
+
+## Runtime implementation status
+
+The art delivery is complete, but UX-408 is not yet complete. The live HUD already uses the
+integrated icons, count/acquisition badges, active material and pulse, unavailable tint, and
+an authoritative Chrono radial fill. Shatter armed state is reconciled from the power-up
+service, and Chrono activity/progress is queried from that same service.
+
+The remaining state-presentation work is documented in the `UX-408 Repository Audit` section
+of `POWER_UP_BUTTON_ART_REPLACEMENT_PLAN.md`. In summary, pressed, visible blocked,
+gameplay-disabled, and consumed/expired/cleared responses remain; the HUD must consume the
+unified outcome channel; and the countdown image must become a named prefab-owned component
+instead of a runtime-created object. That component must explicitly wire the currently unused
+`PowerUpClockRing.png` asset, or document an approved replacement, rather than silently
+continuing to fill a copy of the power-up icon.
+
+The current 14-test `Game.PowerUps.Tests` total is not 14 button-state tests: seven cover the
+service, three cover button active visuals, three cover knife VFX lifecycle, and one covers
+hidden preload visibility. Runtime multi-frame evidence is also outstanding. Do not treat
+the static images in this folder as proof of interaction or motion behavior.
+
+Ownership boundaries:
+
+- UX-406 decides shipping reduced-motion, mute, and haptic-disable behavior.
+- UX-407 builds the state/feedback sandbox.
+- ART-708 owns final state-art polish and final device-size approval.
+- UX-408 closes the reusable state-presentation seam without changing mechanics or inventory.

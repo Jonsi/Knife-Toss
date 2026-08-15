@@ -156,7 +156,12 @@ art problem.
 | UX-405 | Add typed VFX/audio/haptic hooks without coupling domain services to views | P0 | Done | Exact presentation catalog fans the persistent typed channel into independent audio, VFX-signal, and CandyCoded haptic subscribers with per-output cooldown/teardown safety; 6/6 focused, 189/189 full EditMode, and 1/1 PlayMode tests pass, runtime output/cooldown evidence was inspected, and device haptic feel remains QA-904 hardware work. |
 | UX-406 | Define reduced-motion, mute, and haptic-disable behavior | P1 | Needs decision | Accessibility variants have an explicit product policy. |
 | UX-407 | Build a feedback sandbox/debug panel | P1 | Ready | Every feedback state can be previewed without changing economy data. |
-| UX-408 | Prototype authoritative power-up button states and prepare the final-art handoff | P0 | In progress | The art/layout prototype is integrated and 14/14 current power-up EditMode tests pass, but the separate authoritative-state presenter and recorded runtime motion evidence are still outstanding; original gameplay logic remains unchanged. |
+| UX-408 | Prototype authoritative power-up button states and prepare the final-art handoff | P0 | In progress | Mechanics, typed outcomes, Shatter selection, Chrono progress, active/unavailable visuals, production-prefab layout, and static Stage 1/grayscale art reviews already exist. The current 14/14 EditMode total comprises 7 service, 3 button-visual, 3 knife-VFX-lifecycle, and 1 preload-visibility test; it is not full state-matrix coverage. Closure is limited to unified outcome-driven presentation, pressed/blocked/gameplay-disabled/end-state behavior, a prefab-owned countdown seam, focused state tests, and inspected runtime motion evidence. UX-406 owns the shipping accessibility policy, UX-407 owns the sandbox, and ART-708 owns final state-art polish. |
+
+UX-408's audited implementation boundary and file-level evidence are maintained in
+`POWER_UP_BUTTON_ART_REPLACEMENT_PLAN.md`. Do not rebuild the authoritative mechanics,
+inventory rules, Shatter/Chrono identity, current icon family, count/acquisition badges, or
+Stage 1 static review evidence while closing the remaining presenter work.
 
 ### Phase 5 - Failure, Retry, and Continue Polish
 

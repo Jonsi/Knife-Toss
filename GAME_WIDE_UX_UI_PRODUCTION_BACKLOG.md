@@ -389,7 +389,7 @@ Goal: create reusable production elements before rebuilding screens.
 | P2-005 Produce navigation/icon family | P0 | P2-001 | Back/close/settings/Store/Missions/map plus badge/lock/check family. |
 | P2-006 Produce resource/progress components | P0 | P2-001 | Coin chip, stage progress, markers, reward chips and magazine dock. |
 | P2-007 Produce form/toggle components | P1 | P2-001 | Field, validation, toggle, slider and keyboard-safe layout. |
-| P2-008 Integrate current power-up art | P0 | UX-408 | Keep Shatter/Chrono identity; attach counts and authoritative state overlays. |
+| P2-008 Integrate current power-up art | P0 | UX-408 | In progress — Shatter/Chrono icons, count/acquisition badges, active material/pulse, unavailable tint, Chrono radial progress, provenance, individual import settings, and static Stage 1/grayscale reviews are integrated. The socket and clock-ring assets are handoff-only, and `PowerUpHUD.spriteatlasv2` has no packables; atlas/budget validation remains P2-010/ART-708. UX-408 still owns unified outcome-driven pressed/blocked/gameplay-disabled/end-state behavior, a prefab-owned countdown seam, focused state tests, and runtime motion evidence. UX-406 owns shipping accessibility policy; UX-407 owns the sandbox. |
 | P2-009 Build UI gallery/debug scene | P1 | P2-003..008 | Preview every visual/state variant without save/economy mutation. |
 | P2-010 Validate imports and budgets | P0 | P2-002..008 | Provenance, PPU, compression, atlas, mip/filter, memory and grayscale checks pass. |
 
