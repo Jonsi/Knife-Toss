@@ -16,7 +16,7 @@ namespace Game.UI.Store
     /// </summary>
     public abstract class StoreCardView : MonoBehaviour
     {
-        [field: SerializeField] public PricePillBinding PricePill { get; private set; }
+        [field: SerializeField] public StorePricePillView PricePill { get; private set; }
         [field: SerializeField] public Image IconImage { get; private set; }
         [field: SerializeField] public Image ShadowImage { get; private set; }
         [field: SerializeField] public Button BuyButton { get; private set; }
@@ -25,11 +25,14 @@ namespace Game.UI.Store
         private Action<PurchasableEntry> _OnBuyClicked;
         private ActionButtonPresenter _ButtonPresenter;
 
+        public PurchasableEntry BoundEntry => Entry;
+
         public void Setup(
             PurchasableEntry entry,
             Action<PurchasableEntry> onBuyClicked,
             FeedbackEventChannel feedbackChannel = null)
         {
+            ResetForReuse();
             Entry = entry;
             _OnBuyClicked = onBuyClicked;
 
@@ -53,6 +56,19 @@ namespace Game.UI.Store
                 BuyButton.onClick.RemoveListener(OnBuyPressed);
                 BuyButton.onClick.AddListener(OnBuyPressed);
             }
+        }
+
+        public virtual void ResetForReuse()
+        {
+            if (BuyButton != null)
+            {
+                BuyButton.onClick.RemoveListener(OnBuyPressed);
+                BuyButton.interactable = false;
+            }
+
+            _ButtonPresenter?.CancelSubmission();
+            _OnBuyClicked = null;
+            Entry = null;
         }
 
         public void SetInteractable(bool interactable)
@@ -137,39 +153,5 @@ namespace Game.UI.Store
             };
         }
 
-        [Serializable]
-        public class PricePillBinding
-        {
-            [field: SerializeField] public TMP_Text AmountText { get; private set; }
-
-            public void SetPrice(int amount, CurrencyType currencyType)
-            {
-                if (AmountText != null)
-                {
-                    AmountText.text = amount.ToString();
-                }
-            }
-
-            public void SetVisible(bool visible)
-            {
-                if (AmountText == null)
-                {
-                    return;
-                }
-
-                var root = AmountText.transform.parent != null
-                    ? AmountText.transform.parent.gameObject
-                    : AmountText.gameObject;
-                root.SetActive(visible);
-            }
-
-            public void SetCustomPrice(string text)
-            {
-                if (AmountText == null)
-                    return;
-
-                AmountText.text = text ?? string.Empty;
-            }
-        }
     }
 }

@@ -1,7 +1,7 @@
 using Game.Store.Data;
 using Game.Store.Rewards;
-using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,11 +14,9 @@ namespace Game.UI.Store
     {
         [Header("Knife Skin State UI")]
         [SerializeField] private GameObject _PricePillRoot;
-        [SerializeField] private Button _EquipButton;
-        [SerializeField] private float _PurchasedOutDuration = 0.26f;
-        [SerializeField] private float _PurchasedCollapseDuration = 0.18f;
-        [SerializeField] private float _PurchasedOutOffsetY = 48f;
-
+        [SerializeField] private GameObject _StatusPillRoot;
+        [SerializeField] private TMP_Text _StatusText;
+        [SerializeField, Range(0.8f, 1f)] private float _SideCardScale = 0.9f;
         private CanvasGroup _CanvasGroup;
         private RectTransform _RectTransform;
         private LayoutElement _LayoutElement;
@@ -27,23 +25,8 @@ namespace Game.UI.Store
         private float _BaseMinWidth;
         private float _BasePreferredWidth;
         private bool _HasCachedTransformState;
-        private bool _IsPurchasedOut;
-
-        private void Awake()
-        {
-            if (_EquipButton != null)
-            {
-                _EquipButton.gameObject.SetActive(false);
-            }
-        }
-
         public void SetAvailableState(bool canInteract)
         {
-            if (_IsPurchasedOut)
-            {
-                return;
-            }
-
             gameObject.SetActive(true);
             EnsureAnimationState();
             _RectTransform.localScale = _BaseScale;
@@ -58,57 +41,59 @@ namespace Game.UI.Store
             SetInteractable(canInteract);
         }
 
-        public async UniTask PlayPurchasedOutAsync()
+        public void SetStoreState(bool owned, bool equipped, bool canInteract)
         {
-            if (_IsPurchasedOut)
+            EnsureAnimationState();
+            _CanvasGroup.alpha = 1f;
+            SetPricePillVisible(!owned);
+
+            if (_StatusPillRoot != null)
             {
-                return;
+                _StatusPillRoot.SetActive(owned);
             }
 
-            _IsPurchasedOut = true;
-            EnsureAnimationState();
-            SetInteractable(false);
-            SetPricePillVisible(false);
-
-            var startPosition = _RectTransform.anchoredPosition;
-            var targetPosition = startPosition + Vector2.up * _PurchasedOutOffsetY;
-            var sequence = DOTween.Sequence().SetTarget(this).SetUpdate(true);
-            sequence.Join(_RectTransform.DOAnchorPos(targetPosition, _PurchasedOutDuration).SetEase(Ease.InQuad));
-            sequence.Join(_CanvasGroup.DOFade(0f, _PurchasedOutDuration).SetEase(Ease.InQuad));
-
-            await UniTask.Delay(Mathf.CeilToInt(_PurchasedOutDuration * 1000f), ignoreTimeScale: true);
-
-            if (sequence.IsActive())
+            if (_StatusText != null)
             {
-                sequence.Kill();
+                _StatusText.text = equipped ? "EQUIPPED" : "EQUIP";
+            }
+
+            SetInteractable(canInteract && !equipped);
+        }
+
+        public void SetCarouselSelected(bool selected)
+        {
+            transform.localScale = selected ? Vector3.one : Vector3.one * _SideCardScale;
+        }
+
+        public override void ResetForReuse()
+        {
+            DOTween.Kill(this);
+            EnsureAnimationState();
+
+            if (_RectTransform != null)
+            {
+                _RectTransform.localScale = _BaseScale;
+                _RectTransform.sizeDelta = _BaseSizeDelta;
+            }
+
+            if (_CanvasGroup != null)
+            {
+                _CanvasGroup.alpha = 1f;
             }
 
             if (_LayoutElement != null)
             {
-                var collapsedSize = _BaseSizeDelta;
-                collapsedSize.x = 0f;
-                var collapseSequence = DOTween.Sequence().SetTarget(this).SetUpdate(true);
-                collapseSequence.Join(_RectTransform.DOSizeDelta(collapsedSize, _PurchasedCollapseDuration).SetEase(Ease.InQuad));
-                collapseSequence.Join(DOTween.To(
-                    () => _LayoutElement.preferredWidth,
-                    width => _LayoutElement.preferredWidth = width,
-                    0f,
-                    _PurchasedCollapseDuration).SetEase(Ease.InQuad));
-                collapseSequence.Join(DOTween.To(
-                    () => _LayoutElement.minWidth,
-                    width => _LayoutElement.minWidth = width,
-                    0f,
-                    _PurchasedCollapseDuration).SetEase(Ease.InQuad));
-
-                await UniTask.Delay(Mathf.CeilToInt(_PurchasedCollapseDuration * 1000f), ignoreTimeScale: true);
-
-                if (collapseSequence.IsActive())
-                {
-                    collapseSequence.Kill();
-                }
+                _LayoutElement.minWidth = _BaseMinWidth;
+                _LayoutElement.preferredWidth = _BasePreferredWidth;
             }
 
-            Destroy(gameObject);
+            SetPricePillVisible(true);
+            if (_StatusPillRoot != null)
+            {
+                _StatusPillRoot.SetActive(false);
+            }
+
+            base.ResetForReuse();
         }
 
         protected override void BindEntry(PurchasableEntry entry)

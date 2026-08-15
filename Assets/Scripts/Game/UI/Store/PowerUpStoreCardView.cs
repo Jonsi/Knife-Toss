@@ -2,6 +2,7 @@ using Game.Store.Data;
 using Game.Store.Rewards;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game.UI.Store
 {
@@ -12,6 +13,8 @@ namespace Game.UI.Store
     {
         [field: SerializeField] public TMP_Text RewardAmountText { get; private set; }
         [field: SerializeField] public TMP_Text CurrentAmountText { get; private set; }
+        [field: SerializeField] public TMP_Text GrantAmountText { get; private set; }
+        [field: SerializeField] public Image GrantIconImage { get; private set; }
 
         protected override void BindEntry(PurchasableEntry entry)
         {
@@ -21,7 +24,18 @@ namespace Game.UI.Store
 
                 if (RewardAmountText != null)
                 {
-                    RewardAmountText.text = powerUpReward.Config.DisplayName;
+                    RewardAmountText.text = powerUpReward.Config.DisplayName?.ToUpperInvariant();
+                }
+
+                if (GrantAmountText != null)
+                {
+                    GrantAmountText.text = $"+{powerUpReward.Quantity}";
+                }
+
+                if (GrantIconImage != null)
+                {
+                    GrantIconImage.sprite = powerUpReward.Config.Icon;
+                    GrantIconImage.preserveAspect = true;
                 }
             }
         }
@@ -30,7 +44,7 @@ namespace Game.UI.Store
         {
             if (CurrentAmountText != null)
             {
-                CurrentAmountText.text = amount.ToString();
+                CurrentAmountText.text = $"OWNED {amount}";
             }
         }
     }

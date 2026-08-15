@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Common.IAP.Interfaces;
 using Cysharp.Threading.Tasks;
 using Game.Feedback.Events;
 using Game.Flow.Game;
@@ -15,7 +16,8 @@ using VContainer;
 namespace Game.UI.Store
 {
     /// <summary>
-    /// Controller for the Store scene. Binds catalog data to UI and drives purchases.
+    /// Controller for the Store scene. Binds catalog data to authored Store presentation and
+    /// preserves the existing purchase, entitlement, inventory, and equip authorities.
     /// </summary>
     public class StoreMenuController : MonoBehaviour
     {
@@ -25,7 +27,10 @@ namespace Game.UI.Store
         [field: SerializeField] public PowerUpStoreCardView PowerUpCardPrefab { get; private set; }
         [field: SerializeField] public Transform PowerUpsContentRoot { get; private set; }
         [field: SerializeField] public Button CloseButton { get; private set; }
+        [SerializeField] private StoreKnifeCarouselView _KnifeCarouselView;
         [SerializeField] private StoreBalanceChipView _StoreBalanceChipView;
+        [SerializeField] private StoreAdCtaView _StoreAdCtaView;
+        [SerializeField] private StoreRemoveAdsView _RemoveAdsView;
         [SerializeField] private UiElementAnimator[] _StoreAnimators;
 
         private StoreCatalog _StoreCatalog;
@@ -34,11 +39,13 @@ namespace Game.UI.Store
         private SceneLoaderService _SceneLoaderService;
         private PlayerDataService _PlayerDataService;
         private FeedbackEventChannel _FeedbackEventChannel;
+        private IIapService _IapService;
         private ActionButtonPresenter _CloseButtonPresenter;
-        private readonly List<SpawnedCardBinding> _KnifeSkinBindings = new List<SpawnedCardBinding>();
-        private readonly List<SpawnedCardBinding> _PowerUpBindings = new List<SpawnedCardBinding>();
-        private readonly List<UiElementAnimator> _RuntimeAnimators = new List<UiElementAnimator>();
+        private readonly List<SpawnedCardBinding> _PowerUpBindings = new();
+        private readonly List<UiElementAnimator> _RuntimeAnimators = new();
+        private PurchasableEntry _RemoveAdsEntry;
         private bool _IsClosing;
+        private bool _IsSubmitting;
 
         [Inject]
         private void Construct(
@@ -47,7 +54,8 @@ namespace Game.UI.Store
             KnifeSkinService knifeSkinService,
             SceneLoaderService sceneLoaderService,
             PlayerDataService playerDataService,
-            FeedbackEventChannel feedbackEventChannel)
+            FeedbackEventChannel feedbackEventChannel,
+            IIapService iapService)
         {
             _StoreCatalog = storeCatalog;
             _PurchaseRouter = purchaseRouter;
@@ -55,11 +63,13 @@ namespace Game.UI.Store
             _SceneLoaderService = sceneLoaderService;
             _PlayerDataService = playerDataService;
             _FeedbackEventChannel = feedbackEventChannel;
+            _IapService = iapService;
         }
 
         private void Start()
         {
             BindCloseButton();
+            BindAdSubmissionState();
             BindCatalog();
             RefreshCardState();
             PlayStoreIn();
@@ -70,6 +80,11 @@ namespace Game.UI.Store
             if (CloseButton != null)
             {
                 CloseButton.onClick.RemoveListener(OnCloseClicked);
+            }
+
+            if (_StoreAdCtaView != null)
+            {
+                _StoreAdCtaView.SubmissionStateChanged -= OnAdSubmissionStateChanged;
             }
         }
 
@@ -85,46 +100,53 @@ namespace Game.UI.Store
             _CloseButtonPresenter = ActionButtonPresenter.GetOrAdd(CloseButton, _FeedbackEventChannel);
         }
 
+        private void BindAdSubmissionState()
+        {
+            if (_StoreAdCtaView == null)
+            {
+                return;
+            }
+
+            _StoreAdCtaView.SubmissionStateChanged -= OnAdSubmissionStateChanged;
+            _StoreAdCtaView.SubmissionStateChanged += OnAdSubmissionStateChanged;
+        }
+
         private void BindCatalog()
         {
             BindKnifeSkinEntries(_StoreCatalog?.Skins);
             BindPowerUpEntries(_StoreCatalog?.PowerUps);
+            BindRemoveAdsEntry(_StoreCatalog?.IapEntries);
         }
 
         private void BindKnifeSkinEntries(IReadOnlyList<PurchasableEntry> entries)
         {
-            _KnifeSkinBindings.Clear();
-
-            if (KnifeSkinsContentRoot == null || KnifeSkinCardPrefab == null)
+            if (_KnifeCarouselView == null || KnifeSkinCardPrefab == null)
             {
                 return;
             }
 
-            ClearChildren(KnifeSkinsContentRoot);
+            var knifeEntries = new List<PurchasableEntry>();
 
-            if (entries == null)
+            if (entries != null)
             {
-                return;
-            }
-
-            for (var i = 0; i < entries.Count; i++)
-            {
-                var entry = entries[i];
-                if (entry == null || IsOwned(entry))
+                for (var i = 0; i < entries.Count; i++)
                 {
-                    continue;
+                    var entry = entries[i];
+                    if (entry?.Reward is not KnifeSkinReward)
+                    {
+                        continue;
+                    }
+
+                    knifeEntries.Add(entry);
                 }
-
-                var card = Instantiate(KnifeSkinCardPrefab, KnifeSkinsContentRoot);
-                card.Setup(entry, OnBuyClicked, _FeedbackEventChannel);
-                _KnifeSkinBindings.Add(new SpawnedCardBinding
-                {
-                    Card = card,
-                    Entry = entry
-                });
             }
 
-            RefreshScrollableContentLayout(KnifeSkinsContentRoot);
+            _KnifeCarouselView.Configure(
+                knifeEntries,
+                KnifeSkinCardPrefab,
+                OnOfferPressed,
+                ApplyKnifeSkinCardState,
+                _FeedbackEventChannel);
         }
 
         private void BindPowerUpEntries(IReadOnlyList<PurchasableEntry> entries)
@@ -148,63 +170,119 @@ namespace Game.UI.Store
 
             ClearChildren(parent);
 
-            if (entries == null)
+            if (entries != null)
             {
-                return;
-            }
-
-            for (var i = 0; i < entries.Count; i++)
-            {
-                var entry = entries[i];
-                if (entry == null)
+                for (var i = 0; i < entries.Count; i++)
                 {
-                    continue;
+                    var entry = entries[i];
+                    if (entry == null)
+                    {
+                        continue;
+                    }
+
+                    var card = Instantiate(prefab, parent);
+                    card.name = $"PowerUpCard_{i + 1}";
+                    card.Setup(entry, OnOfferPressed, _FeedbackEventChannel);
+                    bindings.Add(new SpawnedCardBinding
+                    {
+                        Card = card,
+                        Entry = entry
+                    });
                 }
-
-                var card = Instantiate(prefab, parent);
-                card.Setup(entry, OnBuyClicked, _FeedbackEventChannel);
-                bindings.Add(new SpawnedCardBinding
-                {
-                    Card = card,
-                    Entry = entry
-                });
             }
 
             RefreshScrollableContentLayout(parent);
         }
 
+        private void BindRemoveAdsEntry(IReadOnlyList<PurchasableEntry> entries)
+        {
+            _RemoveAdsEntry = null;
+            if (entries != null)
+            {
+                for (var i = 0; i < entries.Count; i++)
+                {
+                    if (entries[i]?.Reward is RemoveAdsReward)
+                    {
+                        _RemoveAdsEntry = entries[i];
+                        break;
+                    }
+                }
+            }
+
+            _RemoveAdsView?.Setup(_RemoveAdsEntry, OnOfferPressed, _FeedbackEventChannel);
+        }
+
         private void RefreshCardState()
         {
-            var canInteract = !_IsClosing && (_PurchaseRouter == null || !_PurchaseRouter.IsPurchaseInProgress);
+            var canInteract = !_IsClosing &&
+                              !_IsSubmitting &&
+                              (_StoreAdCtaView == null || !_StoreAdCtaView.IsSubmissionInProgress) &&
+                              (_PurchaseRouter == null || !_PurchaseRouter.IsPurchaseInProgress);
+
             RefreshKnifeSkinStates(canInteract);
             RefreshPowerUpStates(canInteract);
+            RefreshRemoveAdsState(canInteract);
+
             if (CloseButton != null)
             {
                 CloseButton.interactable = canInteract;
             }
         }
 
-        private void OnBuyClicked(PurchasableEntry entry)
+        private void OnOfferPressed(PurchasableEntry entry)
         {
-            TryPurchaseAsync(entry).Forget();
+            TrySubmitOfferAsync(entry).Forget();
         }
 
-        private async UniTaskVoid TryPurchaseAsync(PurchasableEntry entry)
+        private async UniTaskVoid TrySubmitOfferAsync(PurchasableEntry entry)
         {
-            if (_PurchaseRouter == null || entry == null)
+            if (_PurchaseRouter == null || entry == null || _IsSubmitting || _IsClosing)
             {
                 return;
             }
 
-            RefreshCardState();
-            var result = await _PurchaseRouter.TryPurchaseAsync(entry);
-            FindCardForEntry(entry)?.ResolveSubmission(result);
-            if (result.Success)
+            if (TryGetSkinId(entry, out var skinId) && IsOwned(entry))
             {
-                SyncKnifeSkinState();
-                await HandleSuccessfulPurchaseAsync(entry);
+                var equipped = _KnifeSkinService != null && _KnifeSkinService.TryEquip(skinId);
+                FindCardForEntry(entry)?.ResolveSubmission(
+                    equipped ? PurchaseResult.Succeeded : PurchaseResult.Error("Unable to equip item."));
+                RefreshCardState();
+                return;
             }
 
+            _IsSubmitting = true;
+            RefreshCardState();
+
+            try
+            {
+                var result = await _PurchaseRouter.TryPurchaseAsync(entry);
+                ResolveSubmission(entry, result);
+                if (result.Success)
+                {
+                    SyncKnifeSkinState();
+                    await HandleSuccessfulPurchaseAsync(entry);
+                }
+            }
+            finally
+            {
+                _IsSubmitting = false;
+                RefreshCardState();
+            }
+        }
+
+        private void ResolveSubmission(PurchasableEntry entry, PurchaseResult result)
+        {
+            if (ReferenceEquals(entry, _RemoveAdsEntry))
+            {
+                _RemoveAdsView?.ResolveSubmission(result);
+                return;
+            }
+
+            FindCardForEntry(entry)?.ResolveSubmission(result);
+        }
+
+        private void OnAdSubmissionStateChanged(bool _)
+        {
             RefreshCardState();
         }
 
@@ -237,8 +315,8 @@ namespace Game.UI.Store
 
         private void PlayStoreIn()
         {
-            UiElementAnimator[] animators = GetStoreAnimators();
-            for (int i = 0; i < animators.Length; i++)
+            var animators = GetStoreAnimators();
+            for (var i = 0; i < animators.Length; i++)
             {
                 animators[i]?.PlayIn();
             }
@@ -246,19 +324,18 @@ namespace Game.UI.Store
 
         private async UniTask PlayStoreOutAsync()
         {
-            UiElementAnimator[] animators = GetStoreAnimators();
+            var animators = GetStoreAnimators();
             if (animators.Length == 0)
             {
                 return;
             }
 
             var tasks = new List<UniTask>();
-            for (int i = 0; i < animators.Length; i++)
+            for (var i = 0; i < animators.Length; i++)
             {
-                UiElementAnimator animator = animators[i];
-                if (animator != null)
+                if (animators[i] != null)
                 {
-                    tasks.Add(animator.PlayOutAsync());
+                    tasks.Add(animators[i].PlayOutAsync());
                 }
             }
 
@@ -280,16 +357,16 @@ namespace Game.UI.Store
                 return _RuntimeAnimators.ToArray();
             }
 
-            Transform root = transform;
-            for (int i = 0; i < root.childCount; i++)
+            var root = transform;
+            for (var i = 0; i < root.childCount; i++)
             {
-                Transform child = root.GetChild(i);
+                var child = root.GetChild(i);
                 if (child == null)
                 {
                     continue;
                 }
 
-                UiElementAnimator animator = child.GetComponent<UiElementAnimator>();
+                var animator = child.GetComponent<UiElementAnimator>();
                 if (animator == null)
                 {
                     animator = child.gameObject.AddComponent<UiElementAnimator>();
@@ -326,12 +403,6 @@ namespace Game.UI.Store
             }
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
-
-            if (contentRect.parent is RectTransform viewportRect)
-            {
-                LayoutRebuilder.ForceRebuildLayoutImmediate(viewportRect);
-            }
-
             Canvas.ForceUpdateCanvases();
         }
 
@@ -342,23 +413,24 @@ namespace Game.UI.Store
 
         private void RefreshKnifeSkinStates(bool canInteract)
         {
-            for (var i = 0; i < _KnifeSkinBindings.Count; i++)
-            {
-                var binding = _KnifeSkinBindings[i];
-                if (binding.Card == null || binding.IsPurchased)
-                {
-                    continue;
-                }
+            _KnifeCarouselView?.SetInteractable(canInteract);
+        }
 
-                if (binding.Card is KnifeSkinStoreCardView knifeSkinCard)
-                {
-                    knifeSkinCard.SetAvailableState(CanPressSoftPurchaseButton(binding.Entry, canInteract));
-                }
-                else
-                {
-                    binding.Card.SetInteractable(CanPressSoftPurchaseButton(binding.Entry, canInteract));
-                }
+        private void ApplyKnifeSkinCardState(KnifeSkinStoreCardView card, PurchasableEntry entry)
+        {
+            if (card == null || entry == null)
+            {
+                return;
             }
+
+            var canInteract = !_IsClosing &&
+                              !_IsSubmitting &&
+                              (_StoreAdCtaView == null || !_StoreAdCtaView.IsSubmissionInProgress) &&
+                              (_PurchaseRouter == null || !_PurchaseRouter.IsPurchaseInProgress);
+            var equippedId = _KnifeSkinService?.GetEquippedId() ?? string.Empty;
+            var owned = IsOwned(entry);
+            var equipped = TryGetSkinId(entry, out var skinId) && skinId == equippedId;
+            card.SetStoreState(owned, equipped, CanSubmitEntry(entry, canInteract));
         }
 
         private void RefreshPowerUpStates(bool canInteract)
@@ -373,7 +445,7 @@ namespace Game.UI.Store
                     continue;
                 }
 
-                binding.Card.SetInteractable(CanPressSoftPurchaseButton(binding.Entry, canInteract));
+                binding.Card.SetInteractable(CanSubmitEntry(binding.Entry, canInteract));
 
                 if (binding.Card is not PowerUpStoreCardView powerUpCard ||
                     binding.Entry?.Reward is not PowerUpReward powerUpReward ||
@@ -387,14 +459,32 @@ namespace Game.UI.Store
             }
         }
 
-        private bool CanPressSoftPurchaseButton(PurchasableEntry entry, bool canInteract)
+        private void RefreshRemoveAdsState(bool canInteract)
+        {
+            if (_RemoveAdsView == null)
+            {
+                return;
+            }
+
+            var product = _RemoveAdsEntry?.GetIapProduct();
+            var available = _RemoveAdsEntry != null && product != null;
+            var owned = available && _IapService != null && _IapService.IsOwned(product);
+            _RemoveAdsView.SetState(
+                available,
+                owned,
+                available && _IapService != null && CanSubmitEntry(_RemoveAdsEntry, canInteract));
+        }
+
+        private bool CanSubmitEntry(PurchasableEntry entry, bool canInteract)
         {
             return canInteract && entry != null && _PurchaseRouter != null;
         }
 
         private void PlayRewardAccumulation(PurchasableEntry entry)
         {
-            if (_StoreBalanceChipView == null || entry?.Reward is not CurrencyReward currencyReward || currencyReward.Amount <= 0)
+            if (_StoreBalanceChipView == null ||
+                entry?.Reward is not CurrencyReward currencyReward ||
+                currencyReward.Amount <= 0)
             {
                 return;
             }
@@ -405,17 +495,15 @@ namespace Game.UI.Store
 
         private StoreCardView FindCardForEntry(PurchasableEntry entry)
         {
-            for (var i = 0; i < _KnifeSkinBindings.Count; i++)
+            var knifeCard = _KnifeCarouselView?.FindVisibleCard(entry);
+            if (knifeCard != null)
             {
-                if (_KnifeSkinBindings[i].Entry == entry)
-                {
-                    return _KnifeSkinBindings[i].Card;
-                }
+                return knifeCard;
             }
 
             for (var i = 0; i < _PowerUpBindings.Count; i++)
             {
-                if (_PowerUpBindings[i].Entry == entry)
+                if (ReferenceEquals(_PowerUpBindings[i].Entry, entry))
                 {
                     return _PowerUpBindings[i].Card;
                 }
@@ -426,32 +514,15 @@ namespace Game.UI.Store
 
         private async UniTask HandleSuccessfulPurchaseAsync(PurchasableEntry entry)
         {
-            if (TryGetKnifeSkinBinding(entry, out var binding))
-            {
-                binding.IsPurchased = true;
-                binding.Card?.SetInteractable(false);
-
-                if (binding.Card is KnifeSkinStoreCardView knifeSkinCard)
-                {
-                    await knifeSkinCard.PlayPurchasedOutAsync();
-                }
-                else if (binding.Card != null)
-                {
-                    binding.Card.gameObject.SetActive(false);
-                }
-
-                RefreshScrollableContentLayout(KnifeSkinsContentRoot);
-                return;
-            }
-
             PlayRewardAccumulation(entry);
+            await UniTask.Yield();
         }
 
         private bool IsOwned(PurchasableEntry entry)
         {
             return _KnifeSkinService != null &&
-                TryGetSkinId(entry, out var skinId) &&
-                _KnifeSkinService.IsUnlocked(skinId);
+                   TryGetSkinId(entry, out var skinId) &&
+                   _KnifeSkinService.IsUnlocked(skinId);
         }
 
         private static bool TryGetSkinId(PurchasableEntry entry, out string skinId)
@@ -460,26 +531,10 @@ namespace Game.UI.Store
             return !string.IsNullOrEmpty(skinId);
         }
 
-        private bool TryGetKnifeSkinBinding(PurchasableEntry entry, out SpawnedCardBinding binding)
-        {
-            for (var i = 0; i < _KnifeSkinBindings.Count; i++)
-            {
-                binding = _KnifeSkinBindings[i];
-                if (binding.Entry == entry)
-                {
-                    return true;
-                }
-            }
-
-            binding = null;
-            return false;
-        }
-
         private sealed class SpawnedCardBinding
         {
             public StoreCardView Card;
             public PurchasableEntry Entry;
-            public bool IsPurchased;
         }
     }
 }
