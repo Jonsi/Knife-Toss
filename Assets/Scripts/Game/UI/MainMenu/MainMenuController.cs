@@ -39,6 +39,7 @@ namespace Game.UI.MainMenu
         [SerializeField] private Sprite _MainMenuBackgroundOverride;
         [SerializeField] private UiElementAnimator[] _MenuAnimators;
         [SerializeField] private KnifeSkinSelectorView _KnifeSkinSelectorView;
+        [SerializeField] private GameObject _MenuContentRoot;
 
         [Inject] private PlayerDataService _PlayerDataService;
         [Inject] private SceneLoaderService _SceneLoaderService;
@@ -265,6 +266,7 @@ namespace Game.UI.MainMenu
             try
             {
                 await PlayMenuOutAsync();
+                SetMenuContentVisible(false);
                 await loadScene();
             }
             catch (Exception exception)
@@ -277,6 +279,7 @@ namespace Game.UI.MainMenu
                     sourceButton != null ? sourceButton.gameObject.name : "main_menu"));
                 _ActiveNavigationPresenter = null;
                 SetButtonsInteractable(true);
+                SetMenuContentVisible(true);
                 PlayMenuIn();
             }
         }
@@ -287,7 +290,21 @@ namespace Game.UI.MainMenu
             _ActiveNavigationPresenter?.CompleteSubmission();
             _ActiveNavigationPresenter = null;
             SetButtonsInteractable(true);
+            SetMenuContentVisible(true);
             PlayMenuIn();
+        }
+
+        private void SetMenuContentVisible(bool visible)
+        {
+            if (_MenuContentRoot == null)
+            {
+                _MenuContentRoot = transform.Find("Layer1/SafeAreaRoot")?.gameObject;
+            }
+
+            if (_MenuContentRoot != null)
+            {
+                _MenuContentRoot.SetActive(visible);
+            }
         }
 
         private void SetButtonsInteractable(bool isInteractable)

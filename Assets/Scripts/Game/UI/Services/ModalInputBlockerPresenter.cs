@@ -113,6 +113,11 @@ namespace Game.UI.Services
 
         private void EnsureCanvasGroup()
         {
+            if (this == null)
+            {
+                return;
+            }
+
             if (_CanvasGroup == null)
             {
                 _CanvasGroup = GetComponent<CanvasGroup>();
