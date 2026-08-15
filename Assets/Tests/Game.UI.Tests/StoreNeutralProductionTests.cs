@@ -166,7 +166,7 @@ namespace Game.UI.Tests
             AssertCardUsesModularPricePill(
                 PowerPrefabPath,
                 "Assets/Art/UI/StoreModular/StorePowerUpCardContainer.png",
-                -171f,
+                -179f,
                 new Vector2(316f, 72f));
             AssertPowerUpContentStackHasNoOverlaps();
         }
@@ -464,7 +464,7 @@ namespace Game.UI.Tests
                 }
 
                 RectTransform price = root.transform.Find("PricePill") as RectTransform;
-                Assert.That(price.anchoredPosition, Is.EqualTo(new Vector2(0f, -166f)));
+                Assert.That(price.anchoredPosition, Is.EqualTo(new Vector2(0f, -174f)));
                 Assert.That(price.sizeDelta, Is.EqualTo(new Vector2(218f, 84f)));
             }
             finally
@@ -484,7 +484,7 @@ namespace Game.UI.Tests
 
                 Assert.That(owned.anchoredPosition.y, Is.EqualTo(-28f).Within(0.01f));
                 Assert.That(grant.anchoredPosition.y, Is.EqualTo(-94f).Within(0.01f));
-                Assert.That(price.anchoredPosition.y, Is.EqualTo(-171f).Within(0.01f));
+                Assert.That(price.anchoredPosition.y, Is.EqualTo(-179f).Within(0.01f));
                 Assert.That(owned.anchoredPosition.y - owned.rect.height * 0.5f,
                     Is.GreaterThan(grant.anchoredPosition.y + grant.rect.height * 0.5f));
                 Assert.That(grant.anchoredPosition.y - grant.rect.height * 0.5f,
