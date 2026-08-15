@@ -1,7 +1,6 @@
 using Game.Store.Data;
 using Game.Store.Rewards;
 using DG.Tweening;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,12 +9,10 @@ namespace Game.UI.Store
     /// <summary>
     /// Card view used for knife skin store items.
     /// </summary>
+    [RequireComponent(typeof(CanvasGroup))]
     public class KnifeSkinStoreCardView : StoreCardView
     {
         [Header("Knife Skin State UI")]
-        [SerializeField] private GameObject _PricePillRoot;
-        [SerializeField] private GameObject _StatusPillRoot;
-        [SerializeField] private TMP_Text _StatusText;
         [SerializeField, Range(0.8f, 1f)] private float _SideCardScale = 0.9f;
         private CanvasGroup _CanvasGroup;
         private RectTransform _RectTransform;
@@ -37,27 +34,29 @@ namespace Game.UI.Store
                 _LayoutElement.minWidth = _BaseMinWidth;
                 _LayoutElement.preferredWidth = _BasePreferredWidth;
             }
-            SetPricePillVisible(true);
+            PricePill?.SetVisible(true);
+            SetCardInputGate(true);
             SetInteractable(canInteract);
         }
 
-        public void SetStoreState(bool owned, bool equipped, bool canInteract)
+        public void SetStoreState(bool owned, bool canInteract)
         {
             EnsureAnimationState();
             _CanvasGroup.alpha = 1f;
-            SetPricePillVisible(!owned);
+            PricePill?.SetVisible(true);
 
-            if (_StatusPillRoot != null)
+            if (owned)
             {
-                _StatusPillRoot.SetActive(owned);
+                PricePill?.SetOwned();
+                // Owned is a status, not a disabled visual state. Keep the button
+                // presenter visually available, then block input at the card gate.
+                SetInteractable(true);
+                SetCardInputGate(false);
+                return;
             }
 
-            if (_StatusText != null)
-            {
-                _StatusText.text = equipped ? "EQUIPPED" : "EQUIP";
-            }
-
-            SetInteractable(canInteract && !equipped);
+            SetCardInputGate(true);
+            SetInteractable(canInteract);
         }
 
         public void SetCarouselSelected(bool selected)
@@ -79,6 +78,8 @@ namespace Game.UI.Store
             if (_CanvasGroup != null)
             {
                 _CanvasGroup.alpha = 1f;
+                _CanvasGroup.interactable = true;
+                _CanvasGroup.blocksRaycasts = true;
             }
 
             if (_LayoutElement != null)
@@ -87,11 +88,7 @@ namespace Game.UI.Store
                 _LayoutElement.preferredWidth = _BasePreferredWidth;
             }
 
-            SetPricePillVisible(true);
-            if (_StatusPillRoot != null)
-            {
-                _StatusPillRoot.SetActive(false);
-            }
+            PricePill?.SetVisible(true);
 
             base.ResetForReuse();
         }
@@ -108,16 +105,6 @@ namespace Game.UI.Store
         {
             DOTween.Kill(this);
             base.OnDisable();
-        }
-
-        private void SetPricePillVisible(bool visible)
-        {
-            if (_PricePillRoot != null)
-            {
-                _PricePillRoot.SetActive(visible);
-            }
-
-            PricePill?.SetVisible(visible);
         }
 
         private void EnsureAnimationState()
@@ -151,6 +138,15 @@ namespace Game.UI.Store
                 _BasePreferredWidth = _LayoutElement.preferredWidth;
             }
             _HasCachedTransformState = true;
+        }
+
+        private void SetCardInputGate(bool enabled)
+        {
+            if (_CanvasGroup == null)
+                return;
+
+            _CanvasGroup.interactable = enabled;
+            _CanvasGroup.blocksRaycasts = enabled;
         }
     }
 }

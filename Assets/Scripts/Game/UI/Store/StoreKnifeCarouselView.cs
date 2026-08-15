@@ -274,7 +274,6 @@ namespace Game.UI.Store
             {
                 var entry = _Entries[i];
                 var card = _CardPool.Get();
-                card.name = $"KnifeCardView_{i + 1}";
                 card.transform.SetParent(container, false);
                 card.Setup(entry, _OnOfferPressed, _FeedbackChannel);
                 card.gameObject.SetActive(true);

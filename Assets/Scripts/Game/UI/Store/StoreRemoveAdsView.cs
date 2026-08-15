@@ -22,6 +22,7 @@ namespace Game.UI.Store
         private PurchasableEntry _Entry;
         private Action<PurchasableEntry> _OnClicked;
         private ActionButtonPresenter _ButtonPresenter;
+        private CanvasGroup _InputGate;
 
         public Button ActionButton => _ActionButton;
 
@@ -46,6 +47,7 @@ namespace Game.UI.Store
             if (_ActionButton != null)
             {
                 _ButtonPresenter = ActionButtonPresenter.GetOrAdd(_ActionButton, feedbackChannel);
+                _InputGate = _ActionButton.GetComponent<CanvasGroup>();
                 _ActionButton.onClick.RemoveListener(OnPressed);
                 _ActionButton.onClick.AddListener(OnPressed);
             }
@@ -69,13 +71,23 @@ namespace Game.UI.Store
                 _ActionLabelText.gameObject.SetActive(!owned);
             }
 
+            if (owned)
+            {
+                // Ownership is a status, not a disabled visual treatment. Leave the
+                // presenter Ready/opaque and reject input through the CanvasGroup.
+                _ButtonPresenter?.SetAvailable(true);
+                SetInputGate(false);
+                return;
+            }
+
+            SetInputGate(true);
             if (_ButtonPresenter != null)
             {
-                _ButtonPresenter.SetAvailable(canInteract && !owned);
+                _ButtonPresenter.SetAvailable(canInteract);
             }
             else if (_ActionButton != null)
             {
-                _ActionButton.interactable = canInteract && !owned;
+                _ActionButton.interactable = canInteract;
             }
         }
 
@@ -119,6 +131,21 @@ namespace Game.UI.Store
             }
 
             _OnClicked.Invoke(_Entry);
+        }
+
+        private void SetInputGate(bool enabled)
+        {
+            if (_InputGate == null && _ActionButton != null)
+            {
+                _InputGate = _ActionButton.GetComponent<CanvasGroup>();
+            }
+
+            if (_InputGate == null)
+                return;
+
+            _InputGate.alpha = 1f;
+            _InputGate.interactable = enabled;
+            _InputGate.blocksRaycasts = enabled;
         }
     }
 }

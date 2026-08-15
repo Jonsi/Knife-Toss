@@ -21,6 +21,8 @@ namespace Game.UI.Tests
         private const string ScreenPrefabPath = "Assets/Prefabs/UI/Store/StoreScreenView.prefab";
         private const string BalancePrefabPath = "Assets/Prefabs/UI/Coin/CoinUiDisaply.prefab";
         private const string KnifePrefabPath = "Assets/Prefabs/UI/Store/KnifeItemCardView.prefab";
+        private const string KnifeShellPrefabPath = "Assets/Prefabs/UI/Store/StoreKnifeCardShell.prefab";
+        private const string KnifeCarouselPrefabPath = "Assets/Prefabs/UI/Store/StoreKnifeCarouselView.prefab";
         private const string PowerPrefabPath = "Assets/Prefabs/UI/Store/PowerUpItemCardView.prefab";
         private const string PricePrefabPath = "Assets/Prefabs/UI/Store/PricePillView.prefab";
         private const string StatusPrefabPath = "Assets/Prefabs/UI/Store/StoreStatusPillView.prefab";
@@ -29,6 +31,7 @@ namespace Game.UI.Tests
         private const string WatchAdPrefabPath = "Assets/Prefabs/UI/Store/StoreWatchAdCtaView.prefab";
         private const string RemoveAdsPrefabPath = "Assets/Prefabs/UI/Store/StoreRemoveAdsView.prefab";
         private const string ApprovedRoot = "Assets/Art/UI/StoreApproved/";
+        private const string WoodenCardSheetPath = "Assets/Art/UI/Store/WoodenCardV2/StoreKnifeCardParts.png";
         private const string ExistingSecondarySurface = "Assets/Art/UI/Core/ButtonSecondary.png";
 
         [Test]
@@ -44,6 +47,7 @@ namespace Game.UI.Tests
                     Is.EqualTo(ScreenPrefabPath));
 
                 AssertNestedScenePrefab(safe.Find("BackButton"), NavigationPrefabPath);
+                AssertNestedScenePrefab(safe.Find("KnifeCarousel"), KnifeCarouselPrefabPath);
                 AssertNestedScenePrefab(safe.Find("KnifeSectionLabel"), SectionPrefabPath);
                 AssertNestedScenePrefab(safe.Find("PowerUpSectionLabel"), SectionPrefabPath);
                 AssertNestedScenePrefab(safe.Find("BottomActions/WatchAdAction"), WatchAdPrefabPath);
@@ -145,9 +149,9 @@ namespace Game.UI.Tests
         [Test]
         public void StoreCards_NestTheSamePriceAndStatusPrefabSources()
         {
+            AssertNestedCardPrefab(KnifePrefabPath, "CardShell", KnifeShellPrefabPath);
             AssertNestedCardPrefab(KnifePrefabPath, "PricePill", PricePrefabPath);
             AssertNestedCardPrefab(PowerPrefabPath, "PricePill", PricePrefabPath);
-            AssertNestedCardPrefab(KnifePrefabPath, "StatusPill", StatusPrefabPath);
             AssertNestedCardPrefab(PowerPrefabPath, "OwnedPill", StatusPrefabPath);
 
             GameObject price = AssetDatabase.LoadAssetAtPath<GameObject>(PricePrefabPath);
@@ -156,11 +160,146 @@ namespace Game.UI.Tests
             Assert.That(priceView.AmountText, Is.Not.Null);
             Assert.That(priceView.AmountText, Is.TypeOf<TextMeshProUGUI>());
             Assert.That(price.GetComponent<Image>(), Is.Null,
-                "The card art already contains its price plaque; the shared price prefab must only provide coin/text content.");
+                "The shared price prefab root is a container; background, frame, icon, and text must remain separate children.");
 
-            AssertCardUsesIntegratedPricePlaque(KnifePrefabPath, "StoreKnifeCard.png", -135f);
-            AssertCardUsesIntegratedPricePlaque(PowerPrefabPath, "StorePowerUpCard.png", -171f);
+            AssertKnifeCardUsesWoodenShellAndPricePill();
+            AssertCardUsesModularPricePill(
+                PowerPrefabPath,
+                "Assets/Art/UI/StoreModular/StorePowerUpCardContainer.png",
+                -171f,
+                new Vector2(316f, 72f));
             AssertPowerUpContentStackHasNoOverlaps();
+        }
+
+        [Test]
+        public void OwnedKnife_ReusesPricePillAndDoesNotExposeEquipStateInStore()
+        {
+            GameObject root = PrefabUtility.LoadPrefabContents(KnifePrefabPath);
+            try
+            {
+                Assert.That(root.transform.Find("StatusPill"), Is.Null,
+                    "Knife ownership must reuse the existing price pill instead of adding a second status prefab.");
+
+                KnifeSkinStoreCardView card = root.GetComponent<KnifeSkinStoreCardView>();
+                StorePricePillView pricePill = root.transform.Find("PricePill").GetComponent<StorePricePillView>();
+                CanvasGroup canvasGroup = root.GetComponent<CanvasGroup>();
+
+                Assert.That(pricePill.FillImage, Is.Not.Null);
+                Assert.That(pricePill.BorderImage, Is.Not.Null);
+                Assert.That(pricePill.IconImage, Is.Not.Null);
+                Assert.That(pricePill.CurrencyIconSprite, Is.Not.Null);
+                Assert.That(pricePill.OwnedIconSprite, Is.Not.Null);
+                Assert.That(pricePill.transform.Find("Background"), Is.Null);
+                Assert.That(pricePill.transform.Find("Frame"), Is.Null);
+                Assert.That(pricePill.transform.Find("Fill"), Is.Not.Null);
+                Assert.That(pricePill.transform.Find("Border"), Is.Not.Null);
+                Assert.That(pricePill.transform.Find("Content/Icon"), Is.Not.Null);
+                Assert.That(pricePill.transform.Find("Content/Text"), Is.Not.Null);
+                Assert.That(root.transform.Find("Frame"), Is.Null);
+                Assert.That(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(
+                        root.transform.Find("CardShell").gameObject),
+                    Is.EqualTo(KnifeShellPrefabPath));
+                Assert.That(AssetDatabase.GetAssetPath(pricePill.FillImage.sprite),
+                    Is.EqualTo(WoodenCardSheetPath));
+                Assert.That(pricePill.FillImage.sprite.name, Is.EqualTo("WoodenCard_PriceFill"));
+                Sprite unchangedBorderSprite = pricePill.BorderImage.sprite;
+                Color unchangedBorderColor = pricePill.BorderImage.color;
+                card.SetStoreState(true, true);
+
+                Assert.That(pricePill.gameObject.activeSelf, Is.True);
+                Assert.That(pricePill.AmountText.text, Is.EqualTo("OWNED"));
+                Assert.That(pricePill.AmountText.textWrappingMode, Is.EqualTo(TextWrappingModes.NoWrap));
+                Assert.That(pricePill.AmountText.rectTransform.rect.width, Is.EqualTo(112f).Within(0.01f));
+                Assert.That(pricePill.AmountText.fontSizeMin, Is.EqualTo(24f));
+                Assert.That(pricePill.AmountText.fontSizeMax, Is.EqualTo(28f));
+                Assert.That(pricePill.AmountText.characterSpacing, Is.EqualTo(0f));
+                Color ownedTextColor = new Color32(245, 226, 183, 255);
+                Assert.That(pricePill.AmountText.color.r, Is.EqualTo(ownedTextColor.r).Within(0.001f));
+                Assert.That(pricePill.AmountText.color.g, Is.EqualTo(ownedTextColor.g).Within(0.001f));
+                Assert.That(pricePill.AmountText.color.b, Is.EqualTo(ownedTextColor.b).Within(0.001f));
+                Assert.That(pricePill.IconImage.gameObject.activeSelf, Is.True);
+                Assert.That(pricePill.IconImage.sprite, Is.EqualTo(pricePill.OwnedIconSprite));
+                Assert.That(pricePill.IconImage.rectTransform.rect.size,
+                    Is.EqualTo(new Vector2(42f, 42f)));
+                Assert.That(pricePill.FillImage.gameObject.activeSelf, Is.True);
+                Assert.That(pricePill.BorderImage.gameObject.activeSelf, Is.True);
+                Color ownedFillColor = new Color32(48, 140, 64, 255);
+                Assert.That(pricePill.FillImage.color.r,
+                    Is.EqualTo(ownedFillColor.r).Within(0.001f));
+                Assert.That(pricePill.FillImage.color.g,
+                    Is.EqualTo(ownedFillColor.g).Within(0.001f));
+                Assert.That(pricePill.FillImage.color.b,
+                    Is.EqualTo(ownedFillColor.b).Within(0.001f));
+                Assert.That(AssetDatabase.GetAssetPath(pricePill.BorderImage.sprite),
+                    Is.EqualTo(WoodenCardSheetPath));
+                Assert.That(pricePill.BorderImage.sprite.name, Is.EqualTo("WoodenCard_PriceFrame"));
+                Assert.That(pricePill.BorderImage.sprite, Is.SameAs(unchangedBorderSprite));
+                Assert.That(pricePill.BorderImage.color, Is.EqualTo(unchangedBorderColor));
+                Assert.That(AssetDatabase.GetAssetPath(pricePill.OwnedIconSprite),
+                    Is.EqualTo("Assets/Art/UI/Core/ButtonOwnershipMarks.png"));
+                Assert.That(canvasGroup.alpha, Is.EqualTo(1f));
+                Assert.That(card.BuyButton.interactable, Is.True,
+                    "Owned cards keep the shared button presenter in its fully opaque visual state.");
+                Assert.That(canvasGroup.interactable, Is.False,
+                    "Owned cards must reject pointer interaction without entering the dimmed disabled state.");
+                Assert.That(canvasGroup.blocksRaycasts, Is.False);
+
+                pricePill.SetPrice(200, Game.Economy.Data.CurrencyType.Coin);
+                Assert.That(pricePill.AmountText.text, Is.EqualTo("200"));
+                Assert.That(pricePill.IconImage.sprite, Is.EqualTo(pricePill.CurrencyIconSprite));
+                Assert.That(pricePill.IconImage.rectTransform.rect.size,
+                    Is.EqualTo(new Vector2(38f, 38f)));
+                Assert.That(pricePill.FillImage.gameObject.activeSelf, Is.True);
+                Assert.That(pricePill.BorderImage.gameObject.activeSelf, Is.True);
+                Assert.That(pricePill.BorderImage.sprite, Is.SameAs(unchangedBorderSprite));
+                Assert.That(pricePill.BorderImage.color, Is.EqualTo(unchangedBorderColor));
+                Color priceFillColor = new Color32(150, 78, 28, 255);
+                Assert.That(pricePill.FillImage.color.r,
+                    Is.EqualTo(priceFillColor.r).Within(0.001f));
+                Assert.That(pricePill.FillImage.color.g,
+                    Is.EqualTo(priceFillColor.g).Within(0.001f));
+                Assert.That(pricePill.FillImage.color.b,
+                    Is.EqualTo(priceFillColor.b).Within(0.001f));
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+
+            string controllerSource = System.IO.File.ReadAllText(
+                "Assets/Scripts/Game/UI/Store/StoreMenuController.cs");
+            Assert.That(controllerSource, Does.Not.Contain("TryEquip("));
+            Assert.That(controllerSource, Does.Not.Contain("GetEquippedId("));
+        }
+
+        [Test]
+        public void OwnedRemoveAds_StaysOpaqueWhileRejectingInput()
+        {
+            GameObject root = PrefabUtility.LoadPrefabContents(RemoveAdsPrefabPath);
+            try
+            {
+                StoreRemoveAdsView view = root.GetComponent<StoreRemoveAdsView>();
+                Assert.That(view, Is.Not.Null);
+                Assert.That(view.ActionButton.transition, Is.EqualTo(Selectable.Transition.None),
+                    "The shared presenter owns feedback; Unity's disabled ColorTint must not fade the owned surface.");
+
+                view.Setup(null, null);
+                view.SetState(true, true, true);
+
+                CanvasGroup inputGate = view.ActionButton.GetComponent<CanvasGroup>();
+                Assert.That(inputGate, Is.Not.Null);
+                Assert.That(inputGate.alpha, Is.EqualTo(1f));
+                Assert.That(inputGate.interactable, Is.False);
+                Assert.That(inputGate.blocksRaycasts, Is.False);
+                Assert.That(view.ActionButton.interactable, Is.True,
+                    "The presenter must stay Ready so ownership never applies disabled alpha.");
+                Assert.That(view.ActionButton.IsInteractable(), Is.False,
+                    "The CanvasGroup gate must still prevent purchases for an owned offer.");
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
         }
 
         [Test]
@@ -177,6 +316,11 @@ namespace Game.UI.Tests
         {
             GameObject screenPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ScreenPrefabPath);
             GameObject knifePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(KnifePrefabPath);
+            StoreKnifeCarouselView sourceCarousel = screenPrefab.GetComponentInChildren<StoreKnifeCarouselView>(true);
+            Assert.That(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(sourceCarousel.gameObject),
+                Is.EqualTo(KnifeCarouselPrefabPath));
+            Assert.That(screenPrefab.GetComponentsInChildren<KnifeSkinStoreCardView>(true), Is.Empty,
+                "The Store screen must not author duplicate knife cards; every live view must come from the prefab pool.");
             GameObject screen = UnityEngine.Object.Instantiate(screenPrefab);
 
             try
@@ -263,23 +407,65 @@ namespace Game.UI.Tests
             }
         }
 
-        private static void AssertCardUsesIntegratedPricePlaque(
+        private static void AssertCardUsesModularPricePill(
             string cardPath,
             string expectedFrameAsset,
-            float expectedPriceY)
+            float expectedPriceY,
+            Vector2 expectedPriceSize)
         {
             GameObject root = PrefabUtility.LoadPrefabContents(cardPath);
             try
             {
                 Image frame = root.transform.Find("Frame").GetComponent<Image>();
                 Assert.That(AssetDatabase.GetAssetPath(frame.sprite),
-                    Is.EqualTo(ApprovedRoot + expectedFrameAsset));
+                    Is.EqualTo(expectedFrameAsset));
 
                 RectTransform price = root.transform.Find("PricePill") as RectTransform;
                 Assert.That(price, Is.Not.Null);
                 Assert.That(price.anchoredPosition.x, Is.EqualTo(0f).Within(0.01f));
                 Assert.That(price.anchoredPosition.y, Is.EqualTo(expectedPriceY).Within(0.01f));
-                Assert.That(price.sizeDelta, Is.EqualTo(new Vector2(156f, 52f)));
+                Assert.That(price.sizeDelta, Is.EqualTo(expectedPriceSize));
+
+                StorePricePillView priceView = price.GetComponent<StorePricePillView>();
+                Assert.That(AssetDatabase.GetAssetPath(priceView.FillImage.sprite),
+                    Is.EqualTo(WoodenCardSheetPath));
+                Assert.That(priceView.FillImage.sprite.name, Is.EqualTo("WoodenCard_PriceFill"));
+                Assert.That(AssetDatabase.GetAssetPath(priceView.BorderImage.sprite),
+                    Is.EqualTo(WoodenCardSheetPath));
+                Assert.That(priceView.BorderImage.sprite.name, Is.EqualTo("WoodenCard_PriceFrame"));
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+        }
+
+        private static void AssertKnifeCardUsesWoodenShellAndPricePill()
+        {
+            GameObject root = PrefabUtility.LoadPrefabContents(KnifePrefabPath);
+            try
+            {
+                Transform shell = root.transform.Find("CardShell");
+                Assert.That(shell, Is.Not.Null);
+                Assert.That(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(shell.gameObject),
+                    Is.EqualTo(KnifeShellPrefabPath));
+                Assert.That(root.transform.Find("Frame"), Is.Null,
+                    "The knife card must use the nested wooden shell instead of rebuilding a local frame.");
+
+                string[] expectedParts =
+                {
+                    "LeatherFill", "TopRail", "BottomRail", "LeftRail", "RightRail",
+                    "CornerTL", "CornerTR", "CornerBL", "CornerBR"
+                };
+                foreach (string partName in expectedParts)
+                {
+                    Image part = shell.Find(partName).GetComponent<Image>();
+                    Assert.That(AssetDatabase.GetAssetPath(part.sprite), Is.EqualTo(WoodenCardSheetPath));
+                }
+
+                RectTransform price = root.transform.Find("PricePill") as RectTransform;
+                Assert.That(price.anchoredPosition, Is.EqualTo(new Vector2(0f, -166f)));
+                Assert.That(price.sizeDelta, Is.EqualTo(new Vector2(218f, 84f)));
             }
             finally
             {

@@ -17,7 +17,7 @@ namespace Game.UI.Store
 {
     /// <summary>
     /// Controller for the Store scene. Binds catalog data to authored Store presentation and
-    /// preserves the existing purchase, entitlement, inventory, and equip authorities.
+    /// preserves the existing purchase, entitlement, and inventory authorities.
     /// </summary>
     public class StoreMenuController : MonoBehaviour
     {
@@ -241,12 +241,8 @@ namespace Game.UI.Store
                 return;
             }
 
-            if (TryGetSkinId(entry, out var skinId) && IsOwned(entry))
+            if (TryGetSkinId(entry, out _) && IsOwned(entry))
             {
-                var equipped = _KnifeSkinService != null && _KnifeSkinService.TryEquip(skinId);
-                FindCardForEntry(entry)?.ResolveSubmission(
-                    equipped ? PurchaseResult.Succeeded : PurchaseResult.Error("Unable to equip item."));
-                RefreshCardState();
                 return;
             }
 
@@ -427,10 +423,8 @@ namespace Game.UI.Store
                               !_IsSubmitting &&
                               (_StoreAdCtaView == null || !_StoreAdCtaView.IsSubmissionInProgress) &&
                               (_PurchaseRouter == null || !_PurchaseRouter.IsPurchaseInProgress);
-            var equippedId = _KnifeSkinService?.GetEquippedId() ?? string.Empty;
             var owned = IsOwned(entry);
-            var equipped = TryGetSkinId(entry, out var skinId) && skinId == equippedId;
-            card.SetStoreState(owned, equipped, CanSubmitEntry(entry, canInteract));
+            card.SetStoreState(owned, CanSubmitEntry(entry, canInteract));
         }
 
         private void RefreshPowerUpStates(bool canInteract)
