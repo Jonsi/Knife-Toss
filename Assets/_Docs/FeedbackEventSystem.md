@@ -72,3 +72,41 @@ priority/FIFO queueing, full-queue replacement and dropping, active/pending dupl
 suppression, cooldown boundaries, typed-channel subscription, queued copy advancement, scene
 clearing, and teardown. Multi-frame evidence is recorded in
 `Assets/_Docs/Feedback/Captures/UX403_Toast_Queue.mov`.
+
+## Typed audio, VFX, and haptic outputs (UX-405)
+
+`FeedbackOutputCatalog` is the presentation-owned mapping from an exact ordinal
+`(FeedbackKind, CueId)` pair to three optional outputs: an `AudioClip` and volume, a stable VFX
+cue identifier, and a light/medium/heavy haptic style. There is deliberately no kind-only or
+unknown-cue fallback. A missing catalog, null clip, empty VFX identifier, `None` haptic style,
+or unmapped pair is a silent no-op, so adding a domain cue cannot accidentally trigger generic
+presentation spam.
+
+`FeedbackAudioPresenter`, `FeedbackVfxPresenter`, and `FeedbackHapticPresenter` subscribe to
+the shared channel independently in the persistent `GameInstaller` scope. Each output owns its
+own duplicate/cooldown gate, starts idempotently, unsubscribes deterministically, and clears
+transient cooldown state on active-scene changes and disposal. Instantaneous outputs are never
+queued or retried. A failure in an optional output cannot mutate or repeat the authoritative
+action.
+
+Audio reuses the existing persistent `IAudioPlayer`; the existing `AudioListener.pause` mute
+path therefore remains authoritative. Haptics use a small adapter over the already-installed
+CandyCoded Android/iOS package. UX-406 still owns the future haptic-disable and broader
+accessibility policy. `FeedbackVfxSignal` is a presentation-only fan-out seam: scene or
+persistent VFX owners subscribe to stable output identifiers and retain ownership of anchors,
+prefabs, pooling, and teardown. This avoids putting VFX assets or world positions in domain
+events and allows existing pooled stage VFX to remain unchanged until an approved cue maps to
+them.
+
+The production catalog currently covers the exact blocked and insufficient-funds cue IDs
+emitted by `ActionButtonPresenter` owners. Blocked cues map to the existing `ButtonClickClip` at
+0.8 volume, `ui.blocked`, and a light haptic; insufficient-funds cues map to the same neutral UI
+clip, `ui.insufficient_funds`, and a medium haptic. The stable VFX identifiers are routed and
+tested, but no production VFX asset consumes them yet; final effect art remains outside UX-405.
+
+Focused EditMode coverage validates the production asset wiring, unique exact mappings,
+independent audio/VFX/haptic routing, per-context cooldown suppression and exact boundaries,
+idempotent subscription, selective teardown, restart cleanup, VFX listener lifecycle, and
+null/unmapped safety. Runtime evidence is recorded in
+`Assets/_Docs/Feedback/Captures/UX405_Feedback_Output_Hooks.mov`; real-device haptic feel and
+platform behavior remain hardware-validation work.

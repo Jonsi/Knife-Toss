@@ -201,6 +201,7 @@ MonoBehaviour:
   _CurrencyTypeCatalog: {fileID: 11400000, guid: 2e19ae051d2a93f40847e9a57b3109c6, type: 2}
   _CurrencyBalanceChangedEventChannel: {fileID: 11400000, guid: 51473d9d8042dd747bd67e5c302e2a66, type: 2}
   _FeedbackEventChannel: {fileID: 11400000, guid: e4dccbd3ff9fd4d3ab0e2c370271c164, type: 2}
+  _FeedbackOutputCatalog: {fileID: 11400000, guid: 7255fbdd44c0645cfa212d83134bac72, type: 2}
   _SoundSettings: {fileID: 11400000, guid: 189e658594fd4ea4d8b64463039ef584, type: 2}
   _AudioPlayer: {fileID: 2965484948011319591}
   _RemoteConfigSettings: {fileID: 11400000, guid: b80493aa5f5497b43ab4f14b27878bf3, type: 2}

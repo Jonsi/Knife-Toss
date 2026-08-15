@@ -21,6 +21,9 @@ using Game.UI.Services;
 using Game.Feedback.Audio.Interfaces;
 using Game.Feedback.Audio.Systems;
 using Game.Feedback.Audio.Services;
+using Game.Feedback.Haptics;
+using Game.Feedback.Presentation;
+using Game.Feedback.VFX.Services;
 using Common.Rewards.Interfaces;
 using Game.Rewards.Services;
 using Game.Store.Data;
@@ -63,6 +66,7 @@ namespace Game.Installers
 
         [Header("Feedback")]
         [SerializeField] private FeedbackEventChannel _FeedbackEventChannel;
+        [SerializeField] private FeedbackOutputCatalog _FeedbackOutputCatalog;
         [SerializeField] private SoundSettings _SoundSettings;
         [SerializeField] private AudioPlayer _AudioPlayer;
 
@@ -162,6 +166,21 @@ namespace Game.Installers
                 builder.RegisterInstance(_FeedbackEventChannel)
                     .AsSelf()
                     .As<IEventChannel<FeedbackEventData>>();
+
+                if (_FeedbackOutputCatalog != null)
+                {
+                    builder.RegisterInstance(_FeedbackOutputCatalog);
+                    builder.Register<UnityFeedbackPresentationClock>(Lifetime.Singleton)
+                        .As<IFeedbackPresentationClock>();
+                    builder.Register<FeedbackVfxSignal>(Lifetime.Singleton)
+                        .AsSelf()
+                        .As<IFeedbackVfxPlayer>();
+                    builder.Register<CandyCodedHapticFeedbackPlayer>(Lifetime.Singleton)
+                        .As<IHapticFeedbackPlayer>();
+                    builder.RegisterEntryPoint<FeedbackAudioPresenter>();
+                    builder.RegisterEntryPoint<FeedbackVfxPresenter>();
+                    builder.RegisterEntryPoint<FeedbackHapticPresenter>();
+                }
             }
 
             builder.RegisterInstance(_ReturnToMenuEventChannel);

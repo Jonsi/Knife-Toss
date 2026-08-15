@@ -1,6 +1,6 @@
 # Toss Madness Core Gameplay Refinement Tracker
 
-Last updated: 2026-08-10
+Last updated: 2026-08-15
 
 Companion roadmap: [Core Gameplay Refinement Phases](CORE_GAMEPLAY_REFINEMENT_PHASES.md)
 
@@ -153,7 +153,7 @@ art problem.
 | UX-402 | Build reusable button pressed/disabled/loading/blocked presentation | P0 | Done | Shared `ActionButtonPresenter`/state model now gives action buttons deterministic Blocked > Loading > Disabled > Pressed > Ready semantics, typed blocked feedback, loading duplicate prevention, and teardown cleanup; 6/6 focused, 42/42 feedback, and 98/98 full EditMode tests pass, with inspected encoded runtime evidence in `Assets/_Docs/Feedback/Captures/UX402_Action_Button_States.mov`. |
 | UX-403 | Build reusable toast/callout presenter with queue and deduplication | P0 | Done | Persistent typed-channel toast uses the UX-401 interruption/FIFO/capacity/cooldown/dedup rules, clears on scene teardown, passes 28/28 focused EditMode cases, and has inspected multi-frame runtime evidence. |
 | UX-404 | Add consistent currency gain/spend animation and sound hooks | P0 | Done | Existing typed balance events now drive shared gain/spend semantics, the existing count/pulse/color animation, and presentation-only audio hooks; 8/8 focused currency cases pass, both runtime cues reached the persistent AudioSource, and recorded multi-frame evidence was inspected. |
-| UX-405 | Add typed VFX/audio/haptic hooks without coupling domain services to views | P0 | Ready | Each feedback event can fan out to approved presenters. |
+| UX-405 | Add typed VFX/audio/haptic hooks without coupling domain services to views | P0 | Done | Exact presentation catalog fans the persistent typed channel into independent audio, VFX-signal, and CandyCoded haptic subscribers with per-output cooldown/teardown safety; 6/6 focused, 189/189 full EditMode, and 1/1 PlayMode tests pass, runtime output/cooldown evidence was inspected, and device haptic feel remains QA-904 hardware work. |
 | UX-406 | Define reduced-motion, mute, and haptic-disable behavior | P1 | Needs decision | Accessibility variants have an explicit product policy. |
 | UX-407 | Build a feedback sandbox/debug panel | P1 | Ready | Every feedback state can be previewed without changing economy data. |
 | UX-408 | Prototype authoritative power-up button states and prepare the final-art handoff | P0 | In progress | The art/layout prototype is integrated and 14/14 current power-up EditMode tests pass, but the separate authoritative-state presenter and recorded runtime motion evidence are still outstanding; original gameplay logic remains unchanged. |
