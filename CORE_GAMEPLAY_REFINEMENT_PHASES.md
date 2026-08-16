@@ -128,7 +128,7 @@ raycasters.
 
 ### Exit Criteria
 
-- Main Menu -> Gameplay -> Failure -> Restart -> Gameplay -> next Stage -> Main Menu is clean.
+- Main Menu -> Gameplay -> Failure -> Retry -> Gameplay -> next Stage -> Main Menu is clean.
 - Store, Missions, and Stages transitions are also clean.
 - Exactly one EventSystem and one intended AudioListener are active at all times.
 - No hidden scene receives gameplay input.
@@ -369,7 +369,7 @@ The system must distinguish at least:
 - Duplicate events do not create message or sound spam.
 - Reduced-motion and muted variants preserve meaning.
 
-## Phase 5 - Failure, Retry, and Continue Polish
+## Phase 5 - Failure and Recovery Polish
 
 ### Goal
 
@@ -377,28 +377,40 @@ Make failure immediate, fair, and recoverable while maintaining arcade pacing.
 
 ### Scope
 
-- Strengthen knife-on-knife collision feedback.
-- Clarify the cause of failure before presenting choices.
-- Make Retry the dominant action.
-- Give Start Over a real button affordance while keeping it secondary.
-- Replace `Continue 0` with meaningful free-continue language.
-- Decide free/ad/currency Continue rules and attempt limits.
-- Handle ad unavailability, ad failure, insufficient currency, and cancellation through the
-  shared feedback layer.
+- Strengthen the visual impact when a thrown knife hits a stuck knife.
+- Make the collision cause clear in the pre-modal impact beat. Do not add cause-description
+  copy to the popup.
+- Use `Game Over` as the popup's only headline/informational copy. Do not show stage, level,
+  collision, or explanatory text there.
+- Make `Retry` the single dominant recovery action.
+- Keep `Menu` as the quiet exit.
+- Remove Start Over from the failure popup because it is redundant on Level 1 and only
+  discards cleared-level progress later.
+- Remove Continue, its price/ad variants, and related recovery presentation. The current
+  Continue path has no distinct outcome from free Retry.
 - Tune the time from collision to input-ready failure UI.
 
 ### Deliverables
 
 - Failure sequence timeline.
-- Revised popup hierarchy and copy.
-- Continue rule table.
+- Revised popup hierarchy using the exact production art contract recorded in
+  `Assets/_Docs/Phase5VisualAudit/README.md`.
+- Recorded single-recovery decision and legacy-action removal contract.
 - Complete recovery-path regression suite.
+
+Implementation status (2026-08-15): the revised popup hierarchy, single primary Retry,
+quiet Menu, legacy Start Over/Continue removal, real-input behavior checks, and inspected
+collision-to-popup recording are complete. Evidence is indexed in
+`Assets/_Docs/Phase5VisualAudit/README.md`. The broader production collision cue and the
+remaining full recovery/reduced-motion regression matrix stay open under FAIL-501/FAIL-506.
 
 ### Exit Criteria
 
 - A first-time player understands why they failed.
+- That understanding comes from the collision beat; the settled popup says only `Game Over`
+  before its `Retry` and `Menu` actions.
 - Retry can be chosen immediately and is unmistakably primary.
-- Continue conditions and cost are clear before commitment.
+- No Start Over, Continue, price, ad, or currency recovery action appears in the popup.
 - Every recovery path returns to a valid state without reward, inventory, or input errors.
 - The dramatic beat does not feel sluggish after repeated failures.
 

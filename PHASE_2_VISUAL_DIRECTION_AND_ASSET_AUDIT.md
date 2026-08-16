@@ -55,7 +55,7 @@ colors and Unity UI elements with no source asset are covered by the screen-leve
 | Privacy | Replace | Replace cramped placeholder copy and the plain green action with readable body typography, scroll affordance, and shared buttons. |
 | Report error | Replace | Replace default white form controls with the approved modal, field, validation, success, and blocked-feedback tokens. |
 | Add power-up | Replace | Rebuild the tiny bottom strip as a clear acquisition sheet with price, inventory, ad alternative, and close/back hierarchy. |
-| Failure | Refine | Preserve the interrupted-game context; rebuild the mixed copy/actions so Retry is primary and Continue/Start Over are unmistakable. |
+| Failure | Refine | Preserve the interrupted-game context and exact production art. The settled popup shows only `Game Over`, primary `Retry`, and quiet `Menu`; Continue, Start Over, stage/level, price/ad, and cause-description UI are absent. |
 | Completion reward | Replace | Replace the flat purple panel and generic green button with a short, non-blocking gold-to-leaf reward beat. |
 | Tutorial gesture | Refine | Replace the unexplained gesture/rocket-like symbol with an animated hand/trajectory cue plus concise truthful copy. |
 | SRDebugger launcher | Remove | Development-only overlay; Phase 1 production validation must keep it out of release builds. |

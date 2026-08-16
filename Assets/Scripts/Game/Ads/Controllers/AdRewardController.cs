@@ -4,7 +4,6 @@ using Game.Ads.Data;
 using Game.Economy.Data;
 using Game.Economy.Events;
 using Game.Economy.Interfaces;
-using Game.Feedback.Data;
 using Game.Flow.Events;
 using Game.Flow.Level;
 using Game.Flow.Stage;
@@ -29,7 +28,6 @@ namespace Game.Ads.Controllers
         private readonly ILevelCatalog _LevelCatalog;
         private readonly StageData _StageData;
         private readonly RewardedPlacement _ContinuePlacement;
-        private readonly StageFailPopup _FailPopup;
         private bool _HasConsumedContinue;
 
         /// <summary>
@@ -56,7 +54,6 @@ namespace Game.Ads.Controllers
             _LevelCatalog = levelCatalog;
             _StageData = stageData;
             _ContinuePlacement = continuePlacement;
-            _FailPopup = failPopup;
         }
 
         /// <summary>
@@ -91,20 +88,12 @@ namespace Game.Ads.Controllers
             int cost = GetCurrentContinueCost();
             if (!CanContinueAfterFailure(cost))
             {
-                _FailPopup.PresentContinueBlocked(new FeedbackEventData(
-                    CanAfford(cost) ? FeedbackKind.Blocked : FeedbackKind.InsufficientFunds,
-                    CanAfford(cost) ? "continue.unavailable" : "continue.insufficient_funds",
-                    "stage_continue"));
                 RefreshContinueState();
                 return;
             }
 
             if (cost > 0 && !_CurrencyService.TrySpend(CoinCurrencyId, cost))
             {
-                _FailPopup.PresentContinueBlocked(new FeedbackEventData(
-                    FeedbackKind.InsufficientFunds,
-                    "continue.insufficient_funds",
-                    "stage_continue"));
                 RefreshContinueState();
                 return;
             }
@@ -130,10 +119,8 @@ namespace Game.Ads.Controllers
 
         private void RefreshContinueState()
         {
-            int cost = GetCurrentContinueCost();
-            bool visible = !HasConsumedContinueAccess();
-
-            _FailPopup.SetContinueState(visible, visible, cost);
+            // Legacy controller retained only for serialized/backward compatibility.
+            // The approved failure popup has no Continue presentation or input path.
         }
 
         private bool CanContinueAfterFailure(int cost) =>

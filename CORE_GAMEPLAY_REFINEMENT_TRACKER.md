@@ -79,7 +79,7 @@ The largest gap is not the basic mechanic; it is consistency around the mechanic
 | 2 | Visual Direction Lock and Asset Audit | In progress | Direction and inventory are complete; entitlement and legacy-art usage-right evidence remain. |
 | 3 | Power-Up Mechanic Truth | Done | Both power-ups, acquisition/persistence, cleanup, and typed outcome contracts passed real-input and automated QA. |
 | 4 | Shared UX Feedback Foundation | In progress | UX-401 now defines the shared typed event and arbitration contract; presenter work remains. |
-| 5 | Failure, Retry, and Continue Polish | Blocked | Depends on the shared feedback foundation. |
+| 5 | Failure and Recovery Polish | Ready | The single-recovery product hierarchy is approved; implementation and validation remain. |
 | 6 | Continuous Completion and Reward Accumulation | Needs decision | Completion sequence and reward accumulation semantics are approved and implemented. |
 | 7 | Core Vertical-Slice Art, VFX, and Audio Refinement | Blocked | Depends on stable loops and an approved visual target. |
 | 8 | Secondary Screens and Meta UX Consistency | Blocked | Depends on the shared feedback foundation and core UI kit. |
@@ -156,23 +156,22 @@ art problem.
 | UX-405 | Add typed VFX/audio/haptic hooks without coupling domain services to views | P0 | Done | Exact presentation catalog fans the persistent typed channel into independent audio, VFX-signal, and CandyCoded haptic subscribers with per-output cooldown/teardown safety; 6/6 focused, 189/189 full EditMode, and 1/1 PlayMode tests pass, runtime output/cooldown evidence was inspected, and device haptic feel remains QA-904 hardware work. |
 | UX-406 | Define reduced-motion, mute, and haptic-disable behavior | P1 | Needs decision | Accessibility variants have an explicit product policy. |
 | UX-407 | Build a feedback sandbox/debug panel | P1 | Ready | Every feedback state can be previewed without changing economy data. |
-| UX-408 | Prototype authoritative power-up button states and prepare the final-art handoff | P0 | In progress | Mechanics, typed outcomes, Shatter selection, Chrono progress, active/unavailable visuals, production-prefab layout, and static Stage 1/grayscale art reviews already exist. The current 14/14 EditMode total comprises 7 service, 3 button-visual, 3 knife-VFX-lifecycle, and 1 preload-visibility test; it is not full state-matrix coverage. Closure is limited to unified outcome-driven presentation, pressed/blocked/gameplay-disabled/end-state behavior, a prefab-owned countdown seam, focused state tests, and inspected runtime motion evidence. UX-406 owns the shipping accessibility policy, UX-407 owns the sandbox, and ART-708 owns final state-art polish. |
+| UX-408 | Prototype authoritative power-up button states and prepare the final-art handoff | P0 | Done | Product owner accepted the current Shatter/Chrono buttons, authoritative mechanics, active/unavailable presentation, Chrono progress, prefab layout, and art handoff as complete. The recorded 14/14 EditMode baseline comprises 7 service, 3 button-visual, 3 knife-VFX-lifecycle, and 1 preload-visibility case. Do not add a new presenter, state matrix, countdown architecture, animation pass, or art replacement under UX-408 without a new explicit request. UX-406, UX-407, ART-708, and P2-010 remain separate work. |
 
-UX-408's audited implementation boundary and file-level evidence are maintained in
-`POWER_UP_BUTTON_ART_REPLACEMENT_PLAN.md`. Do not rebuild the authoritative mechanics,
-inventory rules, Shatter/Chrono identity, current icon family, count/acquisition badges, or
-Stage 1 static review evidence while closing the remaining presenter work.
+UX-408's accepted implementation boundary and file-level evidence are maintained in
+`POWER_UP_BUTTON_ART_REPLACEMENT_PLAN.md`. Do not reopen it based on aspirational state-matrix
+items from the older plan.
 
-### Phase 5 - Failure, Retry, and Continue Polish
+### Phase 5 - Failure and Recovery Polish
 
 | ID | Work item | Priority | Status | Evidence / acceptance |
 |---|---|---:|---|---|
-| FAIL-501 | Make knife-on-knife failure cause unmistakable | P0 | Blocked | Depends on UX-405 and the Phase 7 production cue pass. |
-| FAIL-502 | Make Retry the primary action and Start Over a clear secondary button | P0 | Ready | First-time users identify both actions without explanation. |
-| FAIL-503 | Replace awkward zero-cost presentation | P1 | Ready | Free continue is labeled meaningfully instead of `0` currency. |
-| FAIL-504 | Define when Continue is free, ad-based, currency-based, or absent | P0 | Needs decision | Rules cover first session and repeat attempts. |
-| FAIL-505 | Verify failure-to-input-ready pacing | P1 | Ready | Dramatic beat is present without feeling sluggish. |
-| FAIL-506 | Validate retry, restart, continue, ad failure, and insufficient-funds paths | P0 | Blocked | Depends on FAIL-504 and Phase 4. |
+| FAIL-501 | Make a thrown knife hitting a stuck knife visually unmistakable | P0 | Blocked | Depends on the Phase 7 production cue pass. The collision cause must be clear from the pre-modal impact beat itself. The failure popup adds no cause description or technical label; its only headline copy is `Game Over`. |
+| FAIL-502 | Make Retry the single primary recovery action and Menu the quiet exit | P0 | Done | `StagePlay` now uses the existing popup frame plus four direct-pixel sprites extracted from the approved target: title, knives/impact, Retry, and Menu. No substitute runtime typography or approximated/redrawn button art remains. Both actions are connected instances of the shared `FailureActionButton.prefab`, while the popup retains its `PopupTemplate.prefab` link. Real-input Play Mode checks proved Retry reload and Menu navigation; focused atlas/prefab and duplicate-input tests pass. Evidence: `Assets/_Docs/Phase5VisualAudit/README.md`. |
+| FAIL-503 | Remove legacy Continue price and recovery presentation | P1 | Done | Continue, price/ad/currency recovery UI, Start Over, their popup bindings, and their StageInstaller recovery registrations are removed. The focused scene-contract test proves no legacy text, controls, or serialized installer bindings remain; currency and ad systems outside failure recovery are unchanged. |
+| FAIL-504 | Define when Continue is free, ad-based, currency-based, or absent | P0 | Done | Continue is absent for every session and attempt. The current path raises the same level reload as free Retry while optionally charging coins, so it has no approved distinct player benefit. A future Continue requires a new product decision and a genuinely different outcome. |
+| FAIL-505 | Verify failure-to-input-ready pacing | P1 | Done | The collision-to-popup flow and final entrance/idle motion were recorded and inspected frame-by-frame in `FAIL502_GameOverFlow.mp4` and `FAIL502_GameOverMotion.mp4`. The panel pop, title/impact settle, staggered actions, and restrained Retry heartbeat remain short, readable, and input-ready. |
+| FAIL-506 | Validate Retry, Menu, and legacy recovery removal | P0 | In progress | Current evidence proves exact legacy-action absence, shared-prefab/reference integrity, one reload for duplicate Retry input, real Retry reload, real Menu navigation, saved scene state, and a clean compile/Console. The remaining phase-level validation is the broader FAIL-501 production collision cue/reduced-motion pass and its complete automated recovery matrix. |
 
 ### Phase 6 - Continuous Completion and Reward Accumulation
 
@@ -244,7 +243,6 @@ run counter, and the next target entering immediately afterward.
 |---|---|---|
 | First power-up teaching path | Phase 9 | Decide against the finished mechanics and acquisition flow; do not lock it early. |
 | Empty-inventory hint behavior | Phase 9 | Never point at an unusable action without an acquisition explanation. |
-| Continue rules | Phase 5 | Keep the first failure low-pressure; delay aggressive ad/currency decisions. |
 | Completion duration | Phase 6 | Start with 0.6-1.0 seconds and tune through real play. |
 | Reward accumulator cashout | Phase 6 | Save rewards immediately; presentation may accumulate without risking loss. |
 | Reduced motion and haptics | Phase 4 | Provide independent settings and never rely on shake alone for meaning. |

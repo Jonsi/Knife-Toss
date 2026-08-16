@@ -100,7 +100,7 @@ Stage difficulty is shaped by:
 - Number of targets in the level.
 - Existing knives already stuck in the target.
 - Collectible placement.
-- Continue cost after failure.
+- Recovery is always free Retry or Menu; no failure Continue cost is presented.
 
 ## 8. World Progression
 
@@ -173,19 +173,23 @@ Expected player behavior:
 
 The stage screen should be treated as a product-facing progression map, not just a list.
 
-## 12. Stage Failure And Continue Flow
+## 12. Stage Failure And Recovery Flow
 
 When the player fails a level, the game presents recovery choices.
 
-Available options:
+Approved popup contract:
 
-- Retry the failed level.
-- Restart the whole stage.
-- Continue after failure through an ad-supported continue flow when available.
+- `Game Over` is the only headline/informational copy.
+- `Retry` is the single primary action and reloads the failed level for free.
+- `Menu` is the quiet exit.
+- The collision cause is communicated by the gameplay impact beat before the popup, not by
+  descriptive popup copy.
+- Start Over, Continue, prices, currency recovery, rewarded ads, and interstitial recovery
+  are absent.
 
-Continue costs are stage-defined and can increase over repeated continues. Early stage data includes a progression such as 0, 50, 100, 150, and 200, which suggests the design intent is to make the first recovery easy and later recoveries more meaningful.
-
-This flow supports both monetization and player mercy. It should be tuned carefully so that ads feel helpful rather than mandatory.
+Legacy Continue cost data and bindings may remain during cleanup, but they are not an
+approved player-facing rule. A future Continue requires a new product decision and an
+outcome genuinely different from free Retry.
 
 ## 13. Rewards
 
@@ -335,9 +339,9 @@ The game supports ads in player-friendly reward contexts.
 
 Ad placements:
 
-- Continue after level failure.
 - Store rewarded ad for soft currency.
-- Interstitial retry placement after enough attempts.
+- Any future interstitial placement requires separate approval and must not interrupt the
+  approved failure recovery path.
 
 Remove Ads:
 
@@ -453,7 +457,7 @@ Implemented or represented in project content:
 - In-level collectibles.
 - Pre-stuck knife obstacles.
 - Stage completion rewards.
-- Failure, retry, restart, and continue flow.
+- Failure, free Retry, and Menu recovery flow.
 - Soft currency.
 - Store.
 - Knife skins.
@@ -481,7 +485,8 @@ Every session should offer either progress, currency, mission progress, or a use
 
 **Fair Recovery**
 
-Failure should sting but not feel punishing. Retry, restart, continue, and power-ups all give the player ways back in.
+Failure should sting but not feel punishing. Free Retry is immediate, Menu is always
+available, and the player is never routed through a spend or ad decision to recover.
 
 **Lightweight Collection**
 

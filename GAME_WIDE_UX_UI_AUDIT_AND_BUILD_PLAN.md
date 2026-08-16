@@ -36,7 +36,8 @@ and authored production sprites. Do not slice or ship the boards themselves.
 
 Covers Main Menu, Gameplay HUD, knife-collision Failure, and Stage Complete. It establishes
 one dominant action per surface, an unobstructed throw lane, attached power-up counts,
-modal-over-guidance layering, explicit failure cause, and a clean completion/reward handoff.
+modal-over-guidance layering, an unmistakable pre-modal failure beat, and a clean
+completion/reward handoff.
 
 ### 2. Meta and progression screens
 
@@ -72,7 +73,7 @@ feedback cue map and implementation contracts below.
 |---|---|---|
 | Main Menu and navigation hierarchy | 1 | Action hierarchy, selector scale, safe placement, shared icon family |
 | Gameplay HUD and tutorial guidance | 1 | Throw-lane clearance, progress/resource hierarchy, guidance placement |
-| Failure and Continue/Retry/Start Over/Menu | 1 | Cause communication, modal hierarchy, layering, action distinction |
+| Failure and recovery | 1 | Cause communication, modal hierarchy, layering, and one clear recovery action |
 | Completion and next-target handoff | 1 and 4 | Clean temporal separation, reward focus, VFX sequence |
 | Daily Missions | 2 | Row hierarchy and claimable/in-progress/claimed truth |
 | Store and Remove Ads | 2 | Carousel discovery and purchase/owned/equipped/blocked truth |
@@ -350,8 +351,9 @@ and reusable without per-screen styling code.
 
 1. Redesign the gameplay HUD hierarchy and progress communication without changing game
    rules.
-2. Rebuild Failure: explicit cause, Retry/Continue primary hierarchy, Start Over secondary,
-   meaningful free/ad/currency labels, and clear return.
+2. Rebuild Failure: make the pre-modal impact beat communicate the cause, then show only
+   `Game Over`, one primary Retry action, a quiet Menu exit, and no redundant
+   Start Over/Continue/price/ad recovery controls.
 3. Approve and implement the non-blocking completion timeline so shatter, progress, reward,
    next target, and tutorial guidance never overlap incoherently.
 4. Add typed VFX/audio/haptic presentation adapters as part of these approved cue contracts.
@@ -359,9 +361,14 @@ and reusable without per-screen styling code.
 5. Preserve the current power-up mechanics and base button art; refine only authoritative
    states, attachment, and feedback.
 
-Exit gate: real-input videos demonstrate valid hit, collision failure, Continue, Start
-Over, return, target completion, next-level handoff, both power-ups, mute, reduced motion,
-and haptic-off fallbacks.
+Exit gate: real-input videos demonstrate valid hit, collision failure, Retry, Menu,
+target completion, next-level handoff, both power-ups, mute, reduced motion, and haptic-off
+fallbacks; no Start Over or Continue failure action appears.
+
+Failure-popup status (2026-08-15): the approved modal rebuild and legacy recovery removal are
+implemented and validated. The exact content, shared-prefab architecture, real Retry/Menu
+outcomes, and inspected collision-to-popup recording are documented in
+`Assets/_Docs/Phase5VisualAudit/README.md`. This does not close the rest of the Wave 2 exit gate.
 
 ### Wave 3 — Main Menu and secondary screens
 
@@ -411,7 +418,8 @@ Completion as the first high-impact polished vertical slice.
 
 ## Product decisions required before relevant waves
 
-- Continue rules and copy: free, ad, currency, unavailable, and repeat-attempt behavior.
+- Failure recovery is approved: Retry is always free, Menu exits, and Start Over/Continue
+  are absent. A future Continue requires a distinct outcome and a new product decision.
 - Completion reward accumulator semantics and where the player sees the total.
 - Final tutorial sequence, first taught power-up, and empty-inventory behavior.
 - Whether PVP, PowerUpsMenu, and Loading should be rebuilt later or removed from the active
@@ -421,11 +429,11 @@ Completion as the first high-impact polished vertical slice.
 
 ## Validation matrix for implementation
 
-- Fresh save: launch, onboarding gesture, Play, first throw, first failure, Continue,
-  Start Over, completion, power-up teaching, return.
+- Fresh save: launch, onboarding gesture, Play, first throw, first failure, Retry,
+  Menu exit, completion, power-up teaching, return.
 - Progressed save: Main Menu, knife selector, Missions, Store success/failure/ad, Stages,
   stage reward, power-ups, Settings/Privacy/Report/Restore, Remove Ads ownership.
-- Transitions: Main↔Store, Main↔Stages, Main→Gameplay, Failure→retry/start-over/menu,
+- Transitions: Main↔Store, Main↔Stages, Main→Gameplay, Failure→try-again/menu,
   completion→next level/stage.
 - State: ready, pressed, disabled, loading, blocked, success, owned/equipped, locked,
   claimable, claimed, muted, reduced motion, haptics off.

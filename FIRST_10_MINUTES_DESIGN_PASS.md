@@ -17,7 +17,7 @@ The intended player journey:
 3. Complete a very easy first level.
 4. Learn that stuck knives become obstacles.
 5. Fail once in a fair, readable way.
-6. Retry and succeed.
+6. Try again and succeed.
 7. Complete the first stage.
 8. Receive a clear reward.
 9. See that stages, skins, power-ups, and missions exist.
@@ -97,19 +97,21 @@ The first failure is a key product moment. It should create "I know what I did w
 
 Recommended fail popup priority:
 
-- Retry should be the most obvious action.
-- Restart stage should be available but secondary.
-- Continue should not be pushed aggressively during the first failure.
+- `Game Over` is the only headline/informational copy; the impact beat already communicated
+  the collision.
+- Retry is the single obvious recovery action.
+- Menu remains available as a quiet exit.
+- Start Over and Continue do not appear in the failure popup.
 
 Player lesson:
 
 - Failure is recoverable.
-- Retry is fast.
+- Trying again is fast.
 - The game respects short attempts.
 
 Success target:
 
-- The player retries within a few seconds.
+- The player tries again within a few seconds.
 
 ### 3:30-5:00 - First Stage Completion
 
@@ -335,7 +337,7 @@ Ads should not appear before the player has formed a positive opinion of the cor
 Recommended:
 
 - No forced/interstitial ad in the first 10 minutes.
-- Continue ad can appear after a failure, but should be framed as optional help.
+- No Continue ad appears after failure; recovery remains free Retry or Menu.
 - Store rewarded ad can appear once the player understands currency.
 - Remove Ads should be visible later, not pushed immediately.
 
@@ -386,7 +388,7 @@ Good:
 - "Stage clear"
 - "Claim"
 - "Retry"
-- "Continue"
+- "Game Over"
 
 Avoid:
 
@@ -485,7 +487,7 @@ Detailed plan: [Phase 1 Opening Flow Plan](PHASE_1_OPENING_FLOW_PLAN.md)
 
 **Dependencies:** Phase 1 is recommended but not required.
 
-### Phase 3 - Failure, Retry, And Continue Experience
+### Phase 3 - Failure And Recovery Experience
 
 **Goal:** Make the first failure feel recoverable instead of punishing.
 
@@ -494,25 +496,25 @@ Detailed plan: [Phase 1 Opening Flow Plan](PHASE_1_OPENING_FLOW_PLAN.md)
 **Scope:**
 
 - Review the fail popup.
-- Make Retry the clearest action.
-- Keep Restart Stage available but secondary.
-- Decide when Continue should appear in the first-time experience.
-- Decide whether first continue is free, ad-based, currency-based, or delayed.
+- Keep `Game Over` as its only headline/informational copy.
+- Make Retry the single clear recovery action.
+- Keep Menu available as a quiet exit.
+- Remove Start Over and Continue from the failure popup.
 - Make sure failure feedback is visually obvious.
 
 **Deliverables:**
 
 - Failure flow decision.
-- Continue timing decision.
+- Single-recovery decision and legacy-action removal contract.
 - Popup priority pass.
 - Any needed copy adjustments.
 
 **Acceptance criteria:**
 
-- Retry is the obvious first action after failure.
-- The player is not pushed into an ad too early.
+- Retry is the obvious action after failure.
+- The player is not pushed into an ad or currency recovery offer.
 - The player understands why they failed.
-- Restart and Continue are present only when they help the decision.
+- Start Over and Continue are absent because they do not help the decision.
 
 **Dependencies:** Best after Phase 2, because failure tuning depends on Stage 1 difficulty.
 
@@ -731,7 +733,7 @@ Detailed plan: [Phase 1 Opening Flow Plan](PHASE_1_OPENING_FLOW_PLAN.md)
 
 1. Phase 1 - Opening Flow Audit.
 2. Phase 2 - Stage 1 Tutorial Tuning.
-3. Phase 3 - Failure, Retry, And Continue Experience.
+3. Phase 3 - Failure And Recovery Experience.
 4. Phase 4 - Stage 1 Completion Reward.
 5. Phase 5 - Early Unlock Order.
 6. Phase 6 - First Mission Moment.

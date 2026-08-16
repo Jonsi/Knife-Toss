@@ -135,7 +135,7 @@ screen-specific presenters; they do not replace the shared action-state preceden
 | FB-001 | UI press | Compression/release and short shadow change | Soft carved-wood click | Optional light selection; static contrast fallback |
 | FB-002 | Navigation | 150–250 ms shared transition language | Short wood/leaf whoosh | No required haptic; instant reduced-motion fallback |
 | FB-003 | Valid target hit | Gold-white core, small chips, crack pulse | Related impact family | Light impact; no shake-only meaning |
-| FB-004 | Knife collision | Opposing sparks, 40–80 ms warm-red flash, tiny nudge/hit stop | Metal clash plus restrained failure accent | Heavy/rigid pulse; icon/cause copy persists |
+| FB-004 | Knife collision | Opposing sparks, 40–80 ms warm-red flash, tiny nudge/hit stop | Metal clash plus restrained failure accent | Heavy/rigid pulse; the impact beat carries the cause before the `Game Over` popup |
 | FB-005 | Collectible | Lagoon/Gold pickup and resource travel | Pickup/coin family | Optional light success; direct value update persists |
 | FB-006 | Completion | Clean shatter, progress pulse, reward travel, delayed next-target entrance | Compact win flourish | Medium success; sequential non-motion fallback |
 | FB-007 | Purchase/claim | Spend pulse, check/stamp, ownership/reward travel | Buy/claim confirmation | Medium success; status text persists |
@@ -197,15 +197,17 @@ Elements:
 
 - Collision flash/VFX beat before the modal settles.
 - Full input-blocking scrim and shared modal shell.
-- Explicit cause banner/icon and short cause copy.
-- Truthful Continue action with cost/ad/free/unavailable presentation supplied at runtime.
-- Retry as the dominant recovery action once product hierarchy is confirmed.
-- Start Over and Menu as real secondary actions, never bare ambiguous text.
+- The existing crossed-knives art and a clear pre-modal collision beat.
+- `Game Over` as the only popup headline/informational copy; no collision description,
+  stage/level text, or technical label.
+- Retry as the single dominant recovery action.
+- Menu as a quiet, clearly actionable exit.
+- No Start Over, Continue, price, ad, or currency-recovery control.
 
 Behavior to preserve:
 
-- Current retry, start-over, Continue and return outcomes until FAIL-504 approves changes.
-- Existing currency/ad availability and save behavior.
+- Existing authoritative current-level reload and Menu outcomes.
+- Existing currency and ad systems outside the removed failure-recovery offer.
 
 Acceptance:
 
@@ -318,7 +320,7 @@ Goal: prevent generated presentation details from becoming accidental product ru
 |---|---|---|---|
 | P0-001 Record core-loop visual approval | ART-204/ART-701 | Done | Attached Core Loop board is the approved hierarchy/material target. |
 | P0-002 Review remaining three boards | ART-701/UX-801 | Needs approval | Each board receives approve/revise notes; candidate status remains explicit until then. |
-| P0-003 Approve Continue matrix | FAIL-504 | Needs decision | Free/ad/currency/unavailable/repeat-attempt rules and exact copy. |
+| P0-003 Approve recovery matrix | FAIL-504 | Done | Retry is always free and reloads the current level; Menu exits quietly; Start Over and Continue are absent for every session and attempt. No failure recovery may spend currency or request an ad. |
 | P0-004 Approve completion contract | COMP-601/COMP-602 | Needs decision | Timeline, automatic progression, reward persistence and summary placement. |
 | P0-005 Approve settings/accessibility policy | UX-406 | Needs decision | Sound/music/mute, reduced motion and haptic availability/defaults. |
 | P0-006 Approve legal/support content | UX-801 | Needs decision | Product name, developer, support route, privacy text and acceptance semantics. |
@@ -389,7 +391,7 @@ Goal: create reusable production elements before rebuilding screens.
 | P2-005 Produce navigation/icon family | P0 | P2-001 | Back/close/settings/Store/Missions/map plus badge/lock/check family. |
 | P2-006 Produce resource/progress components | P0 | P2-001 | Coin chip, stage progress, markers, reward chips and magazine dock. |
 | P2-007 Produce form/toggle components | P1 | P2-001 | Field, validation, toggle, slider and keyboard-safe layout. |
-| P2-008 Integrate current power-up art | P0 | UX-408 | In progress — Shatter/Chrono icons, count/acquisition badges, active material/pulse, unavailable tint, Chrono radial progress, provenance, individual import settings, and static Stage 1/grayscale reviews are integrated. The socket and clock-ring assets are handoff-only, and `PowerUpHUD.spriteatlasv2` has no packables; atlas/budget validation remains P2-010/ART-708. UX-408 still owns unified outcome-driven pressed/blocked/gameplay-disabled/end-state behavior, a prefab-owned countdown seam, focused state tests, and runtime motion evidence. UX-406 owns shipping accessibility policy; UX-407 owns the sandbox. |
+| P2-008 Integrate current power-up art | P0 | UX-408 | Done — the product owner accepted the current Shatter/Chrono buttons, counts, active/unavailable presentation, progress treatment, provenance, individual imports, and static reviews. Preserve them. The handoff-only socket/ring and empty atlas remain optional P2-010/ART-708 work, not UX-408 blockers. UX-406 owns accessibility policy and UX-407 owns the sandbox. |
 | P2-009 Build UI gallery/debug scene | P1 | P2-003..008 | Preview every visual/state variant without save/economy mutation. |
 | P2-010 Validate imports and budgets | P0 | P2-002..008 | Provenance, PPU, compression, atlas, mip/filter, memory and grayscale checks pass. |
 
@@ -479,15 +481,24 @@ Goal: make collision cause, recovery choices and return-to-input pacing unmistak
 | Task | Tracker mapping | Dependency | Deliverable and acceptance |
 |---|---|---|---|
 | P4-001 Add typed presentation adapters | UX-405 | P2 | VFX/audio/haptic subscribers remain presentation-only; domain services stay independent. |
-| P4-002 Build collision feedback beat | FAIL-501/ART-704 | P4-001 | Sparks/flash/audio/haptic/copy identify collision before modal choices. |
-| P4-003 Rebuild Failure modal | FAIL-502/FAIL-503 | P0-003/P2 | Explicit cause, approved Retry hierarchy, truthful Continue, Start Over and Menu buttons. |
-| P4-004 Implement Continue variants | FAIL-504/FAIL-506 | P0-003 | Free/ad/currency/unavailable/cancel/failure states match existing approved outcomes. |
+| P4-002 Build collision feedback beat | FAIL-501/ART-704 | P4-001 | Sparks/flash/audio/haptic identify collision before modal choices; no explanatory popup copy is added. |
+| P4-003 Rebuild Failure modal | FAIL-502/FAIL-503 | P0-003/P2 | Keep the existing project popup frame and compose the rest from direct-pixel sprites extracted from the approved target: only `Game Over`, primary `Retry`, quiet `Menu`, and no stage/level/cause/Start Over/Continue/price/ad UI. |
+| P4-004 Remove legacy recovery variants | FAIL-504/FAIL-506 | P0-003 | Remove the duplicate Continue path, price/ad presentation, Start Over popup action, and stale serialized bindings without changing authoritative Retry or Menu outcomes. |
 | P4-005 Tune failure pacing | FAIL-505 | P4-002..004 | Collision-to-readable-choice and choice-to-input-ready feel responsive repeatedly. |
-| P4-006 Add recovery regression tests | FAIL-506 | P4-003..005 | Retry, Continue, Start Over, Menu, rejection, duplicate input and teardown pass. |
+| P4-006 Add recovery regression tests | FAIL-506 | P4-003..005 | Retry, Menu, legacy-action absence, no spend/ad request, duplicate input, and teardown pass. |
 | P4-007 Record and inspect videos | FAIL-501..506 | P4-006 | Encoded collision, modal, every recovery path and reduced-motion result inspected. |
 
-Exit gate: the failure cause and every recovery option are understood without explanation;
-all paths restore valid state without duplicate spend, reward or input.
+Implementation status (2026-08-15): P4-003 and P4-004 are complete. The current-popup portion
+of P4-005 is complete and has inspected encoded evidence at
+`Assets/_Docs/Phase5VisualAudit/Captures/FAIL502_GameOverFlow.mp4` and
+`Assets/_Docs/Phase5VisualAudit/Captures/FAIL502_GameOverMotion.mp4`. P4-006 currently proves the
+exact content/prefab contract and duplicate-Retry guard, plus real-input Retry and Menu checks.
+P4-007 remains partial until FAIL-501's production collision cue and reduced-motion/full-path
+recordings are completed. See `Assets/_Docs/Phase5VisualAudit/README.md` for the evidence index.
+
+Exit gate: the collision cause is understood from the impact beat, the settled popup adds no
+description, and every recovery option is understood without explanation; all paths restore
+valid state without duplicate spend, reward or input.
 
 ### P5 — Completion, reward and next-target handoff
 
@@ -614,7 +625,9 @@ A phase or screen is not complete until:
 ## Remaining risks
 
 - The three candidate boards may require revision before P6/P7 work begins.
-- Continue and reward semantics can materially change Failure/Completion layouts.
+- Failure recovery is locked to Retry/Menu; only a new product decision with a genuinely
+  different outcome may reopen Continue. Completion reward semantics can still change the
+  Completion layout.
 - Generated target art is visually strong but cannot prove localization, actual content
   density, device safe areas, animation timing or low-spec performance.
 - Audio, haptics, touch latency, thermals and safe areas require physical-device proof.

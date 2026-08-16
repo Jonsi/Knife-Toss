@@ -71,27 +71,25 @@ inspection and automated validation are the handoff evidence for this art-only c
 
 ## Runtime implementation status
 
-The art delivery is complete, but UX-408 is not yet complete. The live HUD already uses the
+The art delivery and UX-408 are complete. The live HUD uses the
 integrated icons, count/acquisition badges, active material and pulse, unavailable tint, and
 an authoritative Chrono radial fill. Shatter armed state is reconciled from the power-up
 service, and Chrono activity/progress is queried from that same service.
 
-The remaining state-presentation work is documented in the `UX-408 Repository Audit` section
-of `POWER_UP_BUTTON_ART_REPLACEMENT_PLAN.md`. In summary, pressed, visible blocked,
-gameplay-disabled, and consumed/expired/cleared responses remain; the HUD must consume the
-unified outcome channel; and the countdown image must become a named prefab-owned component
-instead of a runtime-created object. That component must explicitly wire the currently unused
-`PowerUpClockRing.png` asset, or document an approved replacement, rather than silently
-continuing to fill a copy of the power-up icon.
+The product owner accepted the current buttons and behavior as the UX-408 result. Historical
+technical observations—including the runtime-created fill, unused ring/socket assets, and
+empty atlas—remain documented for their separate owners. They are not UX-408 closure work and
+must not trigger a presenter, state-matrix, countdown, animation, or art rewrite without a new
+explicit request.
 
 The current 14-test `Game.PowerUps.Tests` total is not 14 button-state tests: seven cover the
 service, three cover button active visuals, three cover knife VFX lifecycle, and one covers
-hidden preload visibility. Runtime multi-frame evidence is also outstanding. Do not treat
-the static images in this folder as proof of interaction or motion behavior.
+hidden preload visibility. The static images in this folder remain art-review evidence rather
+than runtime interaction evidence.
 
 Ownership boundaries:
 
 - UX-406 decides shipping reduced-motion, mute, and haptic-disable behavior.
 - UX-407 builds the state/feedback sandbox.
 - ART-708 owns final state-art polish and final device-size approval.
-- UX-408 closes the reusable state-presentation seam without changing mechanics or inventory.
+- UX-408 is complete; preserve its accepted implementation.

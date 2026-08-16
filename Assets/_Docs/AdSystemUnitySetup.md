@@ -1,5 +1,11 @@
 # Ad System — Unity Setup Manual
 
+> Current product rule: failure recovery never requests an ad or currency spend. The failure
+> popup is `Game Over`, primary `Retry`, and quiet `Menu`. ContinueAfterFail,
+> InterstitialRetry, Restart, and Continue wiring described by older revisions is deprecated
+> and must not be added to StagePlay. The active setup below is limited to approved ad
+> placements such as the Store rewarded CTA.
+
 ## 1. Create ScriptableObject Assets
 
 All assets go in `Assets/Configurations/Systems/Ads/` (create the `Ads` folder first).
@@ -19,14 +25,10 @@ All assets go in `Assets/Configurations/Systems/Ads/` (create the `Ads` folder f
 - `Simulated Delay Seconds` = **2**
 - `Sequenced Outcomes` = leave empty
 
-### 1.3 Continue Placement (Rewarded)
+### 1.3 Legacy Continue Placement (Do Not Configure)
 
-- **Create → Knife Toss → Ads → Rewarded Placement** → name `ContinuePlacement`
-- `Placement Key` = **ContinueAfterFail** (enum dropdown)
-- `Cooldown Seconds` = **0** (falls back to global default)
-- `Min Attempts Between Ads` = **0**
-- `Once Per Run` = **true**
-- `Reward` = **(None)** — the reward is the level continuation itself, not an item
+Do not create or wire `ContinuePlacement` / `ContinueAfterFail`. Existing assets are legacy
+cleanup targets, not active product configuration.
 
 ### 1.4 Store Ad Placement (Rewarded)
 
@@ -41,13 +43,10 @@ All assets go in `Assets/Configurations/Systems/Ads/` (create the `Ads` folder f
 
 > The `Reward` field is a polymorphic dropdown. Current options: `CurrencyReward` (grants currency via `CurrencyType` enum + amount), `KnifeSkinReward`, `PowerUpReward`. Any new `ItemReward` subclass added to the codebase appears here automatically. The CTA display text ("+50 COIN") is derived automatically from the reward — no manual text field needed.
 
-### 1.5 Interstitial Placement
+### 1.5 Legacy Retry Interstitial (Do Not Configure)
 
-- **Create → Knife Toss → Ads → Interstitial Placement** → name `InterstitialPlacement`
-- `Placement Key` = **InterstitialRetry** (enum dropdown)
-- `Cooldown Seconds` = **90**
-- `Min Attempts Between Ads` = **3**
-- `Once Per Run` = **false**
+Do not create or wire `InterstitialRetry` on Retry, Menu, or any other failure-recovery
+action. Any future interstitial placement requires a separate product decision.
 
 ### 1.6 Ad Event Channels
 
@@ -57,11 +56,10 @@ Create folder `Assets/Configurations/Events/Ads/`, then:
 2. **Create → Knife Toss → Events → Ads → Ad Completed** → name `AdCompletedEventChannel`
 3. **Create → Knife Toss → Events → Ads → Ad Failed** → name `AdFailedEventChannel`
 
-### 1.7 Continue Requested Event Channel
+### 1.7 Legacy Continue Event Channel (Do Not Configure)
 
-In `Assets/Configurations/Events/UI/LevelFailedPopup/`:
-
-- **Create → Knife Toss → Events → Common → Void** → name `ContinueRequestedChannel`
+Do not create or wire `ContinueRequestedChannel`. Existing channel assets are cleanup
+targets only.
 
 ---
 
@@ -146,22 +144,16 @@ Apply all changes and exit prefab edit mode.
 
 Open `Assets/Scenes/StagePlay.unity`.
 
-### 4.1 StageFailPopup — Add Continue Button
+### 4.1 StageFailPopup — No Ad Wiring
 
-1. Find the `StageFailPopup` GameObject
-2. Add a **Button (TMP)** child → name `ContinueButton`, text "Continue (Ad)"
-3. Style to match the existing Retry / Restart buttons
-4. On the `StageFailPopup` component, assign:
-   - `Continue Button` → `ContinueButton`
-   - `Continue Requested Channel` → `ContinueRequestedChannel`
+Do not add a Continue, Restart, price, currency, rewarded-ad, or interstitial control. The
+approved popup contract is documented in
+`Assets/_Docs/Phase5VisualAudit/README.md`.
 
-### 4.2 StageInstaller — Assign Ad Fields
+### 4.2 StageInstaller — Leave Failure Ad Fields Unassigned
 
-1. Select the `StageInstaller` GameObject
-2. Under **Ads (optional)**, assign:
-   - `Continue Requested Channel` → `ContinueRequestedChannel`
-   - `Continue Placement` → `ContinuePlacement`
-   - `Interstitial Placement` → `InterstitialPlacement`
+Legacy failure Continue and retry-interstitial fields must remain unused and should be
+removed during the FAIL-503/FAIL-506 cleanup.
 
 ---
 
@@ -192,29 +184,14 @@ Open `Assets/Scenes/StoreScene.unity`.
 
 ## 6. Expected Test Results
 
-### Continue After Failure (StagePlay)
+### Failure Recovery (StagePlay)
 
-1. Enter a stage → fail a level
-2. `StageFailPopup` appears with Retry, Restart, and **Continue (Ad)** buttons
-3. Tap Continue (Ad):
-   - MockAdPopup appears full-screen:
-     - Placement: **ContinueAfterFail**
-     - Format: **Rewarded**
-     - Timer counting down from 2s
-     - Buttons: Complete, Skip, Fail
-   - **Complete** → popup closes → level retries from the same point (no reward granted — continuation is the reward)
-   - **Skip / Fail** → popup closes → Continue button re-enables if policy allows
-4. After one successful continue the Continue button disappears for the rest of the run (`Once Per Run = true`)
-5. Starting a new run resets the flag
-
-### Interstitials (StagePlay)
-
-1. Play through 3+ failures or stage completions to satisfy `Min Attempts Between Ads = 3`
-2. On the next Retry or Restart tap → MockAdPopup appears:
-   - Placement: **InterstitialRetry**
-   - Format: **Interstitial**
-3. After Complete, the attempt counter resets — need 3 more events before the next interstitial
-4. The 90s cooldown additionally prevents back-to-back interstitials
+1. Enter a stage and fail a level.
+2. `StageFailPopup` shows only `Game Over`, primary `Retry`, and quiet `Menu`.
+3. Retry reloads the current level exactly once and makes no ad or spend request.
+4. Menu exits cleanly and makes no ad or spend request.
+5. No Continue, Restart/Start Over, price, rewarded-ad, or interstitial recovery path is
+   visible or reachable.
 
 ### Store Rewarded Ad (StoreScene)
 

@@ -31,11 +31,13 @@ The seven-test statement above records the 2026-08-08 art-delivery baseline. The
 suite contains 14 passing EditMode tests, but only three directly exercise button visuals;
 see the audited coverage breakdown below.
 
-## UX-408 Repository Audit (2026-08-15)
+## UX-408 Final Status (2026-08-15)
 
-UX-408 is partially complete. The mechanic, art, and initial active-state work must be
-preserved. The remaining ticket is a focused presentation-state closure, not a power-up
-rewrite or a second art replacement.
+UX-408 is complete. The product owner accepted the current buttons, mechanics, active and
+unavailable presentation, authoritative Shatter/Chrono behavior, progress treatment, prefab
+layout, and art handoff. Earlier audit proposals for an additional presenter, expanded state
+matrix, countdown rewrite, or motion/art pass are not remaining UX-408 requirements. Do not
+reopen them without a new explicit request.
 
 Audit baseline: `main` at `be7c6618` (`feat: add typed feedback output hooks`), before this
 documentation-only update. The audit used the serialized production prefab, current source,
@@ -60,19 +62,19 @@ device validation.
 | Sprite atlas | `PowerUpHUD.spriteatlasv2` | Asset and settings exist, but `packables` is empty and no sprites are packed. Packing/budget validation remains ART-708/P2-010 work. |
 | Background and grayscale review | Four Stage 1 background composite, grayscale composite, and device-reference composites | Implemented as static evidence, not live Game View evidence. |
 
-### Audited state matrix
+### Historical observations, not UX-408 requirements
 
-| Required state | Current behavior | UX-408 closure requirement |
+| Area | Accepted current behavior | Deferred observation |
 |---|---|---|
-| Normal | Count, icon, and normal material are present. | Preserve. |
-| Pressed | The prefab `Button` transition is `None`; no presenter-owned pressed response exists. | Add a deterministic pressed treatment without changing activation rules. |
-| Shatter armed | Selection is derived from the service and uses the active material/pulse. | Preserve authoritative selection; expose it through the final state model. |
-| Chrono active | Service progress drives an active material/pulse and radial fill. | Preserve service authority; move the fill to a named prefab-owned countdown seam. |
-| Blocked | The service can emit `Blocked`, but an active Chrono button becomes non-interactable and its handler also returns early, so the HUD does not present repeated-tap rejection. | Route a valid repeated attempt to typed blocked presentation without consuming or restarting the effect. |
-| Unavailable | Zero stock shows the unavailable tint and acquisition affordance. | Preserve; include it in deterministic state tests. |
-| Gameplay disabled | Fail flow sets a private Boolean only. It does not update visuals or `Button.interactable`; zero-stock acquisition is checked before the gameplay-disabled guard. | Apply a visible, non-interactable disabled state and prevent acquisition UI during fail/transition flow. |
-| Consumed/expired/cleared | Domain outcomes exist, but the HUD does not subscribe to the unified outcome channel and has no short end-state presentation. | Add deterministic transient/end-state handling, then reconcile to authoritative count/selection/progress. |
-| Reduced motion | The power-up view always pulses while active. The `ActionButtonPresenter` Editor preview is unrelated and is not a shipping preference. | Do not invent product policy in UX-408. Provide only the presentation seam required for UX-406's later decision. |
+| Normal | Count, icon, and normal material are present. | Accepted UX-408 baseline. |
+| Pressed | The prefab `Button` transition is `None`; no presenter-owned pressed response exists. | Accepted for UX-408; any change needs a new request. |
+| Shatter armed | Selection is derived from the service and uses the active material/pulse. | Accepted authoritative behavior. |
+| Chrono active | Service progress drives an active material/pulse and radial fill. | Accepted authoritative behavior. |
+| Blocked | The service can emit `Blocked`; active Chrono prevents another button submission. | Accepted for UX-408; future feedback changes belong to a new ticket. |
+| Unavailable | Zero stock shows the unavailable tint and acquisition affordance. | Accepted UX-408 baseline. |
+| Gameplay disabled | Fail flow uses the existing gameplay-active guard. | Accepted for UX-408; any newly reproduced functional defect should receive its own fix ticket. |
+| Consumed/expired/cleared | Existing service state, count refresh, and progress reconciliation remain authoritative. | Accepted UX-408 baseline. |
+| Reduced motion | The power-up view uses its current pulse. | Shipping policy remains UX-406. |
 
 ### Current wiring limitation
 
@@ -82,10 +84,9 @@ expired, cleared, invalid, unsupported, and execution-failed outcomes cannot cur
 button presentation. Chrono progress is authoritative despite this limitation because it is
 queried directly from `IPowerUpService` every frame.
 
-This audit does not require a particular class name or duplicate domain state. UX-408 needs
-one testable presentation-state owner/reducer between the existing authoritative inputs and
-the existing reusable button prefab. It may be a dedicated presenter or an equivalently
-separated component, provided state precedence and teardown are explicit.
+These observations do not authorize changes. UX-406 owns accessibility policy, UX-407 owns
+the sandbox, ART-708 owns optional final-art polish, and P2-010 owns atlas/budget validation.
+Any new presenter or power-up state work requires a new scoped ticket or explicit request.
 
 ### Evidence index
 
@@ -112,43 +113,24 @@ separated component, provided state precedence and teardown are explicit.
 | `DeferredGameSceneVisibilityTests` | 1 | Hidden preload rendering; not button-state coverage. |
 | **Current total** | **14** | All pass at the recorded baseline, but only three directly validate the button presentation. |
 
-Missing focused coverage includes pressed-state teardown, blocked attempts, gameplay-disabled
-precedence, zero-stock behavior while disabled, all unified outcome transitions, expiry/end
-reconciliation, countdown component lifecycle, enable/disable subscription safety, and
-reduced-motion seam behavior once its policy is approved.
+The fixture breakdown is retained to prevent the 14-test total from being misrepresented as
+14 presentation-state tests. It is not an outstanding UX-408 test checklist.
 
 ### Evidence status
 
 - Existing `Assets/_Docs/PowerUpButtonArt/Captures` images are deterministic static sprite
   composites. They prove art size/background/grayscale readability, not runtime binding,
   interaction, pulse motion, countdown motion, or transition cleanup.
-- No UX-408 runtime video is currently stored in the repository.
-- Because pulse, pressed response, countdown, and end states span multiple frames, UX-408
-  cannot be marked Done until a short live Game View recording is captured and inspected in
-  accordance with the repository motion-validation rule.
-
-### Minimal closure checklist
-
-- [ ] Introduce one presentation-state owner/reducer fed by the existing authoritative
-  service progress and unified outcome channel.
-- [ ] Preserve separate Shatter-armed and Chrono-active semantics.
-- [ ] Add pressed, blocked, gameplay-disabled, and consumed/expired/cleared presentation with
-  deterministic precedence and teardown.
-- [ ] Replace runtime `new GameObject("CooldownFill")` construction with a serialized,
-  reusable child component in `PowerUpButton.prefab`; retain prefab links for both instances.
-- [ ] Add focused EditMode tests for the missing state matrix and lifecycle boundaries.
-- [ ] Exercise Shatter and Chrono through real HUD input in Play Mode, record a short video,
-  inspect it, and verify the Console and hierarchy remain clean.
-- [ ] Update this audit and the tracker with exact test totals and evidence paths before
-  marking UX-408 Done.
+- No dedicated UX-408 runtime video is stored in the repository. This is a historical evidence
+  limitation, not authorization for further UX-408 changes. Any future time-based change must
+  follow the repository's record-and-inspect rule.
 
 ### Explicit ownership boundaries
 
-- UX-408 owns only the state-presentation prototype and final-art integration seam.
+- UX-408 is complete; its accepted implementation is the current baseline.
 - UX-406 owns the product decision and shipping behavior for reduced motion, mute, and
   haptic disable. UX-408 must not silently choose those preferences.
-- UX-407 owns the feedback sandbox/debug panel. A production sandbox is not required to
-  close UX-408.
+- UX-407 owns the feedback sandbox/debug panel.
 - ART-708 owns final frame/icon/badge/timer-state art polish and final device-size approval.
 - Power-up inventory, prices, duration, acquisition, consumption, and gameplay effects remain
   outside UX-408.

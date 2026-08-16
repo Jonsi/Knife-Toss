@@ -2,6 +2,7 @@
     "name": "Game.UI.Tests",
     "references": [
         "Game",
+        "Common",
         "Unity.TextMeshPro"
     ],
     "includePlatforms": [

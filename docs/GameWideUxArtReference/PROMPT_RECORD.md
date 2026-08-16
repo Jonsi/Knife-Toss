@@ -2,6 +2,18 @@
 
 Date: 2026-08-09
 
+> Historical record: the Failure screen content in prompt 01 is superseded and must not be
+> implemented or used as current product direction. The authoritative Failure reference is
+> `Assets/_Docs/Phase5VisualAudit/Captures/FAIL502_GameOverTarget.png`: the approved target
+> with only `Game Over`, `Retry`, and `Menu`. The verbatim prompt below is retained
+> solely to preserve provenance for the already-generated board.
+
+Final runtime extraction note (2026-08-15):
+`Assets/Art/UI/Failure/FailurePopupAtlas.png` was created deterministically from the approved
+target pixels and contains only `GameOverTitle`, `CrossedKnives`, `RetryButtonArt`, and
+`MenuButtonArt`. The existing repository popup frame is reused and was not regenerated.
+An intermediate generated atlas approximation was rejected and is not a project asset.
+
 ## Provenance
 
 - Author/commissioner: project owner via Codex.
