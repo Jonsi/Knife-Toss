@@ -1,6 +1,10 @@
 using System;
+using Common.Ads.Data;
 using Common.Ads.Events;
+using Common.Ads.Interfaces;
 using Common.Collision.Events;
+using Game.Ads.Controllers;
+using Game.Ads.Data;
 using Game.Economy.Data;
 using Common.Events;
 using Game.Economy.Events;
@@ -71,7 +75,7 @@ namespace Game.Installers
         private Transform _LevelRoot;
 
         [SerializeField]
-        [Tooltip("Fail overlay with one free Retry action and one quiet Menu exit.")]
+        [Tooltip("Fail overlay with one configured coin-cost Retry action and one quiet Menu exit.")]
         private StageFailPopup _StageFailPopup;
 
         [SerializeField]
@@ -197,6 +201,19 @@ namespace Game.Installers
         [Tooltip("Rewarded ad completed successfully.")]
         private AdCompletedEventChannel _AdCompletedEventChannel;
 
+        [Header("Failure Recovery")]
+        [SerializeField]
+        [Tooltip("Paid Retry request raised by the failure popup.")]
+        private VoidEventChannel _ContinueRequestedChannel;
+
+        [SerializeField]
+        [Tooltip("Paid Retry availability policy; the per-level coin amount comes from StageConfig.")]
+        private RewardedPlacement _ContinuePlacement;
+
+        [SerializeField]
+        [Tooltip("Interstitial policy retained for failure/stage transitions.")]
+        private InterstitialPlacement _InterstitialPlacement;
+
         protected override void Configure(IContainerBuilder builder)
         {
             builder.Register<VContainerRewardGrantContext>(Lifetime.Singleton).As<IRewardGrantContext>();
@@ -271,6 +288,34 @@ namespace Game.Installers
                 _CurrencyBalanceChangedEventChannel != null)
             {
                 Install(builder, new EconomyInstaller(_CurrencyTypeCatalog, _CurrencyBalanceChangedEventChannel));
+            }
+
+            if (_ContinuePlacement != null && _ContinueRequestedChannel != null)
+            {
+                builder.Register(resolver => new AdRewardController(
+                    _ContinueRequestedChannel,
+                    _RetryLevelClickedChannel,
+                    _RestartStageClickedChannel,
+                    resolver.Resolve<LevelFailedEventChannel>(),
+                    _CurrencyBalanceChangedEventChannel,
+                    resolver.Resolve<ICurrencyService>(),
+                    resolver.Resolve<ILevelCatalog>(),
+                    resolver.Resolve<Game.Flow.Stage.StageData>(),
+                    _ContinuePlacement,
+                    resolver.Resolve<StageFailPopup>()
+                ), Lifetime.Scoped).AsImplementedInterfaces();
+            }
+
+            if (_InterstitialPlacement != null)
+            {
+                builder.Register(resolver => new InterstitialAdTrigger(
+                    resolver.Resolve<IAdService>(),
+                    _InterstitialPlacement,
+                    resolver.Resolve<LevelFailedEventChannel>(),
+                    resolver.Resolve<StageCompletedEventChannel>(),
+                    _RetryLevelClickedChannel,
+                    _RestartStageClickedChannel
+                ), Lifetime.Scoped).AsImplementedInterfaces();
             }
 
         }

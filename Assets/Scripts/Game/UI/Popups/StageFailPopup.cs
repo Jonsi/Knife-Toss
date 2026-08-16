@@ -2,9 +2,13 @@ using Cysharp.Threading.Tasks;
 using Common.Events;
 using Game.Feedback.Data;
 using Game.Feedback.Events;
+using Game.Economy.Data;
 using Game.Flow.Game;
+using Game.Flow.Stage;
 using Game.UI.Common;
 using Game.UI.Controllers;
+using Game.UI.Store;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -13,19 +17,22 @@ namespace Game.UI.Popups
 {
     /// <summary>
     /// Popup shown when the player fails a level.
-    /// Exposes one free retry action and one quiet return-to-menu action.
+    /// Exposes the configured paid retry transaction and one quiet return-to-menu action.
     /// </summary>
     public class StageFailPopup : BasePopup
     {
         [Header("UI References")]
+        [SerializeField] private TMP_Text _StageLevelLabel;
         [SerializeField] private Button _RetryButton;
+        [SerializeField] private StorePricePillView _RetryPricePill;
         [SerializeField] private Button _MenuButton;
 
         [Header("Channels")]
-        [SerializeField] private VoidEventChannel _RetryLevelChannel;
+        [SerializeField] private VoidEventChannel _ContinueRequestedChannel;
 
         [Inject] private FeedbackEventChannel _FeedbackEventChannel;
         [Inject] private SceneLoaderService _SceneLoaderService;
+        [Inject] private StageData _StageData;
 
         private ActionButtonPresenter _RetryPresenter;
         private ActionButtonPresenter _MenuPresenter;
@@ -40,6 +47,7 @@ namespace Game.UI.Popups
         private void OnEnable()
         {
             _RecoveryCommitted = false;
+            RefreshStageLevelLabel();
             _RetryPresenter = ActionButtonPresenter.GetOrAdd(_RetryButton, _FeedbackEventChannel);
             _MenuPresenter = ActionButtonPresenter.GetOrAdd(_MenuButton, _FeedbackEventChannel);
 
@@ -67,9 +75,37 @@ namespace Game.UI.Popups
             if (_RecoveryCommitted || (_RetryPresenter != null && !_RetryPresenter.TryBeginSubmission()))
                 return;
 
-            _RecoveryCommitted = true;
-            if (_RetryLevelChannel != null)
-                _RetryLevelChannel.Raise();
+            if (_ContinueRequestedChannel != null)
+                _ContinueRequestedChannel.Raise();
+            else
+                _RetryPresenter?.CancelSubmission();
+        }
+
+        public void SetRetryState(bool visible, bool interactable, int cost)
+        {
+            if (_RetryButton == null)
+                return;
+
+            _RetryButton.gameObject.SetActive(visible);
+            _RetryButton.interactable = interactable;
+            _RetryPricePill?.SetVisible(visible);
+            _RetryPricePill?.SetPrice(cost, CurrencyType.Coin);
+        }
+
+        public void PresentRetryBlocked(FeedbackEventData feedback)
+        {
+            _RetryPresenter ??= ActionButtonPresenter.GetOrAdd(_RetryButton, _FeedbackEventChannel);
+            _RetryPresenter?.PresentBlocked(feedback);
+        }
+
+        private void RefreshStageLevelLabel()
+        {
+            if (_StageLevelLabel == null)
+                return;
+
+            int stageNumber = (_StageData?.StageIndex ?? 0) + 1;
+            int levelNumber = (_StageData?.CurrentLevelIndex ?? 0) + 1;
+            _StageLevelLabel.text = $"STAGE {stageNumber}  •  LEVEL {levelNumber}";
         }
 
         private void OnMenuClicked()

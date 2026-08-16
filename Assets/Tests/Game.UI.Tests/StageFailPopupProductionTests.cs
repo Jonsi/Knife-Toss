@@ -1,9 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Common.Events;
+using Game.Ads.Controllers;
+using Game.Economy.Events;
+using Game.Economy.Interfaces;
+using Game.Flow.Events;
+using Game.Flow.Stage;
+using Game.Level.Configurations.Stage;
+using Game.Level.Data;
+using Game.Level.Interfaces;
 using Game.UI.Common;
 using Game.UI.Popups;
+using Game.UI.Store;
 using NUnit.Framework;
 using TMPro;
 using UnityEditor;
@@ -19,8 +29,15 @@ namespace Game.UI.Tests
         private const string StageScenePath = "Assets/Scenes/StagePlay.unity";
         private const string PopupTemplatePath = "Assets/Prefabs/UI/PopupTemplate.prefab";
         private const string ActionButtonPrefabPath = "Assets/Prefabs/UI/Buttons/FailureActionButton.prefab";
-        private const string FailureAtlasPath = "Assets/Art/UI/Failure/FailurePopupAtlas.png";
+        private const string PricePillPrefabPath = "Assets/Prefabs/UI/Store/PricePillView.prefab";
+        private const string LegacyFailureAtlasPath = "Assets/Art/UI/Failure/FailurePopupAtlas.png";
+        private const string ShellSpritePath = "Assets/Art/UI/Failure/NeutralGameOverShell_Source.png";
+        private const string ShellMaterialPath = "Assets/Art/UI/Failure/NeutralGameOverShell.mat";
+        private const string RetryButtonSpritePath = "Assets/Art/UI/Failure/FailureRetryButton_Source.png";
         private const string KnifeAnimationAtlasPath = "Assets/Art/UI/Failure/FailureKnivesAnimation.png";
+        private const string SecondaryButtonSpritePath = "Assets/Art/UI/Core/ButtonSecondary.png";
+        private const string HudFontPath = "Assets/Art/UI/Fonts/BarlowCondensed-ExtraBold SDF.asset";
+        private const string ImpactGlowPath = "Assets/Layer Lab/GUI Pro-CasualGame/ResourcesData/Particles/Texture/fx_glow_small.png";
 
         [Test]
         public void StagePlayFailurePopupMatchesApprovedContentAndPrefabContract()
@@ -37,21 +54,40 @@ namespace Game.UI.Tests
                         FindObjectsSortMode.None)
                     .Single();
 
-                Assert.That(
-                    popup.GetComponentsInChildren<TMP_Text>(true),
-                    Is.Empty,
-                    "Reference-derived title/button lettering must not be replaced by runtime typography.");
+                TMP_Text[] runtimeLabels = popup.GetComponentsInChildren<TMP_Text>(true);
+                Assert.That(runtimeLabels, Has.Length.EqualTo(5));
+                TMP_Text stageLevelLabel = runtimeLabels.Single(label => label.name == "StageLevelLabel");
+                TMP_Text titleLabel = runtimeLabels.Single(label => label.name == "GameOverTitle");
+                Assert.That(AssetDatabase.GetAssetPath(stageLevelLabel.font), Is.EqualTo(HudFontPath));
+                Assert.That(titleLabel.text, Is.EqualTo("GAME OVER"));
 
-                string[] actualAtlasSprites = popup.GetComponentsInChildren<Image>(true)
-                    .Where(image => image.sprite != null && AssetDatabase.GetAssetPath(image.sprite) == FailureAtlasPath)
-                    .Select(image => image.sprite.name)
-                    .Distinct()
-                    .OrderBy(name => name)
-                    .ToArray();
-                CollectionAssert.AreEqual(
-                    new[] { "GameOverTitle", "MenuButtonArt", "RetryButtonArt" },
-                    actualAtlasSprites,
-                    "The popup must use the direct-reference title and action art by responsibility.");
+                StorePricePillView retryPricePill = popup.GetComponentInChildren<StorePricePillView>(true);
+                Assert.That(retryPricePill, Is.Not.Null);
+                Assert.That(retryPricePill.AmountText, Is.Not.Null);
+                Assert.That(retryPricePill.AmountText.text, Is.EqualTo("50"));
+                GameObject pricePillSource = PrefabUtility.GetCorrespondingObjectFromSource(retryPricePill.gameObject);
+                Assert.That(pricePillSource, Is.Not.Null);
+                Assert.That(AssetDatabase.GetAssetPath(pricePillSource), Is.EqualTo(PricePillPrefabPath));
+                Assert.That(retryPricePill.FillImage.gameObject.activeSelf, Is.False,
+                    "The generated Retry surface owns the inset pocket; shared price-pill fill must not be layered over it.");
+                Assert.That(retryPricePill.BorderImage.gameObject.activeSelf, Is.False,
+                    "The generated Retry surface owns the inset pocket; shared price-pill border must not be layered over it.");
+
+                Assert.That(
+                    runtimeLabels.Where(label => label != retryPricePill.AmountText)
+                        .All(label => AssetDatabase.GetAssetPath(label.font) == HudFontPath),
+                    Is.True,
+                    "Popup-owned labels must use the same production font as Main Menu and Store.");
+
+                Image shell = popup.GetComponentsInChildren<Image>(true)
+                    .Single(image => image.name == "NeutralGameOverShell");
+                Assert.That(AssetDatabase.GetAssetPath(shell.sprite), Is.EqualTo(ShellSpritePath));
+                Assert.That(AssetDatabase.GetAssetPath(shell.material), Is.EqualTo(ShellMaterialPath));
+                Assert.That(
+                    popup.GetComponentsInChildren<Image>(true)
+                        .Any(image => image.sprite != null && AssetDatabase.GetAssetPath(image.sprite) == LegacyFailureAtlasPath),
+                    Is.False,
+                    "The rejected baked title/button atlas must not return to the popup.");
 
                 FailureKnifeSpriteAnimator knifeAnimator = popup.GetComponentInChildren<FailureKnifeSpriteAnimator>(true);
                 Assert.That(knifeAnimator, Is.Not.Null);
@@ -68,8 +104,13 @@ namespace Game.UI.Tests
 
                 Assert.That(
                     popup.GetComponentsInChildren<UiElementAnimator>(true),
-                    Has.Length.EqualTo(4),
-                    "Title, impact art, Retry, and Menu must retain their stagger/settle presentation owners.");
+                    Has.Length.EqualTo(6),
+                    "Progress, title, glow, impact art, Retry, and Menu must retain their presentation owners.");
+
+                Image impactGlow = popup.GetComponentsInChildren<Image>(true)
+                    .Single(image => image.name == "ImpactGlow");
+                Assert.That(AssetDatabase.GetAssetPath(impactGlow.sprite), Is.EqualTo(ImpactGlowPath));
+                Assert.That(impactGlow.raycastTarget, Is.False);
 
                 Button[] buttons = popup.GetComponentsInChildren<Button>(true);
                 Assert.That(buttons, Has.Length.EqualTo(2));
@@ -79,9 +120,20 @@ namespace Game.UI.Tests
 
                 foreach (Button button in buttons)
                 {
+                    TouchTargetPadding padding = button.GetComponent<TouchTargetPadding>();
+                    Assert.That(padding, Is.Not.Null, $"{button.name} lost its shared touch-target padding.");
+                    Assert.That(padding.MinimumSizeDp, Is.GreaterThanOrEqualTo(48f));
+
                     GameObject source = PrefabUtility.GetCorrespondingObjectFromSource(button.gameObject);
                     Assert.That(source, Is.Not.Null, $"{button.name} lost its prefab link.");
                     Assert.That(AssetDatabase.GetAssetPath(source), Is.EqualTo(ActionButtonPrefabPath));
+
+                    Image surface = button.transform.Find("VisualRoot").GetComponent<Image>();
+                    TMP_Text label = button.transform.Find("VisualRoot/Label").GetComponent<TMP_Text>();
+                    Assert.That(
+                        AssetDatabase.GetAssetPath(surface.sprite),
+                        Is.EqualTo(button.name == "RetryButton" ? RetryButtonSpritePath : SecondaryButtonSpritePath));
+                    Assert.That(label.text, Is.EqualTo(button.name == "RetryButton" ? "RETRY" : "MENU"));
                 }
 
                 GameObject popupSource = PrefabUtility.GetCorrespondingObjectFromSource(popup.gameObject);
@@ -89,8 +141,12 @@ namespace Game.UI.Tests
                 Assert.That(AssetDatabase.GetAssetPath(popupSource), Is.EqualTo(PopupTemplatePath));
 
                 SerializedObject popupObject = new SerializedObject(popup);
+                Assert.That(popupObject.FindProperty("_StageLevelLabel").objectReferenceValue, Is.Not.Null);
                 Assert.That(popupObject.FindProperty("_RetryButton").objectReferenceValue, Is.Not.Null);
+                Assert.That(popupObject.FindProperty("_RetryPricePill").objectReferenceValue, Is.Not.Null);
                 Assert.That(popupObject.FindProperty("_MenuButton").objectReferenceValue, Is.Not.Null);
+                Assert.That(popupObject.FindProperty("_ContinueRequestedChannel").objectReferenceValue, Is.Not.Null);
+                Assert.That(popupObject.FindProperty("_RetryLevelChannel"), Is.Null);
                 Assert.That(popupObject.FindProperty("_RestartStageButton"), Is.Null);
                 Assert.That(popupObject.FindProperty("_ContinueButton"), Is.Null);
                 Assert.That(popupObject.FindProperty("_ContinueAmountText"), Is.Null);
@@ -100,9 +156,9 @@ namespace Game.UI.Tests
                         FindObjectsSortMode.None)
                     .Single(behaviour => behaviour != null && behaviour.GetType().Name == "StageInstaller");
                 SerializedObject installerObject = new SerializedObject(installer);
-                Assert.That(installerObject.FindProperty("_ContinueRequestedChannel"), Is.Null);
-                Assert.That(installerObject.FindProperty("_ContinuePlacement"), Is.Null);
-                Assert.That(installerObject.FindProperty("_InterstitialPlacement"), Is.Null);
+                Assert.That(installerObject.FindProperty("_ContinueRequestedChannel").objectReferenceValue, Is.Not.Null);
+                Assert.That(installerObject.FindProperty("_ContinuePlacement").objectReferenceValue, Is.Not.Null);
+                Assert.That(installerObject.FindProperty("_InterstitialPlacement").objectReferenceValue, Is.Not.Null);
             }
             finally
             {
@@ -112,7 +168,43 @@ namespace Game.UI.Tests
         }
 
         [Test]
-        public void RetryCommitsOnlyOnceForDuplicateInput()
+        public void StageLevelLabelUsesOneBasedAuthoritativeStageData()
+        {
+            var root = new GameObject("StageFailPopupProgressTest", typeof(RectTransform), typeof(CanvasGroup));
+            root.SetActive(false);
+
+            try
+            {
+                StageFailPopup popup = root.AddComponent<StageFailPopup>();
+                var labelObject = new GameObject("StageLevelLabel", typeof(RectTransform), typeof(TextMeshProUGUI));
+                labelObject.transform.SetParent(root.transform, false);
+                TMP_Text label = labelObject.GetComponent<TMP_Text>();
+                var stageData = new StageData(0, 2);
+                typeof(StageData)
+                    .GetProperty(nameof(StageData.CurrentLevelIndex))
+                    .SetValue(stageData, 4);
+
+                SerializedObject popupObject = new SerializedObject(popup);
+                popupObject.FindProperty("_StageLevelLabel").objectReferenceValue = label;
+                popupObject.ApplyModifiedPropertiesWithoutUndo();
+                typeof(StageFailPopup)
+                    .GetField("_StageData", BindingFlags.Instance | BindingFlags.NonPublic)
+                    .SetValue(popup, stageData);
+
+                typeof(StageFailPopup)
+                    .GetMethod("RefreshStageLevelLabel", BindingFlags.Instance | BindingFlags.NonPublic)
+                    .Invoke(popup, null);
+
+                Assert.That(label.text, Is.EqualTo("STAGE 3  •  LEVEL 5"));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(root);
+            }
+        }
+
+        [Test]
+        public void PaidRetryRequestsTheTransactionOnlyOnceForDuplicateInput()
         {
             var retryChannel = ScriptableObject.CreateInstance<VoidEventChannel>();
             var root = new GameObject("StageFailPopupTest", typeof(RectTransform), typeof(CanvasGroup));
@@ -127,7 +219,7 @@ namespace Game.UI.Tests
                 SerializedObject popupObject = new SerializedObject(popup);
                 popupObject.FindProperty("_RetryButton").objectReferenceValue = retryButton;
                 popupObject.FindProperty("_MenuButton").objectReferenceValue = menuButton;
-                popupObject.FindProperty("_RetryLevelChannel").objectReferenceValue = retryChannel;
+                popupObject.FindProperty("_ContinueRequestedChannel").objectReferenceValue = retryChannel;
                 popupObject.ApplyModifiedPropertiesWithoutUndo();
 
                 int raiseCount = 0;
@@ -148,6 +240,99 @@ namespace Game.UI.Tests
             {
                 UnityEngine.Object.DestroyImmediate(root);
                 UnityEngine.Object.DestroyImmediate(retryChannel);
+            }
+        }
+
+        [Test]
+        public void RetryStatePresentsTheConfiguredCoinCost()
+        {
+            var root = new GameObject("StageFailPopupCostTest", typeof(RectTransform), typeof(CanvasGroup));
+            root.SetActive(false);
+
+            try
+            {
+                StageFailPopup popup = root.AddComponent<StageFailPopup>();
+                Button retryButton = CreateButton("RetryButton", root.transform);
+                GameObject priceObject = (GameObject)PrefabUtility.InstantiatePrefab(
+                    AssetDatabase.LoadAssetAtPath<GameObject>(PricePillPrefabPath));
+                priceObject.transform.SetParent(retryButton.transform, false);
+                StorePricePillView pricePill = priceObject.GetComponent<StorePricePillView>();
+
+                SerializedObject popupObject = new SerializedObject(popup);
+                popupObject.FindProperty("_RetryButton").objectReferenceValue = retryButton;
+                popupObject.FindProperty("_RetryPricePill").objectReferenceValue = pricePill;
+                popupObject.ApplyModifiedPropertiesWithoutUndo();
+
+                popup.SetRetryState(true, true, 150);
+
+                Assert.That(retryButton.interactable, Is.True);
+                Assert.That(pricePill.AmountText.text, Is.EqualTo("150"));
+                Assert.That(pricePill.IconImage.gameObject.activeSelf, Is.True);
+                Assert.That(pricePill.IconImage.sprite, Is.SameAs(pricePill.CurrencyIconSprite));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(root);
+            }
+        }
+
+        [Test]
+        public void PaidRetrySpendsTheConfiguredCostBeforeReloadingTheLevel()
+        {
+            var continueChannel = ScriptableObject.CreateInstance<VoidEventChannel>();
+            var retryChannel = ScriptableObject.CreateInstance<VoidEventChannel>();
+            var levelFailedChannel = ScriptableObject.CreateInstance<LevelFailedEventChannel>();
+            var balanceChangedChannel = ScriptableObject.CreateInstance<CurrencyBalanceChangedEventChannel>();
+            var stageConfig = ScriptableObject.CreateInstance<StageConfig>();
+            var popupRoot = new GameObject("PaidRetryPopupTest", typeof(RectTransform), typeof(CanvasGroup));
+            popupRoot.SetActive(false);
+
+            try
+            {
+                typeof(StageConfig)
+                    .GetProperty(nameof(StageConfig.ContinueCosts))
+                    .SetValue(stageConfig, new List<int> { 0, 50 });
+                var stageData = new StageData(0, 0);
+                typeof(StageData)
+                    .GetProperty(nameof(StageData.CurrentLevelIndex))
+                    .SetValue(stageData, 1);
+                var currency = new FakeCurrencyService(200);
+                var catalog = new FakeLevelCatalog(stageConfig);
+                StageFailPopup popup = popupRoot.AddComponent<StageFailPopup>();
+                var controller = new AdRewardController(
+                    continueChannel,
+                    retryChannel,
+                    null,
+                    levelFailedChannel,
+                    balanceChangedChannel,
+                    currency,
+                    catalog,
+                    stageData,
+                    null,
+                    popup);
+
+                int retryCount = 0;
+                Action retryHandler = () => retryCount++;
+                retryChannel.Subscribe(retryHandler);
+                controller.Start();
+
+                continueChannel.Raise();
+
+                Assert.That(currency.Balance, Is.EqualTo(150));
+                Assert.That(currency.LastSpendAmount, Is.EqualTo(50));
+                Assert.That(retryCount, Is.EqualTo(1));
+
+                controller.Dispose();
+                retryChannel.Unsubscribe(retryHandler);
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(popupRoot);
+                UnityEngine.Object.DestroyImmediate(stageConfig);
+                UnityEngine.Object.DestroyImmediate(balanceChangedChannel);
+                UnityEngine.Object.DestroyImmediate(levelFailedChannel);
+                UnityEngine.Object.DestroyImmediate(retryChannel);
+                UnityEngine.Object.DestroyImmediate(continueChannel);
             }
         }
 
@@ -202,6 +387,45 @@ namespace Game.UI.Tests
             var gameObject = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
             gameObject.transform.SetParent(parent, false);
             return gameObject.GetComponent<Button>();
+        }
+
+        private sealed class FakeCurrencyService : ICurrencyService
+        {
+            public FakeCurrencyService(int balance)
+            {
+                Balance = balance;
+            }
+
+            public int Balance { get; private set; }
+            public int LastSpendAmount { get; private set; }
+            public int GetBalance(string currencyId) => Balance;
+            public void AddBalance(string currencyId, int amount) => Balance += amount;
+            public bool CanAfford(string currencyId, int amount) => Balance >= amount;
+
+            public bool TrySpend(string currencyId, int amount)
+            {
+                LastSpendAmount = amount;
+                if (!CanAfford(currencyId, amount))
+                    return false;
+
+                Balance -= amount;
+                return true;
+            }
+        }
+
+        private sealed class FakeLevelCatalog : ILevelCatalog
+        {
+            private readonly StageConfig _StageConfig;
+
+            public FakeLevelCatalog(StageConfig stageConfig)
+            {
+                _StageConfig = stageConfig;
+            }
+
+            public int StageCount => 1;
+            public int GetLevelCount(int stageIndex) => _StageConfig.ContinueCosts.Count;
+            public LevelConfig GetLevelConfig(int stageIndex, int levelIndex) => null;
+            public StageConfig GetStageConfig(int stageIndex) => _StageConfig;
         }
     }
 }
