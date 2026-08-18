@@ -20,7 +20,7 @@ MonoBehaviour:
   <Rewards>k__BackingField:
   - {fileID: 11400000, guid: 2e3f071ef9391074a8d9597d424f8b46, type: 2}
   <ContinueCosts>k__BackingField:
-  - 0
+  - 50
   - 50
   - 100
   <Levels>k__BackingField:

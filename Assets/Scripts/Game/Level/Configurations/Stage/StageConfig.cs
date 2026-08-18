@@ -22,8 +22,8 @@ namespace Game.Level.Configurations.Stage
         public List<RewardGrantEntryBase> Rewards { get; private set; } = new();
 
         [field: SerializeField]
-        [field: Tooltip("Coin cost to continue after failing each level in this stage. Index 0 is Level 1 and defaults to 0.")]
-        public List<int> ContinueCosts { get; private set; } = new() { 0 };
+        [field: Tooltip("Coin cost to continue after failing each level in this stage. Index 0 is Level 1.")]
+        public List<int> ContinueCosts { get; private set; } = new() { 50 };
         
         [Tooltip("List of levels contained in this stage.")]
         [field: SerializeField] public List<LevelConfig> Levels { get; private set; } = new();
@@ -49,7 +49,8 @@ namespace Game.Level.Configurations.Stage
             {
                 while (ContinueCosts.Count < Levels.Count)
                 {
-                    ContinueCosts.Add(0);
+                    int nextCost = ContinueCosts.Count > 0 ? ContinueCosts[^1] + 50 : 50;
+                    ContinueCosts.Add(nextCost);
                 }
 
                 while (ContinueCosts.Count > Levels.Count)
@@ -58,14 +59,9 @@ namespace Game.Level.Configurations.Stage
                 }
             }
 
-            if (ContinueCosts.Count > 0)
+            for (int i = 0; i < ContinueCosts.Count; i++)
             {
-                ContinueCosts[0] = 0;
-            }
-
-            for (int i = 1; i < ContinueCosts.Count; i++)
-            {
-                ContinueCosts[i] = Mathf.Max(0, ContinueCosts[i]);
+                ContinueCosts[i] = Mathf.Max(1, ContinueCosts[i]);
             }
 
             if (Levels == null) return;

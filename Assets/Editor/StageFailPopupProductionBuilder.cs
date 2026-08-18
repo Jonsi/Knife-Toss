@@ -7,6 +7,7 @@ using DG.Tweening;
 using Game.Ads.Data;
 using Game.Economy.Data;
 using Game.Installers;
+using Game.Level.Configurations.Stage;
 using Game.UI.Common;
 using Game.UI.Popups;
 using Game.UI.Store;
@@ -23,14 +24,12 @@ public static class StageFailPopupProductionBuilder
     private const string ActionButtonPrefabPath = "Assets/Prefabs/UI/Buttons/FailureActionButton.prefab";
     private const string PricePillPrefabPath = "Assets/Prefabs/UI/Store/PricePillView.prefab";
     private const string PopupTemplatePath = "Assets/Prefabs/UI/PopupTemplate.prefab";
-    private const string ShellSpritePath = "Assets/Art/UI/Failure/NeutralGameOverShell_Source.png";
-    private const string ShellShaderPath = "Assets/Shaders/UI/GeneratedCheckerboardKey.shader";
-    private const string ShellMaterialPath = "Assets/Art/UI/Failure/NeutralGameOverShell.mat";
+    private const string GameOverTitleSpritePath = "Assets/Art/UI/Failure/GameOverTitle_v2.png";
     private const string RetryButtonSpritePath = "Assets/Art/UI/Failure/FailureRetryButton_Source.png";
     private const string KnifeAnimationAtlasPath = "Assets/Art/UI/Failure/FailureKnivesAnimation.png";
     private const string PrimaryButtonSpritePath = "Assets/Art/UI/Core/ButtonPrimary.png";
     private const string SecondaryButtonSpritePath = "Assets/Art/UI/Core/ButtonSecondary.png";
-    private const string HudFontPath = "Assets/Art/UI/Fonts/BarlowCondensed-ExtraBold SDF.asset";
+    private const string DisplayFontPath = "Assets/Layer Lab/GUI Pro-CasualGame/ResourcesData/Fonts/LilitaOne-Regular SDF.asset";
     private const string ImpactGlowPath = "Assets/Layer Lab/GUI Pro-CasualGame/ResourcesData/Particles/Texture/fx_glow_small.png";
     private const string ContinueRequestedChannelPath = "Assets/Configurations/Events/Ads/ContinueRequestedChannel.asset";
     private const string ContinuePlacementPath = "Assets/Configurations/Systems/Ads/RewardPlacement/ContinuePlacement.asset";
@@ -45,7 +44,7 @@ public static class StageFailPopupProductionBuilder
 
         EnsureFolder("Assets/Prefabs/UI/Buttons");
         EnsureFolder("Assets/Art/UI/Failure");
-        bool importerChanged = ConfigureShellImporter();
+        bool importerChanged = ConfigureGameOverTitleImporter();
         importerChanged |= ConfigureRetryButtonImporter();
         importerChanged |= ConfigureKnifeAnimationImporter();
         if (importerChanged)
@@ -53,7 +52,8 @@ public static class StageFailPopupProductionBuilder
             EditorApplication.delayCall += Build;
             return;
         }
-        BuildActionButtonPrefab();
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(ActionButtonPrefabPath) == null)
+            BuildActionButtonPrefab();
         EnsureStageSceneOpen();
         UpdateScene();
 
@@ -71,14 +71,14 @@ public static class StageFailPopupProductionBuilder
         Debug.Log(ValidateInternal());
     }
 
-    private static bool ConfigureShellImporter()
-    {
-        return ConfigureGeneratedSpriteImporter(ShellSpritePath, "approved neutral shell", false);
-    }
-
     private static bool ConfigureRetryButtonImporter()
     {
         return ConfigureGeneratedSpriteImporter(RetryButtonSpritePath, "approved compound Retry button", true);
+    }
+
+    private static bool ConfigureGameOverTitleImporter()
+    {
+        return ConfigureGeneratedSpriteImporter(GameOverTitleSpritePath, "approved GAME OVER title", true);
     }
 
     private static bool ConfigureGeneratedSpriteImporter(
@@ -284,8 +284,8 @@ public static class StageFailPopupProductionBuilder
 
         RectTransform holderRect = (RectTransform)holder;
         holderRect.anchorMin = holderRect.anchorMax = holderRect.pivot = new Vector2(0.5f, 0.5f);
-        holderRect.anchoredPosition = new Vector2(0f, 30f);
-        holderRect.sizeDelta = new Vector2(1050f, 900f);
+        holderRect.anchoredPosition = new Vector2(0f, 10f);
+        holderRect.sizeDelta = new Vector2(1050f, 1200f);
         holderRect.localScale = Vector3.one;
         PrefabUtility.RecordPrefabInstancePropertyModifications(holderRect);
 
@@ -303,13 +303,16 @@ public static class StageFailPopupProductionBuilder
         PrefabUtility.RecordPrefabInstancePropertyModifications(contentRect);
         ClearChildren(content);
 
-        Image shell = CreateImage("NeutralGameOverShell", content, LoadSpriteAtPath(ShellSpritePath));
-        PlaceCenter(shell.rectTransform, new Vector2(0f, 40f), new Vector2(1050f, 727f));
-        shell.material = EnsureShellMaterial();
-        shell.preserveAspect = true;
+        if (popup.GetComponent<PopupFadeInAnimation>() == null)
+            throw new InvalidOperationException("StageFailPopup lost the shared PopupFadeInAnimation component.");
 
-        TMP_Text stageLevelLabel = CreateStageLevelLabel(content);
-        PlaceCenter(stageLevelLabel.rectTransform, new Vector2(0f, 326f), new Vector2(640f, 58f));
+        GameObject failureContentObject = CreateUiObject("FailureContent", content);
+        RectTransform failureContentRect = failureContentObject.GetComponent<RectTransform>();
+        Stretch(failureContentRect, Vector2.zero, Vector2.zero);
+        Transform failureContent = failureContentObject.transform;
+
+        TMP_Text stageLevelLabel = CreateStageLevelLabel(failureContent);
+        PlaceCenter(stageLevelLabel.rectTransform, new Vector2(0f, 455f), new Vector2(760f, 76f));
         ConfigureElementAnimator(
             stageLevelLabel.gameObject,
             stageLevelLabel.rectTransform,
@@ -321,8 +324,8 @@ public static class StageFailPopupProductionBuilder
             0.04f,
             false);
 
-        TMP_Text title = CreateTitleLabel(content);
-        PlaceCenter(title.rectTransform, new Vector2(0f, 250f), new Vector2(780f, 125f));
+        Image title = CreateImage("GameOverTitle", failureContent, LoadSpriteAtPath(GameOverTitleSpritePath));
+        PlaceCenter(title.rectTransform, new Vector2(0f, 235f), new Vector2(610f, 418f));
         ConfigureElementAnimator(
             title.gameObject,
             title.rectTransform,
@@ -334,8 +337,8 @@ public static class StageFailPopupProductionBuilder
             0.1f,
             false);
 
-        Image impactGlow = CreateImage("ImpactGlow", content, LoadSpriteAtPath(ImpactGlowPath));
-        PlaceCenter(impactGlow.rectTransform, new Vector2(0f, 35f), new Vector2(450f, 450f));
+        Image impactGlow = CreateImage("ImpactGlow", failureContent, LoadSpriteAtPath(ImpactGlowPath));
+        PlaceCenter(impactGlow.rectTransform, new Vector2(0f, -110f), new Vector2(450f, 450f));
         impactGlow.color = new Color(1f, 0.28f, 0.04f, 0.18f);
         ConfigureElementAnimator(
             impactGlow.gameObject,
@@ -350,8 +353,8 @@ public static class StageFailPopupProductionBuilder
         ConfigureHeartbeat(impactGlow.gameObject, 0.8f, 1.7f, 1.04f, 1.018f);
 
         Sprite[] knifeFrames = LoadKnifeAnimationFrames();
-        Image knives = CreateImage("CrossedKnives", content, knifeFrames[0]);
-        PlaceCenter(knives.rectTransform, new Vector2(0f, 35f), new Vector2(390f, 390f));
+        Image knives = CreateImage("CrossedKnives", failureContent, knifeFrames[0]);
+        PlaceCenter(knives.rectTransform, new Vector2(0f, -110f), new Vector2(390f, 390f));
         FailureKnifeSpriteAnimator knifeSpriteAnimator = knives.gameObject.AddComponent<FailureKnifeSpriteAnimator>();
         SerializedObject knifeAnimatorObject = new SerializedObject(knifeSpriteAnimator);
         SetReference(knifeAnimatorObject, "_TargetImage", knives);
@@ -379,10 +382,10 @@ public static class StageFailPopupProductionBuilder
         if (buttonPrefab == null)
             throw new InvalidOperationException($"Missing shared action button prefab: {ActionButtonPrefabPath}");
 
-        GameObject retryObject = (GameObject)PrefabUtility.InstantiatePrefab(buttonPrefab, content);
+        GameObject retryObject = (GameObject)PrefabUtility.InstantiatePrefab(buttonPrefab, failureContent);
         retryObject.name = "RetryButton";
         RectTransform retryRect = retryObject.GetComponent<RectTransform>();
-        PlaceCenter(retryRect, new Vector2(0f, -238f), new Vector2(730f, 205f));
+        PlaceCenter(retryRect, new Vector2(0f, -360f), new Vector2(760f, 222f));
         ConfigureButtonInstance(
             retryObject,
             RetryButtonSpritePath,
@@ -395,8 +398,8 @@ public static class StageFailPopupProductionBuilder
         PrefabUtility.RecordPrefabInstancePropertyModifications(retrySurface);
 
         TMP_Text retryLabel = retryObject.transform.Find("VisualRoot/Label").GetComponent<TMP_Text>();
-        retryLabel.fontSize = 78f;
-        retryLabel.characterSpacing = 2f;
+        retryLabel.fontSize = 72f;
+        retryLabel.characterSpacing = 1f;
         PrefabUtility.RecordPrefabInstancePropertyModifications(retryLabel);
         ConfigureElementAnimator(
             retryObject,
@@ -418,8 +421,8 @@ public static class StageFailPopupProductionBuilder
         retryPriceObject.name = "RetryPricePill";
         RectTransform retryPriceRect = retryPriceObject.GetComponent<RectTransform>();
         retryPriceRect.anchorMin = retryPriceRect.anchorMax = retryPriceRect.pivot = new Vector2(0.5f, 0.5f);
-        retryPriceRect.anchoredPosition = new Vector2(178f, 0f);
-        retryPriceRect.sizeDelta = new Vector2(200f, 78f);
+        retryPriceRect.anchoredPosition = new Vector2(188f, 0f);
+        retryPriceRect.sizeDelta = new Vector2(210f, 82f);
         retryPriceRect.localScale = Vector3.one;
         StorePricePillView retryPricePill = retryPriceObject.GetComponent<StorePricePillView>();
         retryPricePill.SetPrice(50, CurrencyType.Coin);
@@ -428,15 +431,15 @@ public static class StageFailPopupProductionBuilder
         RectTransform retryPriceContent = retryPriceObject.transform.Find("Content") as RectTransform;
         retryPriceContent.sizeDelta = new Vector2(-24f, -12f);
 
-        GameObject menuObject = (GameObject)PrefabUtility.InstantiatePrefab(buttonPrefab, content);
+        GameObject menuObject = (GameObject)PrefabUtility.InstantiatePrefab(buttonPrefab, failureContent);
         menuObject.name = "MenuButton";
         RectTransform menuRect = menuObject.GetComponent<RectTransform>();
-        PlaceCenter(menuRect, new Vector2(0f, -398f), new Vector2(400f, 112f));
+        PlaceCenter(menuRect, new Vector2(0f, -530f), new Vector2(460f, 132f));
         ConfigureButtonInstance(
             menuObject,
             SecondaryButtonSpritePath,
             "MENU",
-            new Color(1f, 0.96f, 0.87f, 1f),
+            new Color(0.105f, 0.045f, 0.012f, 1f),
             new Vector2(18f, 10f),
             new Vector2(-18f, -8f));
         ConfigureElementAnimator(
@@ -502,27 +505,10 @@ public static class StageFailPopupProductionBuilder
             "StageLevelLabel",
             parent,
             "STAGE 1  •  LEVEL 1",
-            42f,
+            50f,
             new Color(1f, 0.96f, 0.87f, 1f),
             TextAlignmentOptions.Center,
             true);
-    }
-
-    private static TMP_Text CreateTitleLabel(Transform parent)
-    {
-        TMP_Text label = CreateLabel(
-            "GameOverTitle",
-            parent,
-            "GAME OVER",
-            104f,
-            new Color(1f, 0.63f, 0.08f, 1f),
-            TextAlignmentOptions.Center,
-            true);
-        Outline outline = label.gameObject.AddComponent<Outline>();
-        outline.effectColor = new Color(0.12f, 0.055f, 0.018f, 0.95f);
-        outline.effectDistance = new Vector2(4f, -5f);
-        outline.useGraphicAlpha = true;
-        return label;
     }
 
     private static TMP_Text CreateLabel(
@@ -537,11 +523,11 @@ public static class StageFailPopupProductionBuilder
         GameObject gameObject = CreateUiObject(name, parent);
         TextMeshProUGUI label = gameObject.AddComponent<TextMeshProUGUI>();
         label.text = text;
-        label.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(HudFontPath);
+        label.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(DisplayFontPath);
         if (label.font == null)
-            throw new InvalidOperationException($"Missing HUD font at {HudFontPath}.");
+            throw new InvalidOperationException($"Missing display font at {DisplayFontPath}.");
         label.fontSize = fontSize;
-        label.fontStyle = FontStyles.Bold;
+        label.fontStyle = FontStyles.Normal;
         label.alignment = alignment;
         label.color = color;
         label.characterSpacing = 1f;
@@ -583,30 +569,13 @@ public static class StageFailPopupProductionBuilder
         if (label == null)
             throw new InvalidOperationException($"{buttonObject.name} lost its shared live Label.");
         label.text = labelText;
+        label.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(DisplayFontPath);
+        if (label.font == null)
+            throw new InvalidOperationException($"Missing display font at {DisplayFontPath}.");
+        label.fontStyle = FontStyles.Normal;
         label.color = labelColor;
         Stretch(label.rectTransform, labelOffsetMin, labelOffsetMax);
         PrefabUtility.RecordPrefabInstancePropertyModifications(label);
-    }
-
-    private static Material EnsureShellMaterial()
-    {
-        Shader shader = AssetDatabase.LoadAssetAtPath<Shader>(ShellShaderPath);
-        if (shader == null)
-            throw new InvalidOperationException($"Missing shell transparency shader at {ShellShaderPath}.");
-
-        Material material = AssetDatabase.LoadAssetAtPath<Material>(ShellMaterialPath);
-        if (material == null)
-        {
-            material = new Material(shader) { name = "NeutralGameOverShell" };
-            AssetDatabase.CreateAsset(material, ShellMaterialPath);
-        }
-        else if (material.shader != shader)
-        {
-            material.shader = shader;
-            EditorUtility.SetDirty(material);
-        }
-
-        return material;
     }
 
     private static void ConfigureElementAnimator(
@@ -693,27 +662,41 @@ public static class StageFailPopupProductionBuilder
 
         TMPro.TMP_Text[] runtimeLabels = popup.GetComponentsInChildren<TMPro.TMP_Text>(true);
         TMPro.TMP_Text stageLevelLabel = runtimeLabels.SingleOrDefault(label => label.name == "StageLevelLabel");
-        TMPro.TMP_Text titleLabel = runtimeLabels.SingleOrDefault(label => label.name == "GameOverTitle");
         StorePricePillView retryPricePill = popup.GetComponentInChildren<StorePricePillView>(true);
-        if (runtimeLabels.Length != 5 || stageLevelLabel == null || titleLabel == null || retryPricePill?.AmountText == null)
-            return "FAIL: popup must contain live progress, title, two action labels, and Retry cost text.";
+        Image[] popupImages = popup.GetComponentsInChildren<Image>(true);
+        Image titleImage = popupImages.SingleOrDefault(image => image.name == "GameOverTitle");
+        if (runtimeLabels.Length != 4 || stageLevelLabel == null || titleImage == null || retryPricePill?.AmountText == null)
+            return "FAIL: popup must contain live progress, image title, two action labels, and Retry cost text.";
         if (runtimeLabels.Where(label => label != retryPricePill.AmountText)
-            .Any(label => AssetDatabase.GetAssetPath(label.font) != HudFontPath))
-            return $"FAIL: all popup-owned typography must reuse the production font at {HudFontPath}.";
-        if (titleLabel.text != "GAME OVER")
-            return "FAIL: failure title must be the exact live label GAME OVER.";
+            .Any(label => AssetDatabase.GetAssetPath(label.font) != DisplayFontPath))
+            return $"FAIL: popup-owned progress and action typography must use {DisplayFontPath}.";
+        if (AssetDatabase.GetAssetPath(titleImage.sprite) != GameOverTitleSpritePath)
+            return $"FAIL: failure title must use the approved image at {GameOverTitleSpritePath}.";
         GameObject pricePillSource = PrefabUtility.GetCorrespondingObjectFromSource(retryPricePill.gameObject);
         if (pricePillSource == null || AssetDatabase.GetAssetPath(pricePillSource) != PricePillPrefabPath)
             return $"FAIL: Retry cost must retain its nested shared prefab link to {PricePillPrefabPath}.";
         if (retryPricePill.FillImage.gameObject.activeSelf || retryPricePill.BorderImage.gameObject.activeSelf)
             return "FAIL: Retry price content must sit directly in the generated inset pocket without a second pill surface.";
 
-        Image[] popupImages = popup.GetComponentsInChildren<Image>(true);
-        Image shell = popupImages.SingleOrDefault(image => image.name == "NeutralGameOverShell");
-        if (shell == null || AssetDatabase.GetAssetPath(shell.sprite) != ShellSpritePath)
-            return $"FAIL: popup must use the approved world-neutral shell at {ShellSpritePath}.";
-        if (AssetDatabase.GetAssetPath(shell.material) != ShellMaterialPath)
-            return $"FAIL: neutral shell must use the recovered-alpha material at {ShellMaterialPath}.";
+        Transform blackBackground = popup.transform.Find("BlackBackground");
+        Image scrim = blackBackground?.GetComponent<Image>();
+        if (scrim == null || scrim.color.a < 0.8f || scrim.color.a > 0.84f || !scrim.raycastTarget)
+            return "FAIL: failure presentation must use one interactive full-screen dark scrim.";
+
+        Transform holder = popup.transform.Find("Holder");
+        Image holderImage = holder?.GetComponent<Image>();
+        if (holderImage == null || holderImage.sprite != null || holderImage.color.a > 0.001f)
+            return "FAIL: failure presentation must not render an enclosing popup frame.";
+
+        Transform failureContent = popup.transform.Find("Holder/Content/FailureContent");
+        if (failureContent == null || new[] { stageLevelLabel.transform, titleImage.transform, retryPricePill.transform }
+            .Any(item => !item.IsChildOf(failureContent)))
+            return "FAIL: progress, title, knives, and actions must float directly over the darkened gameplay.";
+        if (popupImages.Any(image => image.name == "NeutralGameOverShell"))
+            return "FAIL: the retired failure-popup shell is still present.";
+
+        if (popup.GetComponent<PopupFadeInAnimation>() == null)
+            return "FAIL: shared popup transition is missing from the frame-free failure presentation.";
 
         Image impactGlow = popupImages.SingleOrDefault(image => image.name == "ImpactGlow");
         if (impactGlow == null || AssetDatabase.GetAssetPath(impactGlow.sprite) != ImpactGlowPath)
@@ -782,7 +765,17 @@ public static class StageFailPopupProductionBuilder
             installerObject.FindProperty("_InterstitialPlacement")?.objectReferenceValue == null)
             return "FAIL: StageInstaller paid-retry/interstitial bindings are incomplete.";
 
-        return "PASS: approved world-neutral Failure popup uses live stage/level and title typography, the configured coin-cost Retry transaction with shared price content inside the compound Retry surface, the new charcoal/teal/gold shell, a sixteen-frame independent-knife impact, restrained ambient glow/settle motion, two shared-prefab actions, valid recovery bindings, and PopupTemplate linkage.";
+        StageConfig[] activeStageConfigs = AssetDatabase.FindAssets("t:StageConfig", new[] { "Assets/Configurations/Worlds" })
+            .Select(AssetDatabase.GUIDToAssetPath)
+            .Where(path => !path.Contains("/Stages(OLD)/", StringComparison.Ordinal))
+            .Select(AssetDatabase.LoadAssetAtPath<StageConfig>)
+            .Where(stage => stage != null)
+            .ToArray();
+        if (activeStageConfigs.Length == 0 || activeStageConfigs.Any(stage =>
+                stage.ContinueCosts == null || stage.ContinueCosts.Count == 0 || stage.ContinueCosts[0] <= 0))
+            return "FAIL: every active stage must present a positive paid Retry cost from Level 1.";
+
+        return "PASS: approved frame-free Failure presentation uses one dark gameplay scrim, live Lilita stage/action typography, the dimensional GAME OVER title sprite, a positive configured coin-cost Retry transaction with shared price content, a sixteen-frame independent-knife impact, restrained ambient motion, two shared-prefab actions, valid recovery bindings, and PopupTemplate linkage.";
     }
 
     private static void EnsureStageSceneOpen()

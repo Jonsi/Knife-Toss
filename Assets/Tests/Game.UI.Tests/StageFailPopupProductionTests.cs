@@ -31,12 +31,11 @@ namespace Game.UI.Tests
         private const string ActionButtonPrefabPath = "Assets/Prefabs/UI/Buttons/FailureActionButton.prefab";
         private const string PricePillPrefabPath = "Assets/Prefabs/UI/Store/PricePillView.prefab";
         private const string LegacyFailureAtlasPath = "Assets/Art/UI/Failure/FailurePopupAtlas.png";
-        private const string ShellSpritePath = "Assets/Art/UI/Failure/NeutralGameOverShell_Source.png";
-        private const string ShellMaterialPath = "Assets/Art/UI/Failure/NeutralGameOverShell.mat";
+        private const string GameOverTitleSpritePath = "Assets/Art/UI/Failure/GameOverTitle_v2.png";
         private const string RetryButtonSpritePath = "Assets/Art/UI/Failure/FailureRetryButton_Source.png";
         private const string KnifeAnimationAtlasPath = "Assets/Art/UI/Failure/FailureKnivesAnimation.png";
         private const string SecondaryButtonSpritePath = "Assets/Art/UI/Core/ButtonSecondary.png";
-        private const string HudFontPath = "Assets/Art/UI/Fonts/BarlowCondensed-ExtraBold SDF.asset";
+        private const string DisplayFontPath = "Assets/Layer Lab/GUI Pro-CasualGame/ResourcesData/Fonts/LilitaOne-Regular SDF.asset";
         private const string ImpactGlowPath = "Assets/Layer Lab/GUI Pro-CasualGame/ResourcesData/Particles/Texture/fx_glow_small.png";
 
         [Test]
@@ -55,11 +54,22 @@ namespace Game.UI.Tests
                     .Single();
 
                 TMP_Text[] runtimeLabels = popup.GetComponentsInChildren<TMP_Text>(true);
-                Assert.That(runtimeLabels, Has.Length.EqualTo(5));
+                Assert.That(runtimeLabels, Has.Length.EqualTo(4));
                 TMP_Text stageLevelLabel = runtimeLabels.Single(label => label.name == "StageLevelLabel");
-                TMP_Text titleLabel = runtimeLabels.Single(label => label.name == "GameOverTitle");
-                Assert.That(AssetDatabase.GetAssetPath(stageLevelLabel.font), Is.EqualTo(HudFontPath));
-                Assert.That(titleLabel.text, Is.EqualTo("GAME OVER"));
+                Assert.That(AssetDatabase.GetAssetPath(stageLevelLabel.font), Is.EqualTo(DisplayFontPath));
+                Assert.That(runtimeLabels.Any(label => label.name == "GameOverTitle"), Is.False,
+                    "The dimensional GAME OVER art must not regress to flat live text.");
+
+                Image titleImage = popup.GetComponentsInChildren<Image>(true)
+                    .Single(image => image.name == "GameOverTitle");
+                Assert.That(AssetDatabase.GetAssetPath(titleImage.sprite), Is.EqualTo(GameOverTitleSpritePath));
+                TextureImporter titleImporter = AssetImporter.GetAtPath(GameOverTitleSpritePath) as TextureImporter;
+                Assert.That(titleImporter, Is.Not.Null);
+                Assert.That(titleImporter.textureType, Is.EqualTo(TextureImporterType.Sprite));
+                Assert.That(titleImporter.spriteImportMode, Is.EqualTo(SpriteImportMode.Single));
+                Assert.That(titleImporter.alphaIsTransparency, Is.True);
+                Assert.That(titleImporter.mipmapEnabled, Is.False);
+                Assert.That(titleImporter.textureCompression, Is.EqualTo(TextureImporterCompression.Uncompressed));
 
                 StorePricePillView retryPricePill = popup.GetComponentInChildren<StorePricePillView>(true);
                 Assert.That(retryPricePill, Is.Not.Null);
@@ -75,14 +85,45 @@ namespace Game.UI.Tests
 
                 Assert.That(
                     runtimeLabels.Where(label => label != retryPricePill.AmountText)
-                        .All(label => AssetDatabase.GetAssetPath(label.font) == HudFontPath),
+                        .All(label => AssetDatabase.GetAssetPath(label.font) == DisplayFontPath),
                     Is.True,
-                    "Popup-owned labels must use the same production font as Main Menu and Store.");
+                    "Progress and action labels must use the illustrated Main Menu display font.");
 
-                Image shell = popup.GetComponentsInChildren<Image>(true)
-                    .Single(image => image.name == "NeutralGameOverShell");
-                Assert.That(AssetDatabase.GetAssetPath(shell.sprite), Is.EqualTo(ShellSpritePath));
-                Assert.That(AssetDatabase.GetAssetPath(shell.material), Is.EqualTo(ShellMaterialPath));
+                Transform blackBackground = popup.transform.Find("BlackBackground");
+                Assert.That(blackBackground, Is.Not.Null);
+                Image scrim = blackBackground.GetComponent<Image>();
+                Assert.That(scrim, Is.Not.Null);
+                Assert.That(scrim.color.a, Is.InRange(0.8f, 0.84f));
+                Assert.That(scrim.raycastTarget, Is.True);
+
+                Transform holder = popup.transform.Find("Holder");
+                Assert.That(holder, Is.Not.Null);
+                Image holderImage = holder.GetComponent<Image>();
+                Assert.That(holderImage, Is.Not.Null);
+                Assert.That(holderImage.sprite, Is.Null);
+                Assert.That(holderImage.color.a, Is.LessThanOrEqualTo(0.001f));
+
+                Transform failureContent = popup.transform.Find("Holder/Content/FailureContent");
+                Assert.That(failureContent, Is.Not.Null);
+                Assert.That(stageLevelLabel.transform.IsChildOf(failureContent), Is.True);
+                Assert.That(titleImage.transform.IsChildOf(failureContent), Is.True);
+                Assert.That(retryPricePill.transform.IsChildOf(failureContent), Is.True);
+                Assert.That(
+                    popup.GetComponentsInChildren<Image>(true).Any(image => image.name == "NeutralGameOverShell"),
+                    Is.False,
+                    "Game Over must float over the scrim without an enclosing modal frame.");
+                Assert.That(popup.GetComponent<PopupFadeInAnimation>(), Is.Not.Null);
+
+                StageConfig[] activeStageConfigs = AssetDatabase
+                    .FindAssets("t:StageConfig", new[] { "Assets/Configurations/Worlds" })
+                    .Select(AssetDatabase.GUIDToAssetPath)
+                    .Where(path => !path.Contains("/Stages(OLD)/", StringComparison.Ordinal))
+                    .Select(AssetDatabase.LoadAssetAtPath<StageConfig>)
+                    .Where(stage => stage != null)
+                    .ToArray();
+                Assert.That(activeStageConfigs, Is.Not.Empty);
+                Assert.That(activeStageConfigs.All(stage =>
+                    stage.ContinueCosts is { Count: > 0 } && stage.ContinueCosts[0] > 0), Is.True);
                 Assert.That(
                     popup.GetComponentsInChildren<Image>(true)
                         .Any(image => image.sprite != null && AssetDatabase.GetAssetPath(image.sprite) == LegacyFailureAtlasPath),
@@ -134,6 +175,7 @@ namespace Game.UI.Tests
                         AssetDatabase.GetAssetPath(surface.sprite),
                         Is.EqualTo(button.name == "RetryButton" ? RetryButtonSpritePath : SecondaryButtonSpritePath));
                     Assert.That(label.text, Is.EqualTo(button.name == "RetryButton" ? "RETRY" : "MENU"));
+                    Assert.That(AssetDatabase.GetAssetPath(label.font), Is.EqualTo(DisplayFontPath));
                 }
 
                 GameObject popupSource = PrefabUtility.GetCorrespondingObjectFromSource(popup.gameObject);
@@ -291,11 +333,8 @@ namespace Game.UI.Tests
             {
                 typeof(StageConfig)
                     .GetProperty(nameof(StageConfig.ContinueCosts))
-                    .SetValue(stageConfig, new List<int> { 0, 50 });
+                    .SetValue(stageConfig, new List<int> { 50, 100 });
                 var stageData = new StageData(0, 0);
-                typeof(StageData)
-                    .GetProperty(nameof(StageData.CurrentLevelIndex))
-                    .SetValue(stageData, 1);
                 var currency = new FakeCurrencyService(200);
                 var catalog = new FakeLevelCatalog(stageConfig);
                 StageFailPopup popup = popupRoot.AddComponent<StageFailPopup>();

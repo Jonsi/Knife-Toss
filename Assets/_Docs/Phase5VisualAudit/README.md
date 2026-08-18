@@ -1,134 +1,154 @@
-# Phase 5 Failure Popup Reference
+# Phase 5 Frame-Free Failure Presentation
 
-## Approved content and behavior contract
+## Approved content and behavior
 
-The failure popup contains these player-facing elements only:
+The failure presentation contains only:
 
 - `STAGE {n} • LEVEL {n}` from authoritative live stage data.
 - `GAME OVER`.
-- The crossed-knives collision animation and impact glow.
+- The crossed-knives collision animation and restrained impact glow.
 - `RETRY` with the configured live coin cost.
 - `MENU`.
 
-There is no failure-description sentence, `Knife Collision` label, `Start Over` action,
-second retry action, or decorative copy. Retry is not free: it raises the existing paid-retry
-request, spends the configured per-level coin cost through the existing currency transaction,
-and reloads only after that transaction succeeds. Menu returns to Main Menu.
+There is no description sentence, `Knife Collision` label, `Start Over` action, second Retry
+action, decorative copy, or enclosing popup frame. Retry raises the existing paid-retry request,
+spends the configured per-level coin cost through the existing currency transaction, and reloads
+only after that transaction succeeds. Menu returns to Main Menu.
 
-## Approved world-neutral art direction
+## Approved art direction
 
-![Approved neutral popup concept](Captures/FAIL502_NeutralPopupConcept.png)
+The product-owner-approved direction from 2026-08-16 is frame-free: gameplay remains visible
+under one full-screen dark scrim while the live failure content floats over it. This is the
+default visual rule for theme-neutral modal presentation: do not add a large parchment, shield,
+wood, teal/gold, or biome-specific enclosure when the background dimmer and content hierarchy
+already communicate modality.
 
-`Captures/FAIL502_NeutralPopupConcept.png` is the product-owner-selected direction from
-2026-08-16. It supersedes the earlier tall parchment popup and every forest-specific popup
-exploration. The first, large concept on the board is the source of truth.
+The frame-free reference was generated from the approved Main Menu, Store, and Gameplay HUD
+screens. Its built-in ImageGen output is
+`exec-1d777392-3115-44f3-911c-b5db71fef176.png`. It established this hierarchy:
 
-The reusable popup shell must not inherit a gameplay world's scenery. It contains no leaves,
-vines, flowers, roots, lava, fire, water, shells, crystals, snow, or other biome identity. The
-same shell is intended to sit unchanged over Verdant Forest, Ember Peaks, Crystal Lagoon, and
-Elder Grove. World identity remains in the dimmed gameplay behind the modal.
+1. Small live stage/level progress.
+2. Large illustrated `GAME OVER` wordmark.
+3. Existing red/blue crossed-knives impact.
+4. Wide orange paid Retry CTA with integrated live price.
+5. Smaller teal Menu action.
 
-The shell instead follows the completed Main Menu and Store language:
-
-- Compact layered shield silhouette rather than a tall rectangular frame.
-- Dark charcoal/leather center surface with offset deep-teal side plates.
-- Warm gold/brass bevels, rivets, crisp dark outlines, and restrained cyan edge light.
-- Bold live cream/orange typography.
-- Orange/gold primary action and teal secondary action.
-- Energy from silhouette, overlap, scale, glow, and motion rather than biome decoration.
+The earlier layered charcoal/teal/gold shell and its fold animation are rejected. The runtime
+`FailurePopupFoldAnimation.png`, `PopupSpriteSequenceAnimator.cs`, and their fold-only
+validation captures were removed to the OS Trash and are no longer referenced by the project.
+The older concept/source images remain only as historical audit material; StageFailPopup does
+not use them.
 
 ## Implemented Unity composition
 
-![Implemented neutral Game Over popup](Captures/FAIL502_NeutralShell_Implemented.png)
-
 The production result is assembled in `Assets/Scenes/StagePlay.unity` while retaining the
-`Assets/Prefabs/UI/PopupTemplate.prefab` link. The former `popup_frame.png` visual is no longer
-used by StageFailPopup.
+`Assets/Prefabs/UI/PopupTemplate.prefab` link:
 
-The new shell source is
-`Assets/Art/UI/Failure/NeutralGameOverShell_Source.png`. It was generated with the built-in
-image-generation workflow from the approved concept plus the final Main Menu and Store
-screens. The generator returned the neutral preview checker as RGB pixels instead of alpha,
-so production uses `Assets/Shaders/UI/GeneratedCheckerboardKey.shader` through
-`Assets/Art/UI/Failure/NeutralGameOverShell.mat` to recover transparent exterior pixels while
-preserving the colored shell and its soft shadow. The shader is local to this generated source;
-shared production sprites are not modified.
+- `BlackBackground` is the only modal surface. It is a raycast-blocking black image at 0.82
+  alpha, so the current world remains visible without competing with the actions.
+- `Holder` retains no sprite, material, fill, or visible color.
+- `Holder/Content/FailureContent` contains the live labels, glow, knives, Retry, and Menu.
+- No `NeutralGameOverShell`, legacy popup frame, or shell sprite animator exists in the
+  hierarchy.
+- `PopupFadeInAnimation` remains the shared popup transition owner, while each visible element
+  retains its own short staggered `UiElementAnimator` entrance.
 
-All wording remains live Unity UI rather than baked artwork:
+The hierarchy combines live data with authored display art:
 
-- Stage/level and `GAME OVER` use `BarlowCondensed-ExtraBold SDF`.
-- The shared `Assets/Prefabs/UI/Buttons/FailureActionButton.prefab` owns hit area, press/state
-  presentation, motion, and its live label.
-- Retry uses the approved compound surface at
-  `Assets/Art/UI/Failure/FailureRetryButton_Source.png`: thick charcoal backing, gold/brass
-  bevels, a dimensional orange face, and a built-in dark cost pocket.
-- Menu uses `Assets/Art/UI/Core/ButtonSecondary.png` with a darker teal tint.
-- Retry still nests the existing `Assets/Prefabs/UI/Store/PricePillView.prefab`, but its duplicate
-  fill and border layers are hidden so only the shared live coin icon and amount occupy the
-  surface's integrated pocket. The cost remains a runtime value rather than a baked `50`.
+- Stage/level, Retry, and Menu remain live Unity text and use the same
+  `LilitaOne-Regular SDF` display face already used by the approved Main Menu chrome.
+- `GAME OVER` is the transparent authored sprite
+  `Assets/Art/UI/Failure/GameOverTitle_v2.png`, not a flat runtime font treatment. Its gold
+  `GAME`, ivory `OVER`, dark painted outline, and beveled depth follow the established
+  `TOSS MADNESS` logo language while remaining biome-neutral.
+- The shared `Assets/Prefabs/UI/Buttons/FailureActionButton.prefab` owns the hit area,
+  interaction presentation, and live label for both actions.
+- The builder instantiates the existing shared action prefab and does not rewrite it when it
+  already exists.
+- Retry uses `Assets/Art/UI/Failure/FailureRetryButton_Source.png`.
+- Menu uses `Assets/Art/UI/Core/ButtonSecondary.png` at its native saturated teal rather than a
+  muted tint. Both action labels use the same dark-brown Lilita treatment for a coherent pair.
+- Retry nests `Assets/Prefabs/UI/Store/PricePillView.prefab`; its duplicate fill and border are
+  hidden so the shared live coin icon and amount occupy the Retry surface's integrated pocket.
+- All sixteen active stage configurations start Level 1 Retry at `50`, and `StageConfig`
+  preserves a positive configured price instead of forcing Level 1 to zero.
 
 The action collection is permanently bounded to Retry and Menu, so pooling or virtualization
-does not apply. Both instances retain their shared prefab link and 48 dp touch-target padding.
+does not apply. Both instances retain their shared prefab links and 48 dp touch-target padding.
 
-## Knife motion and liveliness
+## Motion
 
-The accepted crossed-knives animation remains in
-`Assets/Art/UI/Failure/FailureKnivesAnimation.png` as sixteen ordered 512×512 frames. The two
-knives approach independently, collide, play the orange impact, and hold the final pose. It
-runs on unscaled time after a 0.08-second delay at 0.028 seconds per frame. The detailed frame
-recipe remains in `FAIL502_KnifeAnimationProduction.md`.
+The crossed-knives animation remains at
+`Assets/Art/UI/Failure/FailureKnivesAnimation.png` as sixteen ordered 512×512 frames. The knives
+approach independently, collide, play the orange impact, and hold the final pose. It runs on
+unscaled time after a 0.08-second delay at 0.028 seconds per frame because the modal pauses
+gameplay. The detailed recipe remains in `FAIL502_KnifeAnimationProduction.md`.
 
-The shell is revealed by the existing popup transition. Progress, title, impact glow, knives,
-Retry, and Menu use staggered `UiElementAnimator` presentation. Only the glow, knives, and
-primary action receive restrained settled heartbeat motion; the shell itself stays stable for
-readability.
+Progress, title, glow, knives, Retry, and Menu use staggered element motion. The glow, knives,
+and primary action retain restrained settled heartbeat motion. There is no panel animation.
 
-## Validation evidence
+## Validation contract
 
-- `Captures/FAIL502_NeutralShell_FirstPass.png` records the initial integration review that
-  exposed a checker-alpha halo and an incorrectly high progress label. Both were corrected.
-- `Captures/FAIL502_NeutralShell_Implemented.png` records the corrected Play Mode composition
-  with live `STAGE 3 • LEVEL 1`, `GAME OVER`, paid Retry cost `50`, Menu, and the neutral shell.
-- `Captures/FAIL502_NeutralShell_Motion.mp4` records the initial neutral-shell integration before
-  the Retry visual redesign. Its 90 source frames established the popup/knife motion baseline.
-- `Captures/FAIL502_RetryButton_Redesign_Final.png` records the corrected compound Retry CTA:
-  large live label, integrated live price, no duplicate pill frame, and no white extraction halo.
-- `Captures/FAIL502_RetryButton_Redesign_Motion.mp4` is the updated three-second, 1080×1920,
-  30 fps/90-frame Play Mode recording. Contact-sheet review confirms the larger CTA enters and
-  settles without clipping, texture crawl, or layout wobble while the knife impact still advances.
-- `Tools/Toss Madness/UI/Validate Approved Failure Popup` verifies the shell/material,
-  authoritative live labels, no legacy baked failure atlas, two shared action-prefab instances,
-  shared price-pill link, ordered knife frames, input-safe glow, paid-retry channel, installer
-  recovery bindings, and PopupTemplate link.
-- `StageFailPopupProductionTests` covers the same scene/prefab contract plus one-based progress,
-  configured cost presentation/spend, duplicate-input protection, and knife frame order/final
-  hold.
-- The complete EditMode run passed 195/195 tests after the final neutral-shell integration.
+`Tools/Toss Madness/UI/Validate Approved Failure Popup` verifies:
+
+- One interactive full-screen dark scrim at the approved opacity.
+- A transparent holder with no frame sprite.
+- No retired shell object or legacy baked failure atlas.
+- Authoritative live stage/level typography and the approved transparent `GAME OVER` sprite.
+- Exactly two shared action-prefab instances.
+- The nested shared price-pill link and positive paid Retry cost.
+- Ordered knife-animation frames and input-safe glow.
+- Paid-retry channel, installer recovery bindings, and PopupTemplate linkage.
+
+`StageFailPopupProductionTests` covers the same scene/prefab contract plus one-based progress,
+configured cost presentation/spend, duplicate-input protection, knife frame order/final hold,
+and shared prefab ownership.
+
+Final frame-free Game-view evidence is stored as:
+
+- `Captures/FAIL502_FrameFree_Final.png`
+- `Captures/FAIL502_FrameFree_Motion.mp4`
+
+The prettier title/type/button revision is stored as:
+
+- `Captures/FAIL502_PrettyTitle_Final.png`
+- `Captures/FAIL502_PrettyTitle_Motion.mp4`
+
+Final validation on Unity 6000.4.2f1, Android target, repeated after the prettier title/type/button
+revision on 2026-08-18:
+
+- The production validator passed with no Console errors or warnings.
+- The complete EditMode suite passed `195/195` with no failures or skips.
+- `GameOverTitle_v2.png` was verified as an 1182×809 RGBA single sprite with transparency,
+  mipmaps disabled, bilinear filtering, and uncompressed import.
+- The current 1080×1920 Game-view still was inspected for hierarchy, title edges, typography,
+  button balance, spacing, cost, and the absence of an enclosing frame.
+- The 3-second, 30 fps, 90-frame Game-view recording was inspected across entry, stable hold,
+  knife impact, and exit. It confirms the scrim-only modal treatment, clean wordmark alpha, and
+  smooth shared popup transition over live gameplay.
 
 ## Generated-art provenance
 
-The approved concept board was generated from the direction: create several polished mobile
-Game Over popup references that match Toss Madness Main Menu and Store art, stay neutral across
-all gameplay worlds, and show only live stage/level, `GAME OVER`, crossed knives, paid Retry,
-and Menu. The product owner selected the first, large concept. Its original generator output was
-`exec-d0577462-13e6-4f98-bd33-d60c7a69fb9f.png`; the project copy is
-`Captures/FAIL502_NeutralPopupConcept.png`.
+The approved frame-free reference used built-in ImageGen with:
 
-The production shell was generated from the selected concept with the direction: isolate the
-compact charcoal, teal, and gold popup shell as a clean front-facing UI asset; preserve the
-layered shield silhouette, bevels, rivets, cyan rim light, inner surface, and soft shadow; remove
-all text, buttons, knives, currency, gameplay scenery, and biome motifs. The final generator
-output was `exec-af9629c5-39db-4c51-9cdd-3e76e40992e3.png`; the project source is
-`Assets/Art/UI/Failure/NeutralGameOverShell_Source.png`.
+- Main Menu final review as style reference.
+- Store final review as style reference.
+- Gameplay HUD reference as layout/background reference.
+- Exact copy: `STAGE 3 • LEVEL 1`, `GAME OVER`, `RETRY`, `50`, and `MENU`.
+- Constraints: no enclosing panel, no fold layers, no descriptive copy, no extra actions, and no
+  theme-specific decoration.
 
-The Retry surface was generated from the selected large concept with the direction: isolate one
-front-facing compound Retry button in the same painterly arcade style; use a thick charcoal outer
-backing, gold/brass beveled trim, vivid orange face, and an empty dark inset cost pocket; leave a
-large blank label area; include no text, number, coin, popup shell, scenery, or biome motif. The
-built-in generator output was `exec-17b55639-4634-4aa7-a722-9e1c24585c37.png`. The production
-copy was tightly cropped and its generated neutral preview pixels were converted to true alpha at
-`Assets/Art/UI/Failure/FailureRetryButton_Source.png`; all wording and price content remain live.
+The output `exec-1d777392-3115-44f3-911c-b5db71fef176.png` remains an art-direction reference
+only.
 
-All project-bound outputs are stored under `Assets/Art/UI/Failure` and
-`Assets/_Docs/Phase5VisualAudit/Captures`; no runtime asset depends on a file outside the
-repository.
+The production title revision from 2026-08-18 also used built-in ImageGen. Inputs were the
+approved Main Menu final capture as the authoritative wordmark-style reference and the prior
+frame-free Game Over capture as the composition reference. The prompt required exactly `GAME`
+over `OVER`, gold and ivory beveled faces, the Main Menu logo's dark painted outline/depth,
+mobile-scale readability, genuine transparency, and no panel, icons, scene art, or extra copy.
+The selected generated source is `exec-c47d63fa-db73-404e-8dc6-f831312f8332.png`. Because the
+service encoded its checkerboard as RGB despite two explicit alpha requests, an edge-connected
+background extraction converted only the exterior checkerboard to alpha while preserving the
+enclosed ivory letters. The verified RGBA workspace asset is
+`Assets/Art/UI/Failure/GameOverTitle_v2.png`; runtime never references the external generated
+source.
