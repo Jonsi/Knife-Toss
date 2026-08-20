@@ -1,6 +1,6 @@
 # Toss Madness Core Gameplay Refinement Phases
 
-Last updated: 2026-08-10
+Last updated: 2026-08-18
 
 Live execution status: [Core Gameplay Refinement Tracker](CORE_GAMEPLAY_REFINEMENT_TRACKER.md)
 
@@ -380,14 +380,15 @@ Make failure immediate, fair, and recoverable while maintaining arcade pacing.
 - Strengthen the visual impact when a thrown knife hits a stuck knife.
 - Make the collision cause clear in the pre-modal impact beat. Do not add cause-description
   copy to the popup.
-- Use `Game Over` as the popup's only headline/informational copy. Do not show stage, level,
-  collision, or explanatory text there.
-- Make `Retry` the single dominant recovery action.
+- Use `Game Over` as the popup's only headline while retaining the approved live
+  `STAGE {n} • LEVEL {n}` progress. Do not show collision-cause or explanatory copy there.
+- Make the configured paid `Retry` the single dominant recovery action and show its live coin
+  cost through the nested shared price pill.
 - Keep `Menu` as the quiet exit.
 - Remove Start Over from the failure popup because it is redundant on Level 1 and only
   discards cleared-level progress later.
-- Remove Continue, its price/ad variants, and related recovery presentation. The current
-  Continue path has no distinct outcome from free Retry.
+- Remove Continue and all of its free, price, and ad variants. Paid Retry remains intentionally
+  distinct: it reloads only after the existing currency transaction succeeds.
 - Tune the time from collision to input-ready failure UI.
 
 ### Deliverables
@@ -398,19 +399,21 @@ Make failure immediate, fair, and recoverable while maintaining arcade pacing.
 - Recorded single-recovery decision and legacy-action removal contract.
 - Complete recovery-path regression suite.
 
-Implementation status (2026-08-15): the revised popup hierarchy, single primary Retry,
-quiet Menu, legacy Start Over/Continue removal, real-input behavior checks, and inspected
-collision-to-popup recording are complete. Evidence is indexed in
+Implementation status (2026-08-18): the approved frame-free dark-scrim hierarchy, live
+stage/level progress, authored title sprite, paid primary Retry with live cost, quiet Menu,
+legacy Start Over/Continue removal, real-input behavior checks, and inspected popup recordings
+are complete. Evidence is indexed in
 `Assets/_Docs/Phase5VisualAudit/README.md`. The broader production collision cue and the
 remaining full recovery/reduced-motion regression matrix stay open under FAIL-501/FAIL-506.
 
 ### Exit Criteria
 
 - A first-time player understands why they failed.
-- That understanding comes from the collision beat; the settled popup says only `Game Over`
-  before its `Retry` and `Menu` actions.
+- That understanding comes from the collision beat; the settled popup adds no cause-description
+  copy beyond its live stage/level progress, `Game Over`, paid `Retry`, and `Menu`.
 - Retry can be chosen immediately and is unmistakably primary.
-- No Start Over, Continue, price, ad, or currency recovery action appears in the popup.
+- No Start Over, Continue, or ad recovery action appears in the popup; paid Retry and its live
+  configured coin cost remain intentionally present.
 - Every recovery path returns to a valid state without reward, inventory, or input errors.
 - The dramatic beat does not feel sluggish after repeated failures.
 

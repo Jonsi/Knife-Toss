@@ -114,6 +114,16 @@ The prettier title/type/button revision is stored as:
 - `Captures/FAIL502_PrettyTitle_Final.png`
 - `Captures/FAIL502_PrettyTitle_Motion.mp4`
 
+AUDIO-701 runtime evidence is stored as:
+
+- `Captures/AUDIO701_ProductionCue_Motion.mp4`
+
+The 48.2-second audio-bearing montage preserves local timing from five inspected Play Mode
+windows: reward/target-stick cues, the first real aligned knife collision and failure, paid
+Retry spend/reload, the second real collision and failure, and Menu return. Cue onsets occur at
+2.57, 8.73, 14.30, 22.70, 31.90, and 40.78 seconds. Extracted onset frames and the montage
+spectrogram were inspected; the mixed track peaks at -0.43 dBFS without digital clipping.
+
 Final validation on Unity 6000.4.2f1, Android target, repeated after the prettier title/type/button
 revision on 2026-08-18:
 

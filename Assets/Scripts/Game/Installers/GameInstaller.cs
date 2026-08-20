@@ -155,6 +155,8 @@ namespace Game.Installers
 
             builder.RegisterInstance(_SoundSettings);
             builder.RegisterComponent(_AudioPlayer).As<IAudioPlayer>();
+            builder.Register<UnityFeedbackPresentationClock>(Lifetime.Singleton)
+                .As<IFeedbackPresentationClock>();
 
             if (_CurrencyBalanceChangedEventChannel != null)
             {
@@ -170,8 +172,6 @@ namespace Game.Installers
                 if (_FeedbackOutputCatalog != null)
                 {
                     builder.RegisterInstance(_FeedbackOutputCatalog);
-                    builder.Register<UnityFeedbackPresentationClock>(Lifetime.Singleton)
-                        .As<IFeedbackPresentationClock>();
                     builder.Register<FeedbackVfxSignal>(Lifetime.Singleton)
                         .AsSelf()
                         .As<IFeedbackVfxPlayer>();

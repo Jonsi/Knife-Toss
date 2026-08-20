@@ -17,6 +17,8 @@ namespace Game.UI.Common
     [RequireComponent(typeof(CanvasGroup))]
     public sealed class ActionButtonPresenter : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
     {
+        public const string PressFeedbackCueId = "ui.press";
+
         private static readonly Color FallbackEmber = ParseColor("#F26A2E");
         private static readonly Color FallbackTextIvory = ParseColor("#FFF4DE");
 
@@ -308,6 +310,10 @@ namespace Game.UI.Common
             CapturePressBaseScale();
             _Model.SetPressed(true);
             ApplyState();
+            _FeedbackChannel?.Raise(new FeedbackEventData(
+                FeedbackKind.Navigation,
+                PressFeedbackCueId,
+                gameObject.name));
         }
 
         public void OnPointerUp(PointerEventData eventData)

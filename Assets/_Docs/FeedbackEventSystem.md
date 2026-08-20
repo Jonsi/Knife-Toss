@@ -99,10 +99,14 @@ events and allows existing pooled stage VFX to remain unchanged until an approve
 them.
 
 The production catalog currently covers the exact blocked and insufficient-funds cue IDs
-emitted by `ActionButtonPresenter` owners. Blocked cues map to the existing `ButtonClickClip` at
-0.8 volume, `ui.blocked`, and a light haptic; insufficient-funds cues map to the same neutral UI
-clip, `ui.insufficient_funds`, and a medium haptic. The stable VFX identifiers are routed and
+emitted by `ActionButtonPresenter` owners. AUDIO-701 maps both families to the short CC0
+`UI_Denied_01` cue at 0.6 volume, while retaining `ui.blocked` plus a light haptic for blocked
+actions and `ui.insufficient_funds` plus a medium haptic for insufficient funds. The stable VFX identifiers are routed and
 tested, but no production VFX asset consumes them yet; final effect art remains outside UX-405.
+
+Shared `ActionButtonPresenter` pointer-down presentation also raises the exact low-priority
+`Navigation / ui.press` semantic. AUDIO-701 maps it to `UI_Click_01` at 0.55 with the existing
+0.15-second identical-button cooldown; it intentionally has no separate VFX or haptic output.
 
 Focused EditMode coverage validates the production asset wiring, unique exact mappings,
 independent audio/VFX/haptic routing, per-context cooldown suppression and exact boundaries,

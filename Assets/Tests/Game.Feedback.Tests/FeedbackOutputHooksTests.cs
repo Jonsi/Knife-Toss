@@ -5,6 +5,7 @@ using Game.Feedback.Events;
 using Game.Feedback.Haptics;
 using Game.Feedback.Presentation;
 using Game.Feedback.VFX.Services;
+using Game.UI.Common;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -21,16 +22,26 @@ namespace Game.Feedback.Tests
             FeedbackOutputCatalog catalog =
                 AssetDatabase.LoadAssetAtPath<FeedbackOutputCatalog>(catalogPath);
             Assert.That(catalog, Is.Not.Null);
-            Assert.That(catalog.Mappings, Has.Count.EqualTo(11));
+            Assert.That(catalog.Mappings, Has.Count.EqualTo(12));
 
             var keys = new System.Collections.Generic.HashSet<string>(System.StringComparer.Ordinal);
             foreach (FeedbackOutputMapping mapping in catalog.Mappings)
             {
                 Assert.That(mapping, Is.Not.Null);
                 Assert.That(mapping.AudioClip, Is.Not.Null, mapping.CueId);
-                Assert.That(mapping.VfxCueId, Is.Not.Empty, mapping.CueId);
-                Assert.That(mapping.HapticStyle, Is.Not.EqualTo(FeedbackHapticStyle.None), mapping.CueId);
                 Assert.That(keys.Add($"{mapping.Kind}:{mapping.CueId}"), Is.True, mapping.CueId);
+
+                if (mapping.Kind == FeedbackKind.Navigation &&
+                    mapping.CueId == ActionButtonPresenter.PressFeedbackCueId)
+                {
+                    Assert.That(mapping.VfxCueId, Is.Empty);
+                    Assert.That(mapping.HapticStyle, Is.EqualTo(FeedbackHapticStyle.None));
+                }
+                else
+                {
+                    Assert.That(mapping.VfxCueId, Is.Not.Empty, mapping.CueId);
+                    Assert.That(mapping.HapticStyle, Is.Not.EqualTo(FeedbackHapticStyle.None), mapping.CueId);
+                }
             }
 
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(

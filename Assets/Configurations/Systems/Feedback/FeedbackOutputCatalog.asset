@@ -15,67 +15,73 @@ MonoBehaviour:
   _Mappings:
   - _Kind: 1
     _CueId: navigation.failed
-    _AudioClip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
-    _AudioVolume: 0.8
+    _AudioClip: {fileID: 8300000, guid: e63d2e224866144db8f563c1535a9765, type: 3}
+    _AudioVolume: 0.6
     _VfxCueId: ui.blocked
     _HapticStyle: 1
   - _Kind: 1
     _CueId: ad.reward_blocked
-    _AudioClip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
-    _AudioVolume: 0.8
+    _AudioClip: {fileID: 8300000, guid: e63d2e224866144db8f563c1535a9765, type: 3}
+    _AudioVolume: 0.6
     _VfxCueId: ui.blocked
     _HapticStyle: 1
   - _Kind: 1
     _CueId: store.remove_ads_blocked
-    _AudioClip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
-    _AudioVolume: 0.8
+    _AudioClip: {fileID: 8300000, guid: e63d2e224866144db8f563c1535a9765, type: 3}
+    _AudioVolume: 0.6
     _VfxCueId: ui.blocked
     _HapticStyle: 1
   - _Kind: 1
     _CueId: store.purchase_blocked
-    _AudioClip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
-    _AudioVolume: 0.8
+    _AudioClip: {fileID: 8300000, guid: e63d2e224866144db8f563c1535a9765, type: 3}
+    _AudioVolume: 0.6
     _VfxCueId: ui.blocked
     _HapticStyle: 1
   - _Kind: 1
     _CueId: mission.claim_blocked
-    _AudioClip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
-    _AudioVolume: 0.8
+    _AudioClip: {fileID: 8300000, guid: e63d2e224866144db8f563c1535a9765, type: 3}
+    _AudioVolume: 0.6
     _VfxCueId: ui.blocked
     _HapticStyle: 1
   - _Kind: 1
     _CueId: continue.unavailable
-    _AudioClip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
-    _AudioVolume: 0.8
+    _AudioClip: {fileID: 8300000, guid: e63d2e224866144db8f563c1535a9765, type: 3}
+    _AudioVolume: 0.6
     _VfxCueId: ui.blocked
     _HapticStyle: 1
   - _Kind: 1
     _CueId: report.description_required
-    _AudioClip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
-    _AudioVolume: 0.8
+    _AudioClip: {fileID: 8300000, guid: e63d2e224866144db8f563c1535a9765, type: 3}
+    _AudioVolume: 0.6
     _VfxCueId: ui.blocked
     _HapticStyle: 1
   - _Kind: 1
     _CueId: report.save_failed
-    _AudioClip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
-    _AudioVolume: 0.8
+    _AudioClip: {fileID: 8300000, guid: e63d2e224866144db8f563c1535a9765, type: 3}
+    _AudioVolume: 0.6
     _VfxCueId: ui.blocked
     _HapticStyle: 1
   - _Kind: 2
     _CueId: store.insufficient_funds
-    _AudioClip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
-    _AudioVolume: 0.8
+    _AudioClip: {fileID: 8300000, guid: e63d2e224866144db8f563c1535a9765, type: 3}
+    _AudioVolume: 0.6
     _VfxCueId: ui.insufficient_funds
     _HapticStyle: 2
   - _Kind: 2
     _CueId: continue.insufficient_funds
-    _AudioClip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
-    _AudioVolume: 0.8
+    _AudioClip: {fileID: 8300000, guid: e63d2e224866144db8f563c1535a9765, type: 3}
+    _AudioVolume: 0.6
     _VfxCueId: ui.insufficient_funds
     _HapticStyle: 2
   - _Kind: 2
     _CueId: validation.insufficient_funds
-    _AudioClip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
-    _AudioVolume: 0.8
+    _AudioClip: {fileID: 8300000, guid: e63d2e224866144db8f563c1535a9765, type: 3}
+    _AudioVolume: 0.6
     _VfxCueId: ui.insufficient_funds
     _HapticStyle: 2
+  - _Kind: 6
+    _CueId: ui.press
+    _AudioClip: {fileID: 8300000, guid: 838c183387c4949248fc80296ffb09cb, type: 3}
+    _AudioVolume: 0.55
+    _VfxCueId:
+    _HapticStyle: 0

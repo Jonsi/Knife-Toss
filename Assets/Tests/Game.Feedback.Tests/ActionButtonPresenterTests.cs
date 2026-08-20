@@ -153,6 +153,37 @@ namespace Game.Feedback.Tests
         }
 
         [Test]
+        public void PointerDownRaisesSharedUiPressFeedback()
+        {
+            var channel = ScriptableObject.CreateInstance<FeedbackEventChannel>();
+            GameObject root = CreateButton(out _, out ActionButtonPresenter presenter, channel);
+            FeedbackEventData received = default;
+            bool wasRaised = false;
+            void Handler(FeedbackEventData data)
+            {
+                received = data;
+                wasRaised = true;
+            }
+
+            try
+            {
+                channel.Subscribe(Handler);
+                presenter.OnPointerDown(new PointerEventData(null));
+
+                Assert.That(wasRaised, Is.True);
+                Assert.That(received.Kind, Is.EqualTo(FeedbackKind.Navigation));
+                Assert.That(received.CueId, Is.EqualTo(ActionButtonPresenter.PressFeedbackCueId));
+                Assert.That(received.ContextId, Is.EqualTo(root.name));
+            }
+            finally
+            {
+                channel.Unsubscribe(Handler);
+                Object.DestroyImmediate(root);
+                Object.DestroyImmediate(channel);
+            }
+        }
+
+        [Test]
         public void DisableCleansTransientStateAndRestoresVisualAndInteractionState()
         {
             GameObject root = CreateButton(out _, out ActionButtonPresenter presenter);

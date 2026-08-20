@@ -12,13 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 187f3da722144f049a519467bbfd63b4, type: 3}
   m_Name: SoundSettings
   m_EditorClassIdentifier: Game::Game.Feedback.Audio.Data.SoundSettings
-  <KnifeThrowClip>k__BackingField: {fileID: 8300000, guid: fe0b1f9aeb45b41b089175aeeabd5d95, type: 3}
-  <KnifeLoadClip>k__BackingField: {fileID: 8300000, guid: 699b912cc46ba4f4fad8fa38e997e232, type: 3}
-  <HitTargetClip>k__BackingField: {fileID: 8300000, guid: ad885cbd16cd0064a8d674e1c70497f7, type: 3}
-  <HitKnifeClip>k__BackingField: {fileID: 8300000, guid: 2f79b76c4d829fb439462ad242183257, type: 3}
-  <HitCollectibleClip>k__BackingField: {fileID: 8300000, guid: 22eab4df0bfb76b439118c30d20e43b9, type: 3}
-  <WinClip>k__BackingField: {fileID: 8300000, guid: 52320e590bf774734a288886eba557ba, type: 3}
-  <LoseClip>k__BackingField: {fileID: 8300000, guid: 79e6baad2fd414b82a6d49ce1568d2e5, type: 3}
-  <ButtonClickClip>k__BackingField: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
-  <CurrencyGainClip>k__BackingField: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
-  <CurrencySpendClip>k__BackingField: {fileID: 8300000, guid: 32d4b1811dda14a6cb9e059ee8ad17d2, type: 3}
+  <KnifeThrowClip>k__BackingField: {fileID: 8300000, guid: b6f78a22f64724e379efea19c13272a7, type: 3}
+  <KnifeThrowVolume>k__BackingField: 0.72
+  <KnifeThrowCooldownSeconds>k__BackingField: 0.08
+  <KnifeLoadClip>k__BackingField: {fileID: 8300000, guid: 114b4c2ac80d8494492baebbc3a385ef, type: 3}
+  <HitTargetClip>k__BackingField: {fileID: 8300000, guid: d9545da84879c41a0bd6be3f3ef99160, type: 3}
+  <HitTargetVolume>k__BackingField: 0.78
+  <HitTargetCooldownSeconds>k__BackingField: 0.1
+  <HitKnifeClip>k__BackingField: {fileID: 8300000, guid: 96880a2a5de8441248be4655e1864737, type: 3}
+  <HitKnifeVolume>k__BackingField: 0.95
+  <HitKnifeCooldownSeconds>k__BackingField: 0.55
+  <HitCollectibleClip>k__BackingField: {fileID: 8300000, guid: fde44796a9fe74ac8ba76bc12675c639, type: 3}
+  <HitCollectibleVolume>k__BackingField: 0.82
+  <WinClip>k__BackingField: {fileID: 8300000, guid: 0dd16886f654b466389e5184f25a1b84, type: 3}
+  <WinVolume>k__BackingField: 0.82
+  <LoseClip>k__BackingField: {fileID: 8300000, guid: ae4cc37dec2224f4cb211ae3b9c4dd09, type: 3}
+  <LoseVolume>k__BackingField: 0.58
+  <ButtonClickClip>k__BackingField: {fileID: 8300000, guid: 838c183387c4949248fc80296ffb09cb, type: 3}
+  <ButtonClickVolume>k__BackingField: 0.55
+  <CurrencyGainClip>k__BackingField: {fileID: 8300000, guid: fde44796a9fe74ac8ba76bc12675c639, type: 3}
+  <CurrencyGainVolume>k__BackingField: 0.72
+  <CurrencySpendClip>k__BackingField: {fileID: 8300000, guid: f25f13ab6f7c64abb9d4bc7280d14021, type: 3}
+  <CurrencySpendVolume>k__BackingField: 0.68

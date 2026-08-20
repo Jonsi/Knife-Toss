@@ -56,18 +56,19 @@ namespace Game.Feedback.Audio.Services
 
         private void OnCollectibleHit(CollectibleHitEventData _)
         {
-            PlayClip(_SoundSettings?.HitCollectibleClip);
+            PlayClip(
+                _SoundSettings?.HitCollectibleClip,
+                _SoundSettings?.HitCollectibleVolume ?? 1f);
         }
 
-        private void PlayClip(UnityEngine.AudioClip clip)
+        private void PlayClip(UnityEngine.AudioClip clip, float volume)
         {
             if (clip == null)
             {
                 return;
             }
 
-            _AudioPlayer?.PlayOneShot(clip);
+            _AudioPlayer?.PlayOneShot(clip, UnityEngine.Mathf.Clamp01(volume));
         }
     }
 }
-

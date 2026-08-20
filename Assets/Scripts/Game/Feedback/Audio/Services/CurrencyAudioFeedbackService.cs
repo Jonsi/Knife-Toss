@@ -53,16 +53,20 @@ namespace Game.Feedback.Audio.Services
 
         private void OnBalanceChanged(CurrencyBalanceChangedEventData data)
         {
-            AudioClip clip = CurrencyFeedbackSemantics.Classify(data) switch
+            (AudioClip clip, float volume) = CurrencyFeedbackSemantics.Classify(data) switch
             {
-                CurrencyFeedbackKind.Gain => _SoundSettings?.CurrencyGainClip,
-                CurrencyFeedbackKind.Spend => _SoundSettings?.CurrencySpendClip,
-                _ => null
+                CurrencyFeedbackKind.Gain => (
+                    _SoundSettings?.CurrencyGainClip,
+                    _SoundSettings?.CurrencyGainVolume ?? 1f),
+                CurrencyFeedbackKind.Spend => (
+                    _SoundSettings?.CurrencySpendClip,
+                    _SoundSettings?.CurrencySpendVolume ?? 1f),
+                _ => (null, 0f)
             };
 
             if (clip != null)
             {
-                _AudioPlayer?.PlayOneShot(clip);
+                _AudioPlayer?.PlayOneShot(clip, Mathf.Clamp01(volume));
             }
         }
     }
